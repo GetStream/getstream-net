@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Requests;
+using GetStream.Models;
 
 namespace GetStreamExample
 {
@@ -23,24 +24,23 @@ namespace GetStreamExample
             {
                 Console.WriteLine("=== GetStream .NET SDK Complete Example ===");
                 
-                // Debug breakpoint - uncomment to pause execution here
-                System.Diagnostics.Debugger.Break();
                 
                 // Step 1: Create a feed
                 Console.WriteLine("\n1. Creating feed...");
                 var createFeedRequest = new GetOrCreateFeedRequest
                 {
-                    Data = new { 
-                        visibility = "public",
-                        custom = new { 
+                    UserID = "sara",
+                    Data = new FeedInput
+                    { 
+                        Visibility = "public",
+                        Custom = new { 
                             benchmark = true,
                             description = "Benchmark test feed for .NET SDK"
                         }
                     },
-                    Watch = true
+                    // Watch = true
                 };
                 
-                Console.WriteLine("Creating feed...");
                 var createFeedResponse = await feeds.GetOrCreateFeedAsync(
                     FeedGroupID: "user", 
                     FeedID: "john", 
@@ -54,12 +54,14 @@ namespace GetStreamExample
                 else
                 {
                     Console.WriteLine("⚠️ Feed creation response was null");
+                    Console.WriteLine(createFeedResponse.Error);
                 }
 
                 // Step 2: Add an activity to the feed
                 Console.WriteLine("\n2. Adding activity to feed...");
                 var addActivityRequest = new AddActivityRequest
                 {
+                    UserID = "sara",
                     Type = "post",
                     Fids = new List<string> { "user:john" },
                     Text = "Hello from .NET SDK! This is my first activity.",
@@ -74,11 +76,11 @@ namespace GetStreamExample
                 if (addActivityResponse.Data?.Activity != null)
                 {
                     Console.WriteLine($"✅ Activity added successfully!");
-                    Console.WriteLine($"   Activity ID: {addActivityResponse.Data.Activity.Id}");
+                    Console.WriteLine($"   Activity ID: {addActivityResponse.Data.Activity.ID}");
                     Console.WriteLine($"   Activity Type: {addActivityResponse.Data.Activity.Type}");
                     Console.WriteLine($"   Activity Text: {addActivityResponse.Data.Activity.Text}");
                     
-                    var activityId = addActivityResponse.Data.Activity.Id;
+                    var activityId = addActivityResponse.Data.Activity.ID;
                     
                     // Step 3: Add a comment to the activity
                     Console.WriteLine("\n3. Adding comment to activity...");
@@ -98,10 +100,10 @@ namespace GetStreamExample
                     if (addCommentResponse.Data?.Comment != null)
                     {
                         Console.WriteLine($"✅ Comment added successfully!");
-                        Console.WriteLine($"   Comment ID: {addCommentResponse.Data.Comment.Id}");
+                        Console.WriteLine($"   Comment ID: {addCommentResponse.Data.Comment.ID}");
                         Console.WriteLine($"   Comment Text: {addCommentResponse.Data.Comment.Text}");
                         
-                        var commentId = addCommentResponse.Data.Comment.Id;
+                        var commentId = addCommentResponse.Data.Comment.ID;
                         
                         // Step 4: Fetch the feed to see all activities
                         Console.WriteLine("\n4. Fetching feed activities...");
@@ -113,12 +115,12 @@ namespace GetStreamExample
                         
                         var queryActivitiesResponse = await feeds.QueryActivitiesAsync(queryActivitiesRequest);
                         
-                        if (queryActivitiesResponse.Data?.Results != null)
+                        if (queryActivitiesResponse.Data?.Activities != null)
                         {
                             Console.WriteLine($"✅ Feed fetched successfully!");
-                            Console.WriteLine($"   Total activities: {queryActivitiesResponse.Data.Results.Count}");
+                            Console.WriteLine($"   Total activities: {queryActivitiesResponse.Data.Activities.Count}");
                             
-                            foreach (var activity in queryActivitiesResponse.Data.Results)
+                            foreach (var activity in queryActivitiesResponse.Data.Activities)
                             {
                                 Console.WriteLine($"   - Activity: {activity.Type} - {activity.Text}");
                             }
@@ -136,6 +138,7 @@ namespace GetStreamExample
                 else
                 {
                     Console.WriteLine("❌ Failed to add activity");
+                    Console.WriteLine(addActivityResponse.Error);
                 }
             }
             catch (Exception ex)

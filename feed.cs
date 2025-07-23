@@ -3,25 +3,47 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using GetStream.Models;
 using GetStream.Requests;
+using GetStream.Models;
 
 namespace GetStream
 {
-    public class FeedClient : BaseClient
+    public class FeedClient
     {
-        public FeedClient(Client client) : base(client)
+        private readonly Client _client;
+
+        public FeedClient(Client client)
         {
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+        }
+
+        private Dictionary<string, string> ExtractQueryParams(object request)
+        {
+            if (request == null)
+                return new Dictionary<string, string>();
+            
+            var queryParams = new Dictionary<string, string>();
+            var properties = request.GetType().GetProperties();
+            
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(request);
+                if (value != null)
+                {
+                    queryParams[prop.Name.ToLower()] = value.ToString();
+                }
+            }
+            
+            return queryParams;
         }
 
         /// Create a new activity or update an existing one
         /// 
-        public async Task<StreamResponse<AddActivityResponse>> AddActivityAsync(
-            AddActivityRequest request,
+        public async Task<StreamResponse<AddActivityResponse>> AddActivityAsync(AddActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<AddActivityRequest, AddActivityResponse>(
+            var result = await _client.MakeRequestAsync<AddActivityRequest, AddActivityResponse>(
                 "POST",
                 "/api/v2/feeds/activities",null,request,null,
                 cancellationToken);
@@ -31,12 +53,12 @@ namespace GetStream
 
         /// Create new activities or update existing ones in a batch operation
         /// 
-        public async Task<StreamResponse<UpsertActivitiesResponse>> UpsertActivitiesAsync(
-            UpsertActivitiesRequest request,
+        public async Task<StreamResponse<UpsertActivitiesResponse>> UpsertActivitiesAsync(UpsertActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<UpsertActivitiesRequest, UpsertActivitiesResponse>("POST",
+            var result = await _client.MakeRequestAsync<UpsertActivitiesRequest, UpsertActivitiesResponse>(
+                "POST",
                 "/api/v2/feeds/activities/batch",null,request,null,
                 cancellationToken);
                 
@@ -45,12 +67,12 @@ namespace GetStream
 
         /// Delete one or more activities by their IDs
         /// 
-        public async Task<StreamResponse<DeleteActivitiesResponse>> DeleteActivitiesAsync(
-            DeleteActivitiesRequest request,
+        public async Task<StreamResponse<DeleteActivitiesResponse>> DeleteActivitiesAsync(DeleteActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<DeleteActivitiesRequest, DeleteActivitiesResponse>("POST",
+            var result = await _client.MakeRequestAsync<DeleteActivitiesRequest, DeleteActivitiesResponse>(
+                "POST",
                 "/api/v2/feeds/activities/delete",null,request,null,
                 cancellationToken);
                 
@@ -59,12 +81,12 @@ namespace GetStream
 
         /// Query activities based on filters with pagination and sorting options
         /// 
-        public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(
-            QueryActivitiesRequest request,
+        public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(QueryActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>(
+                "POST",
                 "/api/v2/feeds/activities/query",null,request,null,
                 cancellationToken);
                 
@@ -73,8 +95,7 @@ namespace GetStream
 
         /// Delete a single activity by its ID
         /// 
-        public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string ActivityID,
-            DeleteActivityRequest request,
+        public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -83,7 +104,8 @@ namespace GetStream
             };
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, DeleteActivityResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, DeleteActivityResponse>(
+                "DELETE",
                 "/api/v2/feeds/activities/{activity_id}",queryParams,null,pathParams,
                 cancellationToken);
                 
@@ -92,8 +114,7 @@ namespace GetStream
 
         /// Returns activity by ID
         /// 
-        public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string ActivityID,
-            GetActivityRequest request,
+        public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -101,7 +122,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<object, GetActivityResponse>("GET",
+            var result = await _client.MakeRequestAsync<object, GetActivityResponse>(
+                "GET",
                 "/api/v2/feeds/activities/{activity_id}",null,null,pathParams,
                 cancellationToken);
                 
@@ -113,8 +135,7 @@ namespace GetStream
         /// Sends events:
         /// - feeds.activity.updated
         /// 
-        public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string ActivityID,
-            UpdateActivityPartialRequest request,
+        public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string ActivityID,UpdateActivityPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -122,7 +143,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<UpdateActivityPartialRequest, UpdateActivityPartialResponse>("PATCH",
+            var result = await _client.MakeRequestAsync<UpdateActivityPartialRequest, UpdateActivityPartialResponse>(
+                "PATCH",
                 "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
                 cancellationToken);
                 
@@ -134,8 +156,7 @@ namespace GetStream
         /// Sends events:
         /// - feeds.activity.updated
         /// 
-        public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string ActivityID,
-            UpdateActivityRequest request,
+        public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string ActivityID,UpdateActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -143,7 +164,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<UpdateActivityRequest, UpdateActivityResponse>("PUT",
+            var result = await _client.MakeRequestAsync<UpdateActivityRequest, UpdateActivityResponse>(
+                "PUT",
                 "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
                 cancellationToken);
                 
@@ -152,8 +174,7 @@ namespace GetStream
 
         /// Deletes a bookmark from an activity
         /// 
-        public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string ActivityID,
-            DeleteBookmarkRequest request,
+        public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -162,7 +183,8 @@ namespace GetStream
             };
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, DeleteBookmarkResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, DeleteBookmarkResponse>(
+                "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",queryParams,null,pathParams,
                 cancellationToken);
                 
@@ -171,8 +193,7 @@ namespace GetStream
 
         /// Updates a bookmark for an activity
         /// 
-        public async Task<StreamResponse<UpdateBookmarkResponse>> UpdateBookmarkAsync(string ActivityID,
-            UpdateBookmarkRequest request,
+        public async Task<StreamResponse<UpdateBookmarkResponse>> UpdateBookmarkAsync(string ActivityID,UpdateBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -180,7 +201,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<UpdateBookmarkRequest, UpdateBookmarkResponse>("PATCH",
+            var result = await _client.MakeRequestAsync<UpdateBookmarkRequest, UpdateBookmarkResponse>(
+                "PATCH",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",null,request,pathParams,
                 cancellationToken);
                 
@@ -189,8 +211,7 @@ namespace GetStream
 
         /// Adds a bookmark to an activity
         /// 
-        public async Task<StreamResponse<AddBookmarkResponse>> AddBookmarkAsync(string ActivityID,
-            AddBookmarkRequest request,
+        public async Task<StreamResponse<AddBookmarkResponse>> AddBookmarkAsync(string ActivityID,AddBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -198,7 +219,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<AddBookmarkRequest, AddBookmarkResponse>("POST",
+            var result = await _client.MakeRequestAsync<AddBookmarkRequest, AddBookmarkResponse>(
+                "POST",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",null,request,pathParams,
                 cancellationToken);
                 
@@ -215,8 +237,7 @@ namespace GetStream
         /// - poll.vote_changed
         /// - poll.vote_removed
         /// 
-        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string ActivityID, string PollID,
-            CastPollVoteRequest request,
+        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string ActivityID, string PollID,CastPollVoteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -225,7 +246,8 @@ namespace GetStream
                 ["poll_id"] = PollID,
             };
             
-            var result = await MakeRequestAsync<CastPollVoteRequest, PollVoteResponse>("POST",
+            var result = await _client.MakeRequestAsync<CastPollVoteRequest, PollVoteResponse>(
+                "POST",
                 "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote",null,request,pathParams,
                 cancellationToken);
                 
@@ -238,8 +260,7 @@ namespace GetStream
         /// - feeds.poll.vote_removed
         /// - poll.vote_removed
         /// 
-        public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string ActivityID, string PollID, string VoteID,
-            DeletePollVoteRequest request,
+        public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string ActivityID, string PollID, string VoteID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -250,7 +271,8 @@ namespace GetStream
             };
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, PollVoteResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, PollVoteResponse>(
+                "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote/{vote_id}",queryParams,null,pathParams,
                 cancellationToken);
                 
@@ -259,8 +281,7 @@ namespace GetStream
 
         /// Adds a reaction to an activity
         /// 
-        public async Task<StreamResponse<AddReactionResponse>> AddReactionAsync(string ActivityID,
-            AddReactionRequest request,
+        public async Task<StreamResponse<AddReactionResponse>> AddReactionAsync(string ActivityID,AddReactionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -268,7 +289,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<AddReactionRequest, AddReactionResponse>("POST",
+            var result = await _client.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
+                "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions",null,request,pathParams,
                 cancellationToken);
                 
@@ -277,8 +299,7 @@ namespace GetStream
 
         /// Query activity reactions
         /// 
-        public async Task<StreamResponse<QueryActivityReactionsResponse>> QueryActivityReactionsAsync(string ActivityID,
-            QueryActivityReactionsRequest request,
+        public async Task<StreamResponse<QueryActivityReactionsResponse>> QueryActivityReactionsAsync(string ActivityID,QueryActivityReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -286,7 +307,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<QueryActivityReactionsRequest, QueryActivityReactionsResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryActivityReactionsRequest, QueryActivityReactionsResponse>(
+                "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions/query",null,request,pathParams,
                 cancellationToken);
                 
@@ -295,8 +317,7 @@ namespace GetStream
 
         /// Removes a reaction from an activity
         /// 
-        public async Task<StreamResponse<DeleteActivityReactionResponse>> DeleteActivityReactionAsync(string ActivityID, string Type,
-            DeleteActivityReactionRequest request,
+        public async Task<StreamResponse<DeleteActivityReactionResponse>> DeleteActivityReactionAsync(string ActivityID, string Type,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -304,9 +325,11 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
                 ["type"] = Type,
             };
+            var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, DeleteActivityReactionResponse>("DELETE",
-                "/api/v2/feeds/activities/{activity_id}/reactions/{type}",null,null,pathParams,
+            var result = await _client.MakeRequestAsync<object, DeleteActivityReactionResponse>(
+                "DELETE",
+                "/api/v2/feeds/activities/{activity_id}/reactions/{type}",queryParams,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -314,12 +337,12 @@ namespace GetStream
 
         /// Query bookmark folders with filter query
         /// 
-        public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(
-            QueryBookmarkFoldersRequest request,
+        public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(QueryBookmarkFoldersRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<QueryBookmarkFoldersRequest, QueryBookmarkFoldersResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryBookmarkFoldersRequest, QueryBookmarkFoldersResponse>(
+                "POST",
                 "/api/v2/feeds/bookmark_folders/query",null,request,null,
                 cancellationToken);
                 
@@ -328,8 +351,7 @@ namespace GetStream
 
         /// Delete a bookmark folder by its ID
         /// 
-        public async Task<StreamResponse<DeleteBookmarkFolderResponse>> DeleteBookmarkFolderAsync(string FolderID,
-            DeleteBookmarkFolderRequest request,
+        public async Task<StreamResponse<DeleteBookmarkFolderResponse>> DeleteBookmarkFolderAsync(string FolderID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -337,7 +359,8 @@ namespace GetStream
                 ["folder_id"] = FolderID,
             };
             
-            var result = await MakeRequestAsync<object, DeleteBookmarkFolderResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, DeleteBookmarkFolderResponse>(
+                "DELETE",
                 "/api/v2/feeds/bookmark_folders/{folder_id}",null,null,pathParams,
                 cancellationToken);
                 
@@ -346,8 +369,7 @@ namespace GetStream
 
         /// Update a bookmark folder by its ID
         /// 
-        public async Task<StreamResponse<UpdateBookmarkFolderResponse>> UpdateBookmarkFolderAsync(string FolderID,
-            UpdateBookmarkFolderRequest request,
+        public async Task<StreamResponse<UpdateBookmarkFolderResponse>> UpdateBookmarkFolderAsync(string FolderID,UpdateBookmarkFolderRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -355,7 +377,8 @@ namespace GetStream
                 ["folder_id"] = FolderID,
             };
             
-            var result = await MakeRequestAsync<UpdateBookmarkFolderRequest, UpdateBookmarkFolderResponse>("PATCH",
+            var result = await _client.MakeRequestAsync<UpdateBookmarkFolderRequest, UpdateBookmarkFolderResponse>(
+                "PATCH",
                 "/api/v2/feeds/bookmark_folders/{folder_id}",null,request,pathParams,
                 cancellationToken);
                 
@@ -364,12 +387,12 @@ namespace GetStream
 
         /// Query bookmarks with filter query
         /// 
-        public async Task<StreamResponse<QueryBookmarksResponse>> QueryBookmarksAsync(
-            QueryBookmarksRequest request,
+        public async Task<StreamResponse<QueryBookmarksResponse>> QueryBookmarksAsync(QueryBookmarksRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<QueryBookmarksRequest, QueryBookmarksResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryBookmarksRequest, QueryBookmarksResponse>(
+                "POST",
                 "/api/v2/feeds/bookmarks/query",null,request,null,
                 cancellationToken);
                 
@@ -378,13 +401,13 @@ namespace GetStream
 
         /// Retrieve a threaded list of comments for a specific object (e.g., activity), with configurable depth, sorting, and pagination
         /// 
-        public async Task<StreamResponse<GetCommentsResponse>> GetCommentsAsync(
-            GetCommentsRequest request,
+        public async Task<StreamResponse<GetCommentsResponse>> GetCommentsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, GetCommentsResponse>("GET",
+            var result = await _client.MakeRequestAsync<object, GetCommentsResponse>(
+                "GET",
                 "/api/v2/feeds/comments",queryParams,null,null,
                 cancellationToken);
                 
@@ -393,12 +416,12 @@ namespace GetStream
 
         /// Adds a comment to an object (e.g., activity) or a reply to an existing comment, and broadcasts appropriate events
         /// 
-        public async Task<StreamResponse<AddCommentResponse>> AddCommentAsync(
-            AddCommentRequest request,
+        public async Task<StreamResponse<AddCommentResponse>> AddCommentAsync(AddCommentRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<AddCommentRequest, AddCommentResponse>("POST",
+            var result = await _client.MakeRequestAsync<AddCommentRequest, AddCommentResponse>(
+                "POST",
                 "/api/v2/feeds/comments",null,request,null,
                 cancellationToken);
                 
@@ -407,12 +430,12 @@ namespace GetStream
 
         /// Adds multiple comments in a single request. Each comment must specify the object type and ID.
         /// 
-        public async Task<StreamResponse<AddCommentsBatchResponse>> AddCommentsBatchAsync(
-            AddCommentsBatchRequest request,
+        public async Task<StreamResponse<AddCommentsBatchResponse>> AddCommentsBatchAsync(AddCommentsBatchRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<AddCommentsBatchRequest, AddCommentsBatchResponse>("POST",
+            var result = await _client.MakeRequestAsync<AddCommentsBatchRequest, AddCommentsBatchResponse>(
+                "POST",
                 "/api/v2/feeds/comments/batch",null,request,null,
                 cancellationToken);
                 
@@ -421,12 +444,12 @@ namespace GetStream
 
         /// Query comments using MongoDB-style filters with pagination and sorting options
         /// 
-        public async Task<StreamResponse<QueryCommentsResponse>> QueryCommentsAsync(
-            QueryCommentsRequest request,
+        public async Task<StreamResponse<QueryCommentsResponse>> QueryCommentsAsync(QueryCommentsRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>(
+                "POST",
                 "/api/v2/feeds/comments/query",null,request,null,
                 cancellationToken);
                 
@@ -435,8 +458,7 @@ namespace GetStream
 
         /// Deletes a comment from an object (e.g., activity) and broadcasts appropriate events
         /// 
-        public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string CommentID,
-            DeleteCommentRequest request,
+        public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string CommentID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -444,7 +466,8 @@ namespace GetStream
                 ["comment_id"] = CommentID,
             };
             
-            var result = await MakeRequestAsync<object, DeleteCommentResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, DeleteCommentResponse>(
+                "DELETE",
                 "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
                 cancellationToken);
                 
@@ -453,8 +476,7 @@ namespace GetStream
 
         /// Get a comment by ID
         /// 
-        public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string CommentID,
-            GetCommentRequest request,
+        public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string CommentID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -462,7 +484,8 @@ namespace GetStream
                 ["comment_id"] = CommentID,
             };
             
-            var result = await MakeRequestAsync<object, GetCommentResponse>("GET",
+            var result = await _client.MakeRequestAsync<object, GetCommentResponse>(
+                "GET",
                 "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
                 cancellationToken);
                 
@@ -471,8 +494,7 @@ namespace GetStream
 
         /// Updates a comment on an object (e.g., activity) and broadcasts appropriate events
         /// 
-        public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string CommentID,
-            UpdateCommentRequest request,
+        public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string CommentID,UpdateCommentRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -480,7 +502,8 @@ namespace GetStream
                 ["comment_id"] = CommentID,
             };
             
-            var result = await MakeRequestAsync<UpdateCommentRequest, UpdateCommentResponse>("PATCH",
+            var result = await _client.MakeRequestAsync<UpdateCommentRequest, UpdateCommentResponse>(
+                "PATCH",
                 "/api/v2/feeds/comments/{comment_id}",null,request,pathParams,
                 cancellationToken);
                 
@@ -489,8 +512,7 @@ namespace GetStream
 
         /// Adds a reaction to a comment
         /// 
-        public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string CommentID,
-            AddCommentReactionRequest request,
+        public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string CommentID,AddCommentReactionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -498,7 +520,8 @@ namespace GetStream
                 ["comment_id"] = CommentID,
             };
             
-            var result = await MakeRequestAsync<AddCommentReactionRequest, AddCommentReactionResponse>("POST",
+            var result = await _client.MakeRequestAsync<AddCommentReactionRequest, AddCommentReactionResponse>(
+                "POST",
                 "/api/v2/feeds/comments/{comment_id}/reactions",null,request,pathParams,
                 cancellationToken);
                 
@@ -507,8 +530,7 @@ namespace GetStream
 
         /// Query comment reactions
         /// 
-        public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string CommentID,
-            QueryCommentReactionsRequest request,
+        public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string CommentID,QueryCommentReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -516,7 +538,8 @@ namespace GetStream
                 ["comment_id"] = CommentID,
             };
             
-            var result = await MakeRequestAsync<QueryCommentReactionsRequest, QueryCommentReactionsResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryCommentReactionsRequest, QueryCommentReactionsResponse>(
+                "POST",
                 "/api/v2/feeds/comments/{comment_id}/reactions/query",null,request,pathParams,
                 cancellationToken);
                 
@@ -525,8 +548,7 @@ namespace GetStream
 
         /// Deletes a reaction from a comment
         /// 
-        public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string CommentID, string Type,
-            DeleteCommentReactionRequest request,
+        public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string CommentID, string Type,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -534,9 +556,11 @@ namespace GetStream
                 ["comment_id"] = CommentID,
                 ["type"] = Type,
             };
+            var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, DeleteCommentReactionResponse>("DELETE",
-                "/api/v2/feeds/comments/{comment_id}/reactions/{type}",null,null,pathParams,
+            var result = await _client.MakeRequestAsync<object, DeleteCommentReactionResponse>(
+                "DELETE",
+                "/api/v2/feeds/comments/{comment_id}/reactions/{type}",queryParams,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -544,8 +568,7 @@ namespace GetStream
 
         /// Retrieve a threaded list of replies for a single comment, with configurable depth, sorting, and pagination
         /// 
-        public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string CommentID,
-            GetCommentRepliesRequest request,
+        public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string CommentID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -554,8 +577,92 @@ namespace GetStream
             };
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, GetCommentRepliesResponse>("GET",
+            var result = await _client.MakeRequestAsync<object, GetCommentRepliesResponse>(
+                "GET",
                 "/api/v2/feeds/comments/{comment_id}/replies",queryParams,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// List all feed groups for the application
+        /// 
+        public async Task<StreamResponse<ListFeedGroupsResponse>> ListFeedGroupsAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<object, ListFeedGroupsResponse>(
+                "GET",
+                "/api/v2/feeds/feed_groups",null,null,null,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Creates a new feed group with the specified configuration
+        /// 
+        public async Task<StreamResponse<CreateFeedGroupResponse>> CreateFeedGroupAsync(CreateFeedGroupRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<CreateFeedGroupRequest, CreateFeedGroupResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Delete a feed group by its ID. Can perform a soft delete (default) or hard delete.
+        /// 
+        public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string FeedGroupID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = FeedGroupID,
+            };
+            var queryParams = ExtractQueryParams(request);
+            
+            var result = await _client.MakeRequestAsync<object, DeleteFeedGroupResponse>(
+                "DELETE",
+                "/api/v2/feeds/feed_groups/{feed_group_id}",queryParams,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Get a feed group by ID
+        /// 
+        public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string FeedGroupID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = FeedGroupID,
+            };
+            
+            var result = await _client.MakeRequestAsync<object, GetFeedGroupResponse>(
+                "GET",
+                "/api/v2/feeds/feed_groups/{feed_group_id}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Update a feed group by ID
+        /// 
+        public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string FeedGroupID,UpdateFeedGroupRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = FeedGroupID,
+            };
+            
+            var result = await _client.MakeRequestAsync<UpdateFeedGroupRequest, UpdateFeedGroupResponse>(
+                "PUT",
+                "/api/v2/feeds/feed_groups/{feed_group_id}",null,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -563,8 +670,7 @@ namespace GetStream
 
         /// Delete a single feed by its ID
         /// 
-        public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string FeedGroupID, string FeedID,
-            DeleteFeedRequest request,
+        public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string FeedGroupID, string FeedID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -574,7 +680,8 @@ namespace GetStream
             };
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, DeleteFeedResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, DeleteFeedResponse>(
+                "DELETE",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",queryParams,null,pathParams,
                 cancellationToken);
                 
@@ -583,21 +690,18 @@ namespace GetStream
 
         /// Create a single feed for a given feed group
         /// 
-        public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(string FeedGroupID, string FeedID,
-            GetOrCreateFeedRequest request,
+        public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(string FeedGroupID, string FeedID,GetOrCreateFeedRequest request,
             CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("hvgbhknb vnjknb nkj");
-
             var pathParams = new Dictionary<string, string>
             {
                 ["feed_group_id"] = FeedGroupID,
                 ["feed_id"] = FeedID,
             };
-            var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<GetOrCreateFeedRequest, GetOrCreateFeedResponse>("POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",queryParams,request,pathParams,
+            var result = await _client.MakeRequestAsync<GetOrCreateFeedRequest, GetOrCreateFeedResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -605,8 +709,7 @@ namespace GetStream
 
         /// Update an existing feed
         /// 
-        public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(string FeedGroupID, string FeedID,
-            UpdateFeedRequest request,
+        public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(string FeedGroupID, string FeedID,UpdateFeedRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -615,7 +718,8 @@ namespace GetStream
                 ["feed_id"] = FeedID,
             };
             
-            var result = await MakeRequestAsync<UpdateFeedRequest, UpdateFeedResponse>("PUT",
+            var result = await _client.MakeRequestAsync<UpdateFeedRequest, UpdateFeedResponse>(
+                "PUT",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,request,pathParams,
                 cancellationToken);
                 
@@ -624,8 +728,7 @@ namespace GetStream
 
         /// Mark activities as read/seen/watched. Can mark by timestamp (seen), activity IDs (read), or all as read.
         /// 
-        public async Task<StreamResponse<Response>> MarkActivityAsync(string FeedGroupID, string FeedID,
-            MarkActivityRequest request,
+        public async Task<StreamResponse<Response>> MarkActivityAsync(string FeedGroupID, string FeedID,MarkActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -634,7 +737,8 @@ namespace GetStream
                 ["feed_id"] = FeedID,
             };
             
-            var result = await MakeRequestAsync<MarkActivityRequest, Response>("POST",
+            var result = await _client.MakeRequestAsync<MarkActivityRequest, Response>(
+                "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/mark/batch",null,request,pathParams,
                 cancellationToken);
                 
@@ -643,8 +747,7 @@ namespace GetStream
 
         /// Unpin an activity from a feed. This removes the pin, so the activity will no longer be displayed at the top of the feed.
         /// 
-        public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,
-            UnpinActivityRequest request,
+        public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -653,9 +756,11 @@ namespace GetStream
                 ["feed_id"] = FeedID,
                 ["activity_id"] = ActivityID,
             };
+            var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, UnpinActivityResponse>("DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",null,null,pathParams,
+            var result = await _client.MakeRequestAsync<object, UnpinActivityResponse>(
+                "DELETE",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",queryParams,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -663,8 +768,7 @@ namespace GetStream
 
         /// Pin an activity to a feed. Pinned activities are typically displayed at the top of a feed.
         /// 
-        public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,
-            PinActivityRequest request,
+        public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,PinActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -674,7 +778,8 @@ namespace GetStream
                 ["activity_id"] = ActivityID,
             };
             
-            var result = await MakeRequestAsync<PinActivityRequest, PinActivityResponse>("POST",
+            var result = await _client.MakeRequestAsync<PinActivityRequest, PinActivityResponse>(
+                "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",null,request,pathParams,
                 cancellationToken);
                 
@@ -683,8 +788,7 @@ namespace GetStream
 
         /// Add, remove, or set members for a feed
         /// 
-        public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string FeedGroupID, string FeedID,
-            UpdateFeedMembersRequest request,
+        public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string FeedGroupID, string FeedID,UpdateFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -693,7 +797,8 @@ namespace GetStream
                 ["feed_id"] = FeedID,
             };
             
-            var result = await MakeRequestAsync<UpdateFeedMembersRequest, UpdateFeedMembersResponse>("PATCH",
+            var result = await _client.MakeRequestAsync<UpdateFeedMembersRequest, UpdateFeedMembersResponse>(
+                "PATCH",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members",null,request,pathParams,
                 cancellationToken);
                 
@@ -702,8 +807,7 @@ namespace GetStream
 
         /// Accepts a pending feed member request
         /// 
-        public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(string FeedID, string FeedGroupID,
-            AcceptFeedMemberInviteRequest request,
+        public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(string FeedID, string FeedGroupID,AcceptFeedMemberInviteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -712,7 +816,8 @@ namespace GetStream
                 ["feed_group_id"] = FeedGroupID,
             };
             
-            var result = await MakeRequestAsync<AcceptFeedMemberInviteRequest, AcceptFeedMemberInviteResponse>("POST",
+            var result = await _client.MakeRequestAsync<AcceptFeedMemberInviteRequest, AcceptFeedMemberInviteResponse>(
+                "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/accept",null,request,pathParams,
                 cancellationToken);
                 
@@ -721,8 +826,7 @@ namespace GetStream
 
         /// Query feed members based on filters with pagination and sorting options
         /// 
-        public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(string FeedGroupID, string FeedID,
-            QueryFeedMembersRequest request,
+        public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(string FeedGroupID, string FeedID,QueryFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -731,7 +835,8 @@ namespace GetStream
                 ["feed_id"] = FeedID,
             };
             
-            var result = await MakeRequestAsync<QueryFeedMembersRequest, QueryFeedMembersResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryFeedMembersRequest, QueryFeedMembersResponse>(
+                "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/query",null,request,pathParams,
                 cancellationToken);
                 
@@ -740,8 +845,7 @@ namespace GetStream
 
         /// Rejects a pending feed member request
         /// 
-        public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(string FeedGroupID, string FeedID,
-            RejectFeedMemberInviteRequest request,
+        public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(string FeedGroupID, string FeedID,RejectFeedMemberInviteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -750,28 +854,9 @@ namespace GetStream
                 ["feed_id"] = FeedID,
             };
             
-            var result = await MakeRequestAsync<RejectFeedMemberInviteRequest, RejectFeedMemberInviteResponse>("POST",
+            var result = await _client.MakeRequestAsync<RejectFeedMemberInviteRequest, RejectFeedMemberInviteResponse>(
+                "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/reject",null,request,pathParams,
-                cancellationToken);
-                
-            return result;
-        }
-
-        /// Call this Method to stop receiving feed events
-        /// 
-        public async Task<StreamResponse<Response>> StopWatchingFeedAsync(string FeedGroupID, string FeedID,
-            StopWatchingFeedRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["feed_group_id"] = FeedGroupID,
-                ["feed_id"] = FeedID,
-            };
-            var queryParams = ExtractQueryParams(request);
-            
-            var result = await MakeRequestAsync<object, Response>("DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/watch",queryParams,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -779,8 +864,7 @@ namespace GetStream
 
         /// Get follow suggestions for a feed group
         /// 
-        public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string FeedGroupID,
-            GetFollowSuggestionsRequest request,
+        public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string FeedGroupID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -789,8 +873,91 @@ namespace GetStream
             };
             var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<object, GetFollowSuggestionsResponse>("GET",
+            var result = await _client.MakeRequestAsync<object, GetFollowSuggestionsResponse>(
+                "GET",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/follow_suggestions",queryParams,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// List all feed views for a feed group
+        /// 
+        public async Task<StreamResponse<ListFeedViewsResponse>> ListFeedViewsAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<object, ListFeedViewsResponse>(
+                "GET",
+                "/api/v2/feeds/feed_views",null,null,null,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Create a custom view for a feed group with specific selectors, ranking, or aggregation options
+        /// 
+        public async Task<StreamResponse<CreateFeedViewResponse>> CreateFeedViewAsync(CreateFeedViewRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<CreateFeedViewRequest, CreateFeedViewResponse>(
+                "POST",
+                "/api/v2/feeds/feed_views",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Delete an existing custom feed view
+        /// 
+        public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string ViewID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["view_id"] = ViewID,
+            };
+            
+            var result = await _client.MakeRequestAsync<object, DeleteFeedViewResponse>(
+                "DELETE",
+                "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Get a feed view by its ID
+        /// 
+        public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string ViewID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["view_id"] = ViewID,
+            };
+            
+            var result = await _client.MakeRequestAsync<object, GetFeedViewResponse>(
+                "GET",
+                "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Update an existing custom feed view with new selectors, ranking, or aggregation options
+        /// 
+        public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string ViewID,UpdateFeedViewRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["view_id"] = ViewID,
+            };
+            
+            var result = await _client.MakeRequestAsync<UpdateFeedViewRequest, UpdateFeedViewResponse>(
+                "PUT",
+                "/api/v2/feeds/feed_views/{view_id}",null,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -798,12 +965,12 @@ namespace GetStream
 
         /// Create multiple feeds at once for a given feed group
         /// 
-        public async Task<StreamResponse<CreateFeedsBatchResponse>> CreateFeedsBatchAsync(
-            CreateFeedsBatchRequest request,
+        public async Task<StreamResponse<CreateFeedsBatchResponse>> CreateFeedsBatchAsync(CreateFeedsBatchRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>("POST",
+            var result = await _client.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
+                "POST",
                 "/api/v2/feeds/feeds/batch",null,request,null,
                 cancellationToken);
                 
@@ -812,14 +979,13 @@ namespace GetStream
 
         /// Query feeds with filter query
         /// 
-        public async Task<StreamResponse<QueryFeedsResponse>> FeedsQueryFeedsAsync(
-            FeedsQueryFeedsRequest request,
+        public async Task<StreamResponse<QueryFeedsResponse>> FeedsQueryFeedsAsync(QueryFeedsRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
             
-            var result = await MakeRequestAsync<FeedsQueryFeedsRequest, QueryFeedsResponse>("POST",
-                "/api/v2/feeds/feeds/query",queryParams,request,null,
+            var result = await _client.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/query",null,request,null,
                 cancellationToken);
                 
             return result;
@@ -827,12 +993,12 @@ namespace GetStream
 
         /// Updates a follow's custom data, push preference, and follower role. Source owner can update custom data and push preference. Target owner can update follower role.
         /// 
-        public async Task<StreamResponse<UpdateFollowResponse>> UpdateFollowAsync(
-            UpdateFollowRequest request,
+        public async Task<StreamResponse<UpdateFollowResponse>> UpdateFollowAsync(UpdateFollowRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<UpdateFollowRequest, UpdateFollowResponse>("PATCH",
+            var result = await _client.MakeRequestAsync<UpdateFollowRequest, UpdateFollowResponse>(
+                "PATCH",
                 "/api/v2/feeds/follows",null,request,null,
                 cancellationToken);
                 
@@ -841,12 +1007,12 @@ namespace GetStream
 
         /// Creates a follow and broadcasts FollowAddedEvent
         /// 
-        public async Task<StreamResponse<SingleFollowResponse>> FollowAsync(
-            FollowRequest request,
+        public async Task<StreamResponse<SingleFollowResponse>> FollowAsync(SingleFollowRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<FollowRequest, SingleFollowResponse>("POST",
+            var result = await _client.MakeRequestAsync<SingleFollowRequest, SingleFollowResponse>(
+                "POST",
                 "/api/v2/feeds/follows",null,request,null,
                 cancellationToken);
                 
@@ -855,12 +1021,12 @@ namespace GetStream
 
         /// Accepts a pending follow request
         /// 
-        public async Task<StreamResponse<AcceptFollowResponse>> AcceptFollowAsync(
-            AcceptFollowRequest request,
+        public async Task<StreamResponse<AcceptFollowResponse>> AcceptFollowAsync(AcceptFollowRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<AcceptFollowRequest, AcceptFollowResponse>("POST",
+            var result = await _client.MakeRequestAsync<AcceptFollowRequest, AcceptFollowResponse>(
+                "POST",
                 "/api/v2/feeds/follows/accept",null,request,null,
                 cancellationToken);
                 
@@ -869,12 +1035,12 @@ namespace GetStream
 
         /// Creates multiple follows at once and broadcasts FollowAddedEvent for each follow
         /// 
-        public async Task<StreamResponse<FollowBatchResponse>> FollowBatchAsync(
-            FollowBatchRequest request,
+        public async Task<StreamResponse<FollowBatchResponse>> FollowBatchAsync(FollowBatchRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>("POST",
+            var result = await _client.MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>(
+                "POST",
                 "/api/v2/feeds/follows/batch",null,request,null,
                 cancellationToken);
                 
@@ -883,12 +1049,12 @@ namespace GetStream
 
         /// Query follows based on filters with pagination and sorting options
         /// 
-        public async Task<StreamResponse<QueryFollowsResponse>> QueryFollowsAsync(
-            QueryFollowsRequest request,
+        public async Task<StreamResponse<QueryFollowsResponse>> QueryFollowsAsync(QueryFollowsRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<QueryFollowsRequest, QueryFollowsResponse>("POST",
+            var result = await _client.MakeRequestAsync<QueryFollowsRequest, QueryFollowsResponse>(
+                "POST",
                 "/api/v2/feeds/follows/query",null,request,null,
                 cancellationToken);
                 
@@ -897,12 +1063,12 @@ namespace GetStream
 
         /// Rejects a pending follow request
         /// 
-        public async Task<StreamResponse<RejectFollowResponse>> RejectFollowAsync(
-            RejectFollowRequest request,
+        public async Task<StreamResponse<RejectFollowResponse>> RejectFollowAsync(RejectFollowRequest request,
             CancellationToken cancellationToken = default)
         {
             
-            var result = await MakeRequestAsync<RejectFollowRequest, RejectFollowResponse>("POST",
+            var result = await _client.MakeRequestAsync<RejectFollowRequest, RejectFollowResponse>(
+                "POST",
                 "/api/v2/feeds/follows/reject",null,request,null,
                 cancellationToken);
                 
@@ -911,8 +1077,7 @@ namespace GetStream
 
         /// Removes a follow and broadcasts FollowRemovedEvent
         /// 
-        public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string Source, string Target,
-            UnfollowRequest request,
+        public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string Source, string Target,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -921,8 +1086,59 @@ namespace GetStream
                 ["target"] = Target,
             };
             
-            var result = await MakeRequestAsync<object, UnfollowResponse>("DELETE",
+            var result = await _client.MakeRequestAsync<object, UnfollowResponse>(
+                "DELETE",
                 "/api/v2/feeds/follows/{source}/{target}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Removes multiple follows at once and broadcasts FollowRemovedEvent for each one
+        /// 
+        public async Task<StreamResponse<UnfollowBatchResponse>> UnfollowBatchAsync(UnfollowBatchRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<UnfollowBatchRequest, UnfollowBatchResponse>(
+                "POST",
+                "/api/v2/feeds/unfollow/batch",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Delete all activities, reactions, comments, and bookmarks for a user
+        /// 
+        public async Task<StreamResponse<DeleteFeedUserDataResponse>> DeleteFeedUserDataAsync(string UserID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["user_id"] = UserID,
+            };
+            
+            var result = await _client.MakeRequestAsync<object, DeleteFeedUserDataResponse>(
+                "DELETE",
+                "/api/v2/feeds/users/{user_id}/delete",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+
+        /// Export all activities, reactions, comments, and bookmarks for a user
+        /// 
+        public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string UserID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["user_id"] = UserID,
+            };
+            
+            var result = await _client.MakeRequestAsync<object, ExportFeedUserDataResponse>(
+                "POST",
+                "/api/v2/feeds/users/{user_id}/export",null,null,pathParams,
                 cancellationToken);
                 
             return result;

@@ -8,643 +8,2159 @@ namespace GetStream.Requests
 {
     public class AcceptFeedMemberInviteRequest
     {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class AcceptFollowRequest
     {
         [JsonPropertyName("source_fid")]
         public string SourceFid { get; set; }
-        
         [JsonPropertyName("target_fid")]
         public string TargetFid { get; set; }
-        
         [JsonPropertyName("follower_role")]
         public string? FollowerRole { get; set; }
     }
-
     public class AddActivityRequest
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-        
         [JsonPropertyName("fids")]
         public List<string> Fids { get; set; }
-        
         [JsonPropertyName("expires_at")]
         public string? ExpiresAt { get; set; }
-        
         [JsonPropertyName("id")]
         public string? ID { get; set; }
-        
         [JsonPropertyName("parent_id")]
         public string? ParentID { get; set; }
-        
         [JsonPropertyName("poll_id")]
         public string? PollID { get; set; }
-        
         [JsonPropertyName("text")]
         public string? Text { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("visibility")]
         public string? Visibility { get; set; }
-        
         [JsonPropertyName("visibility_tag")]
         public string? VisibilityTag { get; set; }
-        
         [JsonPropertyName("attachments")]
-        public List<object> Attachments { get; set; }
-        
+        public List<Attachment> Attachments { get; set; }
         [JsonPropertyName("filter_tags")]
         public List<string> FilterTags { get; set; }
-        
         [JsonPropertyName("interest_tags")]
         public List<string> InterestTags { get; set; }
-        
         [JsonPropertyName("mentioned_user_ids")]
         public List<string> MentionedUserIds { get; set; }
-        
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
-        
         [JsonPropertyName("location")]
-        public object Location { get; set; }
-        
+        public ActivityLocation? Location { get; set; }
         [JsonPropertyName("search_data")]
         public object SearchData { get; set; }
     }
-
     public class AddBookmarkRequest
     {
         [JsonPropertyName("folder_id")]
         public string? FolderID { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
-        
         [JsonPropertyName("new_folder")]
-        public object NewFolder { get; set; }
+        public AddFolderRequest? NewFolder { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class AddCommentReactionRequest
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-        
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class AddCommentRequest
     {
         [JsonPropertyName("comment")]
         public string Comment { get; set; }
-        
         [JsonPropertyName("object_id")]
         public string ObjectID { get; set; }
-        
         [JsonPropertyName("object_type")]
         public string ObjectType { get; set; }
-        
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
-        
         [JsonPropertyName("parent_id")]
         public string? ParentID { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("attachments")]
-        public List<object> Attachments { get; set; }
-        
+        public List<Attachment> Attachments { get; set; }
         [JsonPropertyName("mentioned_user_ids")]
         public List<string> MentionedUserIds { get; set; }
-        
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class AddCommentsBatchRequest
     {
         [JsonPropertyName("comments")]
         public List<AddCommentRequest> Comments { get; set; }
     }
-
     public class AddReactionRequest
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-        
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class BanRequest
+    {
+        [JsonPropertyName("target_user_id")]
+        public string TargetUserID { get; set; }
+        [JsonPropertyName("banned_by_id")]
+        public string? BannedByID { get; set; }
+        [JsonPropertyName("channel_cid")]
+        public string? ChannelCid { get; set; }
+        [JsonPropertyName("delete_messages")]
+        public string? DeleteMessages { get; set; }
+        [JsonPropertyName("ip_ban")]
+        public bool? IpBan { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+        [JsonPropertyName("shadow")]
+        public bool? Shadow { get; set; }
+        [JsonPropertyName("timeout")]
+        public int? Timeout { get; set; }
+        [JsonPropertyName("banned_by")]
+        public UserRequest? BannedBy { get; set; }
+    }
+    public class BlockUserRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
+    public class BlockUsersRequest
+    {
+        [JsonPropertyName("blocked_user_id")]
+        public string BlockedUserID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class BulkImageModerationRequest
+    {
+        [JsonPropertyName("csv_file")]
+        public string CsvFile { get; set; }
+    }
+    public class CastPollVoteRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+        [JsonPropertyName("vote")]
+        public VoteData? Vote { get; set; }
+    }
+    public class ChannelGetOrCreateRequest
+    {
+        [JsonPropertyName("hide_for_creator")]
+        public bool? HideForCreator { get; set; }
+        [JsonPropertyName("state")]
+        public bool? State { get; set; }
+        [JsonPropertyName("thread_unread_counts")]
+        public bool? ThreadUnreadCounts { get; set; }
+        [JsonPropertyName("data")]
+        public ChannelInput? Data { get; set; }
+        [JsonPropertyName("members")]
+        public PaginationParams? Members { get; set; }
+        [JsonPropertyName("messages")]
+        public MessagePaginationParams? Messages { get; set; }
+        [JsonPropertyName("watchers")]
+        public PaginationParams? Watchers { get; set; }
+    }
+    public class CheckPushRequest
+    {
+        [JsonPropertyName("apn_template")]
+        public string? ApnTemplate { get; set; }
+        [JsonPropertyName("event_type")]
+        public string? EventType { get; set; }
+        [JsonPropertyName("firebase_data_template")]
+        public string? FirebaseDataTemplate { get; set; }
+        [JsonPropertyName("firebase_template")]
+        public string? FirebaseTemplate { get; set; }
+        [JsonPropertyName("message_id")]
+        public string? MessageID { get; set; }
+        [JsonPropertyName("push_provider_name")]
+        public string? PushProviderName { get; set; }
+        [JsonPropertyName("push_provider_type")]
+        public string? PushProviderType { get; set; }
+        [JsonPropertyName("skip_devices")]
+        public bool? SkipDevices { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class CheckRequest
+    {
+        [JsonPropertyName("config_key")]
+        public string ConfigKey { get; set; }
+        [JsonPropertyName("entity_creator_id")]
+        public string EntityCreatorID { get; set; }
+        [JsonPropertyName("entity_id")]
+        public string EntityID { get; set; }
+        [JsonPropertyName("entity_type")]
+        public string EntityType { get; set; }
+        [JsonPropertyName("config_team")]
+        public string? ConfigTeam { get; set; }
+        [JsonPropertyName("test_mode")]
+        public bool? TestMode { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("moderation_payload")]
+        public ModerationPayload? ModerationPayload { get; set; }
+        [JsonPropertyName("options")]
+        public object Options { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class CheckSNSRequest
+    {
+        [JsonPropertyName("sns_key")]
+        public string? SnsKey { get; set; }
+        [JsonPropertyName("sns_secret")]
+        public string? SnsSecret { get; set; }
+        [JsonPropertyName("sns_topic_arn")]
+        public string? SnsTopicArn { get; set; }
+    }
+    public class CheckSQSRequest
+    {
+        [JsonPropertyName("sqs_key")]
+        public string? SqsKey { get; set; }
+        [JsonPropertyName("sqs_secret")]
+        public string? SqsSecret { get; set; }
+        [JsonPropertyName("sqs_url")]
+        public string? SqsUrl { get; set; }
+    }
+    public class CollectUserFeedbackRequest
+    {
+        [JsonPropertyName("rating")]
+        public int Rating { get; set; }
+        [JsonPropertyName("sdk")]
+        public string Sdk { get; set; }
+        [JsonPropertyName("sdk_version")]
+        public string SdkVersion { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+        [JsonPropertyName("user_session_id")]
+        public string? UserSessionID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
     }
-
-    public class CastPollVoteRequest
+    public class CommitMessageRequest
     {
-        [JsonPropertyName("vote")]
-        public object Vote { get; set; }
     }
-
+    public class CreateBlockListRequest
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("words")]
+        public List<string> Words { get; set; }
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+    }
+    public class CreateCallTypeRequest
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("external_storage")]
+        public string? ExternalStorage { get; set; }
+        [JsonPropertyName("grants")]
+        public Dictionary<string, List<string>> Grants { get; set; }
+        [JsonPropertyName("notification_settings")]
+        public NotificationSettings? NotificationSettings { get; set; }
+        [JsonPropertyName("settings")]
+        public CallSettingsRequest? Settings { get; set; }
+    }
+    public class CreateChannelTypeRequest
+    {
+        [JsonPropertyName("automod")]
+        public string Automod { get; set; }
+        [JsonPropertyName("automod_behavior")]
+        public string AutomodBehavior { get; set; }
+        [JsonPropertyName("max_message_length")]
+        public int MaxMessageLength { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("blocklist")]
+        public string? Blocklist { get; set; }
+        [JsonPropertyName("blocklist_behavior")]
+        public string? BlocklistBehavior { get; set; }
+        [JsonPropertyName("connect_events")]
+        public bool? ConnectEvents { get; set; }
+        [JsonPropertyName("custom_events")]
+        public bool? CustomEvents { get; set; }
+        [JsonPropertyName("mark_messages_pending")]
+        public bool? MarkMessagesPending { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string? MessageRetention { get; set; }
+        [JsonPropertyName("mutes")]
+        public bool? Mutes { get; set; }
+        [JsonPropertyName("partition_size")]
+        public int? PartitionSize { get; set; }
+        [JsonPropertyName("partition_ttl")]
+        public string? PartitionTtl { get; set; }
+        [JsonPropertyName("polls")]
+        public bool? Polls { get; set; }
+        [JsonPropertyName("push_notifications")]
+        public bool? PushNotifications { get; set; }
+        [JsonPropertyName("reactions")]
+        public bool? Reactions { get; set; }
+        [JsonPropertyName("read_events")]
+        public bool? ReadEvents { get; set; }
+        [JsonPropertyName("replies")]
+        public bool? Replies { get; set; }
+        [JsonPropertyName("search")]
+        public bool? Search { get; set; }
+        [JsonPropertyName("shared_locations")]
+        public bool? SharedLocations { get; set; }
+        [JsonPropertyName("skip_last_msg_update_for_system_msgs")]
+        public bool? SkipLastMsgUpdateForSystemMsgs { get; set; }
+        [JsonPropertyName("typing_events")]
+        public bool? TypingEvents { get; set; }
+        [JsonPropertyName("uploads")]
+        public bool? Uploads { get; set; }
+        [JsonPropertyName("url_enrichment")]
+        public bool? UrlEnrichment { get; set; }
+        [JsonPropertyName("user_message_reminders")]
+        public bool? UserMessageReminders { get; set; }
+        [JsonPropertyName("blocklists")]
+        public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("commands")]
+        public List<string> Commands { get; set; }
+        [JsonPropertyName("permissions")]
+        public List<PolicyRequest> Permissions { get; set; }
+        [JsonPropertyName("grants")]
+        public Dictionary<string, List<string>> Grants { get; set; }
+    }
+    public class CreateCommandRequest
+    {
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("args")]
+        public string? Args { get; set; }
+        [JsonPropertyName("set")]
+        public string? Set { get; set; }
+    }
+    public class CreateDeviceRequest
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("push_provider")]
+        public string PushProvider { get; set; }
+        [JsonPropertyName("push_provider_name")]
+        public string? PushProviderName { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("voip_token")]
+        public bool? VoipToken { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class CreateExternalStorageRequest
+    {
+        [JsonPropertyName("bucket")]
+        public string Bucket { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("storage_type")]
+        public string StorageType { get; set; }
+        [JsonPropertyName("gcs_credentials")]
+        public string? GcsCredentials { get; set; }
+        [JsonPropertyName("path")]
+        public string? Path { get; set; }
+        [JsonPropertyName("aws_s3")]
+        public S3Request? AWSS3 { get; set; }
+        [JsonPropertyName("azure_blob")]
+        public AzureRequest? AzureBlob { get; set; }
+    }
+    public class CreateFeedGroupRequest
+    {
+        [JsonPropertyName("feed_group_id")]
+        public string FeedGroupID { get; set; }
+        [JsonPropertyName("default_view_id")]
+        public string? DefaultViewID { get; set; }
+        [JsonPropertyName("default_visibility")]
+        public string? DefaultVisibility { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("notification")]
+        public NotificationConfig? Notification { get; set; }
+    }
+    public class CreateFeedViewRequest
+    {
+        [JsonPropertyName("view_id")]
+        public string ViewID { get; set; }
+        [JsonPropertyName("activity_processors")]
+        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
+        [JsonPropertyName("activity_selectors")]
+        public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
+        [JsonPropertyName("aggregation")]
+        public AggregationConfig? Aggregation { get; set; }
+        [JsonPropertyName("ranking")]
+        public RankingConfig? Ranking { get; set; }
+    }
     public class CreateFeedsBatchRequest
     {
         [JsonPropertyName("feeds")]
-        public List<object> Feeds { get; set; }
+        public List<FeedRequest> Feeds { get; set; }
     }
-
+    public class CreateGuestRequest
+    {
+        [JsonPropertyName("user")]
+        public UserRequest User { get; set; }
+    }
+    public class CreateImportRequest
+    {
+        [JsonPropertyName("mode")]
+        public string Mode { get; set; }
+        [JsonPropertyName("path")]
+        public string Path { get; set; }
+    }
+    public class CreateImportURLRequest
+    {
+        [JsonPropertyName("filename")]
+        public string? Filename { get; set; }
+    }
+    public class CreatePollOptionRequest
+    {
+        [JsonPropertyName("text")]
+        public string Text { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("Custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class CreatePollRequest
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("allow_answers")]
+        public bool? AllowAnswers { get; set; }
+        [JsonPropertyName("allow_user_suggested_options")]
+        public bool? AllowUserSuggestedOptions { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        [JsonPropertyName("enforce_unique_vote")]
+        public bool? EnforceUniqueVote { get; set; }
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        [JsonPropertyName("is_closed")]
+        public bool? IsClosed { get; set; }
+        [JsonPropertyName("max_votes_allowed")]
+        public int? MaxVotesAllowed { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("voting_visibility")]
+        public string? VotingVisibility { get; set; }
+        [JsonPropertyName("options")]
+        public List<PollOptionInput> Options { get; set; }
+        [JsonPropertyName("Custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class CreateReminderRequest
+    {
+        [JsonPropertyName("remind_at")]
+        public DateTime? RemindAt { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class CreateRoleRequest
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+    }
+    public class CustomCheckRequest
+    {
+        [JsonPropertyName("entity_id")]
+        public string EntityID { get; set; }
+        [JsonPropertyName("entity_type")]
+        public string EntityType { get; set; }
+        [JsonPropertyName("flags")]
+        public List<CustomCheckFlag> Flags { get; set; }
+        [JsonPropertyName("entity_creator_id")]
+        public string? EntityCreatorID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("moderation_payload")]
+        public ModerationPayload? ModerationPayload { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class DeactivateUserRequest
+    {
+        [JsonPropertyName("created_by_id")]
+        public string? CreatedByID { get; set; }
+        [JsonPropertyName("mark_messages_deleted")]
+        public bool? MarkMessagesDeleted { get; set; }
+    }
+    public class DeactivateUsersRequest
+    {
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
+        [JsonPropertyName("created_by_id")]
+        public string? CreatedByID { get; set; }
+        [JsonPropertyName("mark_channels_deleted")]
+        public bool? MarkChannelsDeleted { get; set; }
+        [JsonPropertyName("mark_messages_deleted")]
+        public bool? MarkMessagesDeleted { get; set; }
+    }
     public class DeleteActivitiesRequest
     {
         [JsonPropertyName("activity_ids")]
         public List<string> ActivityIds { get; set; }
-        
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class DeleteCallRequest
+    {
+        [JsonPropertyName("hard")]
+        public bool? Hard { get; set; }
+    }
+    public class DeleteChannelsRequest
+    {
+        [JsonPropertyName("cids")]
+        public List<string> Cids { get; set; }
         [JsonPropertyName("hard_delete")]
         public bool? HardDelete { get; set; }
     }
-
-    public class DeleteActivityReactionRequest
+    public class DeleteSegmentTargetsRequest
     {
+        [JsonPropertyName("target_ids")]
+        public List<string> TargetIds { get; set; }
     }
-
-    public class DeleteActivityRequest
+    public class DeleteUsersRequest
     {
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
+        [JsonPropertyName("calls")]
+        public string? Calls { get; set; }
+        [JsonPropertyName("conversations")]
+        public string? Conversations { get; set; }
+        [JsonPropertyName("messages")]
+        public string? Messages { get; set; }
+        [JsonPropertyName("new_call_owner_id")]
+        public string? NewCallOwnerID { get; set; }
+        [JsonPropertyName("new_channel_owner_id")]
+        public string? NewChannelOwnerID { get; set; }
+        [JsonPropertyName("user")]
+        public string? User { get; set; }
     }
-
-    public class DeleteBookmarkFolderRequest
+    public class ExportChannelsRequest
     {
+        [JsonPropertyName("channels")]
+        public List<ChannelExport> Channels { get; set; }
+        [JsonPropertyName("clear_deleted_message_text")]
+        public bool? ClearDeletedMessageText { get; set; }
+        [JsonPropertyName("export_users")]
+        public bool? ExportUsers { get; set; }
+        [JsonPropertyName("include_soft_deleted_channels")]
+        public bool? IncludeSoftDeletedChannels { get; set; }
+        [JsonPropertyName("include_truncated_messages")]
+        public bool? IncludeTruncatedMessages { get; set; }
+        [JsonPropertyName("version")]
+        public string? Version { get; set; }
     }
-
-    public class DeleteBookmarkRequest
+    public class ExportUsersRequest
     {
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
     }
-
-    public class DeleteCommentReactionRequest
+    public class FileUploadRequest
     {
+        [JsonPropertyName("file")]
+        public string? File { get; set; }
+        [JsonPropertyName("user")]
+        public OnlyUserID? User { get; set; }
     }
-
-    public class DeleteCommentRequest
+    public class FlagRequest
     {
+        [JsonPropertyName("entity_id")]
+        public string EntityID { get; set; }
+        [JsonPropertyName("entity_type")]
+        public string EntityType { get; set; }
+        [JsonPropertyName("entity_creator_id")]
+        public string? EntityCreatorID { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("moderation_payload")]
+        public ModerationPayload? ModerationPayload { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
-    public class DeleteFeedRequest
-    {
-    }
-
-    public class DeletePollVoteRequest
-    {
-    }
-
-    public class FeedsQueryFeedsRequest
-    {
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-        
-        [JsonPropertyName("next")]
-        public string? Next { get; set; }
-        
-        [JsonPropertyName("prev")]
-        public string? Prev { get; set; }
-        
-        [JsonPropertyName("watch")]
-        public bool? Watch { get; set; }
-        
-        [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
-        [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
-    }
-
     public class FollowBatchRequest
     {
         [JsonPropertyName("follows")]
-        public List<FollowRequest> Follows { get; set; }
+        public List<FollowPair> Follows { get; set; }
     }
-
-    public class FollowRequest
+    public class GetOrCreateCallRequest
     {
-        [JsonPropertyName("source")]
-        public string Source { get; set; }
-        
-        [JsonPropertyName("target")]
-        public string Target { get; set; }
-        
-        [JsonPropertyName("create_notification_activity")]
-        public bool? CreateNotificationActivity { get; set; }
-        
-        [JsonPropertyName("push_preference")]
-        public string? PushPreference { get; set; }
-        
-        [JsonPropertyName("custom")]
-        public object Custom { get; set; }
+        [JsonPropertyName("members_limit")]
+        public int? MembersLimit { get; set; }
+        [JsonPropertyName("notify")]
+        public bool? Notify { get; set; }
+        [JsonPropertyName("ring")]
+        public bool? Ring { get; set; }
+        [JsonPropertyName("video")]
+        public bool? Video { get; set; }
+        [JsonPropertyName("data")]
+        public CallRequest? Data { get; set; }
     }
-
-    public class GetActivityRequest
-    {
-    }
-
-    public class GetCommentRepliesRequest
-    {
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-        
-        [JsonPropertyName("next")]
-        public string? Next { get; set; }
-        
-        [JsonPropertyName("prev")]
-        public string? Prev { get; set; }
-        
-        [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-    }
-
-    public class GetCommentRequest
-    {
-    }
-
-    public class GetCommentsRequest
-    {
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-        
-        [JsonPropertyName("next")]
-        public string? Next { get; set; }
-        
-        [JsonPropertyName("prev")]
-        public string? Prev { get; set; }
-        
-        [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-    }
-
-    public class GetFollowSuggestionsRequest
-    {
-        [JsonPropertyName("limit")]
-        public int? Limit { get; set; }
-        
-        [JsonPropertyName("next")]
-        public string? Next { get; set; }
-        
-        [JsonPropertyName("prev")]
-        public string? Prev { get; set; }
-    }
-
     public class GetOrCreateFeedRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("view")]
         public string? View { get; set; }
-        
         [JsonPropertyName("watch")]
         public bool? Watch { get; set; }
-        
         [JsonPropertyName("activity_selector_options")]
         public object ActivitySelectorOptions { get; set; }
-        
         [JsonPropertyName("data")]
-        public object Data { get; set; }
-        
+        public FeedInput? Data { get; set; }
         [JsonPropertyName("external_ranking")]
         public object ExternalRanking { get; set; }
-        
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
-        
+        public object Filter { get; set; }
         [JsonPropertyName("followers_pagination")]
-        public object FollowersPagination { get; set; }
-        
+        public PagerRequest? FollowersPagination { get; set; }
         [JsonPropertyName("following_pagination")]
-        public object FollowingPagination { get; set; }
-        
+        public PagerRequest? FollowingPagination { get; set; }
         [JsonPropertyName("interest_weights")]
-        public object InterestWeights { get; set; }
-        
+        public Dictionary<string, double> InterestWeights { get; set; }
         [JsonPropertyName("member_pagination")]
-        public object MemberPagination { get; set; }
+        public PagerRequest? MemberPagination { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
+    public class GoLiveRequest
+    {
+        [JsonPropertyName("recording_storage_name")]
+        public string? RecordingStorageName { get; set; }
+        [JsonPropertyName("start_closed_caption")]
+        public bool? StartClosedCaption { get; set; }
+        [JsonPropertyName("start_hls")]
+        public bool? StartHLS { get; set; }
+        [JsonPropertyName("start_recording")]
+        public bool? StartRecording { get; set; }
+        [JsonPropertyName("start_transcription")]
+        public bool? StartTranscription { get; set; }
+        [JsonPropertyName("transcription_storage_name")]
+        public string? TranscriptionStorageName { get; set; }
+    }
+    public class HideChannelRequest
+    {
+        [JsonPropertyName("clear_history")]
+        public bool? ClearHistory { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class ImageUploadRequest
+    {
+        [JsonPropertyName("file")]
+        public string? File { get; set; }
+        [JsonPropertyName("upload_sizes")]
+        public List<ImageSize> UploadSizes { get; set; }
+        [JsonPropertyName("user")]
+        public OnlyUserID? User { get; set; }
+    }
     public class MarkActivityRequest
     {
         [JsonPropertyName("mark_all_read")]
         public bool? MarkAllRead { get; set; }
-        
         [JsonPropertyName("mark_all_seen")]
         public bool? MarkAllSeen { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("mark_read")]
         public List<string> MarkRead { get; set; }
-        
         [JsonPropertyName("mark_watched")]
         public List<string> MarkWatched { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
+    public class MarkChannelsReadRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("read_by_channel")]
+        public Dictionary<string, string> ReadByChannel { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class MarkReadRequest
+    {
+        [JsonPropertyName("message_id")]
+        public string? MessageID { get; set; }
+        [JsonPropertyName("thread_id")]
+        public string? ThreadID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class MarkUnreadRequest
+    {
+        [JsonPropertyName("message_id")]
+        public string? MessageID { get; set; }
+        [JsonPropertyName("thread_id")]
+        public string? ThreadID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class MessageActionRequest
+    {
+        [JsonPropertyName("form_data")]
+        public Dictionary<string, string> FormData { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class MuteChannelRequest
+    {
+        [JsonPropertyName("expiration")]
+        public int? Expiration { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("channel_cids")]
+        public List<string> ChannelCids { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class MuteRequest
+    {
+        [JsonPropertyName("target_ids")]
+        public List<string> TargetIds { get; set; }
+        [JsonPropertyName("timeout")]
+        public int? Timeout { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class MuteUsersRequest
+    {
+        [JsonPropertyName("audio")]
+        public bool? Audio { get; set; }
+        [JsonPropertyName("mute_all_users")]
+        public bool? MuteAllUsers { get; set; }
+        [JsonPropertyName("muted_by_id")]
+        public string? MutedByID { get; set; }
+        [JsonPropertyName("screenshare")]
+        public bool? Screenshare { get; set; }
+        [JsonPropertyName("screenshare_audio")]
+        public bool? ScreenshareAudio { get; set; }
+        [JsonPropertyName("video")]
+        public bool? Video { get; set; }
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
+        [JsonPropertyName("muted_by")]
+        public UserRequest? MutedBy { get; set; }
+    }
     public class PinActivityRequest
     {
-        [JsonPropertyName("custom")]
-        public object Custom { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
+    public class PinRequest
+    {
+        [JsonPropertyName("session_id")]
+        public string SessionID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
     public class QueryActivitiesRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
     public class QueryActivityReactionsRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
+    public class QueryAggregateCallStatsRequest
+    {
+        [JsonPropertyName("from")]
+        public string? From { get; set; }
+        [JsonPropertyName("to")]
+        public string? To { get; set; }
+        [JsonPropertyName("report_types")]
+        public List<string> ReportTypes { get; set; }
+    }
     public class QueryBookmarkFoldersRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
     public class QueryBookmarksRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
+    public class QueryCallMembersRequest
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
+    }
+    public class QueryCallParticipantsRequest
+    {
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
+    }
+    public class QueryCallStatsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
+    }
+    public class QueryCallsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
+    }
+    public class QueryCampaignsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("user_limit")]
+        public int? UserLimit { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
+    public class QueryChannelsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("member_limit")]
+        public int? MemberLimit { get; set; }
+        [JsonPropertyName("message_limit")]
+        public int? MessageLimit { get; set; }
+        [JsonPropertyName("offset")]
+        public int? Offset { get; set; }
+        [JsonPropertyName("state")]
+        public bool? State { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
     public class QueryCommentReactionsRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
     public class QueryCommentsRequest
     {
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
-        
+        public object Filter { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
         public string? Sort { get; set; }
     }
-
+    public class QueryDraftsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
     public class QueryFeedMembersRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
+    public class QueryFeedsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("watch")]
+        public bool? Watch { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
     public class QueryFollowsRequest
     {
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("sort")]
-        public string? Sort { get; set; }
-        
+        public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
-        public string? Filter { get; set; }
+        public object Filter { get; set; }
     }
-
+    public class QueryMessageHistoryRequest
+    {
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+    }
+    public class QueryModerationConfigsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class QueryModerationFlagsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParam> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
+    public class QueryModerationLogsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class QueryPollVotesRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
+    public class QueryPollsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
+    public class QueryReactionsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class QueryRemindersRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class QueryReviewQueueRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("lock_count")]
+        public int? LockCount { get; set; }
+        [JsonPropertyName("lock_duration")]
+        public int? LockDuration { get; set; }
+        [JsonPropertyName("lock_items")]
+        public bool? LockItems { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("stats_only")]
+        public bool? StatsOnly { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class QuerySegmentTargetsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("Sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("Filter")]
+        public object Filter { get; set; }
+    }
+    public class QuerySegmentsRequest
+    {
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+    }
+    public class QueryThreadsRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("member_limit")]
+        public int? MemberLimit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("participant_limit")]
+        public int? ParticipantLimit { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("reply_limit")]
+        public int? ReplyLimit { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class QueryUserFeedbackRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
+    }
+    public class ReactivateUserRequest
+    {
+        [JsonPropertyName("created_by_id")]
+        public string? CreatedByID { get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+        [JsonPropertyName("restore_messages")]
+        public bool? RestoreMessages { get; set; }
+    }
+    public class ReactivateUsersRequest
+    {
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
+        [JsonPropertyName("created_by_id")]
+        public string? CreatedByID { get; set; }
+        [JsonPropertyName("restore_channels")]
+        public bool? RestoreChannels { get; set; }
+        [JsonPropertyName("restore_messages")]
+        public bool? RestoreMessages { get; set; }
+    }
     public class RejectFeedMemberInviteRequest
     {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class RejectFollowRequest
     {
         [JsonPropertyName("source_fid")]
         public string SourceFid { get; set; }
-        
         [JsonPropertyName("target_fid")]
         public string TargetFid { get; set; }
     }
-
-    public class StopWatchingFeedRequest
+    public class RestoreUsersRequest
+    {
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
+    }
+    public class SendCallEventRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class SendEventRequest
+    {
+        [JsonPropertyName("event")]
+        public EventRequest @Event { get; set; }
+    }
+    public class SendMessageRequest
+    {
+        [JsonPropertyName("message")]
+        public MessageRequest Message { get; set; }
+        [JsonPropertyName("force_moderation")]
+        public bool? ForceModeration { get; set; }
+        [JsonPropertyName("keep_channel_hidden")]
+        public bool? KeepChannelHidden { get; set; }
+        [JsonPropertyName("pending")]
+        public bool? Pending { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
+        [JsonPropertyName("skip_push")]
+        public bool? SkipPush { get; set; }
+        [JsonPropertyName("pending_message_metadata")]
+        public Dictionary<string, string> PendingMessageMetadata { get; set; }
+    }
+    public class SendReactionRequest
+    {
+        [JsonPropertyName("reaction")]
+        public ReactionRequest Reaction { get; set; }
+        [JsonPropertyName("enforce_unique")]
+        public bool? EnforceUnique { get; set; }
+        [JsonPropertyName("skip_push")]
+        public bool? SkipPush { get; set; }
+    }
+    public class SendUserCustomEventRequest
+    {
+        [JsonPropertyName("event")]
+        public UserCustomEventRequest @Event { get; set; }
+    }
+    public class ShowChannelRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class SingleFollowRequest
+    {
+        [JsonPropertyName("source")]
+        public string Source { get; set; }
+        [JsonPropertyName("target")]
+        public string Target { get; set; }
+        [JsonPropertyName("create_notification_activity")]
+        public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("push_preference")]
+        public string? PushPreference { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+    }
+    public class StartCampaignRequest
+    {
+        [JsonPropertyName("scheduled_for")]
+        public DateTime? ScheduledFor { get; set; }
+        [JsonPropertyName("stop_at")]
+        public DateTime? StopAt { get; set; }
+    }
+    public class StartClosedCaptionsRequest
+    {
+        [JsonPropertyName("enable_transcription")]
+        public bool? EnableTranscription { get; set; }
+        [JsonPropertyName("external_storage")]
+        public string? ExternalStorage { get; set; }
+        [JsonPropertyName("language")]
+        public string? Language { get; set; }
+    }
+    public class StartFrameRecordingRequest
+    {
+        [JsonPropertyName("recording_external_storage")]
+        public string? RecordingExternalStorage { get; set; }
+    }
+    public class StartRTMPBroadcastsRequest
+    {
+        [JsonPropertyName("broadcasts")]
+        public List<RTMPBroadcastRequest> Broadcasts { get; set; }
+    }
+    public class StartRecordingRequest
+    {
+        [JsonPropertyName("recording_external_storage")]
+        public string? RecordingExternalStorage { get; set; }
+    }
+    public class StartTranscriptionRequest
+    {
+        [JsonPropertyName("enable_closed_captions")]
+        public bool? EnableClosedCaptions { get; set; }
+        [JsonPropertyName("language")]
+        public string? Language { get; set; }
+        [JsonPropertyName("transcription_external_storage")]
+        public string? TranscriptionExternalStorage { get; set; }
+    }
+    public class StopCampaignRequest
     {
     }
-
-    public class UnfollowRequest
+    public class StopClosedCaptionsRequest
+    {
+        [JsonPropertyName("stop_transcription")]
+        public bool? StopTranscription { get; set; }
+    }
+    public class StopLiveRequest
+    {
+        [JsonPropertyName("continue_closed_caption")]
+        public bool? ContinueClosedCaption { get; set; }
+        [JsonPropertyName("continue_hls")]
+        public bool? ContinueHLS { get; set; }
+        [JsonPropertyName("continue_rtmp_broadcasts")]
+        public bool? ContinueRTMPBroadcasts { get; set; }
+        [JsonPropertyName("continue_recording")]
+        public bool? ContinueRecording { get; set; }
+        [JsonPropertyName("continue_transcription")]
+        public bool? ContinueTranscription { get; set; }
+    }
+    public class StopRTMPBroadcastsRequest
     {
     }
-
-    public class UnpinActivityRequest
+    public class StopTranscriptionRequest
     {
+        [JsonPropertyName("stop_closed_captions")]
+        public bool? StopClosedCaptions { get; set; }
     }
-
+    public class SubmitActionRequest
+    {
+        [JsonPropertyName("action_type")]
+        public string ActionType { get; set; }
+        [JsonPropertyName("item_id")]
+        public string ItemID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("ban")]
+        public BanActionRequest? Ban { get; set; }
+        [JsonPropertyName("custom")]
+        public CustomActionRequest? Custom { get; set; }
+        [JsonPropertyName("delete_activity")]
+        public DeleteActivityRequest? DeleteActivity { get; set; }
+        [JsonPropertyName("delete_message")]
+        public DeleteMessageRequest? DeleteMessage { get; set; }
+        [JsonPropertyName("delete_reaction")]
+        public DeleteReactionRequest? DeleteReaction { get; set; }
+        [JsonPropertyName("delete_user")]
+        public DeleteUserRequest? DeleteUser { get; set; }
+        [JsonPropertyName("mark_reviewed")]
+        public MarkReviewedRequest? MarkReviewed { get; set; }
+        [JsonPropertyName("unban")]
+        public UnbanActionRequest? Unban { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class TranslateMessageRequest
+    {
+        [JsonPropertyName("language")]
+        public string Language { get; set; }
+    }
+    public class TruncateChannelRequest
+    {
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+        [JsonPropertyName("skip_push")]
+        public bool? SkipPush { get; set; }
+        [JsonPropertyName("truncated_at")]
+        public DateTime? TruncatedAt { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("member_ids")]
+        public List<string> MemberIds { get; set; }
+        [JsonPropertyName("message")]
+        public MessageRequest? Message { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UnbanRequest
+    {
+        [JsonPropertyName("unbanned_by_id")]
+        public string? UnbannedByID { get; set; }
+        [JsonPropertyName("unbanned_by")]
+        public UserRequest? UnbannedBy { get; set; }
+    }
+    public class UnblockUserRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
+    public class UnblockUsersRequest
+    {
+        [JsonPropertyName("blocked_user_id")]
+        public string BlockedUserID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UnfollowBatchRequest
+    {
+        [JsonPropertyName("follows")]
+        public List<FollowPair> Follows { get; set; }
+    }
+    public class UnmuteChannelRequest
+    {
+        [JsonPropertyName("expiration")]
+        public int? Expiration { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("channel_cids")]
+        public List<string> ChannelCids { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UnmuteRequest
+    {
+        [JsonPropertyName("target_ids")]
+        public List<string> TargetIds { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UnpinRequest
+    {
+        [JsonPropertyName("session_id")]
+        public string SessionID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
+    public class UnreadCountsBatchRequest
+    {
+        [JsonPropertyName("user_ids")]
+        public List<string> UserIds { get; set; }
+    }
     public class UpdateActivityPartialRequest
     {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("unset")]
         public List<string> Unset { get; set; }
-        
         [JsonPropertyName("set")]
         public object Set { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class UpdateActivityRequest
     {
         [JsonPropertyName("expires_at")]
-        public string? ExpiresAt { get; set; }
-        
+        public DateTime? ExpiresAt { get; set; }
         [JsonPropertyName("poll_id")]
         public string? PollID { get; set; }
-        
         [JsonPropertyName("text")]
         public string? Text { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("visibility")]
         public string? Visibility { get; set; }
-        
         [JsonPropertyName("attachments")]
-        public List<object> Attachments { get; set; }
-        
+        public List<Attachment> Attachments { get; set; }
         [JsonPropertyName("filter_tags")]
         public List<string> FilterTags { get; set; }
-        
         [JsonPropertyName("interest_tags")]
         public List<string> InterestTags { get; set; }
-        
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
-        
         [JsonPropertyName("location")]
-        public object Location { get; set; }
+        public ActivityLocation? Location { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
+    public class UpdateAppRequest
+    {
+        [JsonPropertyName("async_url_enrich_enabled")]
+        public bool? AsyncUrlEnrichEnabled { get; set; }
+        [JsonPropertyName("auto_translation_enabled")]
+        public bool? AutoTranslationEnabled { get; set; }
+        [JsonPropertyName("before_message_send_hook_url")]
+        public string? BeforeMessageSendHookUrl { get; set; }
+        [JsonPropertyName("cdn_expiration_seconds")]
+        public int? CdnExpirationSeconds { get; set; }
+        [JsonPropertyName("channel_hide_members_only")]
+        public bool? ChannelHideMembersOnly { get; set; }
+        [JsonPropertyName("custom_action_handler_url")]
+        public string? CustomActionHandlerUrl { get; set; }
+        [JsonPropertyName("disable_auth_checks")]
+        public bool? DisableAuthChecks { get; set; }
+        [JsonPropertyName("disable_permissions_checks")]
+        public bool? DisablePermissionsChecks { get; set; }
+        [JsonPropertyName("enforce_unique_usernames")]
+        public string? EnforceUniqueUsernames { get; set; }
+        [JsonPropertyName("feeds_moderation_enabled")]
+        public bool? FeedsModerationEnabled { get; set; }
+        [JsonPropertyName("feeds_v2_region")]
+        public string? FeedsV2Region { get; set; }
+        [JsonPropertyName("guest_user_creation_disabled")]
+        public bool? GuestUserCreationDisabled { get; set; }
+        [JsonPropertyName("image_moderation_enabled")]
+        public bool? ImageModerationEnabled { get; set; }
+        [JsonPropertyName("migrate_permissions_to_v2")]
+        public bool? MigratePermissionsToV2 { get; set; }
+        [JsonPropertyName("moderation_enabled")]
+        public bool? ModerationEnabled { get; set; }
+        [JsonPropertyName("moderation_webhook_url")]
+        public string? ModerationWebhookUrl { get; set; }
+        [JsonPropertyName("multi_tenant_enabled")]
+        public bool? MultiTenantEnabled { get; set; }
+        [JsonPropertyName("permission_version")]
+        public string? PermissionVersion { get; set; }
+        [JsonPropertyName("reminders_interval")]
+        public int? RemindersInterval { get; set; }
+        [JsonPropertyName("reminders_max_members")]
+        public int? RemindersMaxMembers { get; set; }
+        [JsonPropertyName("revoke_tokens_issued_before")]
+        public DateTime? RevokeTokensIssuedBefore { get; set; }
+        [JsonPropertyName("sns_key")]
+        public string? SnsKey { get; set; }
+        [JsonPropertyName("sns_secret")]
+        public string? SnsSecret { get; set; }
+        [JsonPropertyName("sns_topic_arn")]
+        public string? SnsTopicArn { get; set; }
+        [JsonPropertyName("sqs_key")]
+        public string? SqsKey { get; set; }
+        [JsonPropertyName("sqs_secret")]
+        public string? SqsSecret { get; set; }
+        [JsonPropertyName("sqs_url")]
+        public string? SqsUrl { get; set; }
+        [JsonPropertyName("user_response_time_enabled")]
+        public bool? UserResponseTimeEnabled { get; set; }
+        [JsonPropertyName("webhook_url")]
+        public string? WebhookUrl { get; set; }
+        [JsonPropertyName("allowed_flag_reasons")]
+        public List<string> AllowedFlagReasons { get; set; }
+        [JsonPropertyName("event_hooks")]
+        public List<EventHook> EventHooks { get; set; }
+        [JsonPropertyName("image_moderation_block_labels")]
+        public List<string> ImageModerationBlockLabels { get; set; }
+        [JsonPropertyName("image_moderation_labels")]
+        public List<string> ImageModerationLabels { get; set; }
+        [JsonPropertyName("user_search_disallowed_roles")]
+        public List<string> UserSearchDisallowedRoles { get; set; }
+        [JsonPropertyName("webhook_events")]
+        public List<string> WebhookEvents { get; set; }
+        [JsonPropertyName("apn_config")]
+        public APNConfig? ApnConfig { get; set; }
+        [JsonPropertyName("async_moderation_config")]
+        public AsyncModerationConfiguration? AsyncModerationConfig { get; set; }
+        [JsonPropertyName("datadog_info")]
+        public DataDogInfo? DatadogInfo { get; set; }
+        [JsonPropertyName("file_upload_config")]
+        public FileUploadConfig? FileUploadConfig { get; set; }
+        [JsonPropertyName("firebase_config")]
+        public FirebaseConfig? FirebaseConfig { get; set; }
+        [JsonPropertyName("grants")]
+        public Dictionary<string, List<string>> Grants { get; set; }
+        [JsonPropertyName("huawei_config")]
+        public HuaweiConfig? HuaweiConfig { get; set; }
+        [JsonPropertyName("image_upload_config")]
+        public FileUploadConfig? ImageUploadConfig { get; set; }
+        [JsonPropertyName("moderation_dashboard_preferences")]
+        public ModerationDashboardPreferences? ModerationDashboardPreferences { get; set; }
+        [JsonPropertyName("push_config")]
+        public PushConfig? PushConfig { get; set; }
+        [JsonPropertyName("xiaomi_config")]
+        public XiaomiConfig? XiaomiConfig { get; set; }
+    }
+    public class UpdateBlockListRequest
+    {
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        [JsonPropertyName("words")]
+        public List<string> Words { get; set; }
+    }
     public class UpdateBookmarkFolderRequest
     {
         [JsonPropertyName("name")]
         public string? Name { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
     public class UpdateBookmarkRequest
     {
         [JsonPropertyName("folder_id")]
         public string? FolderID { get; set; }
-        
         [JsonPropertyName("new_folder_id")]
         public string? NewFolderID { get; set; }
-        
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
-        
         [JsonPropertyName("new_folder")]
-        public object NewFolder { get; set; }
+        public AddFolderRequest? NewFolder { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
-
+    public class UpdateCallMembersRequest
+    {
+        [JsonPropertyName("remove_members")]
+        public List<string> RemoveMembers { get; set; }
+        [JsonPropertyName("update_members")]
+        public List<MemberRequest> UpdateMembers { get; set; }
+    }
+    public class UpdateCallRequest
+    {
+        [JsonPropertyName("starts_at")]
+        public DateTime? StartsAt { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("settings_override")]
+        public CallSettingsRequest? SettingsOverride { get; set; }
+    }
+    public class UpdateCallTypeRequest
+    {
+        [JsonPropertyName("external_storage")]
+        public string? ExternalStorage { get; set; }
+        [JsonPropertyName("grants")]
+        public Dictionary<string, List<string>> Grants { get; set; }
+        [JsonPropertyName("notification_settings")]
+        public NotificationSettings? NotificationSettings { get; set; }
+        [JsonPropertyName("settings")]
+        public CallSettingsRequest? Settings { get; set; }
+    }
+    public class UpdateChannelPartialRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("unset")]
+        public List<string> Unset { get; set; }
+        [JsonPropertyName("set")]
+        public object Set { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdateChannelRequest
+    {
+        [JsonPropertyName("accept_invite")]
+        public bool? AcceptInvite { get; set; }
+        [JsonPropertyName("cooldown")]
+        public int? Cooldown { get; set; }
+        [JsonPropertyName("hide_history")]
+        public bool? HideHistory { get; set; }
+        [JsonPropertyName("reject_invite")]
+        public bool? RejectInvite { get; set; }
+        [JsonPropertyName("skip_push")]
+        public bool? SkipPush { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("add_members")]
+        public List<ChannelMember> AddMembers { get; set; }
+        [JsonPropertyName("add_moderators")]
+        public List<string> AddModerators { get; set; }
+        [JsonPropertyName("assign_roles")]
+        public List<ChannelMember> AssignRoles { get; set; }
+        [JsonPropertyName("demote_moderators")]
+        public List<string> DemoteModerators { get; set; }
+        [JsonPropertyName("invites")]
+        public List<ChannelMember> Invites { get; set; }
+        [JsonPropertyName("remove_members")]
+        public List<string> RemoveMembers { get; set; }
+        [JsonPropertyName("data")]
+        public ChannelInput? Data { get; set; }
+        [JsonPropertyName("message")]
+        public MessageRequest? Message { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdateChannelTypeRequest
+    {
+        [JsonPropertyName("automod")]
+        public string Automod { get; set; }
+        [JsonPropertyName("automod_behavior")]
+        public string AutomodBehavior { get; set; }
+        [JsonPropertyName("max_message_length")]
+        public int MaxMessageLength { get; set; }
+        [JsonPropertyName("blocklist")]
+        public string? Blocklist { get; set; }
+        [JsonPropertyName("blocklist_behavior")]
+        public string? BlocklistBehavior { get; set; }
+        [JsonPropertyName("connect_events")]
+        public bool? ConnectEvents { get; set; }
+        [JsonPropertyName("custom_events")]
+        public bool? CustomEvents { get; set; }
+        [JsonPropertyName("mark_messages_pending")]
+        public bool? MarkMessagesPending { get; set; }
+        [JsonPropertyName("mutes")]
+        public bool? Mutes { get; set; }
+        [JsonPropertyName("partition_size")]
+        public int? PartitionSize { get; set; }
+        [JsonPropertyName("partition_ttl")]
+        public string? PartitionTtl { get; set; }
+        [JsonPropertyName("polls")]
+        public bool? Polls { get; set; }
+        [JsonPropertyName("push_notifications")]
+        public bool? PushNotifications { get; set; }
+        [JsonPropertyName("quotes")]
+        public bool? Quotes { get; set; }
+        [JsonPropertyName("reactions")]
+        public bool? Reactions { get; set; }
+        [JsonPropertyName("read_events")]
+        public bool? ReadEvents { get; set; }
+        [JsonPropertyName("reminders")]
+        public bool? Reminders { get; set; }
+        [JsonPropertyName("replies")]
+        public bool? Replies { get; set; }
+        [JsonPropertyName("search")]
+        public bool? Search { get; set; }
+        [JsonPropertyName("shared_locations")]
+        public bool? SharedLocations { get; set; }
+        [JsonPropertyName("skip_last_msg_update_for_system_msgs")]
+        public bool? SkipLastMsgUpdateForSystemMsgs { get; set; }
+        [JsonPropertyName("typing_events")]
+        public bool? TypingEvents { get; set; }
+        [JsonPropertyName("uploads")]
+        public bool? Uploads { get; set; }
+        [JsonPropertyName("url_enrichment")]
+        public bool? UrlEnrichment { get; set; }
+        [JsonPropertyName("user_message_reminders")]
+        public bool? UserMessageReminders { get; set; }
+        [JsonPropertyName("allowed_flag_reasons")]
+        public List<string> AllowedFlagReasons { get; set; }
+        [JsonPropertyName("blocklists")]
+        public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("commands")]
+        public List<string> Commands { get; set; }
+        [JsonPropertyName("permissions")]
+        public List<PolicyRequest> Permissions { get; set; }
+        [JsonPropertyName("automod_thresholds")]
+        public Thresholds? AutomodThresholds { get; set; }
+        [JsonPropertyName("grants")]
+        public Dictionary<string, List<string>> Grants { get; set; }
+    }
+    public class UpdateCommandRequest
+    {
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+        [JsonPropertyName("args")]
+        public string? Args { get; set; }
+        [JsonPropertyName("set")]
+        public string? Set { get; set; }
+    }
     public class UpdateCommentRequest
     {
         [JsonPropertyName("comment")]
-        public string Comment { get; set; }
-        
+        public string? Comment { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
     }
-
+    public class UpdateExternalStorageRequest
+    {
+        [JsonPropertyName("bucket")]
+        public string Bucket { get; set; }
+        [JsonPropertyName("storage_type")]
+        public string StorageType { get; set; }
+        [JsonPropertyName("gcs_credentials")]
+        public string? GcsCredentials { get; set; }
+        [JsonPropertyName("path")]
+        public string? Path { get; set; }
+        [JsonPropertyName("aws_s3")]
+        public S3Request? AWSS3 { get; set; }
+        [JsonPropertyName("azure_blob")]
+        public AzureRequest? AzureBlob { get; set; }
+    }
+    public class UpdateFeedGroupRequest
+    {
+        [JsonPropertyName("default_view_id")]
+        public string? DefaultViewID { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("notification")]
+        public NotificationConfig? Notification { get; set; }
+    }
     public class UpdateFeedMembersRequest
     {
         [JsonPropertyName("operation")]
         public string Operation { get; set; }
-        
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
-        
         [JsonPropertyName("next")]
         public string? Next { get; set; }
-        
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
-        
         [JsonPropertyName("members")]
-        public List<object> Members { get; set; }
+        public List<FeedMemberRequest> Members { get; set; }
     }
-
     public class UpdateFeedRequest
     {
         [JsonPropertyName("created_by_id")]
-        public string? CreatedById { get; set; }
-        
+        public string? CreatedByID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
     }
-
+    public class UpdateFeedViewRequest
+    {
+        [JsonPropertyName("activity_processors")]
+        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
+        [JsonPropertyName("activity_selectors")]
+        public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
+        [JsonPropertyName("aggregation")]
+        public AggregationConfig? Aggregation { get; set; }
+        [JsonPropertyName("ranking")]
+        public RankingConfig? Ranking { get; set; }
+    }
     public class UpdateFollowRequest
     {
         [JsonPropertyName("source")]
         public string Source { get; set; }
-        
         [JsonPropertyName("target")]
         public string Target { get; set; }
-        
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
-        
         [JsonPropertyName("follower_role")]
         public string? FollowerRole { get; set; }
-        
         [JsonPropertyName("push_preference")]
         public string? PushPreference { get; set; }
-        
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
     }
-
+    public class UpdateLiveLocationRequest
+    {
+        [JsonPropertyName("message_id")]
+        public string MessageID { get; set; }
+        [JsonPropertyName("end_at")]
+        public DateTime? EndAt { get; set; }
+        [JsonPropertyName("latitude")]
+        public double? Latitude { get; set; }
+        [JsonPropertyName("longitude")]
+        public double? Longitude { get; set; }
+    }
+    public class UpdateMemberPartialRequest
+    {
+        [JsonPropertyName("unset")]
+        public List<string> Unset { get; set; }
+        [JsonPropertyName("set")]
+        public object Set { get; set; }
+    }
+    public class UpdateMessagePartialRequest
+    {
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("unset")]
+        public List<string> Unset { get; set; }
+        [JsonPropertyName("set")]
+        public object Set { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdateMessageRequest
+    {
+        [JsonPropertyName("message")]
+        public MessageRequest Message { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
+        [JsonPropertyName("skip_push")]
+        public bool? SkipPush { get; set; }
+    }
+    public class UpdatePollOptionRequest
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("text")]
+        public string Text { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("Custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdatePollPartialRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("unset")]
+        public List<string> Unset { get; set; }
+        [JsonPropertyName("set")]
+        public object Set { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdatePollRequest
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("allow_answers")]
+        public bool? AllowAnswers { get; set; }
+        [JsonPropertyName("allow_user_suggested_options")]
+        public bool? AllowUserSuggestedOptions { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        [JsonPropertyName("enforce_unique_vote")]
+        public bool? EnforceUniqueVote { get; set; }
+        [JsonPropertyName("is_closed")]
+        public bool? IsClosed { get; set; }
+        [JsonPropertyName("max_votes_allowed")]
+        public int? MaxVotesAllowed { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("voting_visibility")]
+        public string? VotingVisibility { get; set; }
+        [JsonPropertyName("options")]
+        public List<PollOptionRequest> Options { get; set; }
+        [JsonPropertyName("Custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdateReminderRequest
+    {
+        [JsonPropertyName("remind_at")]
+        public DateTime? RemindAt { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdateThreadPartialRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("unset")]
+        public List<string> Unset { get; set; }
+        [JsonPropertyName("set")]
+        public object Set { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+    public class UpdateUserPermissionsRequest
+    {
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+        [JsonPropertyName("grant_permissions")]
+        public List<string> GrantPermissions { get; set; }
+        [JsonPropertyName("revoke_permissions")]
+        public List<string> RevokePermissions { get; set; }
+    }
+    public class UpdateUsersPartialRequest
+    {
+        [JsonPropertyName("users")]
+        public List<UpdateUserPartialRequest> Users { get; set; }
+    }
+    public class UpdateUsersRequest
+    {
+        [JsonPropertyName("users")]
+        public Dictionary<string, UserRequest> Users { get; set; }
+    }
+    public class UploadChannelFileRequest
+    {
+        [JsonPropertyName("file")]
+        public string? File { get; set; }
+        [JsonPropertyName("user")]
+        public OnlyUserID? User { get; set; }
+    }
+    public class UploadChannelRequest
+    {
+        [JsonPropertyName("file")]
+        public string? File { get; set; }
+        [JsonPropertyName("upload_sizes")]
+        public List<ImageSize> UploadSizes { get; set; }
+        [JsonPropertyName("user")]
+        public OnlyUserID? User { get; set; }
+    }
     public class UpsertActivitiesRequest
     {
         [JsonPropertyName("activities")]
-        public List<AddActivityRequest> Activities { get; set; }
+        public List<ActivityRequest> Activities { get; set; }
+    }
+    public class UpsertConfigRequest
+    {
+        [JsonPropertyName("key")]
+        public string Key { get; set; }
+        [JsonPropertyName("async")]
+        public bool? Async { get; set; }
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("aws_rekognition_config")]
+        public AIImageConfig? AWSRekognitionConfig { get; set; }
+        [JsonPropertyName("ai_image_config")]
+        public AIImageConfig? AiImageConfig { get; set; }
+        [JsonPropertyName("ai_text_config")]
+        public AITextConfig? AiTextConfig { get; set; }
+        [JsonPropertyName("ai_video_config")]
+        public AIVideoConfig? AiVideoConfig { get; set; }
+        [JsonPropertyName("automod_platform_circumvention_config")]
+        public AutomodPlatformCircumventionConfig? AutomodPlatformCircumventionConfig { get; set; }
+        [JsonPropertyName("automod_semantic_filters_config")]
+        public AutomodSemanticFiltersConfig? AutomodSemanticFiltersConfig { get; set; }
+        [JsonPropertyName("automod_toxicity_config")]
+        public AutomodToxicityConfig? AutomodToxicityConfig { get; set; }
+        [JsonPropertyName("block_list_config")]
+        public BlockListConfig? BlockListConfig { get; set; }
+        [JsonPropertyName("bodyguard_config")]
+        public AITextConfig? BodyguardConfig { get; set; }
+        [JsonPropertyName("google_vision_config")]
+        public GoogleVisionConfig? GoogleVisionConfig { get; set; }
+        [JsonPropertyName("rule_builder_config")]
+        public RuleBuilderConfig? RuleBuilderConfig { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+        [JsonPropertyName("velocity_filter_config")]
+        public VelocityFilterConfig? VelocityFilterConfig { get; set; }
+        [JsonPropertyName("video_call_rule_config")]
+        public VideoCallRuleConfig? VideoCallRuleConfig { get; set; }
+    }
+    public class UpsertModerationTemplateRequest
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("config")]
+        public FeedsModerationTemplateConfig Config { get; set; }
+    }
+    public class UpsertPushPreferencesRequest
+    {
+        [JsonPropertyName("preferences")]
+        public List<PushPreferenceInput> Preferences { get; set; }
+    }
+    public class UpsertPushProviderRequest
+    {
+        [JsonPropertyName("push_provider")]
+        public PushProvider? PushProvider { get; set; }
+    }
+    public class UpsertPushTemplateRequest
+    {
+        [JsonPropertyName("event_type")]
+        public string EventType { get; set; }
+        [JsonPropertyName("push_provider_type")]
+        public string PushProviderType { get; set; }
+        [JsonPropertyName("enable_push")]
+        public bool? EnablePush { get; set; }
+        [JsonPropertyName("push_provider_name")]
+        public string? PushProviderName { get; set; }
+        [JsonPropertyName("template")]
+        public string? Template { get; set; }
+    }
+    public class DeleteActivityRequest
+    {
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+    }
+    public class DeleteMessageRequest
+    {
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+    }
+    public class DeleteReactionRequest
+    {
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
     }
 } 
