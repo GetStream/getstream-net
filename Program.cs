@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GetStream;
 using GetStream.Requests;
 using GetStream.Models;
+using GetStream.Tests;
 
 namespace GetStreamExample
 {
@@ -11,11 +12,35 @@ namespace GetStreamExample
     {
         static async Task Main(string[] args)
         {
-            // Initialize the client with your API credentials
-            var client = new Client(
-                apiKey: "yxe38defzb54",
-                apiSecret: "qe3x56pv86egwk6ku55spf3rq6dd9f5uhazsj7rcqtk2kkff2fd6v26573jcsvh6"
-            );
+            // Read API credentials from environment variables
+            var apiKey = Environment.GetEnvironmentVariable("GETSTREAM_API_KEY");
+            var apiSecret = Environment.GetEnvironmentVariable("GETSTREAM_API_SECRET");
+            var appId = Environment.GetEnvironmentVariable("GETSTREAM_APP_ID");
+
+            // Validate that required environment variables are set
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                Console.WriteLine("❌ Error: GETSTREAM_API_KEY environment variable is not set");
+                Console.WriteLine("Please set it with: export GETSTREAM_API_KEY=your-api-key");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(apiSecret))
+            {
+                Console.WriteLine("❌ Error: GETSTREAM_API_SECRET environment variable is not set");
+                Console.WriteLine("Please set it with: export GETSTREAM_API_SECRET=your-api-secret");
+                return;
+            }
+
+            // Check if user wants to run tests
+            if (args.Length > 0 && args[0].ToLower() == "test")
+            {
+                await TestRunner.RunTests(apiKey, apiSecret, appId ?? "default-app-id");
+                return;
+            }
+
+            // Initialize the client with API credentials from environment
+            var client = new Client(apiKey, apiSecret);
 
             // Create the FeedClient
             var feeds = new FeedClient(client);
@@ -92,7 +117,8 @@ namespace GetStreamExample
                         Custom = new { 
                             commenter = "john",
                             timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
-                        }
+                        },
+                        UserID = "sara",
                     };
                     
                     var addCommentResponse = await feeds.AddCommentAsync(addCommentRequest);
@@ -109,8 +135,8 @@ namespace GetStreamExample
                         Console.WriteLine("\n4. Fetching feed activities...");
                         var queryActivitiesRequest = new QueryActivitiesRequest
                         {
-                            Limit = 10,
-                            Filter = "fid = 'user:john'"
+                            Limit = 10
+                            // Filter removed for now to test basic functionality
                         };
                         
                         var queryActivitiesResponse = await feeds.QueryActivitiesAsync(queryActivitiesRequest);
@@ -139,6 +165,28 @@ namespace GetStreamExample
                 {
                     Console.WriteLine("❌ Failed to add activity");
                     Console.WriteLine(addActivityResponse.Error);
+                }
+
+                // Step 5: Get the feed we created earlier
+                Console.WriteLine("\n5. Getting the feed we created...");
+                var getFeedResponse = await feeds.GetOrCreateFeedAsync(
+                    FeedGroupID: "user", 
+                    FeedID: "john",
+                    request: new GetOrCreateFeedRequest
+                    {
+                        UserID = "sara"
+                    }
+                );
+                
+                if (getFeedResponse.Data != null)
+                {
+                    Console.WriteLine($"✅ Feed retrieved successfully!");
+                    Console.WriteLine($"   Feed Data: {getFeedResponse.Data}");
+                }
+                else
+                {
+                    Console.WriteLine("❌ Failed to get feed");
+                    Console.WriteLine(getFeedResponse.Error);
                 }
             }
             catch (Exception ex)
