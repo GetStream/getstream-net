@@ -12,7 +12,7 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    public class BaseClient : IClient
+    public class BaseClient :IClient
     {
         private readonly HttpClient _httpClient;
         protected string ApiKey;
