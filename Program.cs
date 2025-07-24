@@ -13,23 +13,19 @@ namespace GetStreamExample
         static async Task Main(string[] args)
         {
             // Read API credentials from environment variables
-            var apiKey = Environment.GetEnvironmentVariable("GETSTREAM_API_KEY");
-            var apiSecret = Environment.GetEnvironmentVariable("GETSTREAM_API_SECRET");
+            var apiKey = Environment.GetEnvironmentVariable("STREAM_API_KEY");
+            var apiSecret = Environment.GetEnvironmentVariable("STREAM_API_SECRET");
             var appId = Environment.GetEnvironmentVariable("GETSTREAM_APP_ID");
 
             // Validate that required environment variables are set
             if (string.IsNullOrEmpty(apiKey))
             {
-                Console.WriteLine("❌ Error: GETSTREAM_API_KEY environment variable is not set");
-                Console.WriteLine("Please set it with: export GETSTREAM_API_KEY=your-api-key");
-                return;
+                throw new GetStreamAuthenticationException("STREAM_API_KEY environment variable is not set. Please set it with: export STREAM_API_KEY=your-api-key");
             }
 
             if (string.IsNullOrEmpty(apiSecret))
             {
-                Console.WriteLine("❌ Error: GETSTREAM_API_SECRET environment variable is not set");
-                Console.WriteLine("Please set it with: export GETSTREAM_API_SECRET=your-api-secret");
-                return;
+                throw new GetStreamAuthenticationException("STREAM_API_SECRET environment variable is not set. Please set it with: export STREAM_API_SECRET=your-api-secret");
             }
 
             // Check if user wants to run tests

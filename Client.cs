@@ -12,12 +12,6 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    public class StreamResponse<T>
-    {
-        public T? Data { get; set; }
-        public string? Duration { get; set; }
-        public string? Error { get; set; }
-    }
 
     public class Client
     {
@@ -71,7 +65,7 @@ namespace GetStream
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException($"HTTP {response.StatusCode}: {responseContent}");
+                throw new GetStreamApiException($"HTTP {response.StatusCode}: {responseContent}", (int)response.StatusCode, responseContent);
             }
 
             // Try to deserialize as the actual response type first
@@ -113,7 +107,7 @@ namespace GetStream
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException($"HTTP {response.StatusCode}: {responseContent}");
+                throw new GetStreamApiException($"HTTP {response.StatusCode}: {responseContent}", (int)response.StatusCode, responseContent);
             }
 
             // Try to deserialize as the actual response type first
@@ -210,28 +204,6 @@ namespace GetStream
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-        }
-    }
-
-    public static class QueryParamsHelper
-    {
-        public static Dictionary<string, string>? ExtractQueryParams(object? request)
-        {
-            if (request == null) return null;
-            
-            var queryParams = new Dictionary<string, string>();
-            var properties = request.GetType().GetProperties();
-            
-            foreach (var property in properties)
-            {
-                var value = property.GetValue(request);
-                if (value != null)
-                {
-                    queryParams[property.Name.ToLowerInvariant()] = value.ToString() ?? "";
-                }
-            }
-            
-            return queryParams.Count > 0 ? queryParams : null;
         }
     }
 } 

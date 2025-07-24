@@ -633,7 +633,20 @@ namespace GetStream.Requests
     public class FollowBatchRequest
     {
         [JsonPropertyName("follows")]
-        public List<FollowPair> Follows { get; set; }
+        public List<FollowRequest> Follows { get; set; }
+    }
+    public class FollowRequest
+    {
+        [JsonPropertyName("source")]
+        public string Source { get; set; }
+        [JsonPropertyName("target")]
+        public string Target { get; set; }
+        [JsonPropertyName("create_notification_activity")]
+        public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("push_preference")]
+        public string? PushPreference { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
     }
     public class GetOrCreateCallRequest
     {
@@ -1351,19 +1364,6 @@ namespace GetStream.Requests
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
     }
-    public class SingleFollowRequest
-    {
-        [JsonPropertyName("source")]
-        public string Source { get; set; }
-        [JsonPropertyName("target")]
-        public string Target { get; set; }
-        [JsonPropertyName("create_notification_activity")]
-        public bool? CreateNotificationActivity { get; set; }
-        [JsonPropertyName("push_preference")]
-        public string? PushPreference { get; set; }
-        [JsonPropertyName("custom")]
-        public object Custom { get; set; }
-    }
     public class StartCampaignRequest
     {
         [JsonPropertyName("scheduled_for")]
@@ -1445,12 +1445,12 @@ namespace GetStream.Requests
         public BanActionRequest? Ban { get; set; }
         [JsonPropertyName("custom")]
         public CustomActionRequest? Custom { get; set; }
-        [JsonPropertyName("delete_activity")]
-        public DeleteActivityRequest? DeleteActivity { get; set; }
-        [JsonPropertyName("delete_message")]
-        public DeleteMessageRequest? DeleteMessage { get; set; }
-        [JsonPropertyName("delete_reaction")]
-        public DeleteReactionRequest? DeleteReaction { get; set; }
+        // [JsonPropertyName("delete_activity")]
+        // public DeleteActivityRequest? DeleteActivity { get; set; }
+        // [JsonPropertyName("delete_message")]
+        // public DeleteMessageRequest? DeleteMessage { get; set; }
+        // [JsonPropertyName("delete_reaction")]
+        // public DeleteReactionRequest? DeleteReaction { get; set; }
         [JsonPropertyName("delete_user")]
         public DeleteUserRequest? DeleteUser { get; set; }
         [JsonPropertyName("mark_reviewed")]
@@ -2147,20 +2147,5 @@ namespace GetStream.Requests
         public string? PushProviderName { get; set; }
         [JsonPropertyName("template")]
         public string? Template { get; set; }
-    }
-    public class DeleteActivityRequest
-    {
-        [JsonPropertyName("hard_delete")]
-        public bool? HardDelete { get; set; }
-    }
-    public class DeleteMessageRequest
-    {
-        [JsonPropertyName("hard_delete")]
-        public bool? HardDelete { get; set; }
-    }
-    public class DeleteReactionRequest
-    {
-        [JsonPropertyName("hard_delete")]
-        public bool? HardDelete { get; set; }
     }
 } 

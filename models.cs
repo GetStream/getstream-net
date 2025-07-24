@@ -4498,36 +4498,6 @@ namespace GetStream.Models
     }
     public class FeedOwnCapability
     {
-        public string Value { get; set; }
-        
-        public static implicit operator string(FeedOwnCapability capability)
-        {
-            return capability?.Value;
-        }
-        
-        public static implicit operator FeedOwnCapability(string value)
-        {
-            return new FeedOwnCapability { Value = value };
-        }
-
-        public override string ToString()
-        {
-            return Value ?? string.Empty;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is FeedOwnCapability other)
-                return Value == other.Value;
-            if (obj is string str)
-                return Value == str;
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Value?.GetHashCode() ?? 0;
-        }
     }
     public class FeedRequest
     {
