@@ -42,7 +42,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AddActivityRequest, AddActivityResponse>(
                 "POST",
-                "/api/v2/feeds/activities",null,request,null,
+                "/api/v2/feeds/activities",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -53,7 +53,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpsertActivitiesRequest, UpsertActivitiesResponse>(
                 "POST",
-                "/api/v2/feeds/activities/batch",null,request,null,
+                "/api/v2/feeds/activities/batch",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -64,7 +64,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<DeleteActivitiesRequest, DeleteActivitiesResponse>(
                 "POST",
-                "/api/v2/feeds/activities/delete",null,request,null,
+                "/api/v2/feeds/activities/delete",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -75,7 +75,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>(
                 "POST",
-                "/api/v2/feeds/activities/query",null,request,null,
+                "/api/v2/feeds/activities/query",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -91,7 +91,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteActivityResponse>(
                 "DELETE",
-                "/api/v2/feeds/activities/{activity_id}",queryParams,null,pathParams,
+                "/api/v2/feeds/activities/{activity_id}",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -106,7 +106,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetActivityResponse>(
                 "GET",
-                "/api/v2/feeds/activities/{activity_id}",null,null,pathParams,
+                "/api/v2/feeds/activities/{activity_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -121,7 +121,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateActivityPartialRequest, UpdateActivityPartialResponse>(
                 "PATCH",
-                "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -136,7 +136,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateActivityRequest, UpdateActivityResponse>(
                 "PUT",
-                "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -152,7 +152,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteBookmarkResponse>(
                 "DELETE",
-                "/api/v2/feeds/activities/{activity_id}/bookmarks",queryParams,null,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/bookmarks",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -167,7 +167,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateBookmarkRequest, UpdateBookmarkResponse>(
                 "PATCH",
-                "/api/v2/feeds/activities/{activity_id}/bookmarks",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/bookmarks",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -182,7 +182,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AddBookmarkRequest, AddBookmarkResponse>(
                 "POST",
-                "/api/v2/feeds/activities/{activity_id}/bookmarks",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/bookmarks",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -198,7 +198,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<CastPollVoteRequest, PollVoteResponse>(
                 "POST",
-                "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -216,7 +216,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, PollVoteResponse>(
                 "DELETE",
-                "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote/{vote_id}",queryParams,null,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote/{vote_id}",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -231,7 +231,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
                 "POST",
-                "/api/v2/feeds/activities/{activity_id}/reactions",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/reactions",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -246,7 +246,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryActivityReactionsRequest, QueryActivityReactionsResponse>(
                 "POST",
-                "/api/v2/feeds/activities/{activity_id}/reactions/query",null,request,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/reactions/query",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -263,7 +263,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteActivityReactionResponse>(
                 "DELETE",
-                "/api/v2/feeds/activities/{activity_id}/reactions/{type}",queryParams,null,pathParams,
+                "/api/v2/feeds/activities/{activity_id}/reactions/{type}",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -274,7 +274,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryBookmarkFoldersRequest, QueryBookmarkFoldersResponse>(
                 "POST",
-                "/api/v2/feeds/bookmark_folders/query",null,request,null,
+                "/api/v2/feeds/bookmark_folders/query",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -289,7 +289,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteBookmarkFolderResponse>(
                 "DELETE",
-                "/api/v2/feeds/bookmark_folders/{folder_id}",null,null,pathParams,
+                "/api/v2/feeds/bookmark_folders/{folder_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -304,7 +304,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateBookmarkFolderRequest, UpdateBookmarkFolderResponse>(
                 "PATCH",
-                "/api/v2/feeds/bookmark_folders/{folder_id}",null,request,pathParams,
+                "/api/v2/feeds/bookmark_folders/{folder_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -315,7 +315,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryBookmarksRequest, QueryBookmarksResponse>(
                 "POST",
-                "/api/v2/feeds/bookmarks/query",null,request,null,
+                "/api/v2/feeds/bookmarks/query",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -327,7 +327,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetCommentsResponse>(
                 "GET",
-                "/api/v2/feeds/comments",queryParams,null,null,
+                "/api/v2/feeds/comments",queryParams,null!,null,
                 cancellationToken);
                 
             return result;
@@ -338,7 +338,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AddCommentRequest, AddCommentResponse>(
                 "POST",
-                "/api/v2/feeds/comments",null,request,null,
+                "/api/v2/feeds/comments",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -349,7 +349,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AddCommentsBatchRequest, AddCommentsBatchResponse>(
                 "POST",
-                "/api/v2/feeds/comments/batch",null,request,null,
+                "/api/v2/feeds/comments/batch",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -360,7 +360,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>(
                 "POST",
-                "/api/v2/feeds/comments/query",null,request,null,
+                "/api/v2/feeds/comments/query",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -375,7 +375,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteCommentResponse>(
                 "DELETE",
-                "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
+                "/api/v2/feeds/comments/{comment_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -390,7 +390,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetCommentResponse>(
                 "GET",
-                "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
+                "/api/v2/feeds/comments/{comment_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -405,7 +405,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateCommentRequest, UpdateCommentResponse>(
                 "PATCH",
-                "/api/v2/feeds/comments/{comment_id}",null,request,pathParams,
+                "/api/v2/feeds/comments/{comment_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -420,7 +420,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AddCommentReactionRequest, AddCommentReactionResponse>(
                 "POST",
-                "/api/v2/feeds/comments/{comment_id}/reactions",null,request,pathParams,
+                "/api/v2/feeds/comments/{comment_id}/reactions",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -435,7 +435,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryCommentReactionsRequest, QueryCommentReactionsResponse>(
                 "POST",
-                "/api/v2/feeds/comments/{comment_id}/reactions/query",null,request,pathParams,
+                "/api/v2/feeds/comments/{comment_id}/reactions/query",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -452,7 +452,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteCommentReactionResponse>(
                 "DELETE",
-                "/api/v2/feeds/comments/{comment_id}/reactions/{type}",queryParams,null,pathParams,
+                "/api/v2/feeds/comments/{comment_id}/reactions/{type}",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -468,7 +468,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetCommentRepliesResponse>(
                 "GET",
-                "/api/v2/feeds/comments/{comment_id}/replies",queryParams,null,pathParams,
+                "/api/v2/feeds/comments/{comment_id}/replies",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -479,7 +479,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, ListFeedGroupsResponse>(
                 "GET",
-                "/api/v2/feeds/feed_groups",null,null,null,
+                "/api/v2/feeds/feed_groups",null!,null,null!,
                 cancellationToken);
                 
             return result;
@@ -490,7 +490,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<CreateFeedGroupRequest, CreateFeedGroupResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups",null,request,null,
+                "/api/v2/feeds/feed_groups",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -506,7 +506,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteFeedGroupResponse>(
                 "DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}",queryParams,null,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -521,7 +521,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetFeedGroupResponse>(
                 "GET",
-                "/api/v2/feeds/feed_groups/{feed_group_id}",null,null,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -536,7 +536,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateFeedGroupRequest, UpdateFeedGroupResponse>(
                 "PUT",
-                "/api/v2/feeds/feed_groups/{feed_group_id}",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -553,7 +553,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteFeedResponse>(
                 "DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",queryParams,null,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -569,7 +569,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<GetOrCreateFeedRequest, GetOrCreateFeedResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -585,7 +585,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateFeedRequest, UpdateFeedResponse>(
                 "PUT",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -601,7 +601,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<MarkActivityRequest, Response>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/mark/batch",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/mark/batch",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -619,7 +619,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, UnpinActivityResponse>(
                 "DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",queryParams,null,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -636,7 +636,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<PinActivityRequest, PinActivityResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -652,7 +652,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateFeedMembersRequest, UpdateFeedMembersResponse>(
                 "PATCH",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -668,7 +668,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AcceptFeedMemberInviteRequest, AcceptFeedMemberInviteResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/accept",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/accept",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -684,7 +684,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryFeedMembersRequest, QueryFeedMembersResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/query",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/query",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -700,7 +700,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<RejectFeedMemberInviteRequest, RejectFeedMemberInviteResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/reject",null,request,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/reject",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -716,7 +716,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetFollowSuggestionsResponse>(
                 "GET",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/follow_suggestions",queryParams,null,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/follow_suggestions",queryParams,null!,pathParams,
                 cancellationToken);
                 
             return result;
@@ -727,7 +727,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, ListFeedViewsResponse>(
                 "GET",
-                "/api/v2/feeds/feed_views",null,null,null,
+                "/api/v2/feeds/feed_views",null!,null,null!,
                 cancellationToken);
                 
             return result;
@@ -738,7 +738,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<CreateFeedViewRequest, CreateFeedViewResponse>(
                 "POST",
-                "/api/v2/feeds/feed_views",null,request,null,
+                "/api/v2/feeds/feed_views",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -753,7 +753,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteFeedViewResponse>(
                 "DELETE",
-                "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
+                "/api/v2/feeds/feed_views/{view_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -768,7 +768,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, GetFeedViewResponse>(
                 "GET",
-                "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
+                "/api/v2/feeds/feed_views/{view_id}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -783,7 +783,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateFeedViewRequest, UpdateFeedViewResponse>(
                 "PUT",
-                "/api/v2/feeds/feed_views/{view_id}",null,request,pathParams,
+                "/api/v2/feeds/feed_views/{view_id}",null!,request,pathParams,
                 cancellationToken);
                 
             return result;
@@ -794,7 +794,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
                 "POST",
-                "/api/v2/feeds/feeds/batch",null,request,null,
+                "/api/v2/feeds/feeds/batch",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -805,7 +805,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
                 "POST",
-                "/api/v2/feeds/feeds/query",null,request,null,
+                "/api/v2/feeds/feeds/query",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -816,7 +816,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UpdateFollowRequest, UpdateFollowResponse>(
                 "PATCH",
-                "/api/v2/feeds/follows",null,request,null,
+                "/api/v2/feeds/follows",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -827,7 +827,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<FollowRequest, SingleFollowResponse>(
                 "POST",
-                "/api/v2/feeds/follows",null,request,null,
+                "/api/v2/feeds/follows",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -838,7 +838,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<AcceptFollowRequest, AcceptFollowResponse>(
                 "POST",
-                "/api/v2/feeds/follows/accept",null,request,null,
+                "/api/v2/feeds/follows/accept",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -849,7 +849,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>(
                 "POST",
-                "/api/v2/feeds/follows/batch",null,request,null,
+                "/api/v2/feeds/follows/batch",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -860,7 +860,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<QueryFollowsRequest, QueryFollowsResponse>(
                 "POST",
-                "/api/v2/feeds/follows/query",null,request,null,
+                "/api/v2/feeds/follows/query",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -871,7 +871,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<RejectFollowRequest, RejectFollowResponse>(
                 "POST",
-                "/api/v2/feeds/follows/reject",null,request,null,
+                "/api/v2/feeds/follows/reject",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -887,7 +887,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, UnfollowResponse>(
                 "DELETE",
-                "/api/v2/feeds/follows/{source}/{target}",null,null,pathParams,
+                "/api/v2/feeds/follows/{source}/{target}",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -898,7 +898,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<UnfollowBatchRequest, UnfollowBatchResponse>(
                 "POST",
-                "/api/v2/feeds/unfollow/batch",null,request,null,
+                "/api/v2/feeds/unfollow/batch",null!,request,null!,
                 cancellationToken);
                 
             return result;
@@ -913,7 +913,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, DeleteFeedUserDataResponse>(
                 "DELETE",
-                "/api/v2/feeds/users/{user_id}/delete",null,null,pathParams,
+                "/api/v2/feeds/users/{user_id}/delete",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
@@ -928,7 +928,7 @@ namespace GetStream
             
             var result = await _client.MakeRequestAsync<object, ExportFeedUserDataResponse>(
                 "POST",
-                "/api/v2/feeds/users/{user_id}/export",null,null,pathParams,
+                "/api/v2/feeds/users/{user_id}/export",null!,null,pathParams,
                 cancellationToken);
                 
             return result;
