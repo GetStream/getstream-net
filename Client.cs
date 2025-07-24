@@ -12,8 +12,7 @@ using GetStream.Models;
 
 namespace GetStream
 {
-
-    public class Client
+    public class Client : IClient
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;

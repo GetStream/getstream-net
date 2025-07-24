@@ -13,12 +13,12 @@ namespace GetStream.Tests
     [TestFixture]
     public class FeedClientTests
     {
-        private readonly Mock<Client> _mockClient;
+        private readonly Mock<IClient> _mockClient;
         private readonly FeedClient _client;
 
         public FeedClientTests()
         {
-            _mockClient = new Mock<Client>();
+            _mockClient = new Mock<IClient>();
             _client = new FeedClient(_mockClient.Object);
         }
         [Test]
@@ -165,7 +165,7 @@ namespace GetStream.Tests
         public async Task DeleteActivityAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ActivityID = "test-ActivityID";
 
             var expectedResponse = new StreamResponse<DeleteActivityResponse>
@@ -183,7 +183,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityAsync(ActivityID,null);
+            var result = await _client.DeleteActivityAsync(ActivityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -201,7 +201,7 @@ namespace GetStream.Tests
         public async Task GetActivityAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ActivityID = "test-ActivityID";
 
             var expectedResponse = new StreamResponse<GetActivityResponse>
@@ -219,7 +219,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetActivityAsync(ActivityID,null);
+            var result = await _client.GetActivityAsync(ActivityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -309,7 +309,7 @@ namespace GetStream.Tests
         public async Task DeleteBookmarkAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ActivityID = "test-ActivityID";
 
             var expectedResponse = new StreamResponse<DeleteBookmarkResponse>
@@ -327,7 +327,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkAsync(ActivityID,null);
+            var result = await _client.DeleteBookmarkAsync(ActivityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -454,7 +454,7 @@ namespace GetStream.Tests
         public async Task DeletePollVoteAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ActivityID = "test-ActivityID";
             var PollID = "test-PollID";
             var VoteID = "test-VoteID";
@@ -474,7 +474,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeletePollVoteAsync(ActivityID, PollID, VoteID,null);
+            var result = await _client.DeletePollVoteAsync(ActivityID, PollID, VoteID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -564,7 +564,7 @@ namespace GetStream.Tests
         public async Task DeleteActivityReactionAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ActivityID = "test-ActivityID";
             var Type = "test-Type";
 
@@ -583,7 +583,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityReactionAsync(ActivityID, Type,null);
+            var result = await _client.DeleteActivityReactionAsync(ActivityID, Type,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -594,41 +594,6 @@ namespace GetStream.Tests
                 "/api/v2/feeds/activities/{activity_id}/reactions/{type}",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<object>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-        [Test]
-        public async Task CreateFeedsBatchAsync_ShouldCallCorrectEndpoint()
-        {
-            // Arrange
-            var request = new CreateFeedsBatchRequest();
-
-            var expectedResponse = new StreamResponse<CreateFeedsBatchResponse>
-            {
-                Data = new CreateFeedsBatchResponse()
-            };
-
-            _mockClient.Setup(x => x.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<CreateFeedsBatchRequest>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedResponse);
-
-            // Act
-            var result = await _client.CreateFeedsBatchAsync(request);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(expectedResponse));
-            
-            _mockClient.Verify(x => x.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
-                "POST",
-                "/api/v2/feeds/batch",
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<CreateFeedsBatchRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -671,7 +636,7 @@ namespace GetStream.Tests
         public async Task DeleteBookmarkFolderAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var FolderID = "test-FolderID";
 
             var expectedResponse = new StreamResponse<DeleteBookmarkFolderResponse>
@@ -689,7 +654,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkFolderAsync(FolderID,null);
+            var result = await _client.DeleteBookmarkFolderAsync(FolderID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -778,7 +743,7 @@ namespace GetStream.Tests
         public async Task GetCommentsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
 
             var expectedResponse = new StreamResponse<GetCommentsResponse>
             {
@@ -795,7 +760,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentsAsync(null);
+            var result = await _client.GetCommentsAsync(null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -918,7 +883,7 @@ namespace GetStream.Tests
         public async Task DeleteCommentAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var CommentID = "test-CommentID";
 
             var expectedResponse = new StreamResponse<DeleteCommentResponse>
@@ -936,7 +901,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentAsync(CommentID,null);
+            var result = await _client.DeleteCommentAsync(CommentID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -954,7 +919,7 @@ namespace GetStream.Tests
         public async Task GetCommentAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var CommentID = "test-CommentID";
 
             var expectedResponse = new StreamResponse<GetCommentResponse>
@@ -972,7 +937,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentAsync(CommentID,null);
+            var result = await _client.GetCommentAsync(CommentID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1098,7 +1063,7 @@ namespace GetStream.Tests
         public async Task DeleteCommentReactionAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var CommentID = "test-CommentID";
             var Type = "test-Type";
 
@@ -1117,7 +1082,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentReactionAsync(CommentID, Type,null);
+            var result = await _client.DeleteCommentReactionAsync(CommentID, Type,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1135,7 +1100,7 @@ namespace GetStream.Tests
         public async Task GetCommentRepliesAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var CommentID = "test-CommentID";
 
             var expectedResponse = new StreamResponse<GetCommentRepliesResponse>
@@ -1153,7 +1118,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentRepliesAsync(CommentID,null);
+            var result = await _client.GetCommentRepliesAsync(CommentID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1171,7 +1136,7 @@ namespace GetStream.Tests
         public async Task ListFeedGroupsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
 
             var expectedResponse = new StreamResponse<ListFeedGroupsResponse>
             {
@@ -1188,7 +1153,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ListFeedGroupsAsync(null);
+            var result = await _client.ListFeedGroupsAsync(null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1241,7 +1206,7 @@ namespace GetStream.Tests
         public async Task DeleteFeedGroupAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var FeedGroupID = "test-FeedGroupID";
 
             var expectedResponse = new StreamResponse<DeleteFeedGroupResponse>
@@ -1259,7 +1224,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedGroupAsync(FeedGroupID,null);
+            var result = await _client.DeleteFeedGroupAsync(FeedGroupID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1277,7 +1242,7 @@ namespace GetStream.Tests
         public async Task GetFeedGroupAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var FeedGroupID = "test-FeedGroupID";
 
             var expectedResponse = new StreamResponse<GetFeedGroupResponse>
@@ -1295,7 +1260,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedGroupAsync(FeedGroupID,null);
+            var result = await _client.GetFeedGroupAsync(FeedGroupID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1349,7 +1314,7 @@ namespace GetStream.Tests
         public async Task DeleteFeedAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var FeedGroupID = "test-FeedGroupID";
             var FeedID = "test-FeedID";
 
@@ -1368,7 +1333,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedAsync(FeedGroupID, FeedID,null);
+            var result = await _client.DeleteFeedAsync(FeedGroupID, FeedID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1497,7 +1462,7 @@ namespace GetStream.Tests
         public async Task UnpinActivityAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var FeedGroupID = "test-FeedGroupID";
             var FeedID = "test-FeedID";
             var ActivityID = "test-ActivityID";
@@ -1517,7 +1482,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnpinActivityAsync(FeedGroupID, FeedID, ActivityID,null);
+            var result = await _client.UnpinActivityAsync(FeedGroupID, FeedID, ActivityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1721,7 +1686,7 @@ namespace GetStream.Tests
         public async Task GetFollowSuggestionsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var FeedGroupID = "test-FeedGroupID";
 
             var expectedResponse = new StreamResponse<GetFollowSuggestionsResponse>
@@ -1739,7 +1704,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFollowSuggestionsAsync(FeedGroupID,null);
+            var result = await _client.GetFollowSuggestionsAsync(FeedGroupID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1757,7 +1722,7 @@ namespace GetStream.Tests
         public async Task ListFeedViewsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
 
             var expectedResponse = new StreamResponse<ListFeedViewsResponse>
             {
@@ -1774,7 +1739,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ListFeedViewsAsync(null);
+            var result = await _client.ListFeedViewsAsync(null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1827,7 +1792,7 @@ namespace GetStream.Tests
         public async Task DeleteFeedViewAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ViewID = "test-ViewID";
 
             var expectedResponse = new StreamResponse<DeleteFeedViewResponse>
@@ -1845,7 +1810,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedViewAsync(ViewID,null);
+            var result = await _client.DeleteFeedViewAsync(ViewID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1863,7 +1828,7 @@ namespace GetStream.Tests
         public async Task GetFeedViewAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var ViewID = "test-ViewID";
 
             var expectedResponse = new StreamResponse<GetFeedViewResponse>
@@ -1881,7 +1846,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedViewAsync(ViewID,null);
+            var result = await _client.GetFeedViewAsync(ViewID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1928,6 +1893,76 @@ namespace GetStream.Tests
                 "/api/v2/feeds/feed_views/{view_id}",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<UpdateFeedViewRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task CreateFeedsBatchAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new CreateFeedsBatchRequest();
+
+            var expectedResponse = new StreamResponse<CreateFeedsBatchResponse>
+            {
+                Data = new CreateFeedsBatchResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CreateFeedsBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.CreateFeedsBatchAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/batch",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CreateFeedsBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task QueryFeedsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new QueryFeedsRequest();
+
+            var expectedResponse = new StreamResponse<QueryFeedsResponse>
+            {
+                Data = new QueryFeedsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryFeedsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryFeedsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/query",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryFeedsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2145,7 +2180,7 @@ namespace GetStream.Tests
         public async Task UnfollowAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var Source = "test-Source";
             var Target = "test-Target";
 
@@ -2164,7 +2199,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnfollowAsync(Source, Target,null);
+            var result = await _client.UnfollowAsync(Source, Target,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2175,41 +2210,6 @@ namespace GetStream.Tests
                 "/api/v2/feeds/follows/{source}/{target}",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<object>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-        [Test]
-        public async Task QueryFeedsAsync_ShouldCallCorrectEndpoint()
-        {
-            // Arrange
-            var request = new QueryFeedsRequest();
-
-            var expectedResponse = new StreamResponse<QueryFeedsResponse>
-            {
-                Data = new QueryFeedsResponse()
-            };
-
-            _mockClient.Setup(x => x.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<QueryFeedsRequest>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedResponse);
-
-            // Act
-            var result = await _client.QueryFeedsAsync(request);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(expectedResponse));
-            
-            _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
-                "POST",
-                "/api/v2/feeds/query",
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<QueryFeedsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2252,7 +2252,7 @@ namespace GetStream.Tests
         public async Task DeleteFeedUserDataAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var UserID = "test-UserID";
 
             var expectedResponse = new StreamResponse<DeleteFeedUserDataResponse>
@@ -2270,7 +2270,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedUserDataAsync(UserID,null);
+            var result = await _client.DeleteFeedUserDataAsync(UserID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2288,7 +2288,7 @@ namespace GetStream.Tests
         public async Task ExportFeedUserDataAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null;
+            object request = null!;
             var UserID = "test-UserID";
 
             var expectedResponse = new StreamResponse<ExportFeedUserDataResponse>
@@ -2306,7 +2306,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ExportFeedUserDataAsync(UserID,null);
+            var result = await _client.ExportFeedUserDataAsync(UserID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);

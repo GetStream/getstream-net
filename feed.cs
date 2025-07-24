@@ -10,9 +10,9 @@ namespace GetStream
 {
     public class FeedClient
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public FeedClient(Client client)
+        public FeedClient(IClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
@@ -264,17 +264,6 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, DeleteActivityReactionResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/reactions/{type}",queryParams,null,pathParams,
-                cancellationToken);
-                
-            return result;
-        }
-        public async Task<StreamResponse<CreateFeedsBatchResponse>> CreateFeedsBatchAsync(CreateFeedsBatchRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            
-            var result = await _client.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
-                "POST",
-                "/api/v2/feeds/batch",null,request,null,
                 cancellationToken);
                 
             return result;
@@ -799,6 +788,28 @@ namespace GetStream
                 
             return result;
         }
+        public async Task<StreamResponse<CreateFeedsBatchResponse>> CreateFeedsBatchAsync(CreateFeedsBatchRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/batch",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<QueryFeedsResponse>> QueryFeedsAsync(QueryFeedsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            
+            var result = await _client.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/query",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
         public async Task<StreamResponse<UpdateFollowResponse>> UpdateFollowAsync(UpdateFollowRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -877,17 +888,6 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, UnfollowResponse>(
                 "DELETE",
                 "/api/v2/feeds/follows/{source}/{target}",null,null,pathParams,
-                cancellationToken);
-                
-            return result;
-        }
-        public async Task<StreamResponse<QueryFeedsResponse>> QueryFeedsAsync(QueryFeedsRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            
-            var result = await _client.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
-                "POST",
-                "/api/v2/feeds/query",null,request,null,
                 cancellationToken);
                 
             return result;
