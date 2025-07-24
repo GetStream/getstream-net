@@ -8,12 +8,12 @@ using System.Collections.Generic;
 
 namespace GetStream.Tests
 {
-    public class FeedTests
+    public class FeedTests2
     {
         private Client _client;
         private FeedClient _feeds;
 
-        public FeedTests()
+        public FeedTests2()
         {
             // Initialize with placeholder credentials - will be updated by UpdateCredentials
             _client = new Client(

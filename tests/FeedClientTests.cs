@@ -11,7 +11,7 @@ using FluentAssertions;
 namespace GetStream.Tests
 {
     [TestFixture]
-    public class FeedClientTests : TestBase
+    public class FeedTests1 : TestBase
     {
         [Test]
         public async Task CreateAndGetFeed_ShouldSucceed()
