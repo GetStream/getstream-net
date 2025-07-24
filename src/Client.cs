@@ -12,19 +12,26 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    public class Client : IClient
+    public class BaseClient :IClient
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-        private readonly string _apiSecret;
-        private readonly string _baseUrl;
+        protected string ApiKey;
+        protected string ApiSecret;
+        protected string BaseUrl;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public Client(string apiKey, string apiSecret, string baseUrl = "https://chat-edge-ohio-ce1.stream-io-api.com")
+        //getters 
+        // public string ApiKey => _apiKey;
+        // public string ApiSecret => _apiSecret;
+        // public string BaseUrl => _baseUrl;
+        
+        
+        
+        public BaseClient(string apiKey, string apiSecret, string baseUrl = "https://chat-edge-ohio-ce1.stream-io-api.com")
         {
-            _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
-            _apiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
-            _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
+            ApiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
+            ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
+            BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
             _httpClient = new HttpClient();
             
             // Configure JSON options once
@@ -146,7 +153,7 @@ namespace GetStream
 
         private string BuildUrl(string path, Dictionary<string, string>? queryParams, Dictionary<string, string>? pathParams)
         {
-            var url = _baseUrl + path;
+            var url = BaseUrl + path;
 
             // Replace path parameters
             if (pathParams != null)
@@ -168,7 +175,7 @@ namespace GetStream
             }
             
             // Add API key to query parameters
-            allQueryParams["api_key"] = _apiKey;
+            allQueryParams["api_key"] = ApiKey;
 
             // Add query parameters
             if (allQueryParams.Count > 0)
@@ -187,7 +194,7 @@ namespace GetStream
         private string GenerateServerSideToken()
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_apiSecret);
+            var key = Encoding.ASCII.GetBytes(ApiSecret);
             var claims = new List<System.Security.Claims.Claim>
             {
                 // new System.Security.Claims.Claim("user_id", "*"),

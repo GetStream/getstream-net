@@ -28,20 +28,20 @@ namespace GetStream.Example
             }
 
             // Initialize the client
-            var client = new Client(apiKey, apiSecret);
+            var client = new Client(apiKey, apiSecret);  // Remove empty base URL to use default
             var feeds = new FeedClient(client);
 
             try
             {
                 // 0. Create a user
                 Console.WriteLine("0. Creating user...");
-                var userRes = await feeds.UpdateUsersAsync(
+                var userRes = await client.UpdateUsersAsync(
                     new UpdateUsersRequest
                     {
                         Users = new Dictionary<string, UserRequest> 
                         { 
                             { 
-                                "sara", 
+                                "okabe", // Changed from "sara" to match the user ID
                                 new UserRequest 
                                 { 
                                     ID = "okabe",
@@ -77,7 +77,7 @@ namespace GetStream.Example
                         Type = "post",
                         Fids = new List<string> { "user:example-feed-1" },
                         Text = "Hello from .NET SDK! This is my first activity.",
-                        UserID = "sara"
+                        UserID = "okabe"
                     }
                 );
                 Console.WriteLine("✅ Activity added successfully!");
@@ -93,7 +93,7 @@ namespace GetStream.Example
                         Type = "comment",
                         Fids = new List<string> { "user:example-feed-1" },
                         Text = "This is a great post!",
-                        UserID = "sara"
+                        UserID = "okabe"
                     }
                 );
                 Console.WriteLine("✅ Comment added successfully!");
@@ -123,7 +123,7 @@ namespace GetStream.Example
                     FeedID: "example-feed-1",
                     request: new GetOrCreateFeedRequest
                     {
-                        UserID = "sara"
+                        UserID = "okabe"
                     }
                 );
                 Console.WriteLine("✅ Feed retrieved successfully!");
