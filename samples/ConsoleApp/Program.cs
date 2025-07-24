@@ -33,17 +33,41 @@ namespace GetStream.Example
 
             try
             {
+                // 0. Create a user
+                Console.WriteLine("0. Creating user...");
+                var userRes = await feeds.UpdateUsersAsync(
+                    new UpdateUsersRequest
+                    {
+                        Users = new Dictionary<string, UserRequest> 
+                        { 
+                            { 
+                                "sara", 
+                                new UserRequest 
+                                { 
+                                    ID = "okabe",
+                                    Name = "Okabe",
+                                    Custom = new Dictionary<string, object>
+                                    {
+                                        { "occupation", "Scientist" }
+                                    }
+                                } 
+                            } 
+                        }
+                    }
+                );
+
+                
                 // 1. Create a feed
                 Console.WriteLine("1. Creating feed...");
-                var createResponse = await feeds.GetOrCreateFeedAsync(
+                var feedRes = await feeds.GetOrCreateFeedAsync(
                     FeedGroupID: "user",
                     FeedID: "example-feed-1",
                     request: new GetOrCreateFeedRequest
                     {
-                        UserID = "sara"
+                        UserID = userRes.Data?.Users.FirstOrDefault().Value.ID
                     }
                 );
-                Console.WriteLine($"✅ Feed created successfully: {createResponse.Data}\n");
+                Console.WriteLine($"✅ Feed created successfully: {feedRes.Data}\n");
 
                 // 2. Add an activity to the feed
                 Console.WriteLine("2. Adding activity to feed...");
