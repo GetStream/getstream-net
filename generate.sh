@@ -23,7 +23,7 @@ sed -i '' 's/\[JsonPropertyName("delete_reaction")\]/\/\/ [JsonPropertyName("del
 sed -i '' 's/public DeleteReactionRequest? DeleteReaction { get; set; }/\/\/ public DeleteReactionRequest? DeleteReaction { get; set; }/' $DST_PATH/src/requests.cs
 
 # Rename Upload methods to match new naming convention
-sed -i '' 's/UploadFile/FileUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/FeedIntegrationTests.cs
-sed -i '' 's/UploadImage/ImageUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/FeedIntegrationTests.cs
+sed -i '' 's/UploadFile/FileUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/FeedIntegrationTests.cs $DST_PATH/src/CommonClient.cs
+sed -i '' 's/UploadImage/ImageUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/FeedIntegrationTests.cs $DST_PATH/src/CommonClient.cs
 
 echo "Generated .NET SDK for feeds in $DST_PATH" 
