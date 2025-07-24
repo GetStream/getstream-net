@@ -14,7 +14,7 @@ export STREAM_API_SECRET=your-api-secret-here
 export GETSTREAM_APP_ID=your-app-id-here  # Optional
 ```
 
-For detailed setup instructions, see [Example]([Example](https://github.com/GetStream/getstream-net/blob/master/samples/ConsoleApp/Program.cs)).
+For detailed setup instructions, see [Example](samples/ConsoleApp/Program.cs).
 
 ## Structure
 
