@@ -34,6 +34,8 @@ namespace GetStream
 
             return queryParams;
         }
+        
+        // Create a new activity or update an existing one
         public async Task<StreamResponse<AddActivityResponse>> AddActivityAsync(AddActivityRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -44,6 +46,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Create new activities or update existing ones in a batch operation
         public async Task<StreamResponse<UpsertActivitiesResponse>> UpsertActivitiesAsync(UpsertActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -54,6 +58,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete one or more activities by their IDs
         public async Task<StreamResponse<DeleteActivitiesResponse>> DeleteActivitiesAsync(DeleteActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -64,6 +70,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query activities based on filters with pagination and sorting options
         public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(QueryActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -74,6 +82,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete a single activity by its ID
         public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -89,6 +99,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Returns activity by ID
         public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -103,6 +115,11 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Updates certain fields of the activity
+        
+        // Sends events:
+        // - feeds.activity.updated
         public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string ActivityID,UpdateActivityPartialRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -117,6 +134,11 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Replaces an activity with the provided data
+        
+        // Sends events:
+        // - feeds.activity.updated
         public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string ActivityID,UpdateActivityRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -131,6 +153,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Deletes a bookmark from an activity
         public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -146,6 +170,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Updates a bookmark for an activity
         public async Task<StreamResponse<UpdateBookmarkResponse>> UpdateBookmarkAsync(string ActivityID,UpdateBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -160,6 +186,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Adds a bookmark to an activity
         public async Task<StreamResponse<AddBookmarkResponse>> AddBookmarkAsync(string ActivityID,AddBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -174,6 +202,16 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Cast a vote on a poll
+        
+        // Sends events:
+        // - feeds.poll.vote_casted
+        // - feeds.poll.vote_changed
+        // - feeds.poll.vote_removed
+        // - poll.vote_casted
+        // - poll.vote_changed
+        // - poll.vote_removed
         public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string ActivityID, string PollID,CastPollVoteRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -189,6 +227,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete a vote from a poll
+        
+        // Sends events:
+        // - feeds.poll.vote_removed
+        // - poll.vote_removed
         public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string ActivityID, string PollID, string VoteID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -206,6 +250,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Adds a reaction to an activity
         public async Task<StreamResponse<AddReactionResponse>> AddReactionAsync(string ActivityID,AddReactionRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -220,6 +266,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query activity reactions
         public async Task<StreamResponse<QueryActivityReactionsResponse>> QueryActivityReactionsAsync(string ActivityID,QueryActivityReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -234,6 +282,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Removes a reaction from an activity
         public async Task<StreamResponse<DeleteActivityReactionResponse>> DeleteActivityReactionAsync(string ActivityID, string Type,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -250,6 +300,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query bookmark folders with filter query
         public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(QueryBookmarkFoldersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -260,6 +312,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete a bookmark folder by its ID
         public async Task<StreamResponse<DeleteBookmarkFolderResponse>> DeleteBookmarkFolderAsync(string FolderID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -274,6 +328,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Update a bookmark folder by its ID
         public async Task<StreamResponse<UpdateBookmarkFolderResponse>> UpdateBookmarkFolderAsync(string FolderID,UpdateBookmarkFolderRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -288,6 +344,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query bookmarks with filter query
         public async Task<StreamResponse<QueryBookmarksResponse>> QueryBookmarksAsync(QueryBookmarksRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -298,6 +356,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Retrieve a threaded list of comments for a specific object (e.g., activity), with configurable depth, sorting, and pagination
         public async Task<StreamResponse<GetCommentsResponse>> GetCommentsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -309,6 +369,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Adds a comment to an object (e.g., activity) or a reply to an existing comment, and broadcasts appropriate events
         public async Task<StreamResponse<AddCommentResponse>> AddCommentAsync(AddCommentRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -319,6 +381,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Adds multiple comments in a single request. Each comment must specify the object type and ID.
         public async Task<StreamResponse<AddCommentsBatchResponse>> AddCommentsBatchAsync(AddCommentsBatchRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -329,6 +393,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query comments using MongoDB-style filters with pagination and sorting options
         public async Task<StreamResponse<QueryCommentsResponse>> QueryCommentsAsync(QueryCommentsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -339,6 +405,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Deletes a comment from an object (e.g., activity) and broadcasts appropriate events
         public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string CommentID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -353,6 +421,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Get a comment by ID
         public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string CommentID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -367,6 +437,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Updates a comment on an object (e.g., activity) and broadcasts appropriate events
         public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string CommentID,UpdateCommentRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -381,6 +453,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Adds a reaction to a comment
         public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string CommentID,AddCommentReactionRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -395,6 +469,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query comment reactions
         public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string CommentID,QueryCommentReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -409,6 +485,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Deletes a reaction from a comment
         public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string CommentID, string Type,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -425,6 +503,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Retrieve a threaded list of replies for a single comment, with configurable depth, sorting, and pagination
         public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string CommentID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -440,6 +520,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // List all feed groups for the application
         public async Task<StreamResponse<ListFeedGroupsResponse>> ListFeedGroupsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -450,6 +532,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Creates a new feed group with the specified configuration
         public async Task<StreamResponse<CreateFeedGroupResponse>> CreateFeedGroupAsync(CreateFeedGroupRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -460,6 +544,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete a feed group by its ID. Can perform a soft delete (default) or hard delete.
         public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string FeedGroupID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -475,6 +561,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Get a feed group by ID
         public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string FeedGroupID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -489,6 +577,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Update a feed group by ID
         public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string FeedGroupID,UpdateFeedGroupRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -503,6 +593,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete a single feed by its ID
         public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string FeedGroupID, string FeedID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -519,6 +611,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Create a single feed for a given feed group
         public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(string FeedGroupID, string FeedID,GetOrCreateFeedRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -534,6 +628,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Update an existing feed
         public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(string FeedGroupID, string FeedID,UpdateFeedRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -549,6 +645,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Mark activities as read/seen/watched. Can mark by timestamp (seen), activity IDs (read), or all as read.
         public async Task<StreamResponse<Response>> MarkActivityAsync(string FeedGroupID, string FeedID,MarkActivityRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -564,6 +662,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Unpin an activity from a feed. This removes the pin, so the activity will no longer be displayed at the top of the feed.
         public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -581,6 +681,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Pin an activity to a feed. Pinned activities are typically displayed at the top of a feed.
         public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,PinActivityRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -597,6 +699,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Add, remove, or set members for a feed
         public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string FeedGroupID, string FeedID,UpdateFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -612,6 +716,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Accepts a pending feed member request
         public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(string FeedID, string FeedGroupID,AcceptFeedMemberInviteRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -627,6 +733,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query feed members based on filters with pagination and sorting options
         public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(string FeedGroupID, string FeedID,QueryFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -642,6 +750,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Rejects a pending feed member request
         public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(string FeedGroupID, string FeedID,RejectFeedMemberInviteRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -657,6 +767,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Get follow suggestions for a feed group
         public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string FeedGroupID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -672,6 +784,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // List all feed views for a feed group
         public async Task<StreamResponse<ListFeedViewsResponse>> ListFeedViewsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -682,6 +796,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Create a custom view for a feed group with specific selectors, ranking, or aggregation options
         public async Task<StreamResponse<CreateFeedViewResponse>> CreateFeedViewAsync(CreateFeedViewRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -692,6 +808,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete an existing custom feed view
         public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string ViewID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -706,6 +824,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Get a feed view by its ID
         public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string ViewID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -720,6 +840,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Update an existing custom feed view with new selectors, ranking, or aggregation options
         public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string ViewID,UpdateFeedViewRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -734,6 +856,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Create multiple feeds at once for a given feed group
         public async Task<StreamResponse<CreateFeedsBatchResponse>> CreateFeedsBatchAsync(CreateFeedsBatchRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -744,6 +868,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query feeds with filter query
         public async Task<StreamResponse<QueryFeedsResponse>> QueryFeedsAsync(QueryFeedsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -754,6 +880,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Updates a follow's custom data, push preference, and follower role. Source owner can update custom data and push preference. Target owner can update follower role.
         public async Task<StreamResponse<UpdateFollowResponse>> UpdateFollowAsync(UpdateFollowRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -764,6 +892,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Creates a follow and broadcasts FollowAddedEvent
         public async Task<StreamResponse<SingleFollowResponse>> FollowAsync(FollowRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -774,6 +904,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Accepts a pending follow request
         public async Task<StreamResponse<AcceptFollowResponse>> AcceptFollowAsync(AcceptFollowRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -784,6 +916,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Creates multiple follows at once and broadcasts FollowAddedEvent for each follow
         public async Task<StreamResponse<FollowBatchResponse>> FollowBatchAsync(FollowBatchRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -794,6 +928,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Query follows based on filters with pagination and sorting options
         public async Task<StreamResponse<QueryFollowsResponse>> QueryFollowsAsync(QueryFollowsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -804,6 +940,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Rejects a pending follow request
         public async Task<StreamResponse<RejectFollowResponse>> RejectFollowAsync(RejectFollowRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -814,6 +952,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Removes a follow and broadcasts FollowRemovedEvent
         public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string Source, string Target,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -829,6 +969,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Removes multiple follows at once and broadcasts FollowRemovedEvent for each one
         public async Task<StreamResponse<UnfollowBatchResponse>> UnfollowBatchAsync(UnfollowBatchRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -839,6 +981,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Delete all activities, reactions, comments, and bookmarks for a user
         public async Task<StreamResponse<DeleteFeedUserDataResponse>> DeleteFeedUserDataAsync(string UserID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -853,6 +997,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+        
+        // Export all activities, reactions, comments, and bookmarks for a user
         public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string UserID,object request = null,
             CancellationToken cancellationToken = default)
         {
