@@ -40,7 +40,7 @@ namespace GetStream
         public async Task<StreamResponse<GetApplicationResponse>> GetAppAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<object, GetApplicationResponse>(
                 "GET",
                 "/api/v2/app",null,null,null,
@@ -51,7 +51,7 @@ namespace GetStream
         public async Task<StreamResponse<Response>> UpdateAppAsync(UpdateAppRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<UpdateAppRequest, Response>(
                 "PATCH",
                 "/api/v2/app",null,request,null,
@@ -63,7 +63,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, ListBlockListResponse>(
                 "GET",
                 "/api/v2/blocklists",queryParams,null,null,
@@ -74,7 +74,7 @@ namespace GetStream
         public async Task<StreamResponse<CreateBlockListResponse>> CreateBlockListAsync(CreateBlockListRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateBlockListRequest, CreateBlockListResponse>(
                 "POST",
                 "/api/v2/blocklists",null,request,null,
@@ -90,7 +90,7 @@ namespace GetStream
                 ["name"] = Name,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/blocklists/{name}",queryParams,null,pathParams,
@@ -106,7 +106,7 @@ namespace GetStream
                 ["name"] = Name,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, GetBlockListResponse>(
                 "GET",
                 "/api/v2/blocklists/{name}",queryParams,null,pathParams,
@@ -121,7 +121,7 @@ namespace GetStream
             {
                 ["name"] = Name,
             };
-            
+
             var result = await MakeRequestAsync<UpdateBlockListRequest, UpdateBlockListResponse>(
                 "PUT",
                 "/api/v2/blocklists/{name}",null,request,pathParams,
@@ -132,7 +132,7 @@ namespace GetStream
         public async Task<StreamResponse<CheckPushResponse>> CheckPushAsync(CheckPushRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CheckPushRequest, CheckPushResponse>(
                 "POST",
                 "/api/v2/check_push",null,request,null,
@@ -143,7 +143,7 @@ namespace GetStream
         public async Task<StreamResponse<CheckSNSResponse>> CheckSNSAsync(CheckSNSRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CheckSNSRequest, CheckSNSResponse>(
                 "POST",
                 "/api/v2/check_sns",null,request,null,
@@ -154,7 +154,7 @@ namespace GetStream
         public async Task<StreamResponse<CheckSQSResponse>> CheckSQSAsync(CheckSQSRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CheckSQSRequest, CheckSQSResponse>(
                 "POST",
                 "/api/v2/check_sqs",null,request,null,
@@ -166,7 +166,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/devices",queryParams,null,null,
@@ -178,7 +178,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, ListDevicesResponse>(
                 "GET",
                 "/api/v2/devices",queryParams,null,null,
@@ -189,7 +189,7 @@ namespace GetStream
         public async Task<StreamResponse<Response>> CreateDeviceAsync(CreateDeviceRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateDeviceRequest, Response>(
                 "POST",
                 "/api/v2/devices",null,request,null,
@@ -200,7 +200,7 @@ namespace GetStream
         public async Task<StreamResponse<ExportUsersResponse>> ExportUsersAsync(ExportUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<ExportUsersRequest, ExportUsersResponse>(
                 "POST",
                 "/api/v2/export/users",null,request,null,
@@ -211,7 +211,7 @@ namespace GetStream
         public async Task<StreamResponse<ListExternalStorageResponse>> ListExternalStorageAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<object, ListExternalStorageResponse>(
                 "GET",
                 "/api/v2/external_storage",null,null,null,
@@ -222,7 +222,7 @@ namespace GetStream
         public async Task<StreamResponse<CreateExternalStorageResponse>> CreateExternalStorageAsync(CreateExternalStorageRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateExternalStorageRequest, CreateExternalStorageResponse>(
                 "POST",
                 "/api/v2/external_storage",null,request,null,
@@ -237,7 +237,7 @@ namespace GetStream
             {
                 ["name"] = Name,
             };
-            
+
             var result = await MakeRequestAsync<object, DeleteExternalStorageResponse>(
                 "DELETE",
                 "/api/v2/external_storage/{name}",null,null,pathParams,
@@ -252,7 +252,7 @@ namespace GetStream
             {
                 ["name"] = Name,
             };
-            
+
             var result = await MakeRequestAsync<UpdateExternalStorageRequest, UpdateExternalStorageResponse>(
                 "PUT",
                 "/api/v2/external_storage/{name}",null,request,pathParams,
@@ -267,7 +267,7 @@ namespace GetStream
             {
                 ["name"] = Name,
             };
-            
+
             var result = await MakeRequestAsync<object, CheckExternalStorageResponse>(
                 "GET",
                 "/api/v2/external_storage/{name}/check",null,null,pathParams,
@@ -278,7 +278,7 @@ namespace GetStream
         public async Task<StreamResponse<CreateGuestResponse>> CreateGuestAsync(CreateGuestRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateGuestRequest, CreateGuestResponse>(
                 "POST",
                 "/api/v2/guest",null,request,null,
@@ -289,7 +289,7 @@ namespace GetStream
         public async Task<StreamResponse<CreateImportURLResponse>> CreateImportURLAsync(CreateImportURLRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateImportURLRequest, CreateImportURLResponse>(
                 "POST",
                 "/api/v2/import_urls",null,request,null,
@@ -300,7 +300,7 @@ namespace GetStream
         public async Task<StreamResponse<ListImportsResponse>> ListImportsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<object, ListImportsResponse>(
                 "GET",
                 "/api/v2/imports",null,null,null,
@@ -311,7 +311,7 @@ namespace GetStream
         public async Task<StreamResponse<CreateImportResponse>> CreateImportAsync(CreateImportRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateImportRequest, CreateImportResponse>(
                 "POST",
                 "/api/v2/imports",null,request,null,
@@ -326,7 +326,7 @@ namespace GetStream
             {
                 ["id"] = ID,
             };
-            
+
             var result = await MakeRequestAsync<object, GetImportResponse>(
                 "GET",
                 "/api/v2/imports/{id}",null,null,pathParams,
@@ -338,7 +338,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, GetOGResponse>(
                 "GET",
                 "/api/v2/og",queryParams,null,null,
@@ -349,7 +349,7 @@ namespace GetStream
         public async Task<StreamResponse<ListPermissionsResponse>> ListPermissionsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<object, ListPermissionsResponse>(
                 "GET",
                 "/api/v2/permissions",null,null,null,
@@ -364,7 +364,7 @@ namespace GetStream
             {
                 ["id"] = ID,
             };
-            
+
             var result = await MakeRequestAsync<object, GetCustomPermissionResponse>(
                 "GET",
                 "/api/v2/permissions/{id}",null,null,pathParams,
@@ -375,7 +375,7 @@ namespace GetStream
         public async Task<StreamResponse<PollResponse>> CreatePollAsync(CreatePollRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreatePollRequest, PollResponse>(
                 "POST",
                 "/api/v2/polls",null,request,null,
@@ -386,7 +386,7 @@ namespace GetStream
         public async Task<StreamResponse<PollResponse>> UpdatePollAsync(UpdatePollRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<UpdatePollRequest, PollResponse>(
                 "PUT",
                 "/api/v2/polls",null,request,null,
@@ -398,7 +398,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<QueryPollsRequest, QueryPollsResponse>(
                 "POST",
                 "/api/v2/polls/query",queryParams,request,null,
@@ -414,7 +414,7 @@ namespace GetStream
                 ["poll_id"] = PollID,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/polls/{poll_id}",queryParams,null,pathParams,
@@ -430,7 +430,7 @@ namespace GetStream
                 ["poll_id"] = PollID,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, PollResponse>(
                 "GET",
                 "/api/v2/polls/{poll_id}",queryParams,null,pathParams,
@@ -445,7 +445,7 @@ namespace GetStream
             {
                 ["poll_id"] = PollID,
             };
-            
+
             var result = await MakeRequestAsync<UpdatePollPartialRequest, PollResponse>(
                 "PATCH",
                 "/api/v2/polls/{poll_id}",null,request,pathParams,
@@ -460,7 +460,7 @@ namespace GetStream
             {
                 ["poll_id"] = PollID,
             };
-            
+
             var result = await MakeRequestAsync<CreatePollOptionRequest, PollOptionResponse>(
                 "POST",
                 "/api/v2/polls/{poll_id}/options",null,request,pathParams,
@@ -475,7 +475,7 @@ namespace GetStream
             {
                 ["poll_id"] = PollID,
             };
-            
+
             var result = await MakeRequestAsync<UpdatePollOptionRequest, PollOptionResponse>(
                 "PUT",
                 "/api/v2/polls/{poll_id}/options",null,request,pathParams,
@@ -492,7 +492,7 @@ namespace GetStream
                 ["option_id"] = OptionID,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/polls/{poll_id}/options/{option_id}",queryParams,null,pathParams,
@@ -509,7 +509,7 @@ namespace GetStream
                 ["option_id"] = OptionID,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, PollOptionResponse>(
                 "GET",
                 "/api/v2/polls/{poll_id}/options/{option_id}",queryParams,null,pathParams,
@@ -525,7 +525,7 @@ namespace GetStream
                 ["poll_id"] = PollID,
             };
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<QueryPollVotesRequest, PollVotesResponse>(
                 "POST",
                 "/api/v2/polls/{poll_id}/votes",queryParams,request,pathParams,
@@ -536,7 +536,7 @@ namespace GetStream
         public async Task<StreamResponse<ListPushProvidersResponse>> ListPushProvidersAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<object, ListPushProvidersResponse>(
                 "GET",
                 "/api/v2/push_providers",null,null,null,
@@ -547,7 +547,7 @@ namespace GetStream
         public async Task<StreamResponse<UpsertPushProviderResponse>> UpsertPushProviderAsync(UpsertPushProviderRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<UpsertPushProviderRequest, UpsertPushProviderResponse>(
                 "POST",
                 "/api/v2/push_providers",null,request,null,
@@ -563,7 +563,7 @@ namespace GetStream
                 ["type"] = Type,
                 ["name"] = Name,
             };
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/push_providers/{type}/{name}",null,null,pathParams,
@@ -575,7 +575,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, GetRateLimitsResponse>(
                 "GET",
                 "/api/v2/rate_limits",queryParams,null,null,
@@ -586,7 +586,7 @@ namespace GetStream
         public async Task<StreamResponse<ListRolesResponse>> ListRolesAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<object, ListRolesResponse>(
                 "GET",
                 "/api/v2/roles",null,null,null,
@@ -597,7 +597,7 @@ namespace GetStream
         public async Task<StreamResponse<CreateRoleResponse>> CreateRoleAsync(CreateRoleRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<CreateRoleRequest, CreateRoleResponse>(
                 "POST",
                 "/api/v2/roles",null,request,null,
@@ -612,7 +612,7 @@ namespace GetStream
             {
                 ["name"] = Name,
             };
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/roles/{name}",null,null,pathParams,
@@ -627,7 +627,7 @@ namespace GetStream
             {
                 ["id"] = ID,
             };
-            
+
             var result = await MakeRequestAsync<object, GetTaskResponse>(
                 "GET",
                 "/api/v2/tasks/{id}",null,null,pathParams,
@@ -639,7 +639,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/uploads/file",queryParams,null,null,
@@ -647,45 +647,45 @@ namespace GetStream
                 
             return result;
         }
-        // public async Task<StreamResponse<FileUploadResponse>> UploadFileAsync(UploadFileRequest request,
-        //     CancellationToken cancellationToken = default)
-        // {
-        //     
-        //     var result = await MakeRequestAsync<UploadFileRequest, FileUploadResponse>(
-        //         "POST",
-        //         "/api/v2/uploads/file",null,request,null,
-        //         cancellationToken);
-        //         
-        //     return result;
-        // }
-        // public async Task<StreamResponse<Response>> DeleteImageAsync(object request = null,
-        //     CancellationToken cancellationToken = default)
-        // {
-        //     var queryParams = ExtractQueryParams(request);
-        //     
-        //     var result = await MakeRequestAsync<object, Response>(
-        //         "DELETE",
-        //         "/api/v2/uploads/image",queryParams,null,null,
-        //         cancellationToken);
-        //         
-        //     return result;
-        // }
-        // public async Task<StreamResponse<ImageUploadResponse>> UploadImageAsync(UploadImageRequest request,
-        //     CancellationToken cancellationToken = default)
-        // {
-        //     
-        //     var result = await MakeRequestAsync<UploadImageRequest, ImageUploadResponse>(
-        //         "POST",
-        //         "/api/v2/uploads/image",null,request,null,
-        //         cancellationToken);
-        //         
-        //     return result;
-        // }
+        public async Task<StreamResponse<FileUploadResponse>> FileUploadAsync(FileUploadRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<FileUploadRequest, FileUploadResponse>(
+                "POST",
+                "/api/v2/uploads/file",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<Response>> DeleteImageAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await MakeRequestAsync<object, Response>(
+                "DELETE",
+                "/api/v2/uploads/image",queryParams,null,null,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<ImageUploadResponse>> ImageUploadAsync(ImageUploadRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<ImageUploadRequest, ImageUploadResponse>(
+                "POST",
+                "/api/v2/uploads/image",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
         public async Task<StreamResponse<QueryUsersResponse>> QueryUsersAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, QueryUsersResponse>(
                 "GET",
                 "/api/v2/users",queryParams,null,null,
@@ -696,7 +696,7 @@ namespace GetStream
         public async Task<StreamResponse<UpdateUsersResponse>> UpdateUsersPartialAsync(UpdateUsersPartialRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<UpdateUsersPartialRequest, UpdateUsersResponse>(
                 "PATCH",
                 "/api/v2/users",null,request,null,
@@ -707,7 +707,7 @@ namespace GetStream
         public async Task<StreamResponse<UpdateUsersResponse>> UpdateUsersAsync(UpdateUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<UpdateUsersRequest, UpdateUsersResponse>(
                 "POST",
                 "/api/v2/users",null,request,null,
@@ -719,7 +719,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, GetBlockedUsersResponse>(
                 "GET",
                 "/api/v2/users/block",queryParams,null,null,
@@ -730,7 +730,7 @@ namespace GetStream
         public async Task<StreamResponse<BlockUsersResponse>> BlockUsersAsync(BlockUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<BlockUsersRequest, BlockUsersResponse>(
                 "POST",
                 "/api/v2/users/block",null,request,null,
@@ -741,7 +741,7 @@ namespace GetStream
         public async Task<StreamResponse<DeactivateUsersResponse>> DeactivateUsersAsync(DeactivateUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<DeactivateUsersRequest, DeactivateUsersResponse>(
                 "POST",
                 "/api/v2/users/deactivate",null,request,null,
@@ -752,7 +752,7 @@ namespace GetStream
         public async Task<StreamResponse<DeleteUsersResponse>> DeleteUsersAsync(DeleteUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<DeleteUsersRequest, DeleteUsersResponse>(
                 "POST",
                 "/api/v2/users/delete",null,request,null,
@@ -764,7 +764,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<object, SharedLocationsResponse>(
                 "GET",
                 "/api/v2/users/live_locations",queryParams,null,null,
@@ -776,7 +776,7 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var queryParams = ExtractQueryParams(request);
-            
+
             var result = await MakeRequestAsync<UpdateLiveLocationRequest, SharedLocationResponse>(
                 "PUT",
                 "/api/v2/users/live_locations",queryParams,request,null,
@@ -787,7 +787,7 @@ namespace GetStream
         public async Task<StreamResponse<ReactivateUsersResponse>> ReactivateUsersAsync(ReactivateUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<ReactivateUsersRequest, ReactivateUsersResponse>(
                 "POST",
                 "/api/v2/users/reactivate",null,request,null,
@@ -798,7 +798,7 @@ namespace GetStream
         public async Task<StreamResponse<Response>> RestoreUsersAsync(RestoreUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<RestoreUsersRequest, Response>(
                 "POST",
                 "/api/v2/users/restore",null,request,null,
@@ -809,7 +809,7 @@ namespace GetStream
         public async Task<StreamResponse<UnblockUsersResponse>> UnblockUsersAsync(UnblockUsersRequest request,
             CancellationToken cancellationToken = default)
         {
-            
+
             var result = await MakeRequestAsync<UnblockUsersRequest, UnblockUsersResponse>(
                 "POST",
                 "/api/v2/users/unblock",null,request,null,
@@ -824,7 +824,7 @@ namespace GetStream
             {
                 ["user_id"] = UserID,
             };
-            
+
             var result = await MakeRequestAsync<DeactivateUserRequest, DeactivateUserResponse>(
                 "POST",
                 "/api/v2/users/{user_id}/deactivate",null,request,pathParams,
@@ -839,7 +839,7 @@ namespace GetStream
             {
                 ["user_id"] = UserID,
             };
-            
+
             var result = await MakeRequestAsync<object, ExportUserResponse>(
                 "GET",
                 "/api/v2/users/{user_id}/export",null,null,pathParams,
@@ -854,7 +854,7 @@ namespace GetStream
             {
                 ["user_id"] = UserID,
             };
-            
+
             var result = await MakeRequestAsync<ReactivateUserRequest, ReactivateUserResponse>(
                 "POST",
                 "/api/v2/users/{user_id}/reactivate",null,request,pathParams,

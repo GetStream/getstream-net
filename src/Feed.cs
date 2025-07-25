@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using GetStream.Requests;
 using GetStream.Models;
 
-//client.tpl
 namespace GetStream
 {
     public class FeedClient
@@ -43,7 +42,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpsertActivitiesResponse>> UpsertActivitiesAsync(UpsertActivitiesRequest request,
@@ -54,7 +52,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/batch",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteActivitiesResponse>> DeleteActivitiesAsync(DeleteActivitiesRequest request,
@@ -65,7 +62,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/delete",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(QueryActivitiesRequest request,
@@ -76,7 +72,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/query",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string ActivityID,object request = null,
@@ -92,7 +87,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string ActivityID,object request = null,
@@ -107,7 +101,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/activities/{activity_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string ActivityID,UpdateActivityPartialRequest request,
@@ -122,7 +115,6 @@ namespace GetStream
                 "PATCH",
                 "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string ActivityID,UpdateActivityRequest request,
@@ -137,7 +129,6 @@ namespace GetStream
                 "PUT",
                 "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string ActivityID,object request = null,
@@ -153,7 +144,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateBookmarkResponse>> UpdateBookmarkAsync(string ActivityID,UpdateBookmarkRequest request,
@@ -168,7 +158,6 @@ namespace GetStream
                 "PATCH",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AddBookmarkResponse>> AddBookmarkAsync(string ActivityID,AddBookmarkRequest request,
@@ -183,7 +172,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string ActivityID, string PollID,CastPollVoteRequest request,
@@ -199,7 +187,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string ActivityID, string PollID, string VoteID,object request = null,
@@ -217,7 +204,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote/{vote_id}",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AddReactionResponse>> AddReactionAsync(string ActivityID,AddReactionRequest request,
@@ -232,7 +218,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryActivityReactionsResponse>> QueryActivityReactionsAsync(string ActivityID,QueryActivityReactionsRequest request,
@@ -247,7 +232,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions/query",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteActivityReactionResponse>> DeleteActivityReactionAsync(string ActivityID, string Type,object request = null,
@@ -264,7 +248,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/reactions/{type}",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(QueryBookmarkFoldersRequest request,
@@ -275,7 +258,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/bookmark_folders/query",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteBookmarkFolderResponse>> DeleteBookmarkFolderAsync(string FolderID,object request = null,
@@ -290,7 +272,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/bookmark_folders/{folder_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateBookmarkFolderResponse>> UpdateBookmarkFolderAsync(string FolderID,UpdateBookmarkFolderRequest request,
@@ -305,7 +286,6 @@ namespace GetStream
                 "PATCH",
                 "/api/v2/feeds/bookmark_folders/{folder_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryBookmarksResponse>> QueryBookmarksAsync(QueryBookmarksRequest request,
@@ -316,7 +296,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/bookmarks/query",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetCommentsResponse>> GetCommentsAsync(object request = null,
@@ -328,7 +307,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/comments",queryParams,null,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AddCommentResponse>> AddCommentAsync(AddCommentRequest request,
@@ -339,7 +317,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/comments",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AddCommentsBatchResponse>> AddCommentsBatchAsync(AddCommentsBatchRequest request,
@@ -350,7 +327,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/comments/batch",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryCommentsResponse>> QueryCommentsAsync(QueryCommentsRequest request,
@@ -361,7 +337,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/comments/query",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string CommentID,object request = null,
@@ -376,7 +351,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string CommentID,object request = null,
@@ -391,7 +365,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string CommentID,UpdateCommentRequest request,
@@ -406,7 +379,6 @@ namespace GetStream
                 "PATCH",
                 "/api/v2/feeds/comments/{comment_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string CommentID,AddCommentReactionRequest request,
@@ -421,7 +393,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/comments/{comment_id}/reactions",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string CommentID,QueryCommentReactionsRequest request,
@@ -436,7 +407,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/comments/{comment_id}/reactions/query",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string CommentID, string Type,object request = null,
@@ -453,7 +423,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/comments/{comment_id}/reactions/{type}",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string CommentID,object request = null,
@@ -469,7 +438,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/comments/{comment_id}/replies",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<ListFeedGroupsResponse>> ListFeedGroupsAsync(object request = null,
@@ -480,7 +448,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/feed_groups",null,null,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<CreateFeedGroupResponse>> CreateFeedGroupAsync(CreateFeedGroupRequest request,
@@ -491,7 +458,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string FeedGroupID,object request = null,
@@ -507,7 +473,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/feed_groups/{feed_group_id}",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string FeedGroupID,object request = null,
@@ -522,7 +487,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/feed_groups/{feed_group_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string FeedGroupID,UpdateFeedGroupRequest request,
@@ -537,7 +501,6 @@ namespace GetStream
                 "PUT",
                 "/api/v2/feeds/feed_groups/{feed_group_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string FeedGroupID, string FeedID,object request = null,
@@ -554,7 +517,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(string FeedGroupID, string FeedID,GetOrCreateFeedRequest request,
@@ -570,7 +532,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(string FeedGroupID, string FeedID,UpdateFeedRequest request,
@@ -586,7 +547,6 @@ namespace GetStream
                 "PUT",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<Response>> MarkActivityAsync(string FeedGroupID, string FeedID,MarkActivityRequest request,
@@ -602,7 +562,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/mark/batch",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,object request = null,
@@ -620,7 +579,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string FeedGroupID, string FeedID, string ActivityID,PinActivityRequest request,
@@ -637,7 +595,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string FeedGroupID, string FeedID,UpdateFeedMembersRequest request,
@@ -653,7 +610,6 @@ namespace GetStream
                 "PATCH",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(string FeedID, string FeedGroupID,AcceptFeedMemberInviteRequest request,
@@ -669,7 +625,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/accept",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(string FeedGroupID, string FeedID,QueryFeedMembersRequest request,
@@ -685,7 +640,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/query",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(string FeedGroupID, string FeedID,RejectFeedMemberInviteRequest request,
@@ -701,7 +655,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/reject",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string FeedGroupID,object request = null,
@@ -717,7 +670,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/follow_suggestions",queryParams,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<ListFeedViewsResponse>> ListFeedViewsAsync(object request = null,
@@ -728,7 +680,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/feed_views",null,null,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<CreateFeedViewResponse>> CreateFeedViewAsync(CreateFeedViewRequest request,
@@ -739,7 +690,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feed_views",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string ViewID,object request = null,
@@ -754,7 +704,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string ViewID,object request = null,
@@ -769,7 +718,6 @@ namespace GetStream
                 "GET",
                 "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string ViewID,UpdateFeedViewRequest request,
@@ -784,7 +732,6 @@ namespace GetStream
                 "PUT",
                 "/api/v2/feeds/feed_views/{view_id}",null,request,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<CreateFeedsBatchResponse>> CreateFeedsBatchAsync(CreateFeedsBatchRequest request,
@@ -795,7 +742,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feeds/batch",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryFeedsResponse>> QueryFeedsAsync(QueryFeedsRequest request,
@@ -806,7 +752,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/feeds/query",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UpdateFollowResponse>> UpdateFollowAsync(UpdateFollowRequest request,
@@ -817,7 +762,6 @@ namespace GetStream
                 "PATCH",
                 "/api/v2/feeds/follows",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<SingleFollowResponse>> FollowAsync(FollowRequest request,
@@ -828,7 +772,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/follows",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<AcceptFollowResponse>> AcceptFollowAsync(AcceptFollowRequest request,
@@ -839,7 +782,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/follows/accept",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<FollowBatchResponse>> FollowBatchAsync(FollowBatchRequest request,
@@ -850,7 +792,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/follows/batch",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<QueryFollowsResponse>> QueryFollowsAsync(QueryFollowsRequest request,
@@ -861,7 +802,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/follows/query",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<RejectFollowResponse>> RejectFollowAsync(RejectFollowRequest request,
@@ -872,7 +812,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/follows/reject",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string Source, string Target,object request = null,
@@ -888,7 +827,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/follows/{source}/{target}",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<UnfollowBatchResponse>> UnfollowBatchAsync(UnfollowBatchRequest request,
@@ -899,7 +837,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/unfollow/batch",null,request,null,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<DeleteFeedUserDataResponse>> DeleteFeedUserDataAsync(string UserID,object request = null,
@@ -914,7 +851,6 @@ namespace GetStream
                 "DELETE",
                 "/api/v2/feeds/users/{user_id}/delete",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
         public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string UserID,object request = null,
@@ -929,7 +865,6 @@ namespace GetStream
                 "POST",
                 "/api/v2/feeds/users/{user_id}/export",null,null,pathParams,
                 cancellationToken);
-                
             return result;
         }
             }

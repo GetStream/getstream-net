@@ -16,4 +16,4 @@ namespace GetStream
             Dictionary<string, string>? pathParams,
             CancellationToken cancellationToken = default);
     }
-} 
+}
