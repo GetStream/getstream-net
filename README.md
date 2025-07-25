@@ -13,14 +13,13 @@ The project includes a Makefile for common development tasks:
 export STREAM_API_KEY=your-api-key-here
 export STREAM_API_SECRET=your-api-secret-here
 
-# Run the main application
-make run
-
 # Run the sample application
 make sample
 
+# Run tests
+make test
+
 # Additional commands available in Makefile
-make test      # Run the test suite
 make build     # Build the project
 make clean     # Clean build artifacts
 ```
