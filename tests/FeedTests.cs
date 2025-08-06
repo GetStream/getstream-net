@@ -11,7 +11,7 @@ namespace GetStream.Tests
     public class FeedTests2
     {
         private Client _client;
-        private FeedClient _feeds;
+        private FeedsV3Client _feeds;
 
         public FeedTests2()
         {
@@ -20,13 +20,13 @@ namespace GetStream.Tests
                 apiKey: "placeholder",
                 apiSecret: "placeholder"
             );
-            _feeds = new FeedClient(_client);
+            _feeds = new FeedsV3Client(_client);
         }
 
         public void UpdateCredentials(string apiKey, string apiSecret, string appId)
         {
             _client = new Client(apiKey, apiSecret);
-            _feeds = new FeedClient(_client);
+            _feeds = new FeedsV3Client(_client);
         }
 
         public async Task RunAllTests()
@@ -102,7 +102,7 @@ namespace GetStream.Tests
                 new AddActivityRequest
                 {
                     Type = "post",
-                    Fids = new List<string> { "user:test-feed-1" },
+                    Feeds = new List<string> { "user:test-feed-1" },
                     Text = "This is a test activity for verification",
                     UserID = "sara"
                 }
@@ -151,7 +151,7 @@ namespace GetStream.Tests
                 new AddActivityRequest
                 {
                     Type = "comment",
-                    Fids = new List<string> { "user:test-feed-1" },
+                    Feeds = new List<string> { "user:test-feed-1" },
                     Text = "This is a test comment",
                     UserID = "sara"
                 }

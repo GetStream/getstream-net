@@ -14,12 +14,12 @@ namespace GetStream.Tests
     public class FeedClientTests
     {
         private readonly Mock<IClient> _mockClient;
-        private readonly FeedClient _client;
+        private readonly FeedsV3Client _client;
 
         public FeedClientTests()
         {
             _mockClient = new Mock<IClient>();
-            _client = new FeedClient(_mockClient.Object);
+            _client = new FeedsV3Client(_mockClient.Object);
         }
         [Test]
         public async Task AddActivityAsync_ShouldCallCorrectEndpoint()
@@ -410,6 +410,42 @@ namespace GetStream.Tests
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<AddBookmarkRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task ActivityFeedbackAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new ActivityFeedbackRequest();
+            var ActivityID = "test-ActivityID";
+
+            var expectedResponse = new StreamResponse<ActivityFeedbackResponse>
+            {
+                Data = new ActivityFeedbackResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<ActivityFeedbackRequest, ActivityFeedbackResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<ActivityFeedbackRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.ActivityFeedbackAsync(ActivityID,request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<ActivityFeedbackRequest, ActivityFeedbackResponse>(
+                "POST",
+                "/api/v2/feeds/activities/{activity_id}/feedback",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<ActivityFeedbackRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

@@ -28,9 +28,9 @@ namespace GetStream.Example
             }
 
             // Initialize the client
-            var client = new Client(apiKey, apiSecret);  // Remove empty base URL to use default
-            var feeds = new FeedClient(client);
-
+            var feedsClient = new FeedsV3Client(apiKey, apiSecret);
+            var client=new Client(apiKey, apiSecret);
+            var feed = feedsClient.Feed("user", "userID1");
             try
             {
                 // 0. Create a user
@@ -59,9 +59,7 @@ namespace GetStream.Example
                 
                 // 1. Create a feed
                 Console.WriteLine("1. Creating feed...");
-                var feedRes = await feeds.GetOrCreateFeedAsync(
-                    FeedGroupID: "user",
-                    FeedID: "example-feed-1",
+                var feedRes = await feed.GetOrCreateFeedAsync(
                     request: new GetOrCreateFeedRequest
                     {
                         UserID = userRes.Data?.Users.FirstOrDefault().Value.ID
@@ -71,11 +69,11 @@ namespace GetStream.Example
 
                 // 2. Add an activity to the feed
                 Console.WriteLine("2. Adding activity to feed...");
-                var addActivityResponse = await feeds.AddActivityAsync(
+                var addActivityResponse = await feedsClient.AddActivityAsync(
                     new AddActivityRequest
                     {
                         Type = "post",
-                        Fids = new List<string> { "user:example-feed-1" },
+                        Feeds = new List<string> { "user:example-feed-1" },
                         Text = "Hello from .NET SDK! This is my first activity.",
                         UserID = "okabe"
                     }
@@ -87,11 +85,11 @@ namespace GetStream.Example
 
                 // 3. Add a comment to the activity
                 Console.WriteLine("3. Adding comment to activity...");
-                var addCommentResponse = await feeds.AddActivityAsync(
+                var addCommentResponse = await feedsClient.AddActivityAsync(
                     new AddActivityRequest
                     {
                         Type = "comment",
-                        Fids = new List<string> { "user:example-feed-1" },
+                        Feeds = new List<string> { "user:example-feed-1" },
                         Text = "This is a great post!",
                         UserID = "okabe"
                     }
@@ -102,7 +100,7 @@ namespace GetStream.Example
 
                 // 4. Fetch feed activities
                 Console.WriteLine("4. Fetching feed activities...");
-                var queryResponse = await feeds.QueryActivitiesAsync(
+                var queryResponse = await feedsClient.QueryActivitiesAsync(
                     new QueryActivitiesRequest
                     {
                         Limit = 10
@@ -118,9 +116,7 @@ namespace GetStream.Example
 
                 // 5. Get the feed we created
                 Console.WriteLine("5. Getting the feed we created...");
-                var getResponse = await feeds.GetOrCreateFeedAsync(
-                    FeedGroupID: "user",
-                    FeedID: "example-feed-1",
+                var getResponse = await feed.GetOrCreateFeedAsync(
                     request: new GetOrCreateFeedRequest
                     {
                         UserID = "okabe"

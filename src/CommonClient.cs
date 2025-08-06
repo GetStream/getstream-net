@@ -11,7 +11,7 @@ namespace GetStream
     public class Client : BaseClient
     {
         public Client(string apiKey, string apiSecret,
-            string baseUrl = "https://chat-edge-ohio-ce1.stream-io-api.com") : base(apiKey, apiSecret, baseUrl)
+            string baseUrl = "https://chat.stream-io-api.com") : base(apiKey, apiSecret, baseUrl)
         {
             this.ApiKey = apiKey;
             this.ApiSecret = apiSecret;

@@ -56,7 +56,7 @@ namespace GetStream.Tests
                 new AddActivityRequest
                 {
                     Type = "post",
-                    Fids = new List<string> { "user:test-feed-1" },
+                    Feeds = new List<string> { "user:test-feed-1" },
                     Text = "This is a test activity for verification",
                     UserID = "sara"
                 }
@@ -100,7 +100,7 @@ namespace GetStream.Tests
                 new AddActivityRequest
                 {
                     Type = "comment",
-                    Fids = new List<string> { "user:test-feed-1" },
+                    Feeds = new List<string> { "user:test-feed-1" },
                     Text = "This is a test comment",
                     UserID = "sara"
                 }

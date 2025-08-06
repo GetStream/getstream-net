@@ -8,7 +8,7 @@ namespace GetStream.Tests
     public class TestBase
     {
         protected Client Client { get; private set; } = null!;
-        protected FeedClient Feeds { get; private set; } = null!;
+        protected FeedsV3Client Feeds { get; private set; } = null!;
 
         [OneTimeSetUp]
         public void Setup()
@@ -22,7 +22,7 @@ namespace GetStream.Tests
                 throw new Exception("STREAM_API_SECRET environment variable is required");
 
             Client = new Client(apiKey, apiSecret);
-            Feeds = new FeedClient(Client);
+            Feeds = new FeedsV3Client(Client);
         }
     }
 } 

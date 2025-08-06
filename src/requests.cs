@@ -22,12 +22,29 @@ namespace GetStream.Requests
         [JsonPropertyName("follower_role")]
         public string? FollowerRole { get; set; }
     }
+    public class ActivityFeedbackRequest
+    {
+        [JsonPropertyName("hide")]
+        public bool? Hide { get; set; }
+        [JsonPropertyName("mute_user")]
+        public bool? MuteUser { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+        [JsonPropertyName("report")]
+        public bool? Report { get; set; }
+        [JsonPropertyName("show_less")]
+        public bool? ShowLess { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
     public class AddActivityRequest
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-        [JsonPropertyName("fids")]
-        public List<string> Fids { get; set; }
+        [JsonPropertyName("feeds")]
+        public List<string> Feeds { get; set; }
         [JsonPropertyName("expires_at")]
         public string? ExpiresAt { get; set; }
         [JsonPropertyName("id")]
@@ -406,19 +423,25 @@ namespace GetStream.Requests
     {
         [JsonPropertyName("feed_group_id")]
         public string FeedGroupID { get; set; }
-        [JsonPropertyName("default_view_id")]
-        public string? DefaultViewID { get; set; }
         [JsonPropertyName("default_visibility")]
         public string? DefaultVisibility { get; set; }
+        [JsonPropertyName("activity_processors")]
+        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
+        [JsonPropertyName("activity_selectors")]
+        public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
+        [JsonPropertyName("aggregation")]
+        public AggregationConfig? Aggregation { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("notification")]
         public NotificationConfig? Notification { get; set; }
+        [JsonPropertyName("ranking")]
+        public RankingConfig? Ranking { get; set; }
     }
     public class CreateFeedViewRequest
     {
-        [JsonPropertyName("view_id")]
-        public string ViewID { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
         [JsonPropertyName("activity_processors")]
         public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
@@ -1873,12 +1896,18 @@ namespace GetStream.Requests
     }
     public class UpdateFeedGroupRequest
     {
-        [JsonPropertyName("default_view_id")]
-        public string? DefaultViewID { get; set; }
+        [JsonPropertyName("activity_processors")]
+        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
+        [JsonPropertyName("activity_selectors")]
+        public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
+        [JsonPropertyName("aggregation")]
+        public AggregationConfig? Aggregation { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("notification")]
         public NotificationConfig? Notification { get; set; }
+        [JsonPropertyName("ranking")]
+        public RankingConfig? Ranking { get; set; }
     }
     public class UpdateFeedMembersRequest
     {
@@ -2057,22 +2086,6 @@ namespace GetStream.Requests
     {
         [JsonPropertyName("users")]
         public Dictionary<string, UserRequest> Users { get; set; }
-    }
-    public class UploadChannelFileRequest
-    {
-        [JsonPropertyName("file")]
-        public string? File { get; set; }
-        [JsonPropertyName("user")]
-        public OnlyUserID? User { get; set; }
-    }
-    public class UploadChannelRequest
-    {
-        [JsonPropertyName("file")]
-        public string? File { get; set; }
-        [JsonPropertyName("upload_sizes")]
-        public List<ImageSize> UploadSizes { get; set; }
-        [JsonPropertyName("user")]
-        public OnlyUserID? User { get; set; }
     }
     public class UpsertActivitiesRequest
     {
