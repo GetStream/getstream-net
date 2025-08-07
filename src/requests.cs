@@ -41,7 +41,7 @@ namespace GetStream.Requests
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-        [JsonPropertyName("fids")]//TODO ren to feeds after backend update
+        [JsonPropertyName("feeds")]
         public List<string> Feeds { get; set; }
         [JsonPropertyName("expires_at")]
         public string? ExpiresAt { get; set; }
