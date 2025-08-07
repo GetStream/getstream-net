@@ -66,12 +66,6 @@ namespace GetStream.Tests
         [Test]
         public async Task AddActivityAndVerify_ShouldSucceed()
         {
-            var allFeed = await FeedsV3Client.ListFeedGroupsAsync();
-            foreach (var var in allFeed.Data.Groups)
-            {
-                Console.WriteLine(var.Key+": "+var.Value.FeedGroupID);
-            }
-            
             // Add an activity to the feed
             var addActivityResponse = await FeedsV3Client.AddActivityAsync(
                 new AddActivityRequest

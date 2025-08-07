@@ -12,15 +12,17 @@ fi
 set -ex
 
 # cd in API repo, generate new spec and then generate code from it
-( cd $SOURCE_PATH ; make openapi ; go run ./cmd/chat-manager openapi generate-client --language dotnet --spec ./releases/v2/feeds-serverside-api.yaml --output $DST_PATH )
+( cd $SOURCE_PATH ; go run ./cmd/chat-manager openapi generate-client --language dotnet --spec ./releases/v2/feeds-serverside-api.yaml --output $DST_PATH )
 
-# Comment out problematic lines in requests.cs
+# Comment out problematic lines from openapi generation
 sed -i '' 's/\[JsonPropertyName("delete_activity")\]/\/\/ [JsonPropertyName("delete_activity")]/' $DST_PATH/src/requests.cs
 sed -i '' 's/public DeleteActivityRequest? DeleteActivity { get; set; }/\/\/ public DeleteActivityRequest? DeleteActivity { get; set; }/' $DST_PATH/src/requests.cs
 sed -i '' 's/\[JsonPropertyName("delete_message")\]/\/\/ [JsonPropertyName("delete_message")]/' $DST_PATH/src/requests.cs
 sed -i '' 's/public DeleteMessageRequest? DeleteMessage { get; set; }/\/\/ public DeleteMessageRequest? DeleteMessage { get; set; }/' $DST_PATH/src/requests.cs
 sed -i '' 's/\[JsonPropertyName("delete_reaction")\]/\/\/ [JsonPropertyName("delete_reaction")]/' $DST_PATH/src/requests.cs
 sed -i '' 's/public DeleteReactionRequest? DeleteReaction { get; set; }/\/\/ public DeleteReactionRequest? DeleteReaction { get; set; }/' $DST_PATH/src/requests.cs
+
+sed -i '' -e '/\[JsonPropertyName("Role")\]/,+1d' src/models.cs
 
 # Rename Upload methods to match new naming convention
 sed -i '' 's/UploadFile/FileUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/FeedIntegrationTests.cs $DST_PATH/src/CommonClient.cs
