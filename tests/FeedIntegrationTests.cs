@@ -11,12 +11,12 @@ using NUnit.Framework;
 namespace GetStream.Tests
 {
     [TestFixture]
-    public class FeedClientTests
+    public class FeedsClientTests
     {
         private readonly Mock<IClient> _mockClient;
         private readonly FeedsV3Client _client;
 
-        public FeedClientTests()
+        public FeedsClientTests()
         {
             _mockClient = new Mock<IClient>();
             _client = new FeedsV3Client(_mockClient.Object);

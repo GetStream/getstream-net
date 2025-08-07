@@ -4,9 +4,9 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    public class Client : BaseClient
+    public class StreamClient : BaseClient
     {
-        public Client(string apiKey, string apiSecret,
+        public StreamClient(string apiKey, string apiSecret,
             string baseUrl = "https://chat.stream-io-api.com") : base(apiKey, apiSecret, baseUrl)
         {
             this.ApiKey = apiKey;

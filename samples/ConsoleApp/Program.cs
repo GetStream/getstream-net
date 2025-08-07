@@ -29,7 +29,7 @@ namespace GetStream.Example
 
             // Initialize the client
             var feedsClient = new FeedsV3Client(apiKey, apiSecret);
-            var client=new Client(apiKey, apiSecret);
+            var client=new StreamClient(apiKey, apiSecret);
             var feed = feedsClient.Feed("user", "userID1");
             try
             {

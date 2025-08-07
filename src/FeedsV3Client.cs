@@ -14,7 +14,7 @@ namespace GetStream
         }
         public FeedsV3Client(string apiKey, string apiSecret)
         {
-            var client = new Client(apiKey, apiSecret);
+            var client = new StreamClient(apiKey, apiSecret);
             _client = client;
         }
         public Feed Feed(string feedGroup, string feedId)

@@ -10,23 +10,23 @@ namespace GetStream.Tests
 {
     public class FeedTests2
     {
-        private Client _client;
+        private StreamClient _streamClient;
         private FeedsV3Client _feeds;
 
         public FeedTests2()
         {
             // Initialize with placeholder credentials - will be updated by UpdateCredentials
-            _client = new Client(
+            _streamClient = new StreamClient(
                 apiKey: "placeholder",
                 apiSecret: "placeholder"
             );
-            _feeds = new FeedsV3Client(_client);
+            _feeds = new FeedsV3Client(_streamClient);
         }
 
         public void UpdateCredentials(string apiKey, string apiSecret, string appId)
         {
-            _client = new Client(apiKey, apiSecret);
-            _feeds = new FeedsV3Client(_client);
+            _streamClient = new StreamClient(apiKey, apiSecret);
+            _feeds = new FeedsV3Client(_streamClient);
         }
 
         public async Task RunAllTests()

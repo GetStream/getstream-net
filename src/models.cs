@@ -1977,8 +1977,6 @@ namespace GetStream.Models
         public DateTime JoinedAt { get; set; }
         [JsonPropertyName("online")]
         public bool Online { get; set; }
-        [JsonPropertyName("Role")]
-        public string Role { get; set; }
         [JsonPropertyName("role")]
         public string Role { get; set; }
         [JsonPropertyName("UserSessionID")]
