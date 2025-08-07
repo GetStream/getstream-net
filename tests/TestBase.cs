@@ -14,6 +14,10 @@ namespace GetStream.Tests
         public void Setup()
         {
             var apiKey = Environment.GetEnvironmentVariable("STREAM_API_KEY");
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                apiKey = "zta48ppyvwet";
+            }
             var apiSecret = Environment.GetEnvironmentVariable("STREAM_API_SECRET");
 
             if (string.IsNullOrEmpty(apiKey))
