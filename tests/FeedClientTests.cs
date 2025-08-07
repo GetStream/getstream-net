@@ -67,6 +67,7 @@ namespace GetStream.Tests
         public async Task AddActivityAndVerify_ShouldSucceed()
         {
             // Add an activity to the feed
+            // snippet-start: AddActivity
             var addActivityResponse = await FeedsV3Client.AddActivityAsync(
                 new AddActivityRequest
                 {
@@ -76,6 +77,7 @@ namespace GetStream.Tests
                     UserID = "sara"
                 }
             );
+            // snippet-end: AddActivity
         
             // Verify activity was added successfully
             addActivityResponse.Data.Should().NotBeNull();
