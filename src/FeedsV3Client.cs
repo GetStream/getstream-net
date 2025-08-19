@@ -8,6 +8,15 @@ namespace GetStream
     {
         private readonly IClient _client;
 
+        /// <summary>
+        /// Create FeedsV3Client using credentials from environment variables or .env file
+        /// </summary>
+        public FeedsV3Client()
+        {
+            var client = new StreamClient();
+            _client = client;
+        }
+
         public FeedsV3Client(IClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -78,66 +87,6 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>(
                 "POST",
                 "/api/v2/feeds/activities/query",null,request,null,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string ActivityID,object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["activity_id"] = ActivityID,
-            };
-
-            var result = await _client.MakeRequestAsync<object, DeleteActivityResponse>(
-                "DELETE",
-                "/api/v2/feeds/activities/{activity_id}",null,null,pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string ActivityID,object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["activity_id"] = ActivityID,
-            };
-
-            var result = await _client.MakeRequestAsync<object, GetActivityResponse>(
-                "GET",
-                "/api/v2/feeds/activities/{activity_id}",null,null,pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string ActivityID,UpdateActivityPartialRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["activity_id"] = ActivityID,
-            };
-
-            var result = await _client.MakeRequestAsync<UpdateActivityPartialRequest, UpdateActivityPartialResponse>(
-                "PATCH",
-                "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string ActivityID,UpdateActivityRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["activity_id"] = ActivityID,
-            };
-
-            var result = await _client.MakeRequestAsync<UpdateActivityRequest, UpdateActivityResponse>(
-                "PUT",
-                "/api/v2/feeds/activities/{activity_id}",null,request,pathParams,
                 cancellationToken);
 
             return result;
@@ -284,6 +233,67 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string ID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, DeleteActivityResponse>(
+                "DELETE",
+                "/api/v2/feeds/activities/{id}",queryParams,null,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string ID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<object, GetActivityResponse>(
+                "GET",
+                "/api/v2/feeds/activities/{id}",null,null,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string ID,UpdateActivityPartialRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateActivityPartialRequest, UpdateActivityPartialResponse>(
+                "PATCH",
+                "/api/v2/feeds/activities/{id}",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string ID,UpdateActivityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateActivityRequest, UpdateActivityResponse>(
+                "PUT",
+                "/api/v2/feeds/activities/{id}",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(QueryBookmarkFoldersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -381,110 +391,111 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string CommentID,object request = null,
+        public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string ID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteCommentResponse>(
                 "DELETE",
-                "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
+                "/api/v2/feeds/comments/{id}",queryParams,null,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string CommentID,object request = null,
+        public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string ID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<object, GetCommentResponse>(
                 "GET",
-                "/api/v2/feeds/comments/{comment_id}",null,null,pathParams,
+                "/api/v2/feeds/comments/{id}",null,null,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string CommentID,UpdateCommentRequest request,
+        public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string ID,UpdateCommentRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<UpdateCommentRequest, UpdateCommentResponse>(
                 "PATCH",
-                "/api/v2/feeds/comments/{comment_id}",null,request,pathParams,
+                "/api/v2/feeds/comments/{id}",null,request,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string CommentID,AddCommentReactionRequest request,
+        public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string ID,AddCommentReactionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<AddCommentReactionRequest, AddCommentReactionResponse>(
                 "POST",
-                "/api/v2/feeds/comments/{comment_id}/reactions",null,request,pathParams,
+                "/api/v2/feeds/comments/{id}/reactions",null,request,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string CommentID,QueryCommentReactionsRequest request,
+        public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string ID,QueryCommentReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<QueryCommentReactionsRequest, QueryCommentReactionsResponse>(
                 "POST",
-                "/api/v2/feeds/comments/{comment_id}/reactions/query",null,request,pathParams,
+                "/api/v2/feeds/comments/{id}/reactions/query",null,request,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string CommentID, string Type,object request = null,
+        public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string ID, string Type,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
                 ["type"] = Type,
             };
             var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteCommentReactionResponse>(
                 "DELETE",
-                "/api/v2/feeds/comments/{comment_id}/reactions/{type}",queryParams,null,pathParams,
+                "/api/v2/feeds/comments/{id}/reactions/{type}",queryParams,null,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string CommentID,object request = null,
+        public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string ID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["comment_id"] = CommentID,
+                ["id"] = ID,
             };
             var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, GetCommentRepliesResponse>(
                 "GET",
-                "/api/v2/feeds/comments/{comment_id}/replies",queryParams,null,pathParams,
+                "/api/v2/feeds/comments/{id}/replies",queryParams,null,pathParams,
                 cancellationToken);
 
             return result;
@@ -511,51 +522,6 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string FeedGroupID,object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["feed_group_id"] = FeedGroupID,
-            };
-
-            var result = await _client.MakeRequestAsync<object, DeleteFeedGroupResponse>(
-                "DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}",null,null,pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string FeedGroupID,object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["feed_group_id"] = FeedGroupID,
-            };
-
-            var result = await _client.MakeRequestAsync<object, GetFeedGroupResponse>(
-                "GET",
-                "/api/v2/feeds/feed_groups/{feed_group_id}",null,null,pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string FeedGroupID,UpdateFeedGroupRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["feed_group_id"] = FeedGroupID,
-            };
-
-            var result = await _client.MakeRequestAsync<UpdateFeedGroupRequest, UpdateFeedGroupResponse>(
-                "PUT",
-                "/api/v2/feeds/feed_groups/{feed_group_id}",null,request,pathParams,
-                cancellationToken);
-
-            return result;
-        }
         public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string FeedGroupID, string FeedID,object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -564,10 +530,11 @@ namespace GetStream
                 ["feed_group_id"] = FeedGroupID,
                 ["feed_id"] = FeedID,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteFeedResponse>(
                 "DELETE",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",null,null,pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",queryParams,null,pathParams,
                 cancellationToken);
 
             return result;
@@ -735,6 +702,67 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string ID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, DeleteFeedGroupResponse>(
+                "DELETE",
+                "/api/v2/feeds/feed_groups/{id}",queryParams,null,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string ID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<object, GetFeedGroupResponse>(
+                "GET",
+                "/api/v2/feeds/feed_groups/{id}",null,null,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetOrCreateFeedGroupResponse>> GetOrCreateFeedGroupAsync(string ID,GetOrCreateFeedGroupRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<GetOrCreateFeedGroupRequest, GetOrCreateFeedGroupResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{id}",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string ID,UpdateFeedGroupRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateFeedGroupRequest, UpdateFeedGroupResponse>(
+                "PUT",
+                "/api/v2/feeds/feed_groups/{id}",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<ListFeedViewsResponse>> ListFeedViewsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -757,47 +785,62 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string ViewID,object request = null,
+        public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string ID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["view_id"] = ViewID,
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<object, DeleteFeedViewResponse>(
                 "DELETE",
-                "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
+                "/api/v2/feeds/feed_views/{id}",null,null,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string ViewID,object request = null,
+        public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string ID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["view_id"] = ViewID,
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<object, GetFeedViewResponse>(
                 "GET",
-                "/api/v2/feeds/feed_views/{view_id}",null,null,pathParams,
+                "/api/v2/feeds/feed_views/{id}",null,null,pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string ViewID,UpdateFeedViewRequest request,
+        public async Task<StreamResponse<GetOrCreateFeedViewResponse>> GetOrCreateFeedViewAsync(string ID,GetOrCreateFeedViewRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["view_id"] = ViewID,
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<GetOrCreateFeedViewRequest, GetOrCreateFeedViewResponse>(
+                "POST",
+                "/api/v2/feeds/feed_views/{id}",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string ID,UpdateFeedViewRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
             };
 
             var result = await _client.MakeRequestAsync<UpdateFeedViewRequest, UpdateFeedViewResponse>(
                 "PUT",
-                "/api/v2/feeds/feed_views/{view_id}",null,request,pathParams,
+                "/api/v2/feeds/feed_views/{id}",null,request,pathParams,
                 cancellationToken);
 
             return result;
@@ -906,6 +949,58 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CreateMembershipLevelResponse>> CreateMembershipLevelAsync(CreateMembershipLevelRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CreateMembershipLevelRequest, CreateMembershipLevelResponse>(
+                "POST",
+                "/api/v2/feeds/membership_levels",null,request,null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryMembershipLevelsResponse>> QueryMembershipLevelsAsync(QueryMembershipLevelsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryMembershipLevelsRequest, QueryMembershipLevelsResponse>(
+                "POST",
+                "/api/v2/feeds/membership_levels/query",null,request,null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<Response>> DeleteMembershipLevelAsync(string ID,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<object, Response>(
+                "DELETE",
+                "/api/v2/feeds/membership_levels/{id}",null,null,pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateMembershipLevelResponse>> UpdateMembershipLevelAsync(string ID,UpdateMembershipLevelRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = ID,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateMembershipLevelRequest, UpdateMembershipLevelResponse>(
+                "PATCH",
+                "/api/v2/feeds/membership_levels/{id}",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UnfollowBatchResponse>> UnfollowBatchAsync(UnfollowBatchRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -932,7 +1027,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string UserID,object request = null,
+        public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string UserID,ExportFeedUserDataRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -940,9 +1035,9 @@ namespace GetStream
                 ["user_id"] = UserID,
             };
 
-            var result = await _client.MakeRequestAsync<object, ExportFeedUserDataResponse>(
+            var result = await _client.MakeRequestAsync<ExportFeedUserDataRequest, ExportFeedUserDataResponse>(
                 "POST",
-                "/api/v2/feeds/users/{user_id}/export",null,null,pathParams,
+                "/api/v2/feeds/users/{user_id}/export",null,request,pathParams,
                 cancellationToken);
 
             return result;

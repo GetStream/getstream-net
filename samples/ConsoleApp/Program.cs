@@ -13,24 +13,14 @@ namespace GetStream.Example
         {
             Console.WriteLine("=== GetStream .NET SDK Complete Example ===\n");
 
-            // Read API credentials from environment variables
-            var apiKey = Environment.GetEnvironmentVariable("STREAM_API_KEY");
-            var apiSecret = Environment.GetEnvironmentVariable("STREAM_API_SECRET");
+            Console.WriteLine("🔧 Initializing clients...");
 
-            // Validate that required environment variables are set
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new Exception("STREAM_API_KEY environment variable is required");
-            }
-            if (string.IsNullOrEmpty(apiSecret))
-            {
-                throw new Exception("STREAM_API_SECRET environment variable is required");
-            }
-
-            // Initialize the client
-            var feedsClient = new FeedsV3Client(apiKey, apiSecret);
-            var client=new StreamClient(apiKey, apiSecret);
-            var feed = feedsClient.Feed("user", "userID1");
+            // Clients automatically load credentials from .env file or environment variables
+            var feedsClient = new FeedsV3Client();
+            var client = new StreamClient();
+            
+            Console.WriteLine("✅ Successfully initialized clients with automatic credential loading!");
+            var feed = feedsClient.Feed("user", "example-feed-2");
             try
             {
                 // 0. Create a user
@@ -65,7 +55,7 @@ namespace GetStream.Example
                         UserID = userRes.Data?.Users.FirstOrDefault().Value.ID
                     }
                 );
-                Console.WriteLine($"✅ Feed created successfully: {feedRes.Data}\n");
+                Console.WriteLine($"✅ Feed created successfully: {feedRes.Data.Feed.Feed}\n");
 
                 // 2. Add an activity to the feed
                 Console.WriteLine("2. Adding activity to feed...");
@@ -73,7 +63,7 @@ namespace GetStream.Example
                     new AddActivityRequest
                     {
                         Type = "post",
-                        Feeds = new List<string> { "user:example-feed-1" },
+                        Feeds = new List<string> { feedRes.Data.Feed.Feed },
                         Text = "Hello from .NET SDK! This is my first activity.",
                         UserID = "okabe"
                     }
@@ -89,7 +79,7 @@ namespace GetStream.Example
                     new AddActivityRequest
                     {
                         Type = "comment",
-                        Feeds = new List<string> { "user:example-feed-1" },
+                        Feeds = new List<string> { feedRes.Data.Feed.Feed },
                         Text = "This is a great post!",
                         UserID = "okabe"
                     }

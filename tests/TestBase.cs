@@ -13,20 +13,28 @@ namespace GetStream.Tests
         [OneTimeSetUp]
         public void Setup()
         {
-            var apiKey = Environment.GetEnvironmentVariable("STREAM_API_KEY");
-            if (string.IsNullOrEmpty(apiKey))
+            try
             {
-                apiKey = "zta48ppyvwet";
+                // Clients automatically load configuration from .env file or environment variables
+                StreamClient = new StreamClient();
+                FeedsV3Client = new FeedsV3Client();
+                
+                Console.WriteLine("Successfully loaded GetStream configuration from environment");
             }
-            var apiSecret = Environment.GetEnvironmentVariable("STREAM_API_SECRET");
-
-            if (string.IsNullOrEmpty(apiKey))
-                throw new Exception("STREAM_API_KEY environment variable is required");
-            if (string.IsNullOrEmpty(apiSecret))
-                throw new Exception("STREAM_API_SECRET environment variable is required");
-
-            StreamClient = new StreamClient(apiKey, apiSecret);
-            FeedsV3Client = new FeedsV3Client(StreamClient);
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Configuration error: {ex.Message}");
+                Console.WriteLine("Make sure to:");
+                Console.WriteLine("1. Copy .env.example to .env");
+                Console.WriteLine("2. Fill in your STREAM_API_KEY and STREAM_API_SECRET in the .env file");
+                Console.WriteLine("3. Or set these as environment variables");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error during setup: {ex.Message}");
+                throw;
+            }
         }
     }
 } 

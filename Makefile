@@ -5,14 +5,16 @@ TEST_PROJECT = tests/stream-feed-net-test.csproj
 SAMPLE_PROJECT = samples/ConsoleApp/ConsoleApp.csproj
 CONFIGURATION ?= Debug
 
+# Setup development environment
+setup-env: ## Copy .env.example to .env (you'll need to fill in your credentials)
+	cp .env.example .env
+	@echo "Don't forget to update .env with your actual GetStream credentials!"
+
 # Required environment variables check
 check-env:
-	@if [ -z "$(STREAM_API_KEY)" ]; then \
-		echo "Error: STREAM_API_KEY is not set"; \
-		exit 1; \
-	fi
-	@if [ -z "$(STREAM_API_SECRET)" ]; then \
-		echo "Error: STREAM_API_SECRET is not set"; \
+	@if [ ! -f .env ] && [ -z "$(STREAM_API_KEY)" ]; then \
+		echo "Error: Neither .env file nor STREAM_API_KEY environment variable is set"; \
+		echo "Run 'make setup-env' to create .env file or set environment variables"; \
 		exit 1; \
 	fi
 
@@ -43,7 +45,7 @@ test-endpoints: check-env build
 
 # Run integration tests only
 test-integration: check-env build
-	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "FullyQualifiedName~FeedClientTests"
+	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "FullyQualifiedName~FeedsClientTests"
 
 # Run sample app
 sample: check-env build
@@ -63,6 +65,7 @@ watch-sample: check-env
 # Help
 help:
 	@echo "Available targets:"
+	@echo "  setup-env      - Copy .env.example to .env (you'll need to fill in your credentials)"
 	@echo "  clean          - Clean build artifacts"
 	@echo "  restore        - Restore NuGet packages"
 	@echo "  build          - Build solution"
@@ -74,9 +77,11 @@ help:
 	@echo "  watch-test     - Watch tests (rerun on file changes)"
 	@echo "  watch-sample   - Watch sample app (rerun on file changes)"
 	@echo ""
-	@echo "Environment variables:"
-	@echo "  STREAM_API_KEY    - Stream API key (required)"
-	@echo "  STREAM_API_SECRET - Stream API secret (required)"
+	@echo "Configuration options:"
+	@echo "  1. Create .env file: make setup-env, then edit .env with your credentials"
+	@echo "  2. Set environment variables: STREAM_API_KEY and STREAM_API_SECRET"
+	@echo ""
+	@echo "Other environment variables:"
 	@echo "  CONFIGURATION     - Build configuration (default: Debug)"
 
-.PHONY: check-env clean restore build test test-one test-endpoints test-integration sample watch-test watch-sample help 
+.PHONY: setup-env check-env clean restore build test test-one test-endpoints test-integration sample watch-test watch-sample help 

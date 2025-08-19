@@ -6,6 +6,25 @@ namespace GetStream
 {
     public class StreamClient : BaseClient
     {
+        /// <summary>
+        /// Create StreamClient using credentials from environment variables or .env file
+        /// </summary>
+        public StreamClient() : this(GetEnvironmentCredentials())
+        {
+        }
+
+        private StreamClient((string apiKey, string apiSecret, string baseUrl) credentials) 
+            : this(credentials.apiKey, credentials.apiSecret, credentials.baseUrl)
+        {
+        }
+
+        private static (string apiKey, string apiSecret, string baseUrl) GetEnvironmentCredentials()
+        {
+            var builder = ClientBuilder.FromEnv();
+            builder.LoadCredentials();
+            return (builder.ApiKeyValue!, builder.ApiSecretValue!, builder.BaseUrlValue);
+        }
+
         public StreamClient(string apiKey, string apiSecret,
             string baseUrl = "https://chat.stream-io-api.com") : base(apiKey, apiSecret, baseUrl)
         {
@@ -13,6 +32,8 @@ namespace GetStream
             this.ApiSecret = apiSecret;
             this.BaseUrl = baseUrl;
         }
+
+
 
         private Dictionary<string, string> ExtractQueryParams(object request)
         {
