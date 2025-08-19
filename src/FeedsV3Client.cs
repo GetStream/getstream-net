@@ -7,7 +7,7 @@ namespace GetStream
     public class FeedsV3Client
     {
         private readonly IClient _client;
-        
+
         /// <summary>
         /// Create FeedsV3Client using credentials from environment variables or .env file
         /// </summary>

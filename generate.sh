@@ -12,7 +12,7 @@ fi
 set -ex
 
 # cd in API repo, generate new spec and then generate code from it
-( cd $SOURCE_PATH ; go run ./cmd/chat-manager openapi generate-client --language dotnet --spec ./releases/v2/feeds-serverside-api.yaml --output $DST_PATH )
+( cd $SOURCE_PATH ; make openapi; go run ./cmd/chat-manager openapi generate-client --language dotnet --spec ./releases/v2/feeds-serverside-api.yaml --output $DST_PATH )
 
 # Comment out problematic lines from openapi generation
 sed -i '' 's/\[JsonPropertyName("delete_activity")\]/\/\/ [JsonPropertyName("delete_activity")]/' $DST_PATH/src/requests.cs
