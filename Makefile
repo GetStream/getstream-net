@@ -45,7 +45,7 @@ test-endpoints: check-env build
 
 # Run integration tests only
 test-integration: check-env build
-	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "FullyQualifiedName~FeedsClientTests"
+	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "FullyQualifiedName~FeedIntegrationTests"
 
 # Run sample app
 sample: check-env build
