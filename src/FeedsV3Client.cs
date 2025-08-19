@@ -7,7 +7,7 @@ namespace GetStream
     public class FeedsV3Client
     {
         private readonly IClient _client;
-
+        
         /// <summary>
         /// Create FeedsV3Client using credentials from environment variables or .env file
         /// </summary>
@@ -16,7 +16,6 @@ namespace GetStream
             var client = new StreamClient();
             _client = client;
         }
-
         public FeedsV3Client(IClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
