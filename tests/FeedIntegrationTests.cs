@@ -28,8 +28,10 @@ namespace GetStream.Tests
         private FeedsV3Client _feedsV3Client;
         private string _testUserId;
         private string _testUserId2; // For follow operations
+        private string _testUserId3; // For follow operations
         private string _testFeedId;
         private string _testFeedId2;
+        private string _testFeedId3;
 
         // Track created resources for cleanup
         private readonly List<string> _createdActivityIds = new List<string>();
@@ -57,8 +59,11 @@ namespace GetStream.Tests
 
             _testUserId = "test-user-" + Guid.NewGuid().ToString("N")[..8];
             _testUserId2 = "test-user-2-" + Guid.NewGuid().ToString("N")[..8];
+            _testUserId3 = "test-user-3-" + Guid.NewGuid().ToString("N")[..8];
             _testFeedId = "test-feed-" + Guid.NewGuid().ToString("N")[..8];
             _testFeedId2 = "test-feed-2-" + Guid.NewGuid().ToString("N")[..8];
+            _testFeedId3 = "test-feed-3-" + Guid.NewGuid().ToString("N")[..8];
+            
 
             // Setup environment for each test
             await SetupEnvironment();
@@ -98,6 +103,12 @@ namespace GetStream.Tests
                             ID = _testUserId2,
                             Name = "Test User 2", 
                             Role = "user"
+                        },
+                        [_testUserId3] = new UserRequest
+                        {
+                            ID = _testUserId3,
+                            Name = "Test User 3", 
+                            Role = "user"
                         }
                     }
                 };
@@ -125,6 +136,11 @@ namespace GetStream.Tests
                 );
                 // snippet-end: GetOrCreateFeed
 
+                var feedResponse3 = await _feedsV3Client.GetOrCreateFeedAsync(
+                    FeedGroupID: "user",
+                    FeedID: _testFeedId3,
+                    request: new GetOrCreateFeedRequest { UserID = _testUserId3 }
+                );
                 if (feedResponse1.Data == null)
                 {
                     throw new Exception($"Failed to create feed 1");
@@ -133,8 +149,12 @@ namespace GetStream.Tests
                 {
                     throw new Exception($"Failed to create feed 2");
                 }
+                if (feedResponse3.Data == null)
+                {
+                    throw new Exception($"Failed to create feed 3");
+                }
 
-                Console.WriteLine($"✅ Created test feeds: {_testFeedId}, {_testFeedId2}");
+                Console.WriteLine($"✅ Created test feeds: {_testFeedId}, {_testFeedId2}, {_testFeedId3}");
             }
             catch (Exception e)
             {
@@ -401,7 +421,7 @@ namespace GetStream.Tests
                     new QueryActivityReactionsRequest
                     {
                         Limit = 10,
-                        Filter = new Dictionary<string, object> { ["type"] = "like" }
+                        Filter = new Dictionary<string, object> { ["reaction_type"] = "like" }
                     }
                 );
                 // snippet-end: QueryActivityReactions
@@ -412,7 +432,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Query reactions skipped: {e.Message}");
-                Assert.Ignore($"Query reactions not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -603,7 +623,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Add bookmark failed: {e.Message}");
-                Assert.Ignore($"Add bookmark not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -658,6 +678,10 @@ namespace GetStream.Tests
                     }
                 );
                 Assert.That(addResponse, Is.Not.Null);
+                Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
+
+                // Get the folder ID from the bookmark response
+                var folderId = addResponse.Data.Bookmark.Folder.ID;
 
                 // snippet-start: UpdateBookmark
                 var response = await _feedsV3Client.UpdateBookmarkAsync(
@@ -665,7 +689,7 @@ namespace GetStream.Tests
                     new UpdateBookmarkRequest
                     {
                         UserID = _testUserId,
-                        NewFolder = new AddFolderRequest { Name = "updated-bookmarks-folder" }
+                        FolderID = folderId  // Use existing folder ID, not create new folder
                     }
                 );
                 // snippet-end: UpdateBookmark
@@ -676,7 +700,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Update bookmark failed: {e.Message}");
-                Assert.Ignore($"Update bookmark not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -703,7 +727,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Follow failed: {e.Message}");
-                Assert.Ignore($"Follow operation not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -716,7 +740,6 @@ namespace GetStream.Tests
             var response = await _feedsV3Client.QueryFollowsAsync(
                 new QueryFollowsRequest
                 {
-                    Filter = new Dictionary<string, object> { ["follower_feed_id"] = _testFeedId },
                     Limit = 10
                 }
             );
@@ -838,11 +861,15 @@ namespace GetStream.Tests
                     }
                 );
                 Assert.That(addResponse, Is.Not.Null);
+                Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
+
+                // Get the folder ID from the bookmark response
+                var folderId = addResponse.Data.Bookmark.Folder.ID;
 
                 // snippet-start: DeleteBookmark
                 var response = await _feedsV3Client.DeleteBookmarkAsync(
                     activityId,
-                    new { user_id = _testUserId }
+                    new { folder_id = folderId, user_id = _testUserId }
                 );
                 // snippet-end: DeleteBookmark
 
@@ -852,7 +879,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Delete bookmark failed: {e.Message}");
-                Assert.Ignore($"Delete bookmark not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -1003,14 +1030,14 @@ namespace GetStream.Tests
                     new FollowRequest
                     {
                         Source = $"user:{_testFeedId}",
-                        Target = $"user:{_testFeedId2}"
+                        Target = $"user:{_testFeedId3}"
                     }
                 );
 
                 // snippet-start: UnfollowUser
                 var response = await _feedsV3Client.UnfollowAsync(
                     $"user:{_testFeedId}",
-                    $"user:{_testFeedId2}",
+                    $"user:{_testFeedId3}",
                     new { user_id = _testUserId }
                 );
                 // snippet-end: UnfollowUser
@@ -1021,7 +1048,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Unfollow operation skipped: {e.Message}");
-                Assert.Ignore($"Unfollow operation not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -1033,13 +1060,34 @@ namespace GetStream.Tests
             try
             {
                 // snippet-start: CreatePoll
+                // First create a poll using the poll API
+                var poll = new CreatePollRequest
+                {
+                    Name = "Programming Language Poll",
+                    Description = "What's your favorite programming language?",
+                    UserID = _testUserId,
+                    Options = new List<PollOptionInput>
+                    {
+                        new PollOptionInput { Text = "C#" },
+                        new PollOptionInput { Text = "Python" },
+                        new PollOptionInput { Text = "JavaScript" },
+                        new PollOptionInput { Text = "Go" }
+                    }
+                };
+                
+                var pollResponse = await _client.CreatePollAsync(poll);
+                Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
+                
+                var pollId = pollResponse.Data.Poll.ID;
+                
+                // Create activity with the poll
                 var activity = new AddActivityRequest
                 {
                     Type = "poll",
                     Text = "What's your favorite programming language?",
                     UserID = _testUserId,
                     Feeds = new List<string> { $"user:{_testFeedId}" },
-                    PollID = "programming-poll-" + Guid.NewGuid().ToString("N")[..8]
+                    PollID = pollId
                 };
                 
                 var response = await _feedsV3Client.AddActivityAsync(activity);
@@ -1052,7 +1100,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Poll creation failed: {e.Message}");
-                Assert.Ignore($"Poll creation not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -1063,14 +1111,35 @@ namespace GetStream.Tests
             
             try
             {
-                // Create a poll activity first
+                // Create a poll first using the proper API
+                var poll = new CreatePollRequest
+                {
+                    Name = "Favorite Color Poll",
+                    Description = "What is your favorite color?",
+                    UserID = _testUserId,
+                    Options = new List<PollOptionInput>
+                    {
+                        new PollOptionInput { Text = "Red" },
+                        new PollOptionInput { Text = "Blue" },
+                        new PollOptionInput { Text = "Green" }
+                    }
+                };
+                
+                var pollResponse = await _client.CreatePollAsync(poll);
+                Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
+                Assert.That(pollResponse.Data?.Poll?.Options, Is.Not.Null.And.Not.Empty);
+                
+                var pollId = pollResponse.Data.Poll.ID;
+                var pollOptions = pollResponse.Data.Poll.Options;
+                
+                // Create activity with the poll
                 var activity = new AddActivityRequest
                 {
                     Type = "poll",
                     Text = "Vote test poll",
                     UserID = _testUserId,
                     Feeds = new List<string> { $"user:{_testFeedId}" },
-                    PollID = "vote-poll-" + Guid.NewGuid().ToString("N")[..8]
+                    PollID = pollId
                 };
                 
                 var createResponse = await _feedsV3Client.AddActivityAsync(activity);
@@ -1079,13 +1148,20 @@ namespace GetStream.Tests
                 var activityId = createResponse.Data.Activity.ID;
                 _createdActivityIds.Add(activityId);
 
+                // Get the first option ID for voting
+                var optionId = pollOptions[0].ID;
+
                 // snippet-start: VotePoll
                 var voteResponse = await _feedsV3Client.CastPollVoteAsync(
                     activityId,
-                    activity.PollID,
+                    pollId,
                     new CastPollVoteRequest
                     {
-                        UserID = _testUserId
+                        UserID = _testUserId,
+                        Vote = new VoteData
+                        {
+                            OptionID = optionId
+                        }
                     }
                 );
                 // snippet-end: VotePoll
@@ -1096,7 +1172,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Poll voting failed: {e.Message}");
-                Assert.Ignore($"Poll voting not supported: {e.Message}");
+                throw e;
             }
         }
 
@@ -1134,7 +1210,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Moderation test failed: {e.Message}");
-                Assert.Ignore($"Moderation not available: {e.Message}");
+                throw e;
             }
         }
 
@@ -1163,7 +1239,7 @@ namespace GetStream.Tests
             catch (Exception e)
             {
                 Console.WriteLine($"Device management test failed: {e.Message}");
-                Assert.Ignore($"Device management not available: {e.Message}");
+                throw e;
             }
         }
 
@@ -1198,7 +1274,7 @@ namespace GetStream.Tests
                 {
                     Filter = new Dictionary<string, object> 
                     { 
-                        ["type"] = "post",
+                        ["activity_type"] = "post",
                         ["user_id"] = _testUserId
                     },
                     Limit = 5
