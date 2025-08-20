@@ -44,6 +44,7 @@ namespace GetStream.Tests
             var solutionRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), ".."));
             var envFilePath = Path.Combine(solutionRoot, ".env");
             
+            // snippet-start: Getting_Started
             ClientBuilder builder;
             if (File.Exists(envFilePath))
             {
@@ -53,7 +54,9 @@ namespace GetStream.Tests
             {
                 builder = ClientBuilder.FromEnv();
             }
-            
+            // builder = new ClientBuilder().ApiKey("").ApiSecret("");
+            // builder.Build();
+            // snippet-end: Getting_Started
             _client = builder.Build();
             _feedsV3Client = builder.BuildFeedsClient();
 
