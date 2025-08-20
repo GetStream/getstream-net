@@ -24,14 +24,14 @@ namespace GetStream.Tests
     [TestFixture]
     public class FeedIntegrationTests
     {
-        private StreamClient _client;
-        private FeedsV3Client _feedsV3Client;
-        private string _testUserId;
-        private string _testUserId2; // For follow operations
-        private string _testUserId3; // For follow operations
-        private string _testFeedId;
-        private string _testFeedId2;
-        private string _testFeedId3;
+        private StreamClient _client = null!;
+        private FeedsV3Client _feedsV3Client = null!;
+        private string _testUserId = null!;
+        private string _testUserId2 = null!; // For follow operations
+        private string _testUserId3 = null!; // For follow operations
+        private string _testFeedId = null!;
+        private string _testFeedId2 = null!;
+        private string _testFeedId3 = null!;
 
         // Track created resources for cleanup
         private readonly List<string> _createdActivityIds = new List<string>();
@@ -202,10 +202,10 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            Assert.That(response.Data.Activity, Is.Not.Null);
-            Assert.That(response.Data.Activity.ID, Is.Not.Null);
+            Assert.That(response.Data!.Activity, Is.Not.Null);
+            Assert.That(response.Data!.Activity!.ID, Is.Not.Null);
 
-            var activityId = response.Data.Activity.ID;
+            var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             
             Console.WriteLine($"✅ Created activity with ID: {activityId}");
@@ -243,9 +243,9 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            Assert.That(response.Data.Activity, Is.Not.Null);
+            Assert.That(response.Data!.Activity, Is.Not.Null);
             
-            var activityId = response.Data.Activity.ID;
+            var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             
             Console.WriteLine($"✅ Created activity with image attachment: {activityId}");
@@ -268,7 +268,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            Assert.That(response.Data.Activities, Is.Not.Null);
+            Assert.That(response.Data!.Activities, Is.Not.Null);
             Console.WriteLine("✅ Queried activities successfully");
         }
 
@@ -289,7 +289,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // snippet-start: GetActivity
@@ -298,8 +298,8 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            Assert.That(response.Data.Activity, Is.Not.Null);
-            Assert.That(response.Data.Activity.ID, Is.EqualTo(activityId));
+            Assert.That(response.Data!.Activity, Is.Not.Null);
+            Assert.That(response.Data!.Activity!.ID, Is.EqualTo(activityId));
             Console.WriteLine("✅ Retrieved single activity");
         }
 
@@ -320,7 +320,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // snippet-start: UpdateActivity
@@ -364,7 +364,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // snippet-start: AddReaction
@@ -399,7 +399,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             
             // Add a reaction first
@@ -450,7 +450,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // snippet-start: AddComment
@@ -468,7 +468,7 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             
-            if (response.Data.Comment?.ID != null)
+            if (response.Data!.Comment?.ID != null)
             {
                 _createdCommentIds.Add(response.Data.Comment.ID);
                 Console.WriteLine($"✅ Added comment with ID: {response.Data.Comment.ID}");
@@ -496,7 +496,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             
             // Add a comment first
@@ -542,7 +542,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             
             // Add a comment to update
@@ -594,7 +594,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
                 // snippet-start: AddBookmark
@@ -648,7 +648,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Add a bookmark first
@@ -664,7 +664,7 @@ namespace GetStream.Tests
                 Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
 
                 // Get the folder ID from the bookmark response
-                var folderId = addResponse.Data.Bookmark.Folder.ID;
+                var folderId = addResponse.Data!.Bookmark!.Folder!.ID;
 
                 // snippet-start: UpdateBookmark
                 var response = await _feedsV3Client.UpdateBookmarkAsync(
@@ -735,7 +735,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // snippet-start: PinActivity
@@ -771,7 +771,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Pin it first
@@ -815,7 +815,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Add a bookmark first
@@ -831,7 +831,7 @@ namespace GetStream.Tests
                 Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
 
                 // Get the folder ID from the bookmark response
-                var folderId = addResponse.Data.Bookmark.Folder.ID;
+                var folderId = addResponse.Data!.Bookmark!.Folder!.ID;
 
                 // snippet-start: DeleteBookmark
                 var response = await _feedsV3Client.DeleteBookmarkAsync(
@@ -879,7 +879,7 @@ namespace GetStream.Tests
             Assert.That(response.Data, Is.Not.Null);
             
             // Track created activities for cleanup
-            if (response.Data.Activities != null)
+            if (response.Data!.Activities != null)
             {
                 foreach (var activityResponse in response.Data.Activities)
                 {
@@ -910,7 +910,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Add a reaction first
@@ -952,7 +952,7 @@ namespace GetStream.Tests
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = createResponse.Data.Activity.ID;
+            var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Add a comment first
@@ -966,7 +966,7 @@ namespace GetStream.Tests
                 }
             );
             Assert.That(commentResponse.Data?.Comment?.ID, Is.Not.Null);
-            var commentId = commentResponse.Data.Comment.ID;
+            var commentId = commentResponse.Data!.Comment!.ID!;
 
             // snippet-start: DeleteComment
             var response = await _feedsV3Client.DeleteCommentAsync(
@@ -1029,7 +1029,7 @@ namespace GetStream.Tests
                 var pollResponse = await _client.CreatePollAsync(poll);
                 Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
                 
-                var pollId = pollResponse.Data.Poll.ID;
+                var pollId = pollResponse.Data!.Poll!.ID;
                 
                 // Create activity with the poll
                 var activity = new AddActivityRequest
@@ -1045,7 +1045,7 @@ namespace GetStream.Tests
                 // snippet-end: CreatePoll
 
                 Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
-                _createdActivityIds.Add(response.Data.Activity.ID);
+                _createdActivityIds.Add(response.Data!.Activity!.ID!);
                 Console.WriteLine("✅ Created poll activity");
         }
 
@@ -1072,7 +1072,7 @@ namespace GetStream.Tests
                 Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
                 Assert.That(pollResponse.Data?.Poll?.Options, Is.Not.Null.And.Not.Empty);
                 
-                var pollId = pollResponse.Data.Poll.ID;
+                var pollId = pollResponse.Data!.Poll!.ID;
                 var pollOptions = pollResponse.Data.Poll.Options;
                 
                 // Create activity with the poll
@@ -1088,7 +1088,7 @@ namespace GetStream.Tests
                 var createResponse = await _feedsV3Client.AddActivityAsync(activity);
                 Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
                 
-                var activityId = createResponse.Data.Activity.ID;
+                var activityId = createResponse.Data!.Activity!.ID!;
                 _createdActivityIds.Add(activityId);
 
                 // Get the first option ID for voting
@@ -1130,7 +1130,7 @@ namespace GetStream.Tests
                 var createResponse = await _feedsV3Client.AddActivityAsync(activity);
                 Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
                 
-                var activityId = createResponse.Data.Activity.ID;
+                var activityId = createResponse.Data!.Activity!.ID!;
                 _createdActivityIds.Add(activityId);
 
                 // snippet-start: ModerateActivity
@@ -1185,7 +1185,7 @@ namespace GetStream.Tests
                 var response = await _feedsV3Client.AddActivityAsync(activity);
                 if (response.Data?.Activity?.ID != null)
                 {
-                    _createdActivityIds.Add(response.Data.Activity.ID);
+                    _createdActivityIds.Add(response.Data!.Activity!.ID!);
                 }
             }
 
@@ -1288,7 +1288,7 @@ namespace GetStream.Tests
             var response = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
             
-            var activityId = response.Data.Activity.ID;
+            var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             Console.WriteLine($"✅ Successfully authenticated and created activity: {activityId}");
 
@@ -1418,7 +1418,7 @@ namespace GetStream.Tests
                 var createResponse = await _feedsV3Client.AddActivityAsync(activity);
                 Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
                 
-                var activityId = createResponse.Data.Activity.ID;
+                var activityId = createResponse.Data!.Activity!.ID!;
                 activitiesToDelete.Add(activityId);
                 _createdActivityIds.Add(activityId);
             }

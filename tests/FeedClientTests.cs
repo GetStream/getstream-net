@@ -99,8 +99,8 @@ namespace GetStream.Tests
             );
         
             queryResponse.Data.Should().NotBeNull();
-            queryResponse.Data.Activities.Should().NotBeNull();
-            queryResponse.Data.Activities.Should().NotBeEmpty();
+            queryResponse.Data!.Activities.Should().NotBeNull();
+            queryResponse.Data!.Activities.Should().NotBeEmpty();
         
             queryResponse.Data.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeNull();
@@ -123,7 +123,7 @@ namespace GetStream.Tests
         
             // Verify comment was added successfully
             addCommentResponse.Data.Should().NotBeNull();
-            addCommentResponse.Data.Activity.Should().NotBeNull();
+            addCommentResponse.Data!.Activity.Should().NotBeNull();
         
             addCommentResponse.Data.Should().NotBeNull();
             addCommentResponse.Data!.Activity.Should().NotBeNull();
@@ -147,7 +147,7 @@ namespace GetStream.Tests
         
             // Verify we got activities
             queryResponse.Data.Should().NotBeNull();
-            queryResponse.Data.Activities.Should().NotBeNull();
+            queryResponse.Data!.Activities.Should().NotBeNull();
         
             queryResponse.Data.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeNull();
@@ -185,7 +185,7 @@ namespace GetStream.Tests
                 response.Data.Should().NotBeNull();
                 var data = response.Data!;
                 data.Should().NotBeNull();
-                createdFeeds.Add(data.ToString());
+                createdFeeds.Add(data.ToString() ?? "");
             }
         
             // Verify we can retrieve all feeds

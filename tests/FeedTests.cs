@@ -165,7 +165,6 @@ namespace GetStream.Tests
         public async Task DeleteBookmarkAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null!;
             var ActivityID = "test-ActivityID";
 
             var expectedResponse = new StreamResponse<DeleteBookmarkResponse>
