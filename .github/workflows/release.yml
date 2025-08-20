@@ -104,7 +104,7 @@ jobs:
         STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         CONFIGURATION: Release
-      run: make test
+      run: make test-ci
     
     - name: Get current version
       id: current_version

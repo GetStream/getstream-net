@@ -48,20 +48,28 @@ jobs:
     - name: Build (Release)
       run: dotnet build --no-restore --configuration Release
     
+    - name: Verify API Credentials
+      env:
+        STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+        STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+      run: |
+        if [ -n "$STREAM_API_KEY" ] && [ -n "$STREAM_API_SECRET" ]; then
+          echo "✅ API credentials are available from repository secrets"
+          echo "API Key length: ${#STREAM_API_KEY} characters"
+          echo "API Secret length: ${#STREAM_API_SECRET} characters"
+        else
+          echo "❌ API credentials are missing"
+          exit 1
+        fi
+    
     - name: Run Tests
       env:
         STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         CONFIGURATION: Debug
       run: |
-        if [ -n "$STREAM_API_KEY" ] && [ -n "$STREAM_API_SECRET" ]; then
-          echo "Running all tests with API credentials"
-          make test
-        else
-          echo "⚠️ Running tests without API credentials (integration tests may be skipped)"
-          echo "For full test coverage, add STREAM_API_KEY and STREAM_API_SECRET secrets"
-          make test || echo "Some tests may have failed due to missing API credentials"
-        fi
+        echo "Running all tests with API credentials from repository secrets"
+        make test-ci
     
     - name: Check for warnings
       run: |

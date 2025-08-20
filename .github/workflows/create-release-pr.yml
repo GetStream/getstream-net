@@ -108,10 +108,11 @@ jobs:
       env:
         STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+        CONFIGURATION: Release
       run: |
         dotnet restore
         dotnet build --no-restore --configuration Release
-        dotnet test --no-build --configuration Release --verbosity normal
+        make test-ci
     
     - name: Generate changelog
       id: changelog
