@@ -190,8 +190,6 @@ jobs:
         # Create PR body
         PR_BODY="## Release v$NEW_VERSION
 
-This PR prepares the release of version $NEW_VERSION.
-
 ### Version Bump: $VERSION_BUMP
 ### Prerelease: $IS_PRERELEASE
 
@@ -218,7 +216,7 @@ ${{ steps.changelog.outputs.changelog }}
         gh pr create \
           --title "$PR_TITLE" \
           --body "$PR_BODY" \
-          --base main \
+          --base master \
           --head "${{ env.branch_name }}" \
           --label "$LABELS"
         
