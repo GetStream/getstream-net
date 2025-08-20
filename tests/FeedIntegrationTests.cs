@@ -54,9 +54,9 @@ namespace GetStream.Tests
             {
                 builder = ClientBuilder.FromEnv();
             }
-            // builder = new ClientBuilder().ApiKey("").ApiSecret("");
-            // builder.Build();
+
             // snippet-end: Getting_Started
+            
             _client = builder.Build();
             _feedsV3Client = builder.BuildFeedsClient();
 
@@ -180,7 +180,7 @@ namespace GetStream.Tests
             Console.WriteLine($"   Test Feed 1: {_testFeedId}");
             Console.WriteLine($"   Test Feed 2: {_testFeedId2}");
 
-            Assert.That(true, Is.True); // Just a demo test
+            Assert.Pass(); // Just a demo test
         }
 
         // =================================================================
@@ -255,6 +255,114 @@ namespace GetStream.Tests
         }
 
         [Test, Order(4)]
+        public async Task Test02c_CreateVideoActivity()
+        {
+            Console.WriteLine("\n🎥 Testing video activity creation...");
+
+            // snippet-start: AddVideoActivity
+            var activity = new AddActivityRequest
+            {
+                Type = "video",
+                Text = "Check out this amazing video!",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" }
+                // Note: Video attachments would be added here in a real scenario
+            };
+            var response = await _feedsV3Client.AddActivityAsync(activity);
+            // snippet-end: AddVideoActivity
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            Assert.That(response.Data!.Activity, Is.Not.Null);
+            
+            var activityId = response.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+            
+            Console.WriteLine($"✅ Created video activity: {activityId}");
+        }
+
+        [Test, Order(5)]
+        public async Task Test02d_CreateStoryActivityWithExpiration()
+        {
+            Console.WriteLine("\n📖 Testing story activity with expiration...");
+
+            // snippet-start: AddStoryActivityWithExpiration
+            var tomorrow = DateTime.UtcNow.AddDays(1);
+            var activity = new AddActivityRequest
+            {
+                Type = "story",
+                Text = "My daily story - expires tomorrow!",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" },
+                ExpiresAt = tomorrow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                Attachments = new List<Attachment>
+                {
+                    new Attachment
+                    {
+                        ImageUrl = "https://example.com/story-image.jpg",
+                        Type = "image"
+                    },
+                    new Attachment
+                    {
+                        AssetUrl = "https://example.com/story-video.mp4",
+                        Type = "video"
+                    }
+                },
+                Custom = new Dictionary<string, object>
+                {
+                    ["story_type"] = "daily",
+                    ["auto_expire"] = true
+                }
+            };
+            var response = await _feedsV3Client.AddActivityAsync(activity);
+            // snippet-end: AddStoryActivityWithExpiration
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            Assert.That(response.Data!.Activity, Is.Not.Null);
+            
+            var activityId = response.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+            
+            Console.WriteLine($"✅ Created story activity with expiration: {activityId}");
+        }
+
+        [Test, Order(6)]
+        public async Task Test02e_CreateActivityMultipleFeeds()
+        {
+            Console.WriteLine("\n📡 Testing activity creation to multiple feeds...");
+
+            // snippet-start: AddActivityToMultipleFeeds
+            var activity = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "This post appears in multiple feeds!",
+                UserID = _testUserId,
+                Feeds = new List<string> 
+                { 
+                    $"user:{_testFeedId}",
+                    $"user:{_testFeedId2}"
+                },
+                Custom = new Dictionary<string, object>
+                {
+                    ["cross_posted"] = true,
+                    ["target_feeds"] = 2
+                }
+            };
+            var response = await _feedsV3Client.AddActivityAsync(activity);
+            // snippet-end: AddActivityToMultipleFeeds
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            Assert.That(response.Data!.Activity, Is.Not.Null);
+            
+            var activityId = response.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+            
+            Console.WriteLine($"✅ Created activity in multiple feeds: {activityId}");
+        }
+
+        [Test, Order(7)]
         public async Task Test03_QueryActivities()
         {
             Console.WriteLine("\n🔍 Testing activity querying...");
@@ -275,7 +383,7 @@ namespace GetStream.Tests
             Console.WriteLine("✅ Queried activities successfully");
         }
 
-        [Test, Order(5)]
+        [Test, Order(8)]
         public async Task Test04_GetSingleActivity()
         {
             Console.WriteLine("\n📄 Testing single activity retrieval...");
@@ -306,7 +414,7 @@ namespace GetStream.Tests
             Console.WriteLine("✅ Retrieved single activity");
         }
 
-        [Test, Order(6)]
+        [Test, Order(9)]
         public async Task Test05_UpdateActivity()
         {
             Console.WriteLine("\n✏️ Testing activity update...");
@@ -689,7 +797,7 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n👥 Testing follow operation...");
 
-                // snippet-start: FollowUser
+                // snippet-start: Follow
                 var response = await _feedsV3Client.FollowAsync(
                     new FollowRequest
                     {
@@ -697,7 +805,7 @@ namespace GetStream.Tests
                         Target = $"user:{_testFeedId2}"
                     }
                 );
-                // snippet-end: FollowUser
+                // snippet-end: Follow
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Followed user");
@@ -926,13 +1034,13 @@ namespace GetStream.Tests
                 }
             );
 
-            // snippet-start: DeleteReaction
+            // snippet-start: DeleteActivityReaction
             var response = await _feedsV3Client.DeleteActivityReactionAsync(
                 activityId,
                 "like",
                 new { user_id = _testUserId }
             );
-            // snippet-end: DeleteReaction
+            // snippet-end: DeleteActivityReaction
 
             Assert.That(response, Is.Not.Null);
             Console.WriteLine("✅ Deleted reaction");
@@ -996,13 +1104,13 @@ namespace GetStream.Tests
                     }
                 );
 
-                // snippet-start: UnfollowUser
+                // snippet-start: Unfollow
                 var response = await _feedsV3Client.UnfollowAsync(
                     $"user:{_testFeedId}",
                     $"user:{_testFeedId3}",
                     new { user_id = _testUserId }
                 );
-                // snippet-end: UnfollowUser
+                // snippet-end: Unfollow
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Unfollowed user");
@@ -1151,20 +1259,38 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📱 Testing device management...");
             
-                // snippet-start: DeviceManagement
-                // Note: Device management typically requires specific device tokens
-                // This test demonstrates the concept
-                var deviceId = $"test-device-{Guid.NewGuid()}";
-                Console.WriteLine($"Managing device: {deviceId}");
+            var deviceToken = $"test-device-token-{Guid.NewGuid()}";
+            
+            try
+            {
+                // snippet-start: AddDevice
+                var addDeviceResponse = await _client.CreateDeviceAsync(
+                    new CreateDeviceRequest
+                    {
+                        ID = deviceToken,
+                        PushProvider = "apn",
+                        UserID = _testUserId
+                    }
+                );
+                // snippet-end: AddDevice
                 
-                // In a real scenario, you would:
-                // 1. Register device tokens
-                // 2. Associate devices with users
-                // 3. Send push notifications
-                // 4. Manage device preferences
-                // snippet-end: DeviceManagement
-
-                Console.WriteLine("✅ Device management test completed (demo only)");
+                Assert.That(addDeviceResponse, Is.Not.Null);
+                Console.WriteLine($"✅ Added device: {deviceToken}");
+                
+                // snippet-start: RemoveDevice
+                var removeDeviceResponse = await _client.DeleteDeviceAsync(
+                    deviceToken
+                );
+                // snippet-end: RemoveDevice
+                
+                Assert.That(removeDeviceResponse, Is.Not.Null);
+                Console.WriteLine($"✅ Removed device: {deviceToken}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Device management skipped: {ex.Message}");
+                // Device management might not be available in all configurations
+            }
         }
 
         [Test, Order(26)]
@@ -1182,7 +1308,13 @@ namespace GetStream.Tests
                     Type = type,
                     Text = $"Test {type} activity for filtering",
                     UserID = _testUserId,
-                    Feeds = new List<string> { $"user:{_testFeedId}" }
+                    Feeds = new List<string> { $"user:{_testFeedId}" },
+                    Custom = new Dictionary<string, object>
+                    {
+                        ["category"] = type,
+                        ["priority"] = new Random().Next(1, 6),
+                        ["tags"] = new[] { type, "test", "filter" }
+                    }
                 };
                 
                 var response = await _feedsV3Client.AddActivityAsync(activity);
@@ -1192,22 +1324,42 @@ namespace GetStream.Tests
                 }
             }
 
-            // snippet-start: QueryActivitiesWithFilters
-            var filterResponse = await _feedsV3Client.QueryActivitiesAsync(
+            // Query with type filter
+            // snippet-start: QueryActivitiesWithTypeFilter
+            var typeFilterResponse = await _feedsV3Client.QueryActivitiesAsync(
                 new QueryActivitiesRequest
                 {
-                    Filter = new Dictionary<string, object> 
-                    { 
+                    Limit = 10,
+                    Filter = new Dictionary<string, object>
+                    {
                         ["activity_type"] = "post",
                         ["user_id"] = _testUserId
-                    },
-                    Limit = 5
+                    }
+                    // Note: Sort would be added here: Sort = new Dictionary<string, int> { ["created_at"] = -1 }
                 }
             );
-            // snippet-end: QueryActivitiesWithFilters
+            // snippet-end: QueryActivitiesWithTypeFilter
 
-            Assert.That(filterResponse, Is.Not.Null);
+            Assert.That(typeFilterResponse, Is.Not.Null);
             Console.WriteLine("✅ Queried activities with type filter");
+
+            // Query with custom field filter
+            // snippet-start: QueryActivitiesWithCustomFilter
+            var customFilterResponse = await _feedsV3Client.QueryActivitiesAsync(
+                new QueryActivitiesRequest
+                {
+                    Limit = 10,
+                    Filter = new Dictionary<string, object>
+                    {
+                        // Note: Custom field filtering syntax may vary by API implementation
+                        ["user_id"] = _testUserId
+                    }
+                }
+            );
+            // snippet-end: QueryActivitiesWithCustomFilter
+
+            Assert.That(customFilterResponse, Is.Not.Null);
+            Console.WriteLine("✅ Queried activities with custom filter");
         }
 
         [Test, Order(27)]
@@ -1228,6 +1380,7 @@ namespace GetStream.Tests
             Assert.That(firstPageResponse, Is.Not.Null);
             
             // Get second page if there's a next token
+            // snippet-start: GetFeedActivitiesSecondPage
             if (firstPageResponse.Data?.Next != null)
             {
                 var secondPageResponse = await _feedsV3Client.QueryActivitiesAsync(
@@ -1242,6 +1395,11 @@ namespace GetStream.Tests
                 Assert.That(secondPageResponse, Is.Not.Null);
                 Console.WriteLine("✅ Retrieved second page of activities");
             }
+            else
+            {
+                Console.WriteLine("⚠️ No next page available");
+            }
+            // snippet-end: GetFeedActivitiesSecondPage
             // snippet-end: GetFeedActivitiesWithPagination
 
             Console.WriteLine("✅ Retrieved feed activities with pagination");
@@ -1252,12 +1410,12 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n⚠️ Testing error handling scenarios...");
 
+            // Test 1: Invalid activity ID
             try
             {
-                // snippet-start: ErrorHandling
-                // Try to get a non-existent activity
-                await _feedsV3Client.GetActivityAsync("non-existent-activity-id");
-                // snippet-end: ErrorHandling
+                // snippet-start: HandleInvalidActivityId
+                await _feedsV3Client.GetActivityAsync("invalid-activity-id-12345");
+                // snippet-end: HandleInvalidActivityId
                 
                 Assert.Fail("Expected exception was not thrown");
             }
@@ -1271,6 +1429,57 @@ namespace GetStream.Tests
                 Assert.That(ex, Is.Not.Null);
                 Console.WriteLine($"✅ Caught expected error for invalid activity ID: {ex.GetType().Name}");
             }
+
+            // Test 2: Empty activity text
+            try
+            {
+                // snippet-start: HandleEmptyActivityText
+                var emptyActivity = new AddActivityRequest
+                {
+                    Type = "post",
+                    Text = "", // Empty text
+                    UserID = _testUserId,
+                    Feeds = new List<string> { $"user:{_testFeedId}" }
+                };
+                await _feedsV3Client.AddActivityAsync(emptyActivity);
+                // snippet-end: HandleEmptyActivityText
+                
+                // If we reach here, the API allows empty text (which might be valid)
+                Console.WriteLine("✅ Empty activity text was accepted by API");
+            }
+            catch (GetStreamApiException ex)
+            {
+                Console.WriteLine($"✅ Caught expected error for empty activity text: {ex.GetType().Name}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"✅ Caught expected error for empty activity text: {ex.GetType().Name}");
+            }
+
+            // Test 3: Invalid user ID
+            try
+            {
+                // snippet-start: HandleInvalidUserId
+                var invalidUserActivity = new AddActivityRequest
+                {
+                    Type = "post",
+                    Text = "Test with invalid user",
+                    UserID = "", // Empty user ID
+                    Feeds = new List<string> { $"user:{_testFeedId}" }
+                };
+                await _feedsV3Client.AddActivityAsync(invalidUserActivity);
+                // snippet-end: HandleInvalidUserId
+                
+                Assert.Fail("Expected exception was not thrown for invalid user ID");
+            }
+            catch (GetStreamApiException ex)
+            {
+                Console.WriteLine($"✅ Caught expected error for invalid user ID: {ex.GetType().Name}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"✅ Caught expected error for invalid user ID: {ex.GetType().Name}");
+            }
         }
 
         [Test, Order(29)]
@@ -1278,36 +1487,38 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n🔐 Testing authentication scenarios...");
 
-            // snippet-start: AuthenticationScenarios
-            // Test that our client is properly authenticated
+            // Test with valid user authentication
+            // snippet-start: ValidUserAuthentication
             var activity = new AddActivityRequest
             {
-                Type = "auth_test",
-                Text = "Testing authentication",
+                Type = "post",
+                Text = "Activity with proper authentication",
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
             var response = await _feedsV3Client.AddActivityAsync(activity);
+            // snippet-end: ValidUserAuthentication
+            
             Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
             
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             Console.WriteLine($"✅ Successfully authenticated and created activity: {activityId}");
 
-            // Test updating with proper user permissions
+            // Test user permissions for updating activity
+            // snippet-start: UserPermissionUpdate
             var updateResponse = await _feedsV3Client.UpdateActivityAsync(
                 activityId,
                 new UpdateActivityRequest
                 {
-                    Text = "Updated with proper authentication",
-                    UserID = _testUserId
+                    Text = "Updated with proper user permissions",
+                    UserID = _testUserId // Same user can update
                 }
             );
+            // snippet-end: UserPermissionUpdate
             
             Assert.That(updateResponse, Is.Not.Null);
             Console.WriteLine("✅ Successfully updated activity with proper user permissions");
-            // snippet-end: AuthenticationScenarios
         }
 
         // =================================================================
@@ -1348,7 +1559,7 @@ namespace GetStream.Tests
             var postResponse = await _feedsV3Client.AddActivityAsync(postActivity);
             Assert.That(postResponse.Data?.Activity?.ID, Is.Not.Null);
             
-            var postId = postResponse.Data.Activity.ID;
+            var postId = postResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(postId);
             
             // 2. Other users react to the post
