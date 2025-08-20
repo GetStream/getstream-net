@@ -413,8 +413,6 @@ namespace GetStream.Tests
             );
             Assert.That(reactionResponse, Is.Not.Null);
 
-            try
-            {
                 // snippet-start: QueryActivityReactions
                 var response = await _feedsV3Client.QueryActivityReactionsAsync(
                     activityId,
@@ -428,12 +426,7 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Queried reactions");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Query reactions skipped: {e.Message}");
-                throw e;
-            }
+            
         }
 
         // =================================================================
@@ -604,8 +597,6 @@ namespace GetStream.Tests
             var activityId = createResponse.Data.Activity.ID;
             _createdActivityIds.Add(activityId);
 
-            try
-            {
                 // snippet-start: AddBookmark
                 var response = await _feedsV3Client.AddBookmarkAsync(
                     activityId,
@@ -619,12 +610,6 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Added bookmark");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Add bookmark failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(13)]
@@ -667,8 +652,6 @@ namespace GetStream.Tests
             _createdActivityIds.Add(activityId);
 
             // Add a bookmark first
-            try
-            {
                 var addResponse = await _feedsV3Client.AddBookmarkAsync(
                     activityId,
                     new AddBookmarkRequest
@@ -696,12 +679,6 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Updated bookmark");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Update bookmark failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(14)]
@@ -709,8 +686,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n👥 Testing follow operation...");
 
-            try
-            {
                 // snippet-start: FollowUser
                 var response = await _feedsV3Client.FollowAsync(
                     new FollowRequest
@@ -723,12 +698,6 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Followed user");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Follow failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(15)]
@@ -850,8 +819,6 @@ namespace GetStream.Tests
             _createdActivityIds.Add(activityId);
 
             // Add a bookmark first
-            try
-            {
                 var addResponse = await _feedsV3Client.AddBookmarkAsync(
                     activityId,
                     new AddBookmarkRequest
@@ -875,12 +842,6 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Deleted bookmark");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Delete bookmark failed: {e.Message}");
-                throw e;
-            }
         }
 
         // =================================================================
@@ -1023,8 +984,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n👥 Testing unfollow operation...");
 
-            try
-            {
                 // Follow first
                 await _feedsV3Client.FollowAsync(
                     new FollowRequest
@@ -1044,12 +1003,6 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
                 Console.WriteLine("✅ Unfollowed user");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Unfollow operation skipped: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(22)]
@@ -1057,8 +1010,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📊 Testing poll creation...");
             
-            try
-            {
                 // snippet-start: CreatePoll
                 // First create a poll using the poll API
                 var poll = new CreatePollRequest
@@ -1096,12 +1047,6 @@ namespace GetStream.Tests
                 Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
                 _createdActivityIds.Add(response.Data.Activity.ID);
                 Console.WriteLine("✅ Created poll activity");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Poll creation failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(23)]
@@ -1109,8 +1054,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n🗳️ Testing poll voting...");
             
-            try
-            {
                 // Create a poll first using the proper API
                 var poll = new CreatePollRequest
                 {
@@ -1168,12 +1111,6 @@ namespace GetStream.Tests
 
                 Assert.That(voteResponse, Is.Not.Null);
                 Console.WriteLine("✅ Cast poll vote");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Poll voting failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(24)]
@@ -1181,8 +1118,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n🛡️ Testing activity moderation...");
             
-            try
-            {
                 // Create an activity to moderate
                 var activity = new AddActivityRequest
                 {
@@ -1206,12 +1141,6 @@ namespace GetStream.Tests
                 // snippet-end: ModerateActivity
 
                 Console.WriteLine("✅ Moderation test completed (demo only)");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Moderation test failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(25)]
@@ -1219,8 +1148,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📱 Testing device management...");
             
-            try
-            {
                 // snippet-start: DeviceManagement
                 // Note: Device management typically requires specific device tokens
                 // This test demonstrates the concept
@@ -1235,12 +1162,6 @@ namespace GetStream.Tests
                 // snippet-end: DeviceManagement
 
                 Console.WriteLine("✅ Device management test completed (demo only)");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Device management test failed: {e.Message}");
-                throw e;
-            }
         }
 
         [Test, Order(26)]
