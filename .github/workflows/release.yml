@@ -173,16 +173,23 @@ jobs:
           echo "To enable NuGet publishing, add your NuGet API key as a repository secret named 'NUGET_API_KEY'"
         else
           echo "🚀 Publishing to NuGet.org using v3 API..."
-          # Clear any existing sources and add nuget.org explicitly
-          dotnet nuget remove source nuget.org || true
-          dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
           
-          # Push with explicit source reference
+          # Clear all existing sources to prevent fallback
+          dotnet nuget remove source nuget.org || true
+          dotnet nuget list source
+          
+          # Add nuget.org v3 source explicitly
+          dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
+          dotnet nuget list source
+          
+          # Push with explicit v3 source URL (not just name)
+          echo "Pushing package with explicit v3 endpoint..."
           dotnet nuget push ./packages/*.nupkg \
             --api-key "$NUGET_API_KEY" \
-            --source nuget.org \
+            --source https://api.nuget.org/v3/index.json \
             --skip-duplicate \
-            --no-symbols
+            --no-symbols \
+            --timeout 300
           echo "✅ Published to NuGet as getstream-net package"
         fi
     

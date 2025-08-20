@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     
     <!-- NuGet Package Metadata -->
-    <PackageId>GetStream.Feed</PackageId>
+    <PackageId>getstream-net</PackageId>
     <Version>1.1.0</Version>
     <Authors>GetStream</Authors>
     <Company>GetStream</Company>
