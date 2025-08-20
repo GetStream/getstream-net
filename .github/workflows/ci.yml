@@ -3,11 +3,21 @@ name: .NET CI
 on:
   push:
     branches: [ "main", "master" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
   pull_request:
     branches: [ "main", "master" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
 
 env:
-  DOTNET_VERSION: '9.0.x' # Set this to the .NET version being used
+  DOTNET_VERSION: '9.0.x'
 
 jobs:
   build-and-test:
@@ -21,14 +31,54 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    
     - name: Restore dependencies
       run: dotnet restore
       
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build (Debug)
+      run: dotnet build --no-restore --configuration Debug
+      
+    - name: Build (Release)
+      run: dotnet build --no-restore --configuration Release
     
-    - name: Test
+    - name: Run Unit Tests
+      run: dotnet test --no-build --configuration Debug --verbosity normal --filter "Category!=Integration"
+    
+    - name: Run Integration Tests
       env:
         STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
-      run: dotnet test --no-build --verbosity normal 
+      run: |
+        if [ -n "$STREAM_API_KEY" ] && [ -n "$STREAM_API_SECRET" ]; then
+          echo "Running integration tests with API credentials"
+          dotnet test --no-build --configuration Debug --verbosity normal --filter "Category=Integration|TestCategory=Integration|FullyQualifiedName~Integration"
+        else
+          echo "⚠️ Skipping integration tests - API credentials not available"
+          echo "Integration tests require STREAM_API_KEY and STREAM_API_SECRET secrets"
+        fi
+    
+    - name: Check for warnings
+      run: |
+        echo "Checking for build warnings..."
+        dotnet build --no-restore --configuration Release --verbosity normal 2>&1 | tee build.log
+        if grep -q "warning" build.log; then
+          echo "❌ Build warnings found:"
+          grep "warning" build.log
+          exit 1
+        else
+          echo "✅ No build warnings found"
+        fi
+    
+    - name: Test NuGet package creation
+      run: |
+        echo "Testing NuGet package creation..."
+        dotnet pack src/stream-feed-net.csproj --configuration Release --no-build --output ./test-packages
+        ls -la ./test-packages/
+        echo "✅ NuGet package created successfully" 

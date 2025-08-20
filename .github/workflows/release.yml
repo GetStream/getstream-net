@@ -1,0 +1,214 @@
+name: Release
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      prerelease:
+        description: 'Is this a prerelease?'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  # Determine if we should create a release
+  check-release:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version_bump: ${{ steps.check.outputs.version_bump }}
+      is_prerelease: ${{ steps.check.outputs.is_prerelease }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Check for release triggers
+      id: check
+      run: |
+        # Check commit message for version bump keywords
+        COMMIT_MSG=$(git log -1 --pretty=%B)
+        echo "Commit message: $COMMIT_MSG"
+        
+        # Manual workflow dispatch
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "version_bump=${{ github.event.inputs.version_bump }}" >> $GITHUB_OUTPUT
+          echo "is_prerelease=${{ github.event.inputs.prerelease }}" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        
+        # Check commit message for version bump keywords
+        if echo "$COMMIT_MSG" | grep -iE "\[major\]|\[breaking\]|BREAKING CHANGE"; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "version_bump=major" >> $GITHUB_OUTPUT
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+        elif echo "$COMMIT_MSG" | grep -iE "\[minor\]|\[feature\]|feat:"; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "version_bump=minor" >> $GITHUB_OUTPUT
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+        elif echo "$COMMIT_MSG" | grep -iE "\[patch\]|\[fix\]|fix:"; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "version_bump=patch" >> $GITHUB_OUTPUT
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+        elif echo "$COMMIT_MSG" | grep -iE "\[prerelease\]|\[alpha\]|\[beta\]|\[rc\]"; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "version_bump=patch" >> $GITHUB_OUTPUT
+          echo "is_prerelease=true" >> $GITHUB_OUTPUT
+        else
+          echo "should_release=false" >> $GITHUB_OUTPUT
+        fi
+
+  # Build, test, and release
+  release:
+    needs: check-release
+    if: needs.check-release.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Test
+      env:
+        STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+        STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+      run: dotnet test --no-build --configuration Release --verbosity normal
+    
+    - name: Get current version
+      id: current_version
+      run: |
+        CURRENT_VERSION=$(grep -oP '<Version>\K[^<]+' src/stream-feed-net.csproj)
+        echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $CURRENT_VERSION"
+    
+    - name: Calculate new version
+      id: new_version
+      run: |
+        CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+        VERSION_BUMP="${{ needs.check-release.outputs.version_bump }}"
+        IS_PRERELEASE="${{ needs.check-release.outputs.is_prerelease }}"
+        
+        # Parse current version
+        IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+        MAJOR=${VERSION_PARTS[0]}
+        MINOR=${VERSION_PARTS[1]}
+        PATCH=${VERSION_PARTS[2]%%-*}  # Remove any prerelease suffix
+        
+        # Bump version based on type
+        case $VERSION_BUMP in
+          major)
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            ;;
+          minor)
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            ;;
+          patch)
+            PATCH=$((PATCH + 1))
+            ;;
+        esac
+        
+        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+        
+        # Add prerelease suffix if needed
+        if [ "$IS_PRERELEASE" = "true" ]; then
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          NEW_VERSION="$NEW_VERSION-alpha.$TIMESTAMP"
+        fi
+        
+        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version: $NEW_VERSION"
+    
+    - name: Update version in project file
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" src/stream-feed-net.csproj
+        echo "Updated version to $NEW_VERSION"
+    
+    - name: Create NuGet package
+      run: |
+        dotnet pack src/stream-feed-net.csproj --configuration Release --no-build --output ./packages
+        ls -la ./packages/
+    
+    - name: Publish to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        if [ -z "$NUGET_API_KEY" ]; then
+          echo "⚠️ NUGET_API_KEY secret not set. Skipping NuGet publish."
+          echo "To enable NuGet publishing, add your NuGet API key as a repository secret named 'NUGET_API_KEY'"
+        else
+          dotnet nuget push ./packages/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+          echo "✅ Published to NuGet"
+        fi
+    
+    - name: Commit version bump
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add src/stream-feed-net.csproj
+        git commit -m "chore: bump version to $NEW_VERSION [skip ci]" || exit 0
+        git push
+    
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        IS_PRERELEASE="${{ needs.check-release.outputs.is_prerelease }}"
+        
+        # Generate release notes
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        if [ -n "$PREVIOUS_TAG" ]; then
+          RELEASE_NOTES=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s" --no-merges)
+        else
+          RELEASE_NOTES=$(git log --pretty=format:"- %s" --no-merges -10)
+        fi
+        
+        # Create release
+        PRERELEASE_FLAG=""
+        if [ "$IS_PRERELEASE" = "true" ]; then
+          PRERELEASE_FLAG="--prerelease"
+        fi
+        
+        gh release create "v$NEW_VERSION" \
+          --title "Release v$NEW_VERSION" \
+          --notes "$RELEASE_NOTES" \
+          $PRERELEASE_FLAG \
+          ./packages/*.nupkg
+        
+        echo "✅ Created GitHub release v$NEW_VERSION"

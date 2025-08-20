@@ -4,7 +4,23 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
+    
+    <!-- NuGet Package Metadata -->
+    <PackageId>GetStream.Feed</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>GetStream</Authors>
+    <Company>GetStream</Company>
+    <Product>GetStream Feed .NET SDK</Product>
+    <Description>Official .NET SDK for GetStream Feed API</Description>
+    <PackageTags>getstream;feed;api;sdk;dotnet;csharp</PackageTags>
+    <PackageProjectUrl>https://github.com/GetStream/getstream-net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GetStream/getstream-net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>

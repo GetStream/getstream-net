@@ -1,0 +1,224 @@
+name: Create Release PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      prerelease:
+        description: 'Is this a prerelease?'
+        required: false
+        default: false
+        type: boolean
+      release_notes:
+        description: 'Release notes (optional)'
+        required: false
+        type: string
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Get current version
+      id: current_version
+      run: |
+        CURRENT_VERSION=$(grep -oP '<Version>\K[^<]+' src/stream-feed-net.csproj)
+        echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $CURRENT_VERSION"
+    
+    - name: Calculate new version
+      id: new_version
+      run: |
+        CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+        VERSION_BUMP="${{ github.event.inputs.version_bump }}"
+        IS_PRERELEASE="${{ github.event.inputs.prerelease }}"
+        
+        # Parse current version
+        IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+        MAJOR=${VERSION_PARTS[0]}
+        MINOR=${VERSION_PARTS[1]}
+        PATCH=${VERSION_PARTS[2]%%-*}  # Remove any prerelease suffix
+        
+        # Bump version based on type
+        case $VERSION_BUMP in
+          major)
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            ;;
+          minor)
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            ;;
+          patch)
+            PATCH=$((PATCH + 1))
+            ;;
+        esac
+        
+        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+        
+        # Add prerelease suffix if needed
+        if [ "$IS_PRERELEASE" = "true" ]; then
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          NEW_VERSION="$NEW_VERSION-alpha.$TIMESTAMP"
+        fi
+        
+        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version: $NEW_VERSION"
+    
+    - name: Create release branch
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        BRANCH_NAME="release/v$NEW_VERSION"
+        
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout -b "$BRANCH_NAME"
+        
+        echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+    
+    - name: Update version in project file
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" src/stream-feed-net.csproj
+        echo "Updated version to $NEW_VERSION"
+    
+    - name: Run tests to ensure everything works
+      env:
+        STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+        STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+      run: |
+        dotnet restore
+        dotnet build --no-restore --configuration Release
+        dotnet test --no-build --configuration Release --verbosity normal
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        
+        # Get the latest tag
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        
+        if [ -n "$PREVIOUS_TAG" ]; then
+          echo "## Changes since $PREVIOUS_TAG" > CHANGELOG_TEMP.md
+          echo "" >> CHANGELOG_TEMP.md
+          
+          # Get commits since last tag
+          git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges >> CHANGELOG_TEMP.md
+        else
+          echo "## Initial Release" > CHANGELOG_TEMP.md
+          echo "" >> CHANGELOG_TEMP.md
+          echo "- Initial release of GetStream Feed .NET SDK" >> CHANGELOG_TEMP.md
+        fi
+        
+        echo "" >> CHANGELOG_TEMP.md
+        
+        # Add custom release notes if provided
+        if [ -n "${{ github.event.inputs.release_notes }}" ]; then
+          echo "## Additional Notes" >> CHANGELOG_TEMP.md
+          echo "" >> CHANGELOG_TEMP.md
+          echo "${{ github.event.inputs.release_notes }}" >> CHANGELOG_TEMP.md
+        fi
+        
+        # Read the changelog content
+        CHANGELOG_CONTENT=$(cat CHANGELOG_TEMP.md)
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+    
+    - name: Commit changes
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        
+        git add src/stream-feed-net.csproj
+        git commit -m "chore: prepare release v$NEW_VERSION"
+        git push origin "${{ env.branch_name }}"
+    
+    - name: Create Pull Request
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+        VERSION_BUMP="${{ github.event.inputs.version_bump }}"
+        IS_PRERELEASE="${{ github.event.inputs.prerelease }}"
+        
+        # Determine PR title and labels
+        if [ "$IS_PRERELEASE" = "true" ]; then
+          PR_TITLE="🚀 Release v$NEW_VERSION (Prerelease)"
+          LABELS="release,prerelease"
+        else
+          PR_TITLE="🚀 Release v$NEW_VERSION"
+          LABELS="release"
+        fi
+        
+        # Add version bump label
+        case $VERSION_BUMP in
+          major)
+            LABELS="$LABELS,major"
+            ;;
+          minor)
+            LABELS="$LABELS,minor"
+            ;;
+          patch)
+            LABELS="$LABELS,patch"
+            ;;
+        esac
+        
+        # Create PR body
+        PR_BODY="## Release v$NEW_VERSION
+
+This PR prepares the release of version $NEW_VERSION.
+
+### Version Bump: $VERSION_BUMP
+### Prerelease: $IS_PRERELEASE
+
+${{ steps.changelog.outputs.changelog }}
+
+---
+
+### Checklist
+- [x] Version updated in project file
+- [x] Tests passing
+- [ ] Release notes reviewed
+- [ ] Ready to merge and release
+
+### Instructions
+1. Review the changes and release notes
+2. Merge this PR to trigger the automated release process
+3. The release will be automatically published to NuGet and GitHub Releases
+
+**Note:** Merging this PR will automatically:
+- Create a GitHub release with tag v$NEW_VERSION
+- Publish the NuGet package to nuget.org
+- Generate release notes from recent commits"
+        
+        gh pr create \
+          --title "$PR_TITLE" \
+          --body "$PR_BODY" \
+          --base main \
+          --head "${{ env.branch_name }}" \
+          --label "$LABELS"
+        
+        echo "✅ Created release PR for v$NEW_VERSION"
