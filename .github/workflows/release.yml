@@ -172,8 +172,18 @@ jobs:
           echo "⚠️ NUGET_API_KEY secret not set. Skipping NuGet publish."
           echo "To enable NuGet publishing, add your NuGet API key as a repository secret named 'NUGET_API_KEY'"
         else
-          dotnet nuget push ./packages/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
-          echo "✅ Published to NuGet"
+          echo "🚀 Publishing to NuGet.org using v3 API..."
+          # Clear any existing sources and add nuget.org explicitly
+          dotnet nuget remove source nuget.org || true
+          dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
+          
+          # Push with explicit source reference
+          dotnet nuget push ./packages/*.nupkg \
+            --api-key "$NUGET_API_KEY" \
+            --source nuget.org \
+            --skip-duplicate \
+            --no-symbols
+          echo "✅ Published to NuGet as getstream-net package"
         fi
     
     - name: Commit version bump
