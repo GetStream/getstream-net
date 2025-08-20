@@ -53,6 +53,22 @@ jobs:
         STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
       run: |
+        echo "🔍 Checking API credentials..."
+        
+        if [ -z "$STREAM_API_KEY" ]; then
+          echo "❌ STREAM_API_KEY is missing or empty"
+          echo "   Please check that the secret 'STREAM_API_KEY' is set in repository settings"
+        else
+          echo "✅ STREAM_API_KEY is available (${#STREAM_API_KEY} characters)"
+        fi
+        
+        if [ -z "$STREAM_API_SECRET" ]; then
+          echo "❌ STREAM_API_SECRET is missing or empty"
+          echo "   Please check that the secret 'STREAM_API_SECRET' is set in repository settings"
+        else
+          echo "✅ STREAM_API_SECRET is available (${#STREAM_API_SECRET} characters)"
+        fi
+        
         if [ -n "$STREAM_API_KEY" ] && [ -n "$STREAM_API_SECRET" ]; then
           echo "✅ API credentials are available from repository secrets"
           echo "API Key length: ${#STREAM_API_KEY} characters"
@@ -69,7 +85,7 @@ jobs:
         CONFIGURATION: Debug
       run: |
         echo "Running all tests with API credentials from repository secrets"
-        make test-ci
+        make test
     
     - name: Check for warnings
       run: |
