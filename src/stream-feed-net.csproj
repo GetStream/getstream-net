@@ -7,7 +7,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>getstream-net</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Authors>GetStream</Authors>
     <Company>GetStream</Company>
     <Product>GetStream Feed .NET SDK</Product>
