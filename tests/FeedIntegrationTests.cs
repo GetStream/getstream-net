@@ -1608,6 +1608,185 @@ namespace GetStream.Tests
             Console.WriteLine("✅ Completed real-world usage scenario demonstration");
         }
 
+        /// <summary>
+        /// Test 33: Feed Group CRUD Operations
+        /// </summary>
+        [Test, Order(33)]
+        public async Task Test33_FeedGroupCRUD()
+        {
+            Console.WriteLine("\n📁 Testing Feed Group CRUD operations...");
+
+            var feedGroupId = $"test-feed-group-{Guid.NewGuid().ToString()[..8]}";
+
+            // Test 1: List Feed Groups
+            Console.WriteLine("\n📋 Testing list feed groups...");
+            // snippet-start: ListFeedGroups
+            var listResponse = await _feedsV3Client.ListFeedGroupsAsync();
+            // snippet-end: ListFeedGroups
+            
+            
+            Console.WriteLine($"✅ Listed {listResponse.Data.Groups.Count} existing feed groups");
+
+            // Test 2: Create Feed Group
+            Console.WriteLine("\n➕ Testing create feed group...");
+            // snippet-start: CreateFeedGroup
+            var createResponse = await _feedsV3Client.CreateFeedGroupAsync(new CreateFeedGroupRequest
+            {
+                ID = feedGroupId,
+                DefaultVisibility = "public",
+                ActivityProcessors = new List<ActivityProcessorConfig>
+                {
+                    new() { Type = "default" }
+                }
+            });
+            // snippet-end: CreateFeedGroup
+
+            
+            Assert.Equals(feedGroupId, createResponse.Data.FeedGroup.ID);
+            Console.WriteLine($"✅ Created feed group: {feedGroupId}");
+
+            // Test 3: Get Feed Group
+            Console.WriteLine("\n🔍 Testing get feed group...");
+            // snippet-start: GetFeedGroup
+            var getResponse = await _feedsV3Client.GetFeedGroupAsync("feed_group_id");
+            // snippet-end: GetFeedGroup
+
+            
+            Assert.Equals("feed_group_id", getResponse.Data.FeedGroup.ID);
+            Console.WriteLine($"✅ Retrieved feed group: {feedGroupId}");
+
+            // Test 4: Update Feed Group
+            Console.WriteLine("\n✏️ Testing update feed group...");
+            // snippet-start: UpdateFeedGroup
+            var updateResponse = await _feedsV3Client.UpdateFeedGroupAsync("feed_group_id", new UpdateFeedGroupRequest
+            {
+                ActivityProcessors = new List<ActivityProcessorConfig>
+                {
+                    new() { Type = "default" }
+                },
+                Aggregation = new AggregationConfig
+                {
+                    Format = "time_based"
+                }
+            });
+            // snippet-end: UpdateFeedGroup
+
+            
+            Console.WriteLine($"✅ Updated feed group: {feedGroupId}");
+
+            // Test 5: Get or Create Feed Group (should get existing)
+            Console.WriteLine("\n🔄 Testing get or create feed group (existing)...");
+            // snippet-start: GetOrCreateFeedGroupExisting
+            var getOrCreateResponse = await _feedsV3Client.GetOrCreateFeedGroupAsync("feed_group_id", new GetOrCreateFeedGroupRequest
+            {
+                DefaultVisibility = "public"
+            });
+            // snippet-end: GetOrCreateFeedGroupExisting
+
+            
+            Console.WriteLine($"✅ Got existing feed group: {feedGroupId}");
+
+            // Test 6: Delete Feed Group
+            Console.WriteLine("\n🗑️ Testing delete feed group...");
+            // snippet-start: DeleteFeedGroup
+            await _feedsV3Client.DeleteFeedGroupAsync("groupID-123");
+            // snippet-end: DeleteFeedGroup
+
+            Console.WriteLine("✅ Completed Feed Group CRUD operations");
+        }
+
+        /// <summary>
+        /// Test 34: Feed View CRUD Operations
+        /// </summary>
+        [Test, Order(34)]
+        public async Task Test34_FeedViewCRUD()
+        {
+            Console.WriteLine("\n👁️ Testing Feed View CRUD operations...");
+
+            var feedViewId = $"test-feed-view-{Guid.NewGuid().ToString()[..8]}";
+
+            // Test 1: List Feed Views
+            Console.WriteLine("\n📋 Testing list feed views...");
+            // snippet-start: ListFeedViews
+            var listResponse = await _feedsV3Client.ListFeedViewsAsync();
+            // snippet-end: ListFeedViews
+
+            Console.WriteLine($"✅ Listed {listResponse.Data.Views.Count} existing feed views");
+
+            // Test 2: Create Feed View
+            Console.WriteLine("\n➕ Testing create feed view...");
+            // snippet-start: CreateFeedView
+            var createResponse = await _feedsV3Client.CreateFeedViewAsync(new CreateFeedViewRequest
+            {
+                ID = feedViewId,
+                ActivitySelectors = new List<ActivitySelectorConfig>
+                {
+                    new() { Type = "recent" }
+                },
+                ActivityProcessors = new List<ActivityProcessorConfig>
+                {
+                    new() { Type = "default" }
+                },
+                Aggregation = new AggregationConfig
+                {
+                    Format = "time_based"
+                }
+            });
+            // snippet-end: CreateFeedView
+
+            Assert.Equals(feedViewId, createResponse.Data.FeedView.ID);
+            Console.WriteLine($"✅ Created feed view: {feedViewId}");
+
+            // Test 3: Get Feed View
+            Console.WriteLine("\n🔍 Testing get feed view...");
+            // snippet-start: GetFeedView
+            var getResponse = await _feedsV3Client.GetFeedViewAsync("feedViewID");
+            // snippet-end: GetFeedView
+
+            Assert.Equals("feedViewID", getResponse.Data.FeedView.ID);
+            Console.WriteLine($"✅ Retrieved feed view: {feedViewId}");
+
+            // Test 4: Update Feed View
+            Console.WriteLine("\n✏️ Testing update feed view...");
+            // snippet-start: UpdateFeedView
+            var updateResponse = await _feedsV3Client.UpdateFeedViewAsync("feedViewID", new UpdateFeedViewRequest
+            {
+                ActivitySelectors = new List<ActivitySelectorConfig>
+                {
+                    new() { Type = "popular", MinPopularity = 10 }
+                },
+                Aggregation = new AggregationConfig
+                {
+                    Format = "popularity_based"
+                }
+            });
+            // snippet-end: UpdateFeedView
+
+            Console.WriteLine($"✅ Updated feed view: {feedViewId}");
+
+            // Test 5: Get or Create Feed View (should get existing)
+            Console.WriteLine("\n🔄 Testing get or create feed view (existing)...");
+            // snippet-start: GetOrCreateFeedViewExisting
+            var getOrCreateResponse = await _feedsV3Client.GetOrCreateFeedViewAsync(feedViewId, new GetOrCreateFeedViewRequest
+            {
+                ActivitySelectors = new List<ActivitySelectorConfig>
+                {
+                    new() { Type = "recent" }
+                }
+            });
+            // snippet-end: GetOrCreateFeedViewExisting
+
+            Console.WriteLine($"✅ Got existing feed view: {feedViewId}");
+
+            // Test 6: Delete Feed View
+            Console.WriteLine("\n🗑️ Testing delete feed view...");
+            // snippet-start: DeleteFeedView
+            await _feedsV3Client.DeleteFeedViewAsync("viewID-123");
+            // snippet-end: DeleteFeedView
+
+            Console.WriteLine("✅ Completed Feed View CRUD operations");
+        }
+
         // =================================================================
         // 7. CLEANUP OPERATIONS (in reverse order)
         // =================================================================
