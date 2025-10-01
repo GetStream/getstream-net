@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using GetStream;
 using GetStream.Models;
-using GetStream.Requests;
 using System.Collections.Generic;
 using NUnit.Framework;
 using FluentAssertions;

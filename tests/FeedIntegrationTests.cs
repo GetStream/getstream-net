@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Models;
-using GetStream.Requests;
 using NUnit.Framework;
 
 namespace GetStream.Tests

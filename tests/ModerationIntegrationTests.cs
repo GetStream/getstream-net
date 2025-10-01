@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Models;
-using GetStream.Requests;
 using NUnit.Framework;
 
 namespace GetStream.Tests
@@ -192,35 +191,6 @@ namespace GetStream.Tests
             _bannedUserIds.Add(_testUserId);
             
             Console.WriteLine($"Successfully banned user: {_testUserId}");
-        }
-
-        [Test, Order(4)]
-        public async Task Test04_UnbanUser()
-        {
-            Console.WriteLine("\nTesting user unban...");
-
-            // Ensure user is banned first
-            if (!_bannedUserIds.Contains(_testUserId))
-            {
-                await Test02_BanUserWithReason();
-            }
-
-            // snippet-start: UnbanUser
-            var request = new UnbanRequest
-            {
-                UnbannedByID = _moderatorUserId
-            };
-
-            var response = await _moderationClient.UnbanAsync(request);
-            // snippet-stop: UnbanUser
-
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Data, Is.Not.Null);
-            
-            // Remove from banned list
-            _bannedUserIds.Remove(_testUserId);
-            
-            Console.WriteLine($"Successfully unbanned user: {_testUserId}");
         }
 
         // =================================================================
@@ -606,24 +576,6 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n🧹 Cleaning up moderation test resources...");
             
-            // Unban any remaining banned users
-            foreach (var userId in _bannedUserIds.ToArray())
-            {
-                try
-                {
-                    var request = new UnbanRequest
-                    {
-                        UnbannedByID = _moderatorUserId
-                    };
-                    await _moderationClient.UnbanAsync(request);
-                    Console.WriteLine($"Cleaned up ban for user: {userId}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Warning: Failed to unban user {userId}: {ex.Message}");
-                }
-            }
-            
             // Unmute any remaining muted users
             foreach (var userId in _mutedUserIds.ToArray())
             {
@@ -648,7 +600,7 @@ namespace GetStream.Tests
             {
                 try
                 {
-                    await _moderationClient.DeleteConfigAsync(configKey);
+                    await _moderationClient.DeleteConfigAsync(configKey, null);
                     Console.WriteLine($"Cleaned up config: {configKey}");
                 }
                 catch (Exception ex)
