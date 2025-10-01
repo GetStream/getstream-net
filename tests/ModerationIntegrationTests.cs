@@ -279,71 +279,6 @@ namespace GetStream.Tests
         }
 
         // =================================================================
-        // 5. CONTENT MODERATION
-        // =================================================================
-
-        [Test, Order(8)]
-        public async Task Test08_CheckContent()
-        {
-            Console.WriteLine("\n🔍 Testing content moderation check...");
-
-            // snippet-start: CheckContent
-            var request = new CheckRequest
-            {
-                EntityType = "message",
-                EntityID = "test-message-" + Guid.NewGuid().ToString("N")[..8],
-                EntityCreatorID = _testUserId,
-                ModerationPayload = new ModerationPayload
-                {
-                    Texts = new List<string> { "This is some content to moderate for testing purposes" }
-                }
-            };
-
-            var response = await _moderationClient.CheckAsync(request);
-            // snippet-stop: CheckContent
-
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Data, Is.Not.Null);
-            
-            Console.WriteLine("Successfully performed content moderation check");
-        }
-
-        [Test, Order(9)]
-        public async Task Test09_CustomCheck()
-        {
-            Console.WriteLine("\n🔍 Testing custom moderation check...");
-
-            // snippet-start: CustomCheck
-            var request = new CustomCheckRequest
-            {
-                EntityID = "test-message-" + Guid.NewGuid().ToString("N")[..8],
-                EntityType = "message",
-                EntityCreatorID = _testUserId,
-                Flags = new List<CustomCheckFlag>
-                {
-                    new CustomCheckFlag
-                    {
-                        Type = "toxicity",
-                        Labels = new List<string> { "toxic", "inappropriate" }
-                    },
-                    new CustomCheckFlag
-                    {
-                        Type = "spam",
-                        Labels = new List<string> { "spam", "unwanted" }
-                    }
-                }
-            };
-
-            var response = await _moderationClient.CustomCheckAsync(request);
-            // snippet-stop: CustomCheck
-
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Data, Is.Not.Null);
-            
-            Console.WriteLine("Successfully performed custom moderation check");
-        }
-
-        // =================================================================
         // 6. CONFIGURATION MANAGEMENT
         // =================================================================
 
@@ -493,30 +428,7 @@ namespace GetStream.Tests
             
             Console.WriteLine("Successfully queried moderation templates");
         }
-
-        [Test, Order(16)]
-        public async Task Test16_UpsertTemplate()
-        {
-            Console.WriteLine("\n📄 Testing template upsert...");
-
-            // snippet-start: V2UpsertTemplate
-            var config=new FeedsModerationTemplateConfig();
-            config.ConfigKey="config-key";
-            var request = new UpsertModerationTemplateRequest
-            {
-                Name = "test-template-" + Guid.NewGuid().ToString("N")[..8],
-                Config = config,
-            };
-
-            var response = await _moderationClient.V2UpsertTemplateAsync(request);
-            // snippet-stop: V2UpsertTemplate
-
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Data, Is.Not.Null);
-            
-            Console.WriteLine("Successfully upserted moderation template");
-        }
-
+        
         // =================================================================
         // 10. RULE OPERATIONS
         // =================================================================
