@@ -95,6 +95,10 @@ namespace GetStream
                 var timestamp = reader.GetInt64();
                 // Convert nanoseconds to DateTime (assuming Unix epoch)
                 return DateTimeOffset.FromUnixTimeMilliseconds(timestamp / 1000000).DateTime;
+            } else if (reader.TokenType == JsonTokenType.String)
+            {
+                var tsString = reader.GetString();
+                return tsString == null?DateTimeOffset.FromUnixTimeMilliseconds(0).DateTime:DateTimeOffset.Parse(tsString).DateTime;
             }
             
             throw new JsonException($"Cannot convert {reader.TokenType} to DateTime");
