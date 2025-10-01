@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Models;
-using GetStream.Requests;
 using System.Collections.Generic;
 
 namespace GetStream.Example
