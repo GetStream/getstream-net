@@ -189,35 +189,3 @@ jobs:
         
         # Create PR body
         PR_BODY="## Release v$NEW_VERSION
-
-### Version Bump: $VERSION_BUMP
-### Prerelease: $IS_PRERELEASE
-
-${{ steps.changelog.outputs.changelog }}
-
----
-
-### Checklist
-- [x] Version updated in project file
-- [x] Tests passing
-- [ ] Release notes reviewed
-- [ ] Ready to merge and release
-
-### Instructions
-1. Review the changes and release notes
-2. Merge this PR to trigger the automated release process
-3. The release will be automatically published to NuGet and GitHub Releases
-
-**Note:** Merging this PR will automatically:
-- Create a GitHub release with tag v$NEW_VERSION
-- Publish the NuGet package to nuget.org
-- Generate release notes from recent commits"
-        
-        gh pr create \
-          --title "$PR_TITLE" \
-          --body "$PR_BODY" \
-          --base master \
-          --head "${{ env.branch_name }}" \
-          --label "$LABELS"
-        
-        echo "✅ Created release PR for v$NEW_VERSION"
