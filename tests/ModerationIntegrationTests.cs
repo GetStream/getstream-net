@@ -450,6 +450,7 @@ namespace GetStream.Tests
                 Description = "Test moderation rule created by .NET SDK",
                 Enabled = true,
                 Action = ruleAction,
+                RuleType = "user"
             };
 
             var response = await _moderationClient.UpsertModerationRuleAsync(request);
