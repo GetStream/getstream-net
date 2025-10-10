@@ -96,12 +96,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<Response>> DeleteBlockListAsync(string Name,object request = null,
+        public async Task<StreamResponse<Response>> DeleteBlockListAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
             var queryParams = ExtractQueryParams(request);
 
@@ -112,12 +112,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<GetBlockListResponse>> GetBlockListAsync(string Name,object request = null,
+        public async Task<StreamResponse<GetBlockListResponse>> GetBlockListAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
             var queryParams = ExtractQueryParams(request);
 
@@ -128,12 +128,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<UpdateBlockListResponse>> UpdateBlockListAsync(string Name,UpdateBlockListRequest request,
+        public async Task<StreamResponse<UpdateBlockListResponse>> UpdateBlockListAsync(string name,UpdateBlockListRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
 
             var result = await MakeRequestAsync<UpdateBlockListRequest, UpdateBlockListResponse>(
@@ -244,12 +244,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<DeleteExternalStorageResponse>> DeleteExternalStorageAsync(string Name,object request = null,
+        public async Task<StreamResponse<DeleteExternalStorageResponse>> DeleteExternalStorageAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
 
             var result = await MakeRequestAsync<object, DeleteExternalStorageResponse>(
@@ -259,12 +259,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<UpdateExternalStorageResponse>> UpdateExternalStorageAsync(string Name,UpdateExternalStorageRequest request,
+        public async Task<StreamResponse<UpdateExternalStorageResponse>> UpdateExternalStorageAsync(string name,UpdateExternalStorageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
 
             var result = await MakeRequestAsync<UpdateExternalStorageRequest, UpdateExternalStorageResponse>(
@@ -274,12 +274,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<CheckExternalStorageResponse>> CheckExternalStorageAsync(string Name,object request = null,
+        public async Task<StreamResponse<CheckExternalStorageResponse>> CheckExternalStorageAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
 
             var result = await MakeRequestAsync<object, CheckExternalStorageResponse>(
@@ -333,12 +333,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<GetImportResponse>> GetImportAsync(string ID,object request = null,
+        public async Task<StreamResponse<GetImportResponse>> GetImportAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["id"] = ID,
+                ["id"] = id,
             };
 
             var result = await MakeRequestAsync<object, GetImportResponse>(
@@ -371,12 +371,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<GetCustomPermissionResponse>> GetPermissionAsync(string ID,object request = null,
+        public async Task<StreamResponse<GetCustomPermissionResponse>> GetPermissionAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["id"] = ID,
+                ["id"] = id,
             };
 
             var result = await MakeRequestAsync<object, GetCustomPermissionResponse>(
@@ -420,12 +420,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<Response>> DeletePollAsync(string PollID,object request = null,
+        public async Task<StreamResponse<Response>> DeletePollAsync(string pollID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
+                ["poll_id"] = pollID,
             };
             var queryParams = ExtractQueryParams(request);
 
@@ -436,12 +436,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<PollResponse>> GetPollAsync(string PollID,object request = null,
+        public async Task<StreamResponse<PollResponse>> GetPollAsync(string pollID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
+                ["poll_id"] = pollID,
             };
             var queryParams = ExtractQueryParams(request);
 
@@ -452,12 +452,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<PollResponse>> UpdatePollPartialAsync(string PollID,UpdatePollPartialRequest request,
+        public async Task<StreamResponse<PollResponse>> UpdatePollPartialAsync(string pollID,UpdatePollPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
+                ["poll_id"] = pollID,
             };
 
             var result = await MakeRequestAsync<UpdatePollPartialRequest, PollResponse>(
@@ -467,12 +467,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<PollOptionResponse>> CreatePollOptionAsync(string PollID,CreatePollOptionRequest request,
+        public async Task<StreamResponse<PollOptionResponse>> CreatePollOptionAsync(string pollID,CreatePollOptionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
+                ["poll_id"] = pollID,
             };
 
             var result = await MakeRequestAsync<CreatePollOptionRequest, PollOptionResponse>(
@@ -482,12 +482,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<PollOptionResponse>> UpdatePollOptionAsync(string PollID,UpdatePollOptionRequest request,
+        public async Task<StreamResponse<PollOptionResponse>> UpdatePollOptionAsync(string pollID,UpdatePollOptionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
+                ["poll_id"] = pollID,
             };
 
             var result = await MakeRequestAsync<UpdatePollOptionRequest, PollOptionResponse>(
@@ -497,13 +497,13 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<Response>> DeletePollOptionAsync(string PollID, string OptionID,object request = null,
+        public async Task<StreamResponse<Response>> DeletePollOptionAsync(string pollID, string optionID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
-                ["option_id"] = OptionID,
+                ["poll_id"] = pollID,
+                ["option_id"] = optionID,
             };
             var queryParams = ExtractQueryParams(request);
 
@@ -514,13 +514,13 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<PollOptionResponse>> GetPollOptionAsync(string PollID, string OptionID,object request = null,
+        public async Task<StreamResponse<PollOptionResponse>> GetPollOptionAsync(string pollID, string optionID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
-                ["option_id"] = OptionID,
+                ["poll_id"] = pollID,
+                ["option_id"] = optionID,
             };
             var queryParams = ExtractQueryParams(request);
 
@@ -531,18 +531,29 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<PollVotesResponse>> QueryPollVotesAsync(string PollID,QueryPollVotesRequest request,
+        public async Task<StreamResponse<PollVotesResponse>> QueryPollVotesAsync(string pollID,QueryPollVotesRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["poll_id"] = PollID,
+                ["poll_id"] = pollID,
             };
             var queryParams = ExtractQueryParams(request);
 
             var result = await MakeRequestAsync<QueryPollVotesRequest, PollVotesResponse>(
                 "POST",
                 "/api/v2/polls/{poll_id}/votes",queryParams,request,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<UpsertPushPreferencesResponse>> UpdatePushNotificationPreferencesAsync(UpsertPushPreferencesRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<UpsertPushPreferencesRequest, UpsertPushPreferencesResponse>(
+                "POST",
+                "/api/v2/push_preferences",null,request,null,
                 cancellationToken);
                 
             return result;
@@ -569,18 +580,41 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<Response>> DeletePushProviderAsync(string Type, string Name,object request = null,
+        public async Task<StreamResponse<Response>> DeletePushProviderAsync(string type, string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["type"] = Type,
-                ["name"] = Name,
+                ["type"] = type,
+                ["name"] = name,
             };
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/push_providers/{type}/{name}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<GetPushTemplatesResponse>> GetPushTemplatesAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await MakeRequestAsync<object, GetPushTemplatesResponse>(
+                "GET",
+                "/api/v2/push_templates",queryParams,null,null,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<UpsertPushTemplateResponse>> UpsertPushTemplateAsync(UpsertPushTemplateRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<UpsertPushTemplateRequest, UpsertPushTemplateResponse>(
+                "POST",
+                "/api/v2/push_templates",null,request,null,
                 cancellationToken);
                 
             return result;
@@ -619,12 +653,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<Response>> DeleteRoleAsync(string Name,object request = null,
+        public async Task<StreamResponse<Response>> DeleteRoleAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["name"] = Name,
+                ["name"] = name,
             };
 
             var result = await MakeRequestAsync<object, Response>(
@@ -634,12 +668,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<GetTaskResponse>> GetTaskAsync(string ID,object request = null,
+        public async Task<StreamResponse<GetTaskResponse>> GetTaskAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["id"] = ID,
+                ["id"] = id,
             };
 
             var result = await MakeRequestAsync<object, GetTaskResponse>(
@@ -831,12 +865,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<DeactivateUserResponse>> DeactivateUserAsync(string UserID,DeactivateUserRequest request,
+        public async Task<StreamResponse<DeactivateUserResponse>> DeactivateUserAsync(string userID,DeactivateUserRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["user_id"] = UserID,
+                ["user_id"] = userID,
             };
 
             var result = await MakeRequestAsync<DeactivateUserRequest, DeactivateUserResponse>(
@@ -846,12 +880,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<ExportUserResponse>> ExportUserAsync(string UserID,object request = null,
+        public async Task<StreamResponse<ExportUserResponse>> ExportUserAsync(string userID,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["user_id"] = UserID,
+                ["user_id"] = userID,
             };
 
             var result = await MakeRequestAsync<object, ExportUserResponse>(
@@ -861,12 +895,12 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<ReactivateUserResponse>> ReactivateUserAsync(string UserID,ReactivateUserRequest request,
+        public async Task<StreamResponse<ReactivateUserResponse>> ReactivateUserAsync(string userID,ReactivateUserRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
-                ["user_id"] = UserID,
+                ["user_id"] = userID,
             };
 
             var result = await MakeRequestAsync<ReactivateUserRequest, ReactivateUserResponse>(
@@ -878,3 +912,4 @@ namespace GetStream
         }
             }
         }
+

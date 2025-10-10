@@ -164,7 +164,8 @@ namespace GetStream.Tests
         public async Task DeleteBookmarkAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            var ActivityID = "test-ActivityID";
+            object request = null!;
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<DeleteBookmarkResponse>
             {
@@ -181,7 +182,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkAsync(ActivityID,null!);
+            var result = await _client.DeleteBookmarkAsync(activityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -200,7 +201,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateBookmarkRequest();
-            var ActivityID = "test-ActivityID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<UpdateBookmarkResponse>
             {
@@ -217,7 +218,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateBookmarkAsync(ActivityID,request);
+            var result = await _client.UpdateBookmarkAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -236,7 +237,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new AddBookmarkRequest();
-            var ActivityID = "test-ActivityID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<AddBookmarkResponse>
             {
@@ -253,7 +254,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddBookmarkAsync(ActivityID,request);
+            var result = await _client.AddBookmarkAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -272,7 +273,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new ActivityFeedbackRequest();
-            var ActivityID = "test-ActivityID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<ActivityFeedbackResponse>
             {
@@ -289,7 +290,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ActivityFeedbackAsync(ActivityID,request);
+            var result = await _client.ActivityFeedbackAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -308,8 +309,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new CastPollVoteRequest();
-            var ActivityID = "test-ActivityID";
-            var PollID = "test-PollID";
+            var activityID = "test-activityID";
+            var pollID = "test-pollID";
 
             var expectedResponse = new StreamResponse<PollVoteResponse>
             {
@@ -326,7 +327,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.CastPollVoteAsync(ActivityID, PollID,request);
+            var result = await _client.CastPollVoteAsync(activityID, pollID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -345,9 +346,9 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ActivityID = "test-ActivityID";
-            var PollID = "test-PollID";
-            var VoteID = "test-VoteID";
+            var activityID = "test-activityID";
+            var pollID = "test-pollID";
+            var voteID = "test-voteID";
 
             var expectedResponse = new StreamResponse<PollVoteResponse>
             {
@@ -364,7 +365,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeletePollVoteAsync(ActivityID, PollID, VoteID,null!);
+            var result = await _client.DeletePollVoteAsync(activityID, pollID, voteID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -379,11 +380,11 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
-        public async Task AddReactionAsync_ShouldCallCorrectEndpoint()
+        public async Task AddActivityReactionAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
             var request = new AddReactionRequest();
-            var ActivityID = "test-ActivityID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<AddReactionResponse>
             {
@@ -400,7 +401,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddReactionAsync(ActivityID,request);
+            var result = await _client.AddActivityReactionAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -419,7 +420,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new QueryActivityReactionsRequest();
-            var ActivityID = "test-ActivityID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<QueryActivityReactionsResponse>
             {
@@ -436,7 +437,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryActivityReactionsAsync(ActivityID,request);
+            var result = await _client.QueryActivityReactionsAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -455,8 +456,8 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ActivityID = "test-ActivityID";
-            var Type = "test-Type";
+            var activityID = "test-activityID";
+            var type = "test-type";
 
             var expectedResponse = new StreamResponse<DeleteActivityReactionResponse>
             {
@@ -473,7 +474,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityReactionAsync(ActivityID, Type,null!);
+            var result = await _client.DeleteActivityReactionAsync(activityID, type,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -492,7 +493,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<DeleteActivityResponse>
             {
@@ -509,7 +510,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityAsync(ID,null!);
+            var result = await _client.DeleteActivityAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -528,7 +529,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetActivityResponse>
             {
@@ -545,7 +546,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetActivityAsync(ID,null!);
+            var result = await _client.GetActivityAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -564,7 +565,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateActivityPartialRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<UpdateActivityPartialResponse>
             {
@@ -581,7 +582,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateActivityPartialAsync(ID,request);
+            var result = await _client.UpdateActivityPartialAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -600,7 +601,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateActivityRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<UpdateActivityResponse>
             {
@@ -617,7 +618,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateActivityAsync(ID,request);
+            var result = await _client.UpdateActivityAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -671,7 +672,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var FolderID = "test-FolderID";
+            var folderID = "test-folderID";
 
             var expectedResponse = new StreamResponse<DeleteBookmarkFolderResponse>
             {
@@ -688,7 +689,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkFolderAsync(FolderID,null!);
+            var result = await _client.DeleteBookmarkFolderAsync(folderID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -707,7 +708,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateBookmarkFolderRequest();
-            var FolderID = "test-FolderID";
+            var folderID = "test-folderID";
 
             var expectedResponse = new StreamResponse<UpdateBookmarkFolderResponse>
             {
@@ -724,7 +725,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateBookmarkFolderAsync(FolderID,request);
+            var result = await _client.UpdateBookmarkFolderAsync(folderID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -918,7 +919,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<DeleteCommentResponse>
             {
@@ -935,7 +936,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentAsync(ID,null!);
+            var result = await _client.DeleteCommentAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -954,7 +955,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetCommentResponse>
             {
@@ -971,7 +972,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentAsync(ID,null!);
+            var result = await _client.GetCommentAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -990,7 +991,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateCommentRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<UpdateCommentResponse>
             {
@@ -1007,7 +1008,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateCommentAsync(ID,request);
+            var result = await _client.UpdateCommentAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1026,7 +1027,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new AddCommentReactionRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<AddCommentReactionResponse>
             {
@@ -1043,7 +1044,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddCommentReactionAsync(ID,request);
+            var result = await _client.AddCommentReactionAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1062,7 +1063,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new QueryCommentReactionsRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<QueryCommentReactionsResponse>
             {
@@ -1079,7 +1080,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryCommentReactionsAsync(ID,request);
+            var result = await _client.QueryCommentReactionsAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1098,8 +1099,8 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
-            var Type = "test-Type";
+            var id = "test-id";
+            var type = "test-type";
 
             var expectedResponse = new StreamResponse<DeleteCommentReactionResponse>
             {
@@ -1116,7 +1117,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentReactionAsync(ID, Type,null!);
+            var result = await _client.DeleteCommentReactionAsync(id, type,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1135,7 +1136,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetCommentRepliesResponse>
             {
@@ -1152,7 +1153,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentRepliesAsync(ID,null!);
+            var result = await _client.GetCommentRepliesAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1241,8 +1242,8 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<DeleteFeedResponse>
             {
@@ -1259,7 +1260,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedAsync(FeedGroupID, FeedID,null!);
+            var result = await _client.DeleteFeedAsync(feedGroupID, feedID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1278,8 +1279,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new GetOrCreateFeedRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<GetOrCreateFeedResponse>
             {
@@ -1296,7 +1297,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedAsync(FeedGroupID, FeedID,request);
+            var result = await _client.GetOrCreateFeedAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1315,8 +1316,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateFeedRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<UpdateFeedResponse>
             {
@@ -1333,7 +1334,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedAsync(FeedGroupID, FeedID,request);
+            var result = await _client.UpdateFeedAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1352,8 +1353,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new MarkActivityRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<Response>
             {
@@ -1370,7 +1371,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.MarkActivityAsync(FeedGroupID, FeedID,request);
+            var result = await _client.MarkActivityAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1389,9 +1390,9 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
-            var ActivityID = "test-ActivityID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<UnpinActivityResponse>
             {
@@ -1408,7 +1409,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnpinActivityAsync(FeedGroupID, FeedID, ActivityID,null!);
+            var result = await _client.UnpinActivityAsync(feedGroupID, feedID, activityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1427,9 +1428,9 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new PinActivityRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
-            var ActivityID = "test-ActivityID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
+            var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<PinActivityResponse>
             {
@@ -1446,7 +1447,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.PinActivityAsync(FeedGroupID, FeedID, ActivityID,request);
+            var result = await _client.PinActivityAsync(feedGroupID, feedID, activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1465,8 +1466,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateFeedMembersRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<UpdateFeedMembersResponse>
             {
@@ -1483,7 +1484,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedMembersAsync(FeedGroupID, FeedID,request);
+            var result = await _client.UpdateFeedMembersAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1502,8 +1503,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new AcceptFeedMemberInviteRequest();
-            var FeedID = "test-FeedID";
-            var FeedGroupID = "test-FeedGroupID";
+            var feedID = "test-feedID";
+            var feedGroupID = "test-feedGroupID";
 
             var expectedResponse = new StreamResponse<AcceptFeedMemberInviteResponse>
             {
@@ -1520,7 +1521,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AcceptFeedMemberInviteAsync(FeedID, FeedGroupID,request);
+            var result = await _client.AcceptFeedMemberInviteAsync(feedID, feedGroupID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1539,8 +1540,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new QueryFeedMembersRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<QueryFeedMembersResponse>
             {
@@ -1557,7 +1558,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryFeedMembersAsync(FeedGroupID, FeedID,request);
+            var result = await _client.QueryFeedMembersAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1576,8 +1577,8 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new RejectFeedMemberInviteRequest();
-            var FeedGroupID = "test-FeedGroupID";
-            var FeedID = "test-FeedID";
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
 
             var expectedResponse = new StreamResponse<RejectFeedMemberInviteResponse>
             {
@@ -1594,7 +1595,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RejectFeedMemberInviteAsync(FeedGroupID, FeedID,request);
+            var result = await _client.RejectFeedMemberInviteAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1613,7 +1614,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var FeedGroupID = "test-FeedGroupID";
+            var feedGroupID = "test-feedGroupID";
 
             var expectedResponse = new StreamResponse<GetFollowSuggestionsResponse>
             {
@@ -1630,7 +1631,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFollowSuggestionsAsync(FeedGroupID,null!);
+            var result = await _client.GetFollowSuggestionsAsync(feedGroupID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1649,7 +1650,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<DeleteFeedGroupResponse>
             {
@@ -1666,7 +1667,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedGroupAsync(ID,null!);
+            var result = await _client.DeleteFeedGroupAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1685,7 +1686,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetFeedGroupResponse>
             {
@@ -1702,7 +1703,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedGroupAsync(ID,null!);
+            var result = await _client.GetFeedGroupAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1721,7 +1722,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new GetOrCreateFeedGroupRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetOrCreateFeedGroupResponse>
             {
@@ -1738,7 +1739,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedGroupAsync(ID,request);
+            var result = await _client.GetOrCreateFeedGroupAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1757,7 +1758,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateFeedGroupRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<UpdateFeedGroupResponse>
             {
@@ -1774,7 +1775,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedGroupAsync(ID,request);
+            var result = await _client.UpdateFeedGroupAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1863,7 +1864,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<DeleteFeedViewResponse>
             {
@@ -1880,7 +1881,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedViewAsync(ID,null!);
+            var result = await _client.DeleteFeedViewAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1899,7 +1900,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetFeedViewResponse>
             {
@@ -1916,7 +1917,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedViewAsync(ID,null!);
+            var result = await _client.GetFeedViewAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1935,7 +1936,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new GetOrCreateFeedViewRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<GetOrCreateFeedViewResponse>
             {
@@ -1952,7 +1953,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedViewAsync(ID,request);
+            var result = await _client.GetOrCreateFeedViewAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1971,7 +1972,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateFeedViewRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<UpdateFeedViewResponse>
             {
@@ -1988,7 +1989,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedViewAsync(ID,request);
+            var result = await _client.UpdateFeedViewAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1999,6 +2000,77 @@ namespace GetStream.Tests
                 "/api/v2/feeds/feed_views/{id}",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<UpdateFeedViewRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task ListFeedVisibilitiesAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+
+            var expectedResponse = new StreamResponse<ListFeedVisibilitiesResponse>
+            {
+                Data = new ListFeedVisibilitiesResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, ListFeedVisibilitiesResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.ListFeedVisibilitiesAsync(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<object, ListFeedVisibilitiesResponse>(
+                "GET",
+                "/api/v2/feeds/feed_visibilities",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task GetFeedVisibilityAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var name = "test-name";
+
+            var expectedResponse = new StreamResponse<GetFeedVisibilityResponse>
+            {
+                Data = new GetFeedVisibilityResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, GetFeedVisibilityResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetFeedVisibilityAsync(name,null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedVisibilityResponse>(
+                "GET",
+                "/api/v2/feeds/feed_visibilities/{name}",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2287,8 +2359,8 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var Source = "test-Source";
-            var Target = "test-Target";
+            var source = "test-source";
+            var target = "test-target";
 
             var expectedResponse = new StreamResponse<UnfollowResponse>
             {
@@ -2305,7 +2377,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnfollowAsync(Source, Target,null!);
+            var result = await _client.UnfollowAsync(source, target,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2394,7 +2466,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<Response>
             {
@@ -2411,7 +2483,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteMembershipLevelAsync(ID,null!);
+            var result = await _client.DeleteMembershipLevelAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2430,7 +2502,7 @@ namespace GetStream.Tests
         {
             // Arrange
             var request = new UpdateMembershipLevelRequest();
-            var ID = "test-ID";
+            var id = "test-id";
 
             var expectedResponse = new StreamResponse<UpdateMembershipLevelResponse>
             {
@@ -2447,7 +2519,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateMembershipLevelAsync(ID,request);
+            var result = await _client.UpdateMembershipLevelAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2501,7 +2573,7 @@ namespace GetStream.Tests
         {
             // Arrange
             object request = null!;
-            var UserID = "test-UserID";
+            var userID = "test-userID";
 
             var expectedResponse = new StreamResponse<DeleteFeedUserDataResponse>
             {
@@ -2518,7 +2590,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedUserDataAsync(UserID,null!);
+            var result = await _client.DeleteFeedUserDataAsync(userID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2536,35 +2608,35 @@ namespace GetStream.Tests
         public async Task ExportFeedUserDataAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            var request = new ExportFeedUserDataRequest();
-            var UserID = "test-UserID";
+            object request = null!;
+            var userID = "test-userID";
 
             var expectedResponse = new StreamResponse<ExportFeedUserDataResponse>
             {
                 Data = new ExportFeedUserDataResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<ExportFeedUserDataRequest, ExportFeedUserDataResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<object, ExportFeedUserDataResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<ExportFeedUserDataRequest>(),
+                It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ExportFeedUserDataAsync(UserID,request);
+            var result = await _client.ExportFeedUserDataAsync(userID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
             
-            _mockClient.Verify(x => x.MakeRequestAsync<ExportFeedUserDataRequest, ExportFeedUserDataResponse>(
+            _mockClient.Verify(x => x.MakeRequestAsync<object, ExportFeedUserDataResponse>(
                 "POST",
                 "/api/v2/feeds/users/{user_id}/export",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<ExportFeedUserDataRequest>(),
+                It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

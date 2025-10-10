@@ -47,21 +47,21 @@ public async Task<StreamResponse<Response>> MarkActivityAsync(
 }
         
 // Unpin an activity from a feed. This removes the pin, so the activity will no longer be displayed at the top of the feed.
-public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string ActivityID,
+public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string activityID,
     object request = null,
     CancellationToken cancellationToken = default)
 {
     return await _client.UnpinActivityAsync(_feedGroup, _feedId,
-    ActivityID,request, cancellationToken);
+    activityID,request, cancellationToken);
 }
         
 // Pin an activity to a feed. Pinned activities are typically displayed at the top of a feed.
-public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string ActivityID,
+public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string activityID,
     PinActivityRequest request,
     CancellationToken cancellationToken = default)
 {
     return await _client.PinActivityAsync(_feedGroup, _feedId,
-    ActivityID,request, cancellationToken);
+    activityID,request, cancellationToken);
 }
         
 // Add, remove, or set members for a feed

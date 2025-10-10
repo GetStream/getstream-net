@@ -44,9 +44,7 @@ namespace GetStream.Tests
             createResponse.Data.Should().NotBeNull();
 
             // Get the same feed
-            var getResponse = await FeedsV3Client.GetOrCreateFeedAsync(
-                FeedGroupID: "user",
-                FeedID: "test-feed-1",
+            var getResponse = await FeedsV3Client.GetOrCreateFeedAsync("user","test-feed-1",
                 request: new GetOrCreateFeedRequest
                 {
                     UserID = "sara"
@@ -171,9 +169,7 @@ namespace GetStream.Tests
         
             foreach (var feedId in feedIds)
             {
-                var response = await FeedsV3Client.GetOrCreateFeedAsync(
-                    FeedGroupID: "user",
-                    FeedID: feedId,
+                var response = await FeedsV3Client.GetOrCreateFeedAsync("user", feedId,
                     request: new GetOrCreateFeedRequest
                     {
                         UserID = "sara"
@@ -190,9 +186,7 @@ namespace GetStream.Tests
             // Verify we can retrieve all feeds
             foreach (var feedId in feedIds)
             {
-                var response = await FeedsV3Client.GetOrCreateFeedAsync(
-                    FeedGroupID: "user",
-                    FeedID: feedId,
+                var response = await FeedsV3Client.GetOrCreateFeedAsync("user", feedId,
                     request: new GetOrCreateFeedRequest
                     {
                         UserID = "sara"

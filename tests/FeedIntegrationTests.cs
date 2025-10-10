@@ -126,21 +126,15 @@ namespace GetStream.Tests
 
                 // Create feeds
                 // snippet-start: GetOrCreateFeed
-                var feedResponse1 = await _feedsV3Client.GetOrCreateFeedAsync(
-                    FeedGroupID: "user",
-                    FeedID: _testFeedId,
+                var feedResponse1 = await _feedsV3Client.GetOrCreateFeedAsync("user", _testFeedId,
                     request: new GetOrCreateFeedRequest { UserID = _testUserId }
                 );
-                var feedResponse2 = await _feedsV3Client.GetOrCreateFeedAsync(
-                    FeedGroupID: "user", 
-                    FeedID: _testFeedId2,
+                var feedResponse2 = await _feedsV3Client.GetOrCreateFeedAsync("user", _testFeedId2,
                     request: new GetOrCreateFeedRequest { UserID = _testUserId2 }
                 );
                 // snippet-end: GetOrCreateFeed
 
-                var feedResponse3 = await _feedsV3Client.GetOrCreateFeedAsync(
-                    FeedGroupID: "user",
-                    FeedID: _testFeedId3,
+                var feedResponse3 = await _feedsV3Client.GetOrCreateFeedAsync("user", _testFeedId3,
                     request: new GetOrCreateFeedRequest { UserID = _testUserId3 }
                 );
                 if (feedResponse1.Data == null)
@@ -478,7 +472,7 @@ namespace GetStream.Tests
             _createdActivityIds.Add(activityId);
 
             // snippet-start: AddReaction
-            var response = await _feedsV3Client.AddReactionAsync(
+            var response = await _feedsV3Client.AddActivityReactionAsync(
                 activityId,
                 new AddReactionRequest
                 {
@@ -513,7 +507,7 @@ namespace GetStream.Tests
             _createdActivityIds.Add(activityId);
             
             // Add a reaction first
-            var reactionResponse = await _feedsV3Client.AddReactionAsync(
+            var reactionResponse = await _feedsV3Client.AddActivityReactionAsync(
                 activityId,
                 new AddReactionRequest
                 {
@@ -1026,7 +1020,7 @@ namespace GetStream.Tests
             _createdActivityIds.Add(activityId);
 
             // Add a reaction first
-            await _feedsV3Client.AddReactionAsync(
+            await _feedsV3Client.AddActivityReactionAsync(
                 activityId,
                 new AddReactionRequest
                 {
@@ -1567,7 +1561,7 @@ namespace GetStream.Tests
             var reactionTypes = new[] { "like", "love", "wow" };
             foreach (var reactionType in reactionTypes)
             {
-                var reactionResponse = await _feedsV3Client.AddReactionAsync(
+                var reactionResponse = await _feedsV3Client.AddActivityReactionAsync(
                     postId,
                     new AddReactionRequest
                     {
