@@ -188,4 +188,12 @@ jobs:
         esac
         
         # Create PR body
-        PR_BODY="## Release v$NEW_VERSION
+        PR_BODY="## Release v$NEW_VERSION"        
+        gh pr create \
+          --title "$PR_TITLE" \
+          --body "$PR_BODY" \
+          --base master \
+          --head "${{ env.branch_name }}" \
+          --label "$LABELS"
+            
+            echo "✅ Created release PR for v$NEW_VERSION"
