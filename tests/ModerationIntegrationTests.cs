@@ -439,7 +439,6 @@ namespace GetStream.Tests
             Console.WriteLine("\n📋 Testing moderation rule upsert...");
 
             // snippet-start: UpsertModerationRule
-
             var ruleAction = new RuleBuilderAction
             {
                 Type = "ban_user"
