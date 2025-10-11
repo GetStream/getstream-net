@@ -2,11 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [ "main", "master" ]
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - '.github/workflows/**'
+    branches: [ "master" ]
   workflow_dispatch:
     inputs:
       version_bump:
