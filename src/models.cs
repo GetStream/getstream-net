@@ -267,18 +267,46 @@ namespace GetStream.Models
         public UserResponseCommonFields? User { get; set; }
     }
 
+    public class ActivityFeedbackEvent
+    {
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("activity_feedback")]
+        public ActivityFeedbackEventPayload ActivityFeedback { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("received_at")]
+        public DateTime? ReceivedAt { get; set; }
+        [JsonPropertyName("user")]
+        public UserResponseCommonFields? User { get; set; }
+    }
+
+    public class ActivityFeedbackEventPayload
+    {
+        [JsonPropertyName("action")]
+        public string Action { get; set; }
+        [JsonPropertyName("activity_id")]
+        public string ActivityID { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("value")]
+        public string Value { get; set; }
+        [JsonPropertyName("user")]
+        public UserResponse User { get; set; }
+    }
+
     public class ActivityFeedbackRequest
     {
         [JsonPropertyName("hide")]
         public bool? Hide { get; set; }
-        [JsonPropertyName("mute_user")]
-        public bool? MuteUser { get; set; }
-        [JsonPropertyName("reason")]
-        public string? Reason { get; set; }
-        [JsonPropertyName("report")]
-        public bool? Report { get; set; }
         [JsonPropertyName("show_less")]
         public bool? ShowLess { get; set; }
+        [JsonPropertyName("show_more")]
+        public bool? ShowMore { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
         [JsonPropertyName("user")]
@@ -469,6 +497,10 @@ namespace GetStream.Models
         public string? ParentID { get; set; }
         [JsonPropertyName("poll_id")]
         public string? PollID { get; set; }
+        [JsonPropertyName("restrict_replies")]
+        public string? RestrictReplies { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
         [JsonPropertyName("text")]
         public string? Text { get; set; }
         [JsonPropertyName("user_id")]
@@ -479,6 +511,8 @@ namespace GetStream.Models
         public string? VisibilityTag { get; set; }
         [JsonPropertyName("attachments")]
         public List<Attachment> Attachments { get; set; }
+        [JsonPropertyName("collection_refs")]
+        public List<string> CollectionRefs { get; set; }
         [JsonPropertyName("filter_tags")]
         public List<string> FilterTags { get; set; }
         [JsonPropertyName("interest_tags")]
@@ -501,12 +535,18 @@ namespace GetStream.Models
         public int CommentCount { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("hidden")]
+        public bool Hidden { get; set; }
         [JsonPropertyName("id")]
         public string ID { get; set; }
         [JsonPropertyName("popularity")]
         public int Popularity { get; set; }
+        [JsonPropertyName("preview")]
+        public bool Preview { get; set; }
         [JsonPropertyName("reaction_count")]
         public int ReactionCount { get; set; }
+        [JsonPropertyName("restrict_replies")]
+        public string RestrictReplies { get; set; }
         [JsonPropertyName("score")]
         public double Score { get; set; }
         [JsonPropertyName("share_count")]
@@ -535,6 +575,8 @@ namespace GetStream.Models
         public List<BookmarkResponse> OwnBookmarks { get; set; }
         [JsonPropertyName("own_reactions")]
         public List<FeedsReactionResponse> OwnReactions { get; set; }
+        [JsonPropertyName("collections")]
+        public Dictionary<string, EnrichedCollectionResponse> Collections { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("reaction_groups")]
@@ -549,10 +591,10 @@ namespace GetStream.Models
         public DateTime? EditedAt { get; set; }
         [JsonPropertyName("expires_at")]
         public DateTime? ExpiresAt { get; set; }
-        [JsonPropertyName("hidden")]
-        public bool? Hidden { get; set; }
         [JsonPropertyName("is_watched")]
         public bool? IsWatched { get; set; }
+        [JsonPropertyName("moderation_action")]
+        public string? ModerationAction { get; set; }
         [JsonPropertyName("text")]
         public string? Text { get; set; }
         [JsonPropertyName("visibility_tag")]
@@ -573,28 +615,36 @@ namespace GetStream.Models
 
     public class ActivitySelectorConfig
     {
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
         [JsonPropertyName("cutoff_time")]
         public string? CutoffTime { get; set; }
+        [JsonPropertyName("cutoff_window")]
+        public string? CutoffWindow { get; set; }
         [JsonPropertyName("min_popularity")]
         public int? MinPopularity { get; set; }
-        [JsonPropertyName("type")]
-        public string? Type { get; set; }
         [JsonPropertyName("sort")]
-        public List<SortParam> Sort { get; set; }
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("params")]
+        public object @Params { get; set; }
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
     }
 
     public class ActivitySelectorConfigResponse
     {
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
         [JsonPropertyName("cutoff_time")]
         public DateTime? CutoffTime { get; set; }
+        [JsonPropertyName("cutoff_window")]
+        public string? CutoffWindow { get; set; }
         [JsonPropertyName("min_popularity")]
         public int? MinPopularity { get; set; }
-        [JsonPropertyName("type")]
-        public string? Type { get; set; }
         [JsonPropertyName("sort")]
-        public List<SortParam> Sort { get; set; }
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("params")]
+        public object @Params { get; set; }
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
     }
@@ -653,6 +703,10 @@ namespace GetStream.Models
         public string? ParentID { get; set; }
         [JsonPropertyName("poll_id")]
         public string? PollID { get; set; }
+        [JsonPropertyName("restrict_replies")]
+        public string? RestrictReplies { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
         [JsonPropertyName("text")]
         public string? Text { get; set; }
         [JsonPropertyName("user_id")]
@@ -663,6 +717,8 @@ namespace GetStream.Models
         public string? VisibilityTag { get; set; }
         [JsonPropertyName("attachments")]
         public List<Attachment> Attachments { get; set; }
+        [JsonPropertyName("collection_refs")]
+        public List<string> CollectionRefs { get; set; }
         [JsonPropertyName("filter_tags")]
         public List<string> FilterTags { get; set; }
         [JsonPropertyName("interest_tags")]
@@ -737,16 +793,20 @@ namespace GetStream.Models
 
     public class AddCommentRequest
     {
-        [JsonPropertyName("object_id")]
-        public string ObjectID { get; set; }
-        [JsonPropertyName("object_type")]
-        public string ObjectType { get; set; }
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        [JsonPropertyName("object_id")]
+        public string? ObjectID { get; set; }
+        [JsonPropertyName("object_type")]
+        public string? ObjectType { get; set; }
         [JsonPropertyName("parent_id")]
         public string? ParentID { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
         [JsonPropertyName("skip_push")]
         public bool? SkipPush { get; set; }
         [JsonPropertyName("user_id")]
@@ -869,6 +929,8 @@ namespace GetStream.Models
         public string EnforceUniqueUsernames { get; set; }
         [JsonPropertyName("guest_user_creation_disabled")]
         public bool GuestUserCreationDisabled { get; set; }
+        [JsonPropertyName("id")]
+        public int ID { get; set; }
         [JsonPropertyName("image_moderation_enabled")]
         public bool ImageModerationEnabled { get; set; }
         [JsonPropertyName("max_aggregated_activities_length")]
@@ -891,12 +953,10 @@ namespace GetStream.Models
         public string Organization { get; set; }
         [JsonPropertyName("permission_version")]
         public string PermissionVersion { get; set; }
-        [JsonPropertyName("region")]
-        public string Region { get; set; }
+        [JsonPropertyName("placement")]
+        public string Placement { get; set; }
         [JsonPropertyName("reminders_interval")]
         public int RemindersInterval { get; set; }
-        [JsonPropertyName("shard")]
-        public string Shard { get; set; }
         [JsonPropertyName("sns_key")]
         public string SnsKey { get; set; }
         [JsonPropertyName("sns_secret")]
@@ -928,7 +988,7 @@ namespace GetStream.Models
         [JsonPropertyName("call_types")]
         public Dictionary<string, CallType?> CallTypes { get; set; }
         [JsonPropertyName("channel_configs")]
-        public Dictionary<string, ChannelConfig> ChannelConfigs { get; set; }
+        public Dictionary<string, ChannelConfig?> ChannelConfigs { get; set; }
         [JsonPropertyName("file_upload_config")]
         public FileUploadConfig FileUploadConfig { get; set; }
         [JsonPropertyName("grants")]
@@ -1273,6 +1333,12 @@ namespace GetStream.Models
         public string Duration { get; set; }
     }
 
+    public class BlockActionRequest
+    {
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+    }
+
     public class BlockListConfig
     {
         [JsonPropertyName("async")]
@@ -1441,6 +1507,8 @@ namespace GetStream.Models
         public string Name { get; set; }
         [JsonPropertyName("updated_at")]
         public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("user")]
+        public UserResponse User { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
     }
@@ -1695,21 +1763,21 @@ namespace GetStream.Models
 
     public class CallType
     {
-        [JsonPropertyName("AppPK")]
-        public int AppPK { get; set; }
-        [JsonPropertyName("CreatedAt")]
+        [JsonPropertyName("app")]
+        public int App { get; set; }
+        [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
-        [JsonPropertyName("ExternalStorage")]
-        public string ExternalStorage { get; set; }
-        [JsonPropertyName("Name")]
+        [JsonPropertyName("id")]
+        public int ID { get; set; }
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonPropertyName("PK")]
-        public int PK { get; set; }
-        [JsonPropertyName("UpdatedAt")]
+        [JsonPropertyName("recording_external_storage")]
+        public string RecordingExternalStorage { get; set; }
+        [JsonPropertyName("updated_at")]
         public DateTime UpdatedAt { get; set; }
-        [JsonPropertyName("NotificationSettings")]
+        [JsonPropertyName("notification_settings")]
         public NotificationSettings? NotificationSettings { get; set; }
-        [JsonPropertyName("Settings")]
+        [JsonPropertyName("settings")]
         public CallSettings? Settings { get; set; }
     }
 
@@ -1763,6 +1831,8 @@ namespace GetStream.Models
         public string? Team { get; set; }
         [JsonPropertyName("active_live_locations")]
         public List<SharedLocation> ActiveLiveLocations { get; set; }
+        [JsonPropertyName("filter_tags")]
+        public List<string> FilterTags { get; set; }
         [JsonPropertyName("invites")]
         public List<ChannelMember> Invites { get; set; }
         [JsonPropertyName("members")]
@@ -1793,6 +1863,8 @@ namespace GetStream.Models
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("custom_events")]
         public bool CustomEvents { get; set; }
+        [JsonPropertyName("delivery_events")]
+        public bool DeliveryEvents { get; set; }
         [JsonPropertyName("mark_messages_pending")]
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
@@ -1840,7 +1912,7 @@ namespace GetStream.Models
         [JsonPropertyName("partition_size")]
         public int? PartitionSize { get; set; }
         [JsonPropertyName("partition_ttl")]
-        public int? PartitionTtl { get; set; }
+        public string? PartitionTtl { get; set; }
         [JsonPropertyName("allowed_flag_reasons")]
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
@@ -1863,6 +1935,8 @@ namespace GetStream.Models
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("custom_events")]
         public bool CustomEvents { get; set; }
+        [JsonPropertyName("delivery_events")]
+        public bool DeliveryEvents { get; set; }
         [JsonPropertyName("mark_messages_pending")]
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
@@ -1929,6 +2003,76 @@ namespace GetStream.Models
         public string ChannelRole { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("is_global_banned")]
+        public bool IsGlobalBanned { get; set; }
+        [JsonPropertyName("notifications_muted")]
+        public bool NotificationsMuted { get; set; }
+        [JsonPropertyName("shadow_banned")]
+        public bool ShadowBanned { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("archived_at")]
+        public DateTime? ArchivedAt { get; set; }
+        [JsonPropertyName("ban_expires")]
+        public DateTime? BanExpires { get; set; }
+        [JsonPropertyName("blocked")]
+        public bool? Blocked { get; set; }
+        [JsonPropertyName("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
+        [JsonPropertyName("hidden")]
+        public bool? Hidden { get; set; }
+        [JsonPropertyName("invite_accepted_at")]
+        public DateTime? InviteAcceptedAt { get; set; }
+        [JsonPropertyName("invite_rejected_at")]
+        public DateTime? InviteRejectedAt { get; set; }
+        [JsonPropertyName("invited")]
+        public bool? Invited { get; set; }
+        [JsonPropertyName("is_moderator")]
+        public bool? IsModerator { get; set; }
+        [JsonPropertyName("pinned_at")]
+        public DateTime? PinnedAt { get; set; }
+        [JsonPropertyName("status")]
+        public string? Status { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("deleted_messages")]
+        public List<string> DeletedMessages { get; set; }
+        [JsonPropertyName("channel")]
+        public DenormalizedChannelFields? Channel { get; set; }
+        [JsonPropertyName("user")]
+        public User? User { get; set; }
+    }
+
+    public class ChannelMemberLookup
+    {
+        [JsonPropertyName("archived")]
+        public bool Archived { get; set; }
+        [JsonPropertyName("banned")]
+        public bool Banned { get; set; }
+        [JsonPropertyName("blocked")]
+        public bool Blocked { get; set; }
+        [JsonPropertyName("hidden")]
+        public bool Hidden { get; set; }
+        [JsonPropertyName("pinned")]
+        public bool Pinned { get; set; }
+        [JsonPropertyName("archived_at")]
+        public DateTime? ArchivedAt { get; set; }
+        [JsonPropertyName("ban_expires")]
+        public DateTime? BanExpires { get; set; }
+        [JsonPropertyName("pinned_at")]
+        public DateTime? PinnedAt { get; set; }
+    }
+
+    public class ChannelMemberResponse
+    {
+        [JsonPropertyName("banned")]
+        public bool Banned { get; set; }
+        [JsonPropertyName("channel_role")]
+        public string ChannelRole { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
         [JsonPropertyName("notifications_muted")]
         public bool NotificationsMuted { get; set; }
         [JsonPropertyName("shadow_banned")]
@@ -1963,32 +2107,6 @@ namespace GetStream.Models
         public List<string> DeletedMessages { get; set; }
         [JsonPropertyName("user")]
         public UserResponse? User { get; set; }
-    }
-
-    public class ChannelMemberLookup
-    {
-        [JsonPropertyName("archived")]
-        public bool Archived { get; set; }
-        [JsonPropertyName("banned")]
-        public bool Banned { get; set; }
-        [JsonPropertyName("blocked")]
-        public bool Blocked { get; set; }
-        [JsonPropertyName("hidden")]
-        public bool Hidden { get; set; }
-        [JsonPropertyName("pinned")]
-        public bool Pinned { get; set; }
-        [JsonPropertyName("archived_at")]
-        public DateTime? ArchivedAt { get; set; }
-        [JsonPropertyName("ban_expires")]
-        public DateTime? BanExpires { get; set; }
-        [JsonPropertyName("pinned_at")]
-        public DateTime? PinnedAt { get; set; }
-    }
-
-    public class ChannelMemberResponse
-    {
-        [JsonPropertyName("channel_role")]
-        public string ChannelRole { get; set; }
     }
 
     public class ChannelMute
@@ -2063,8 +2181,10 @@ namespace GetStream.Models
         public string? Team { get; set; }
         [JsonPropertyName("truncated_at")]
         public DateTime? TruncatedAt { get; set; }
+        [JsonPropertyName("filter_tags")]
+        public List<string> FilterTags { get; set; }
         [JsonPropertyName("members")]
-        public List<ChannelMember> Members { get; set; }
+        public List<ChannelMemberResponse> Members { get; set; }
         [JsonPropertyName("own_capabilities")]
         public List<ChannelOwnCapability> OwnCapabilities { get; set; }
         [JsonPropertyName("config")]
@@ -2209,6 +2329,34 @@ namespace GetStream.Models
         public string? Error { get; set; }
         [JsonPropertyName("data")]
         public object Data { get; set; }
+    }
+
+    public class CollectionRequest
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+    }
+
+    public class CollectionResponse
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime? CreatedAt { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
     }
 
     public class Command
@@ -2509,6 +2657,24 @@ namespace GetStream.Models
         public BlockListResponse? Blocklist { get; set; }
     }
 
+    public class CreateCollectionsRequest
+    {
+        [JsonPropertyName("collections")]
+        public List<CollectionRequest> Collections { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+
+    public class CreateCollectionsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("collections")]
+        public List<CollectionResponse> Collections { get; set; }
+    }
+
     public class CreateDeviceRequest
     {
         [JsonPropertyName("id")]
@@ -2585,8 +2751,6 @@ namespace GetStream.Models
     {
         [JsonPropertyName("id")]
         public string ID { get; set; }
-        [JsonPropertyName("activity_processors")]
-        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("aggregation")]
@@ -2795,6 +2959,22 @@ namespace GetStream.Models
         public ReviewQueueItemResponse? Item { get; set; }
     }
 
+    public class DailyMetricResponse
+    {
+        [JsonPropertyName("date")]
+        public string Date { get; set; }
+        [JsonPropertyName("value")]
+        public int Value { get; set; }
+    }
+
+    public class DailyMetricStatsResponse
+    {
+        [JsonPropertyName("total")]
+        public int Total { get; set; }
+        [JsonPropertyName("daily")]
+        public List<DailyMetricResponse> Daily { get; set; }
+    }
+
     public class Data
     {
         [JsonPropertyName("id")]
@@ -2897,6 +3077,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("hard_delete")]
         public bool? HardDelete { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
     }
 
     public class DeleteActivityResponse
@@ -2919,6 +3101,12 @@ namespace GetStream.Models
         public BookmarkResponse Bookmark { get; set; }
     }
 
+    public class DeleteCollectionsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+    }
+
     public class DeleteCommentReactionResponse
     {
         [JsonPropertyName("duration")]
@@ -2927,6 +3115,14 @@ namespace GetStream.Models
         public CommentResponse Comment { get; set; }
         [JsonPropertyName("reaction")]
         public FeedsReactionResponse Reaction { get; set; }
+    }
+
+    public class DeleteCommentRequest
+    {
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
     }
 
     public class DeleteCommentResponse
@@ -2959,18 +3155,18 @@ namespace GetStream.Models
         public string TaskID { get; set; }
     }
 
+    public class DeleteFeedUserDataRequest
+    {
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+    }
+
     public class DeleteFeedUserDataResponse
     {
-        [JsonPropertyName("deleted_activities")]
-        public int DeletedActivities { get; set; }
-        [JsonPropertyName("deleted_bookmarks")]
-        public int DeletedBookmarks { get; set; }
-        [JsonPropertyName("deleted_comments")]
-        public int DeletedComments { get; set; }
-        [JsonPropertyName("deleted_reactions")]
-        public int DeletedReactions { get; set; }
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
+        [JsonPropertyName("task_id")]
+        public string TaskID { get; set; }
     }
 
     public class DeleteFeedViewResponse
@@ -2979,10 +3175,28 @@ namespace GetStream.Models
         public string Duration { get; set; }
     }
 
+    public class DeleteFeedsBatchRequest
+    {
+        [JsonPropertyName("feeds")]
+        public List<string> Feeds { get; set; }
+        [JsonPropertyName("hard_delete")]
+        public bool? HardDelete { get; set; }
+    }
+
+    public class DeleteFeedsBatchResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("task_id")]
+        public string TaskID { get; set; }
+    }
+
     public class DeleteMessageRequest
     {
         [JsonPropertyName("hard_delete")]
         public bool? HardDelete { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
     }
 
     public class DeleteModerationConfigResponse
@@ -3007,6 +3221,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("hard_delete")]
         public bool? HardDelete { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
     }
 
     public class DeleteUserRequest
@@ -3019,6 +3235,8 @@ namespace GetStream.Models
         public bool? HardDelete { get; set; }
         [JsonPropertyName("mark_messages_deleted")]
         public bool? MarkMessagesDeleted { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
     }
 
     public class DeleteUsersRequest
@@ -3059,6 +3277,32 @@ namespace GetStream.Models
     {
         [JsonPropertyName("enabled")]
         public bool? Enabled { get; set; }
+    }
+
+    public class DenormalizedChannelFields
+    {
+        [JsonPropertyName("created_at")]
+        public string? CreatedAt { get; set; }
+        [JsonPropertyName("created_by_id")]
+        public string? CreatedByID { get; set; }
+        [JsonPropertyName("disabled")]
+        public bool? Disabled { get; set; }
+        [JsonPropertyName("frozen")]
+        public bool? Frozen { get; set; }
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        [JsonPropertyName("last_message_at")]
+        public string? LastMessageAt { get; set; }
+        [JsonPropertyName("member_count")]
+        public int? MemberCount { get; set; }
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+        [JsonPropertyName("updated_at")]
+        public string? UpdatedAt { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
     }
 
     public class Device
@@ -3219,6 +3463,24 @@ namespace GetStream.Models
         public Data? Target { get; set; }
     }
 
+    public class EnrichedCollectionResponse
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime? CreatedAt { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+    }
+
     public class EnrichedReaction
     {
         [JsonPropertyName("activity_id")]
@@ -3247,6 +3509,44 @@ namespace GetStream.Models
         public Time? UpdatedAt { get; set; }
         [JsonPropertyName("user")]
         public Data? User { get; set; }
+    }
+
+    public class EnrichmentOptions
+    {
+        [JsonPropertyName("skip_activity")]
+        public bool? SkipActivity { get; set; }
+        [JsonPropertyName("skip_activity_collections")]
+        public bool? SkipActivityCollections { get; set; }
+        [JsonPropertyName("skip_activity_comments")]
+        public bool? SkipActivityComments { get; set; }
+        [JsonPropertyName("skip_activity_current_feed")]
+        public bool? SkipActivityCurrentFeed { get; set; }
+        [JsonPropertyName("skip_activity_mentioned_users")]
+        public bool? SkipActivityMentionedUsers { get; set; }
+        [JsonPropertyName("skip_activity_own_bookmarks")]
+        public bool? SkipActivityOwnBookmarks { get; set; }
+        [JsonPropertyName("skip_activity_parents")]
+        public bool? SkipActivityParents { get; set; }
+        [JsonPropertyName("skip_activity_poll")]
+        public bool? SkipActivityPoll { get; set; }
+        [JsonPropertyName("skip_activity_reactions")]
+        public bool? SkipActivityReactions { get; set; }
+        [JsonPropertyName("skip_activity_refresh_image_urls")]
+        public bool? SkipActivityRefreshImageUrls { get; set; }
+        [JsonPropertyName("skip_all")]
+        public bool? SkipAll { get; set; }
+        [JsonPropertyName("skip_feed_member_user")]
+        public bool? SkipFeedMemberUser { get; set; }
+        [JsonPropertyName("skip_followers")]
+        public bool? SkipFollowers { get; set; }
+        [JsonPropertyName("skip_following")]
+        public bool? SkipFollowing { get; set; }
+        [JsonPropertyName("skip_own_capabilities")]
+        public bool? SkipOwnCapabilities { get; set; }
+        [JsonPropertyName("skip_own_follows")]
+        public bool? SkipOwnFollows { get; set; }
+        [JsonPropertyName("skip_pins")]
+        public bool? SkipPins { get; set; }
     }
 
     public class EntityCreatorResponse
@@ -3329,6 +3629,8 @@ namespace GetStream.Models
         public string? ID { get; set; }
         [JsonPropertyName("product")]
         public string? Product { get; set; }
+        [JsonPropertyName("should_send_custom_events")]
+        public bool? ShouldSendCustomEvents { get; set; }
         [JsonPropertyName("sns_auth_type")]
         public string? SnsAuthType { get; set; }
         [JsonPropertyName("sns_key")]
@@ -3473,37 +3775,37 @@ namespace GetStream.Models
 
     public class FeedGroup
     {
-        [JsonPropertyName("AggregationVersion")]
+        [JsonPropertyName("aggregation_version")]
         public int AggregationVersion { get; set; }
-        [JsonPropertyName("AppPK")]
-        public int AppPK { get; set; }
+        [JsonPropertyName("app_pk")]
+        public int AppPk { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
-        [JsonPropertyName("DefaultVisibility")]
+        [JsonPropertyName("default_visibility")]
         public string DefaultVisibility { get; set; }
-        [JsonPropertyName("ID")]
-        public string ID { get; set; }
+        [JsonPropertyName("group_id")]
+        public string GroupID { get; set; }
         [JsonPropertyName("updated_at")]
         public DateTime UpdatedAt { get; set; }
-        [JsonPropertyName("ActivityProcessors")]
+        [JsonPropertyName("activity_processors")]
         public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
-        [JsonPropertyName("ActivitySelectors")]
+        [JsonPropertyName("activity_selectors")]
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
-        [JsonPropertyName("Custom")]
+        [JsonPropertyName("custom")]
         public object Custom { get; set; }
-        [JsonPropertyName("DeletedAt")]
+        [JsonPropertyName("deleted_at")]
         public DateTime? DeletedAt { get; set; }
-        [JsonPropertyName("LastFeedGetAt")]
+        [JsonPropertyName("last_feed_get_at")]
         public DateTime? LastFeedGetAt { get; set; }
-        [JsonPropertyName("Aggregation")]
+        [JsonPropertyName("aggregation")]
         public AggregationConfig? Aggregation { get; set; }
-        [JsonPropertyName("Notification")]
+        [JsonPropertyName("notification")]
         public NotificationConfig? Notification { get; set; }
-        [JsonPropertyName("PushNotification")]
+        [JsonPropertyName("push_notification")]
         public PushNotificationConfig? PushNotification { get; set; }
-        [JsonPropertyName("Ranking")]
+        [JsonPropertyName("ranking")]
         public RankingConfig? Ranking { get; set; }
-        [JsonPropertyName("Stories")]
+        [JsonPropertyName("stories")]
         public StoriesConfig? Stories { get; set; }
     }
 
@@ -3555,6 +3857,8 @@ namespace GetStream.Models
         public DateTime UpdatedAt { get; set; }
         [JsonPropertyName("default_visibility")]
         public string? DefaultVisibility { get; set; }
+        [JsonPropertyName("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
         [JsonPropertyName("activity_processors")]
         public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
@@ -3689,6 +3993,16 @@ namespace GetStream.Models
     {
     }
 
+    public class FeedOwnData
+    {
+        [JsonPropertyName("own_capabilities")]
+        public List<FeedOwnCapability> OwnCapabilities { get; set; }
+        [JsonPropertyName("own_follows")]
+        public List<FollowResponse> OwnFollows { get; set; }
+        [JsonPropertyName("own_membership")]
+        public FeedMemberResponse? OwnMembership { get; set; }
+    }
+
     public class FeedRequest
     {
         [JsonPropertyName("feed_group_id")]
@@ -3713,6 +4027,8 @@ namespace GetStream.Models
 
     public class FeedResponse
     {
+        [JsonPropertyName("activity_count")]
+        public int ActivityCount { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("description")]
@@ -3753,6 +4069,56 @@ namespace GetStream.Models
         public FeedMemberResponse? OwnMembership { get; set; }
     }
 
+    public class FeedSuggestionResponse
+    {
+        [JsonPropertyName("activity_count")]
+        public int ActivityCount { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+        [JsonPropertyName("feed")]
+        public string Feed { get; set; }
+        [JsonPropertyName("follower_count")]
+        public int FollowerCount { get; set; }
+        [JsonPropertyName("following_count")]
+        public int FollowingCount { get; set; }
+        [JsonPropertyName("group_id")]
+        public string GroupID { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("member_count")]
+        public int MemberCount { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("pin_count")]
+        public int PinCount { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("created_by")]
+        public UserResponse CreatedBy { get; set; }
+        [JsonPropertyName("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+        [JsonPropertyName("recommendation_score")]
+        public double? RecommendationScore { get; set; }
+        [JsonPropertyName("visibility")]
+        public string? Visibility { get; set; }
+        [JsonPropertyName("filter_tags")]
+        public List<string> FilterTags { get; set; }
+        [JsonPropertyName("own_capabilities")]
+        public List<FeedOwnCapability> OwnCapabilities { get; set; }
+        [JsonPropertyName("own_follows")]
+        public List<FollowResponse> OwnFollows { get; set; }
+        [JsonPropertyName("algorithm_scores")]
+        public Dictionary<string, double> AlgorithmScores { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("own_membership")]
+        public FeedMemberResponse? OwnMembership { get; set; }
+    }
+
     public class FeedUpdatedEvent
     {
         [JsonPropertyName("created_at")]
@@ -3779,8 +4145,6 @@ namespace GetStream.Models
         public string ID { get; set; }
         [JsonPropertyName("last_used_at")]
         public DateTime? LastUsedAt { get; set; }
-        [JsonPropertyName("activity_processors")]
-        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
         public List<ActivitySelectorConfigResponse> ActivitySelectors { get; set; }
         [JsonPropertyName("aggregation")]
@@ -3791,10 +4155,10 @@ namespace GetStream.Models
 
     public class FeedVisibilityResponse
     {
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
+        [JsonPropertyName("permissions")]
+        public List<Permission> Permissions { get; set; }
         [JsonPropertyName("grants")]
         public Dictionary<string, List<string>> Grants { get; set; }
     }
@@ -3813,6 +4177,8 @@ namespace GetStream.Models
         public string? Comment { get; set; }
         [JsonPropertyName("comment_reaction")]
         public string? CommentReaction { get; set; }
+        [JsonPropertyName("comment_reply")]
+        public string? CommentReply { get; set; }
         [JsonPropertyName("follow")]
         public string? Follow { get; set; }
         [JsonPropertyName("mention")]
@@ -3883,6 +4249,14 @@ namespace GetStream.Models
         public string? ThumbUrl { get; set; }
     }
 
+    public class FilterConfigResponse
+    {
+        [JsonPropertyName("llm_labels")]
+        public List<string> LlmLabels { get; set; }
+        [JsonPropertyName("ai_text_labels")]
+        public List<string> AiTextLabels { get; set; }
+    }
+
     public class FirebaseConfig
     {
         [JsonPropertyName("apn_template")]
@@ -3913,6 +4287,12 @@ namespace GetStream.Models
         public string? NotificationTemplate { get; set; }
         [JsonPropertyName("server_key")]
         public string? ServerKey { get; set; }
+    }
+
+    public class FlagCountRuleParameters
+    {
+        [JsonPropertyName("threshold")]
+        public int? Threshold { get; set; }
     }
 
     public class FlagRequest
@@ -3959,6 +4339,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
+        [JsonPropertyName("created")]
+        public List<FollowResponse> Created { get; set; }
         [JsonPropertyName("follows")]
         public List<FollowResponse> Follows { get; set; }
     }
@@ -4283,12 +4665,28 @@ namespace GetStream.Models
         public FeedVisibilityResponse FeedVisibility { get; set; }
     }
 
+    public class GetFeedsRateLimitsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("android")]
+        public Dictionary<string, LimitInfo> Android { get; set; }
+        [JsonPropertyName("ios")]
+        public Dictionary<string, LimitInfo> Ios { get; set; }
+        [JsonPropertyName("server_side")]
+        public Dictionary<string, LimitInfo> ServerSide { get; set; }
+        [JsonPropertyName("web")]
+        public Dictionary<string, LimitInfo> Web { get; set; }
+    }
+
     public class GetFollowSuggestionsResponse
     {
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
         [JsonPropertyName("suggestions")]
-        public List<FeedResponse> Suggestions { get; set; }
+        public List<FeedSuggestionResponse> Suggestions { get; set; }
+        [JsonPropertyName("algorithm_used")]
+        public string? AlgorithmUsed { get; set; }
     }
 
     public class GetImportResponse
@@ -4391,6 +4789,8 @@ namespace GetStream.Models
 
     public class GetOrCreateFeedRequest
     {
+        [JsonPropertyName("id_around")]
+        public string? IDAround { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -4403,10 +4803,10 @@ namespace GetStream.Models
         public string? View { get; set; }
         [JsonPropertyName("watch")]
         public bool? Watch { get; set; }
-        [JsonPropertyName("activity_selector_options")]
-        public object ActivitySelectorOptions { get; set; }
         [JsonPropertyName("data")]
         public FeedInput? Data { get; set; }
+        [JsonPropertyName("enrichment_options")]
+        public EnrichmentOptions? EnrichmentOptions { get; set; }
         [JsonPropertyName("external_ranking")]
         public object ExternalRanking { get; set; }
         [JsonPropertyName("filter")]
@@ -4459,8 +4859,6 @@ namespace GetStream.Models
 
     public class GetOrCreateFeedViewRequest
     {
-        [JsonPropertyName("activity_processors")]
-        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("aggregation")]
@@ -5341,6 +5739,10 @@ namespace GetStream.Models
         public bool? FlagUserOnFlaggedContent { get; set; }
         [JsonPropertyName("media_queue_blur_enabled")]
         public bool? MediaQueueBlurEnabled { get; set; }
+        [JsonPropertyName("allowed_moderation_action_reasons")]
+        public List<string> AllowedModerationActionReasons { get; set; }
+        [JsonPropertyName("overview_dashboard")]
+        public OverviewDashboardConfig? OverviewDashboard { get; set; }
     }
 
     public class ModerationFlagResponse
@@ -5499,8 +5901,22 @@ namespace GetStream.Models
         public string Mode { get; set; }
     }
 
+    public class NotificationComment
+    {
+        [JsonPropertyName("comment")]
+        public string Comment { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+        [JsonPropertyName("attachments")]
+        public List<Attachment> Attachments { get; set; }
+    }
+
     public class NotificationConfig
     {
+        [JsonPropertyName("deduplication_window")]
+        public string? DeduplicationWindow { get; set; }
         [JsonPropertyName("track_read")]
         public bool? TrackRead { get; set; }
         [JsonPropertyName("track_seen")]
@@ -5583,6 +5999,8 @@ namespace GetStream.Models
         public string? UserID { get; set; }
         [JsonPropertyName("attachments")]
         public List<Attachment> Attachments { get; set; }
+        [JsonPropertyName("comment")]
+        public NotificationComment? Comment { get; set; }
     }
 
     public class NotificationTrigger
@@ -5591,6 +6009,8 @@ namespace GetStream.Models
         public string Text { get; set; }
         [JsonPropertyName("type")]
         public string Type { get; set; }
+        [JsonPropertyName("comment")]
+        public NotificationComment? Comment { get; set; }
     }
 
     public class OCRRule
@@ -5605,6 +6025,34 @@ namespace GetStream.Models
     {
         [JsonPropertyName("id")]
         public string ID { get; set; }
+    }
+
+    public class OverviewDashboardConfig
+    {
+        [JsonPropertyName("default_date_range_days")]
+        public int? DefaultDateRangeDays { get; set; }
+        [JsonPropertyName("visible_charts")]
+        public List<string> VisibleCharts { get; set; }
+    }
+
+    public class OwnBatchRequest
+    {
+        [JsonPropertyName("feeds")]
+        public List<string> Feeds { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("fields")]
+        public List<string> Fields { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+
+    public class OwnBatchResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("data")]
+        public Dictionary<string, FeedOwnData> Data { get; set; }
     }
 
     public class OwnUser
@@ -6107,6 +6555,8 @@ namespace GetStream.Models
         public string? HuaweiAppID { get; set; }
         [JsonPropertyName("huawei_app_secret")]
         public string? HuaweiAppSecret { get; set; }
+        [JsonPropertyName("huawei_host")]
+        public string? HuaweiHost { get; set; }
         [JsonPropertyName("xiaomi_app_secret")]
         public string? XiaomiAppSecret { get; set; }
         [JsonPropertyName("xiaomi_package_name")]
@@ -6191,16 +6641,22 @@ namespace GetStream.Models
 
     public class QueryActivitiesRequest
     {
+        [JsonPropertyName("include_private_activities")]
+        public bool? IncludePrivateActivities { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
         public string? Next { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
 
     public class QueryActivitiesResponse
@@ -6417,6 +6873,28 @@ namespace GetStream.Models
         public string? Next { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+    }
+
+    public class QueryFeedsUsageStatsRequest
+    {
+        [JsonPropertyName("from")]
+        public string? From { get; set; }
+        [JsonPropertyName("to")]
+        public string? To { get; set; }
+    }
+
+    public class QueryFeedsUsageStatsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("api_requests")]
+        public DailyMetricStatsResponse APIRequests { get; set; }
+        [JsonPropertyName("activities")]
+        public DailyMetricStatsResponse Activities { get; set; }
+        [JsonPropertyName("follows")]
+        public DailyMetricStatsResponse Follows { get; set; }
+        [JsonPropertyName("openai_requests")]
+        public DailyMetricStatsResponse OpenaiRequests { get; set; }
     }
 
     public class QueryFollowsRequest
@@ -6669,6 +7147,8 @@ namespace GetStream.Models
         public string? Next { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+        [JsonPropertyName("filter_config")]
+        public FilterConfigResponse? FilterConfig { get; set; }
     }
 
     public class QueryUsersPayload
@@ -6751,20 +7231,38 @@ namespace GetStream.Models
 
     public class Reaction
     {
+        [JsonPropertyName("activity_id")]
+        public string ActivityID { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
-        [JsonPropertyName("message_id")]
-        public string MessageID { get; set; }
-        [JsonPropertyName("score")]
-        public int Score { get; set; }
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
+        [JsonPropertyName("kind")]
+        public string Kind { get; set; }
         [JsonPropertyName("updated_at")]
         public DateTime UpdatedAt { get; set; }
-        [JsonPropertyName("custom")]
-        public object Custom { get; set; }
         [JsonPropertyName("user_id")]
-        public string? UserID { get; set; }
+        public string UserID { get; set; }
+        [JsonPropertyName("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        [JsonPropertyName("parent")]
+        public string? Parent { get; set; }
+        [JsonPropertyName("score")]
+        public double? Score { get; set; }
+        [JsonPropertyName("target_feeds")]
+        public List<string> TargetFeeds { get; set; }
+        [JsonPropertyName("children_counts")]
+        public object ChildrenCounts { get; set; }
+        [JsonPropertyName("data")]
+        public object Data { get; set; }
+        [JsonPropertyName("latest_children")]
+        public Dictionary<string, List<Reaction>> LatestChildren { get; set; }
+        [JsonPropertyName("moderation")]
+        public object Moderation { get; set; }
+        [JsonPropertyName("own_children")]
+        public Dictionary<string, List<Reaction>> OwnChildren { get; set; }
+        [JsonPropertyName("target_feeds_extra_data")]
+        public object TargetFeedsExtraData { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
     }
@@ -6837,6 +7335,14 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("task_id")]
         public string TaskID { get; set; }
+    }
+
+    public class ReadCollectionsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("collections")]
+        public List<CollectionResponse> Collections { get; set; }
     }
 
     public class ReadReceipts
@@ -6924,9 +7430,9 @@ namespace GetStream.Models
         [JsonPropertyName("channel")]
         public ChannelResponse? Channel { get; set; }
         [JsonPropertyName("message")]
-        public Message? Message { get; set; }
+        public MessageResponse? Message { get; set; }
         [JsonPropertyName("user")]
-        public User? User { get; set; }
+        public UserResponse? User { get; set; }
     }
 
     public class RepliesMeta
@@ -6989,6 +7495,8 @@ namespace GetStream.Models
         public int FlagsCount { get; set; }
         [JsonPropertyName("id")]
         public string ID { get; set; }
+        [JsonPropertyName("latest_moderator_action")]
+        public string LatestModeratorAction { get; set; }
         [JsonPropertyName("recommended_action")]
         public string RecommendedAction { get; set; }
         [JsonPropertyName("reviewed_by")]
@@ -7029,6 +7537,10 @@ namespace GetStream.Models
         public EnrichedActivity? FeedsV2Activity { get; set; }
         [JsonPropertyName("feeds_v2_reaction")]
         public Reaction? FeedsV2Reaction { get; set; }
+        [JsonPropertyName("feeds_v3_activity")]
+        public ActivityResponse? FeedsV3Activity { get; set; }
+        [JsonPropertyName("feeds_v3_comment")]
+        public CommentResponse? FeedsV3Comment { get; set; }
         [JsonPropertyName("message")]
         public MessageResponse? Message { get; set; }
         [JsonPropertyName("moderation_payload")]
@@ -7107,6 +7619,8 @@ namespace GetStream.Models
         public string? Type { get; set; }
         [JsonPropertyName("content_count_rule_params")]
         public ContentCountRuleParameters? ContentCountRuleParams { get; set; }
+        [JsonPropertyName("content_flag_count_rule_params")]
+        public FlagCountRuleParameters? ContentFlagCountRuleParams { get; set; }
         [JsonPropertyName("image_content_params")]
         public ImageContentParameters? ImageContentParams { get; set; }
         [JsonPropertyName("image_rule_params")]
@@ -7119,6 +7633,8 @@ namespace GetStream.Models
         public UserCreatedWithinParameters? UserCreatedWithinParams { get; set; }
         [JsonPropertyName("user_custom_property_params")]
         public UserCustomPropertyParameters? UserCustomPropertyParams { get; set; }
+        [JsonPropertyName("user_flag_count_rule_params")]
+        public FlagCountRuleParameters? UserFlagCountRuleParams { get; set; }
         [JsonPropertyName("user_rule_params")]
         public UserRuleParameters? UserRuleParams { get; set; }
         [JsonPropertyName("video_content_params")]
@@ -7213,6 +7729,8 @@ namespace GetStream.Models
 
     public class ShadowBlockActionRequest
     {
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
     }
 
     public class SharedLocation
@@ -7317,6 +7835,8 @@ namespace GetStream.Models
         public int? Direction { get; set; }
         [JsonPropertyName("field")]
         public string? Field { get; set; }
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
     }
 
     public class SortParamRequest
@@ -7325,6 +7845,8 @@ namespace GetStream.Models
         public int? Direction { get; set; }
         [JsonPropertyName("field")]
         public string? Field { get; set; }
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
     }
 
     public class SpeechSegmentConfig
@@ -7357,6 +7879,8 @@ namespace GetStream.Models
         public string? FeedVisibility { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
+        [JsonPropertyName("activities")]
+        public List<ActivityResponse> Activities { get; set; }
         [JsonPropertyName("aggregated_activities")]
         public List<AggregatedActivityResponse> AggregatedActivities { get; set; }
         [JsonPropertyName("user")]
@@ -7373,10 +7897,14 @@ namespace GetStream.Models
         public string? UserID { get; set; }
         [JsonPropertyName("ban")]
         public BanActionRequest? Ban { get; set; }
+        [JsonPropertyName("block")]
+        public BlockActionRequest? Block { get; set; }
         [JsonPropertyName("custom")]
         public CustomActionRequest? Custom { get; set; }
         [JsonPropertyName("delete_activity")]
         public DeleteActivityRequest? DeleteActivity { get; set; }
+        [JsonPropertyName("delete_comment")]
+        public DeleteCommentRequest? DeleteComment { get; set; }
         [JsonPropertyName("delete_message")]
         public DeleteMessageRequest? DeleteMessage { get; set; }
         [JsonPropertyName("delete_reaction")]
@@ -7385,6 +7913,8 @@ namespace GetStream.Models
         public DeleteUserRequest? DeleteUser { get; set; }
         [JsonPropertyName("mark_reviewed")]
         public MarkReviewedRequest? MarkReviewed { get; set; }
+        [JsonPropertyName("shadow_block")]
+        public ShadowBlockActionRequest? ShadowBlock { get; set; }
         [JsonPropertyName("unban")]
         public UnbanActionRequest? Unban { get; set; }
         [JsonPropertyName("user")]
@@ -7693,6 +8223,10 @@ namespace GetStream.Models
         public DateTime? ExpiresAt { get; set; }
         [JsonPropertyName("poll_id")]
         public string? PollID { get; set; }
+        [JsonPropertyName("restrict_replies")]
+        public string? RestrictReplies { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
         [JsonPropertyName("text")]
         public string? Text { get; set; }
         [JsonPropertyName("user_id")]
@@ -7701,6 +8235,8 @@ namespace GetStream.Models
         public string? Visibility { get; set; }
         [JsonPropertyName("attachments")]
         public List<Attachment> Attachments { get; set; }
+        [JsonPropertyName("collection_refs")]
+        public List<string> CollectionRefs { get; set; }
         [JsonPropertyName("feeds")]
         public List<string> Feeds { get; set; }
         [JsonPropertyName("filter_tags")]
@@ -7885,14 +8421,48 @@ namespace GetStream.Models
         public BookmarkResponse Bookmark { get; set; }
     }
 
+    public class UpdateCollectionRequest
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+    }
+
+    public class UpdateCollectionsRequest
+    {
+        [JsonPropertyName("collections")]
+        public List<UpdateCollectionRequest> Collections { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+
+    public class UpdateCollectionsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("collections")]
+        public List<CollectionResponse> Collections { get; set; }
+    }
+
     public class UpdateCommentRequest
     {
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
         [JsonPropertyName("skip_push")]
         public bool? SkipPush { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
 
     public class UpdateCommentResponse
@@ -7935,6 +8505,8 @@ namespace GetStream.Models
 
     public class UpdateFeedGroupRequest
     {
+        [JsonPropertyName("default_visibility")]
+        public string? DefaultVisibility { get; set; }
         [JsonPropertyName("activity_processors")]
         public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
@@ -8005,8 +8577,6 @@ namespace GetStream.Models
 
     public class UpdateFeedViewRequest
     {
-        [JsonPropertyName("activity_processors")]
-        public List<ActivityProcessorConfig> ActivityProcessors { get; set; }
         [JsonPropertyName("activity_selectors")]
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("aggregation")]
@@ -8021,6 +8591,20 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("feed_view")]
         public FeedViewResponse FeedView { get; set; }
+    }
+
+    public class UpdateFeedVisibilityRequest
+    {
+        [JsonPropertyName("grants")]
+        public Dictionary<string, List<string>> Grants { get; set; }
+    }
+
+    public class UpdateFeedVisibilityResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("feed_visibility")]
+        public FeedVisibilityResponse FeedVisibility { get; set; }
     }
 
     public class UpdateFollowRequest
@@ -8183,6 +8767,20 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("activities")]
         public List<ActivityResponse> Activities { get; set; }
+    }
+
+    public class UpsertCollectionsRequest
+    {
+        [JsonPropertyName("collections")]
+        public List<CollectionRequest> Collections { get; set; }
+    }
+
+    public class UpsertCollectionsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("collections")]
+        public List<CollectionResponse> Collections { get; set; }
     }
 
     public class UpsertConfigRequest

@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Moq;
+using GetStream.Requests;
 using GetStream.Models;
 using System.Threading;
 using NUnit.Framework;
@@ -383,7 +384,7 @@ namespace GetStream.Tests
         public async Task AddActivityReactionAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            var request = new AddReactionRequest();
+            var request = new AddActivityReactionRequest();
             var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<AddReactionResponse>
@@ -391,11 +392,11 @@ namespace GetStream.Tests
                 Data = new AddReactionResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<AddActivityReactionRequest, AddReactionResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<AddReactionRequest>(),
+                It.IsAny<AddActivityReactionRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
@@ -407,11 +408,11 @@ namespace GetStream.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
             
-            _mockClient.Verify(x => x.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
+            _mockClient.Verify(x => x.MakeRequestAsync<AddActivityReactionRequest, AddReactionResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<AddReactionRequest>(),
+                It.IsAny<AddActivityReactionRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -771,6 +772,181 @@ namespace GetStream.Tests
                 "/api/v2/feeds/bookmarks/query",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<QueryBookmarksRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task DeleteCollectionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+
+            var expectedResponse = new StreamResponse<DeleteCollectionsResponse>
+            {
+                Data = new DeleteCollectionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, DeleteCollectionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.DeleteCollectionsAsync(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteCollectionsResponse>(
+                "DELETE",
+                "/api/v2/feeds/collections",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task ReadCollectionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+
+            var expectedResponse = new StreamResponse<ReadCollectionsResponse>
+            {
+                Data = new ReadCollectionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, ReadCollectionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.ReadCollectionsAsync(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<object, ReadCollectionsResponse>(
+                "GET",
+                "/api/v2/feeds/collections",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task UpdateCollectionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new UpdateCollectionsRequest();
+
+            var expectedResponse = new StreamResponse<UpdateCollectionsResponse>
+            {
+                Data = new UpdateCollectionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<UpdateCollectionsRequest, UpdateCollectionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.UpdateCollectionsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<UpdateCollectionsRequest, UpdateCollectionsResponse>(
+                "PATCH",
+                "/api/v2/feeds/collections",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task CreateCollectionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new CreateCollectionsRequest();
+
+            var expectedResponse = new StreamResponse<CreateCollectionsResponse>
+            {
+                Data = new CreateCollectionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<CreateCollectionsRequest, CreateCollectionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CreateCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.CreateCollectionsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<CreateCollectionsRequest, CreateCollectionsResponse>(
+                "POST",
+                "/api/v2/feeds/collections",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CreateCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task UpsertCollectionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new UpsertCollectionsRequest();
+
+            var expectedResponse = new StreamResponse<UpsertCollectionsResponse>
+            {
+                Data = new UpsertCollectionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<UpsertCollectionsRequest, UpsertCollectionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpsertCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.UpsertCollectionsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<UpsertCollectionsRequest, UpsertCollectionsResponse>(
+                "PUT",
+                "/api/v2/feeds/collections",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpsertCollectionsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2075,6 +2251,42 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task UpdateFeedVisibilityAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new UpdateFeedVisibilityRequest();
+            var name = "test-name";
+
+            var expectedResponse = new StreamResponse<UpdateFeedVisibilityResponse>
+            {
+                Data = new UpdateFeedVisibilityResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<UpdateFeedVisibilityRequest, UpdateFeedVisibilityResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateFeedVisibilityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.UpdateFeedVisibilityAsync(name,request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<UpdateFeedVisibilityRequest, UpdateFeedVisibilityResponse>(
+                "PUT",
+                "/api/v2/feeds/feed_visibilities/{name}",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateFeedVisibilityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task CreateFeedsBatchAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -2110,6 +2322,76 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task DeleteFeedsBatchAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new DeleteFeedsBatchRequest();
+
+            var expectedResponse = new StreamResponse<DeleteFeedsBatchResponse>
+            {
+                Data = new DeleteFeedsBatchResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<DeleteFeedsBatchRequest, DeleteFeedsBatchResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<DeleteFeedsBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.DeleteFeedsBatchAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<DeleteFeedsBatchRequest, DeleteFeedsBatchResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/delete",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<DeleteFeedsBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task OwnBatchAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new OwnBatchRequest();
+
+            var expectedResponse = new StreamResponse<OwnBatchResponse>
+            {
+                Data = new OwnBatchResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<OwnBatchRequest, OwnBatchResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<OwnBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.OwnBatchAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<OwnBatchRequest, OwnBatchResponse>(
+                "POST",
+                "/api/v2/feeds/feeds/own/batch",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<OwnBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task QueryFeedsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -2141,6 +2423,41 @@ namespace GetStream.Tests
                 "/api/v2/feeds/feeds/query",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<QueryFeedsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task GetFeedsRateLimitsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+
+            var expectedResponse = new StreamResponse<GetFeedsRateLimitsResponse>
+            {
+                Data = new GetFeedsRateLimitsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, GetFeedsRateLimitsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetFeedsRateLimitsAsync(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedsRateLimitsResponse>(
+                "GET",
+                "/api/v2/feeds/feeds/rate_limits",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2281,6 +2598,41 @@ namespace GetStream.Tests
                 "/api/v2/feeds/follows/batch",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<FollowBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task GetOrCreateFollowsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new GetOrCreateFollowsRequest();
+
+            var expectedResponse = new StreamResponse<FollowBatchResponse>
+            {
+                Data = new FollowBatchResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<GetOrCreateFollowsRequest, FollowBatchResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<GetOrCreateFollowsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetOrCreateFollowsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateFollowsRequest, FollowBatchResponse>(
+                "POST",
+                "/api/v2/feeds/follows/batch/upsert",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<GetOrCreateFollowsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2534,6 +2886,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task QueryFeedsUsageStatsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new QueryFeedsUsageStatsRequest();
+
+            var expectedResponse = new StreamResponse<QueryFeedsUsageStatsResponse>
+            {
+                Data = new QueryFeedsUsageStatsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<QueryFeedsUsageStatsRequest, QueryFeedsUsageStatsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryFeedsUsageStatsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryFeedsUsageStatsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedsUsageStatsRequest, QueryFeedsUsageStatsResponse>(
+                "POST",
+                "/api/v2/feeds/stats/usage",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryFeedsUsageStatsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task UnfollowBatchAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -2569,10 +2956,45 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task GetOrCreateUnfollowsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new GetOrCreateUnfollowsRequest();
+
+            var expectedResponse = new StreamResponse<UnfollowBatchResponse>
+            {
+                Data = new UnfollowBatchResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<GetOrCreateUnfollowsRequest, UnfollowBatchResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<GetOrCreateUnfollowsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetOrCreateUnfollowsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateUnfollowsRequest, UnfollowBatchResponse>(
+                "POST",
+                "/api/v2/feeds/unfollow/batch/upsert",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<GetOrCreateUnfollowsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task DeleteFeedUserDataAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null!;
+            var request = new DeleteFeedUserDataRequest();
             var userID = "test-userID";
 
             var expectedResponse = new StreamResponse<DeleteFeedUserDataResponse>
@@ -2580,27 +3002,27 @@ namespace GetStream.Tests
                 Data = new DeleteFeedUserDataResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<object, DeleteFeedUserDataResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<DeleteFeedUserDataRequest, DeleteFeedUserDataResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<object>(),
+                It.IsAny<DeleteFeedUserDataRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedUserDataAsync(userID,null!);
+            var result = await _client.DeleteFeedUserDataAsync(userID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
             
-            _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteFeedUserDataResponse>(
-                "DELETE",
+            _mockClient.Verify(x => x.MakeRequestAsync<DeleteFeedUserDataRequest, DeleteFeedUserDataResponse>(
+                "POST",
                 "/api/v2/feeds/users/{user_id}/delete",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<object>(),
+                It.IsAny<DeleteFeedUserDataRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
