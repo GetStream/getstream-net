@@ -1748,10 +1748,6 @@ namespace GetStream.Tests
                 {
                     new() { Type = "popular" }
                 },
-                ActivityProcessors = new List<ActivityProcessorConfig>
-                {
-                    new() { Type = "proximity" }
-                },
                 Aggregation = new AggregationConfig
                 {
                     Format = "time_based"
