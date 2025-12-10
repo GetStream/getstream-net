@@ -391,7 +391,7 @@ namespace GetStream.Tests
                 Data = new AddReactionResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<AddActivityReactionRequest, AddReactionResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
@@ -407,7 +407,7 @@ namespace GetStream.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
             
-            _mockClient.Verify(x => x.MakeRequestAsync<AddActivityReactionRequest, AddReactionResponse>(
+            _mockClient.Verify(x => x.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions",
                 It.IsAny<Dictionary<string, string>>(),
@@ -2611,7 +2611,7 @@ namespace GetStream.Tests
                 Data = new FollowBatchResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<GetOrCreateFollowsRequest, FollowBatchResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
@@ -2627,7 +2627,7 @@ namespace GetStream.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
             
-            _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateFollowsRequest, FollowBatchResponse>(
+            _mockClient.Verify(x => x.MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>(
                 "POST",
                 "/api/v2/feeds/follows/batch/upsert",
                 It.IsAny<Dictionary<string, string>>(),
@@ -2965,7 +2965,7 @@ namespace GetStream.Tests
                 Data = new UnfollowBatchResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<GetOrCreateUnfollowsRequest, UnfollowBatchResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<UnfollowBatchRequest, UnfollowBatchResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
@@ -2981,7 +2981,7 @@ namespace GetStream.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
             
-            _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateUnfollowsRequest, UnfollowBatchResponse>(
+            _mockClient.Verify(x => x.MakeRequestAsync<UnfollowBatchRequest, UnfollowBatchResponse>(
                 "POST",
                 "/api/v2/feeds/unfollow/batch/upsert",
                 It.IsAny<Dictionary<string, string>>(),
