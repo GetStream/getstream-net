@@ -668,7 +668,8 @@ namespace GetStream.Tests
                 commentId,
                 new UpdateCommentRequest
                 {
-                    Comment = "Updated comment text from .NET SDK"
+                    Comment = "Updated comment text from .NET SDK",
+                    UserID = _testUserId
                 }
             );
             // snippet-end: UpdateComment
