@@ -3,7 +3,6 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Moq;
-using GetStream.Requests;
 using GetStream.Models;
 using System.Threading;
 using NUnit.Framework;
