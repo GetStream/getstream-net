@@ -39,10 +39,6 @@ jobs:
     - name: Check for release triggers
       id: check
       run: |
-        # Check commit message for version bump keywords
-        COMMIT_MSG=$(git log -1 --pretty=%B)
-        echo "Commit message: $COMMIT_MSG"
-        
         # Manual workflow dispatch
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           echo "should_release=true" >> $GITHUB_OUTPUT
@@ -51,23 +47,28 @@ jobs:
           exit 0
         fi
         
+        # Check if this is a release PR merge (look for "Bump version to" in recent commits)
+        if git log -10 --pretty=%B --no-merges | grep -qi "Bump version to"; then
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "version_bump=from_pr" >> $GITHUB_OUTPUT
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        
         # Check commit message for version bump keywords
-        if echo "$COMMIT_MSG" | grep -iE "\[major\]|\[breaking\]|BREAKING CHANGE"; then
+        COMMIT_MSG=$(git log -1 --pretty=%B)
+        if echo "$COMMIT_MSG" | grep -qi "\[major\]"; then
           echo "should_release=true" >> $GITHUB_OUTPUT
           echo "version_bump=major" >> $GITHUB_OUTPUT
           echo "is_prerelease=false" >> $GITHUB_OUTPUT
-        elif echo "$COMMIT_MSG" | grep -iE "\[minor\]|\[feature\]|feat:"; then
+        elif echo "$COMMIT_MSG" | grep -qi "\[minor\]"; then
           echo "should_release=true" >> $GITHUB_OUTPUT
           echo "version_bump=minor" >> $GITHUB_OUTPUT
           echo "is_prerelease=false" >> $GITHUB_OUTPUT
-        elif echo "$COMMIT_MSG" | grep -iE "\[patch\]|\[fix\]|fix:"; then
+        elif echo "$COMMIT_MSG" | grep -qi "\[bug\]"; then
           echo "should_release=true" >> $GITHUB_OUTPUT
           echo "version_bump=patch" >> $GITHUB_OUTPUT
           echo "is_prerelease=false" >> $GITHUB_OUTPUT
-        elif echo "$COMMIT_MSG" | grep -iE "\[prerelease\]|\[alpha\]|\[beta\]|\[rc\]"; then
-          echo "should_release=true" >> $GITHUB_OUTPUT
-          echo "version_bump=patch" >> $GITHUB_OUTPUT
-          echo "is_prerelease=true" >> $GITHUB_OUTPUT
         else
           echo "should_release=false" >> $GITHUB_OUTPUT
         fi
@@ -109,57 +110,43 @@ jobs:
         echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
         echo "Current version: $CURRENT_VERSION"
     
-    - name: Calculate new version
+    - name: Get release version
       id: new_version
       run: |
         CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
         VERSION_BUMP="${{ needs.check-release.outputs.version_bump }}"
-        IS_PRERELEASE="${{ needs.check-release.outputs.is_prerelease }}"
         
-        # Parse current version
-        IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-        MAJOR=${VERSION_PARTS[0]}
-        MINOR=${VERSION_PARTS[1]}
-        PATCH=${VERSION_PARTS[2]%%-*}  # Remove any prerelease suffix
-        
-        # Bump version based on type
-        case $VERSION_BUMP in
-          major)
-            MAJOR=$((MAJOR + 1))
-            MINOR=0
-            PATCH=0
-            ;;
-          minor)
-            MINOR=$((MINOR + 1))
-            PATCH=0
-            ;;
-          patch)
-            PATCH=$((PATCH + 1))
-            ;;
-        esac
-        
-        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-        
-        # Add prerelease suffix if needed
-        if [ "$IS_PRERELEASE" = "true" ]; then
-          TIMESTAMP=$(date +%Y%m%d%H%M%S)
-          NEW_VERSION="$NEW_VERSION-alpha.$TIMESTAMP"
+        # If version was already bumped in a release PR, use that version
+        if [ "$VERSION_BUMP" = "from_pr" ]; then
+          NEW_VERSION="$CURRENT_VERSION"
+        else
+          # Parse and bump version
+          IFS='.' read -ra PARTS <<< "$CURRENT_VERSION"
+          MAJOR=${PARTS[0]}
+          MINOR=${PARTS[1]}
+          PATCH=${PARTS[2]%%-*}
+          
+          case $VERSION_BUMP in
+            major) NEW_VERSION="$((MAJOR + 1)).0.0" ;;
+            minor) NEW_VERSION="$MAJOR.$((MINOR + 1)).0" ;;
+            patch) NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))" ;;
+          esac
+          
+          if [ "${{ needs.check-release.outputs.is_prerelease }}" = "true" ]; then
+            NEW_VERSION="$NEW_VERSION-alpha.$(date +%Y%m%d%H%M%S)"
+          fi
         fi
         
         echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "New version: $NEW_VERSION"
+        echo "Release version: $NEW_VERSION"
     
-    - name: Update version in project file
+    - name: Update version in files
+      if: needs.check-release.outputs.version_bump != 'from_pr'
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
         sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" src/stream-feed-net.csproj
-        echo "Updated version to $NEW_VERSION"
-    
-    - name: Update version in Client.cs
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
         sed -i "s/private const string VersionName = \".*\";/private const string VersionName = \"$NEW_VERSION\";/" src/Client.cs
-        echo "Updated version constant in Client.cs to $NEW_VERSION"
+        echo "Updated version to $NEW_VERSION"
     
     - name: Create NuGet package
       run: |
