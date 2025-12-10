@@ -2,6 +2,9 @@ using System.Text;
 using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.IO;
+using System.Net.Http;
+using GetStream.Models;
 
 namespace GetStream
 {
@@ -59,8 +62,21 @@ namespace GetStream
             // Add request body if provided
             if (requestBody != null)
             {
-                var json = JsonSerializer.Serialize(requestBody, _jsonOptions);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                // Handle multipart form data for file/image uploads
+                if (requestBody is FileUploadRequest fileUploadRequest)
+                {
+                    request.Content = CreateMultipartContent(fileUploadRequest);
+                }
+                else if (requestBody is ImageUploadRequest imageUploadRequest)
+                {
+                    request.Content = CreateMultipartContent(imageUploadRequest);
+                }
+                else
+                {
+                    // Default to JSON for other request types
+                    var json = JsonSerializer.Serialize(requestBody, _jsonOptions);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
             }
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
@@ -102,8 +118,21 @@ namespace GetStream
             // Add request body if provided
             if (requestBody != null)
             {
-                var json = JsonSerializer.Serialize(requestBody, _jsonOptions);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                // Handle multipart form data for file/image uploads
+                if (requestBody is FileUploadRequest fileUploadRequest)
+                {
+                    request.Content = CreateMultipartContent(fileUploadRequest);
+                }
+                else if (requestBody is ImageUploadRequest imageUploadRequest)
+                {
+                    request.Content = CreateMultipartContent(imageUploadRequest);
+                }
+                else
+                {
+                    // Default to JSON for other request types
+                    var json = JsonSerializer.Serialize(requestBody, _jsonOptions);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
             }
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
@@ -208,6 +237,71 @@ namespace GetStream
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        private MultipartFormDataContent CreateMultipartContent(FileUploadRequest request)
+        {
+            if (string.IsNullOrEmpty(request.File))
+            {
+                throw new ArgumentException("File path must be provided", nameof(request));
+            }
+
+            if (!File.Exists(request.File))
+            {
+                throw new FileNotFoundException($"File not found: {request.File}");
+            }
+
+            var content = new MultipartFormDataContent();
+            
+            // Add file
+            var fileStream = File.OpenRead(request.File);
+            var fileName = Path.GetFileName(request.File);
+            content.Add(new StreamContent(fileStream), "file", fileName);
+
+            // Add user field if present
+            if (request.User != null)
+            {
+                var userJson = JsonSerializer.Serialize(request.User, _jsonOptions);
+                content.Add(new StringContent(userJson, Encoding.UTF8), "user");
+            }
+
+            return content;
+        }
+
+        private MultipartFormDataContent CreateMultipartContent(ImageUploadRequest request)
+        {
+            if (string.IsNullOrEmpty(request.File))
+            {
+                throw new ArgumentException("File path must be provided", nameof(request));
+            }
+
+            if (!File.Exists(request.File))
+            {
+                throw new FileNotFoundException($"File not found: {request.File}");
+            }
+
+            var content = new MultipartFormDataContent();
+            
+            // Add file
+            var fileStream = File.OpenRead(request.File);
+            var fileName = Path.GetFileName(request.File);
+            content.Add(new StreamContent(fileStream), "file", fileName);
+
+            // Add upload_sizes field if present
+            if (request.UploadSizes != null && request.UploadSizes.Count > 0)
+            {
+                var uploadSizesJson = JsonSerializer.Serialize(request.UploadSizes, _jsonOptions);
+                content.Add(new StringContent(uploadSizesJson, Encoding.UTF8), "upload_sizes");
+            }
+
+            // Add user field if present
+            if (request.User != null)
+            {
+                var userJson = JsonSerializer.Serialize(request.User, _jsonOptions);
+                content.Add(new StringContent(userJson, Encoding.UTF8), "user");
+            }
+
+            return content;
         }
     }
 } 

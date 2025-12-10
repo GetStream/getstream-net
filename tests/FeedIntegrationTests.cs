@@ -1604,6 +1604,111 @@ namespace GetStream.Tests
             Console.WriteLine("✅ Completed real-world usage scenario demonstration");
         }
 
+        [Test, Order(30)]
+        public async Task Test35_UploadImage()
+        {
+            Console.WriteLine("\n📸 Testing image upload...");
+
+            // Get the path to test-upload.png in the tests directory
+            // The file is in the tests/ directory, but tests run from bin/Debug/net9.0/
+            var testImagePath = Path.Combine(Directory.GetCurrentDirectory(), "test-upload.png");
+            
+            if (!File.Exists(testImagePath))
+            {
+                // Try relative to the test assembly location (bin/Debug/net9.0/)
+                var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                var assemblyDir = Path.GetDirectoryName(assemblyLocation);
+                if (assemblyDir != null)
+                {
+                    // Go up from bin/Debug/net9.0/ to tests/
+                    var testsDir = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", ".."));
+                    testImagePath = Path.Combine(testsDir, "test-upload.png");
+                }
+            }
+
+            if (!File.Exists(testImagePath))
+            {
+                // Try relative to solution root from current directory
+                var solutionRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+                testImagePath = Path.Combine(solutionRoot, "tests", "test-upload.png");
+            }
+
+            if (!File.Exists(testImagePath))
+            {
+                Assert.Fail($"Test image file not found. Tried: {testImagePath}");
+                return;
+            }
+
+            Console.WriteLine($"Using test image: {testImagePath}");
+
+            // snippet-start: UploadImage
+            var uploadRequest = new ImageUploadRequest
+            {
+                File = testImagePath,
+                UploadSizes = new List<ImageSize>
+                {
+                    new ImageSize { Width = 100, Height = 100 },
+                    new ImageSize { Width = 300, Height = 200 }
+                },
+                User = new OnlyUserID
+                {
+                    ID = _testUserId
+                }
+            };
+
+            var response = await _client.ImageUploadAsync(uploadRequest);
+            // snippet-end: UploadImage
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            Assert.That(response.Data!.File, Is.Not.Null.And.Not.Empty, "Image URL should not be empty");
+            Assert.That(response.Data.File, Does.Contain("http"), "Image URL should be a valid HTTP URL");
+
+            Console.WriteLine($"✅ Image uploaded successfully: {response.Data.File}");
+        }
+
+        [Test, Order(31)]
+        public async Task Test36_UploadFile()
+        {
+            Console.WriteLine("\n📄 Testing file upload...");
+
+            // Create a temporary test file
+            var testContent = "This is a test file for multipart upload integration test\nContains multiple lines\nWith various content";
+            var tempFile = Path.GetTempFileName();
+            await File.WriteAllTextAsync(tempFile, testContent);
+
+            try
+            {
+                // snippet-start: UploadFile
+                var uploadRequest = new FileUploadRequest
+                {
+                    File = tempFile,
+                    User = new OnlyUserID
+                    {
+                        ID = _testUserId
+                    }
+                };
+
+                var response = await _client.FileUploadAsync(uploadRequest);
+                // snippet-end: UploadFile
+
+                Assert.That(response, Is.Not.Null);
+                Assert.That(response.Data, Is.Not.Null);
+                Assert.That(response.Data!.File, Is.Not.Null.And.Not.Empty, "File URL should not be empty");
+                Assert.That(response.Data.File, Does.Contain("http"), "File URL should be a valid HTTP URL");
+
+                Console.WriteLine($"✅ File uploaded successfully: {response.Data.File}");
+            }
+            finally
+            {
+                // Clean up temp file
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+            }
+        }
+
         /// <summary>
         /// Test 33: Feed Group CRUD Operations
         /// </summary>
