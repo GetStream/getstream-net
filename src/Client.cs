@@ -7,6 +7,9 @@ namespace GetStream
 {
     public class BaseClient :IClient
     {
+        private const string VersionName = "2.1.0";
+        private static readonly string VersionHeader = $"getstream-net-{VersionName}";
+        
         private readonly HttpClient _httpClient;
         protected string ApiKey;
         protected string ApiSecret;
@@ -51,6 +54,7 @@ namespace GetStream
             var token = GenerateServerSideToken();
             request.Headers.Add("Authorization", token);
             request.Headers.Add("stream-auth-type", "jwt");
+            request.Headers.Add("X-Stream-Client", VersionHeader);
 
             // Add request body if provided
             if (requestBody != null)
@@ -93,6 +97,7 @@ namespace GetStream
             var token = GenerateServerSideToken();
             request.Headers.Add("Authorization", token);
             request.Headers.Add("stream-auth-type", "jwt");
+            request.Headers.Add("X-Stream-Client", VersionHeader);
 
             // Add request body if provided
             if (requestBody != null)

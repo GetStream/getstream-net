@@ -668,7 +668,8 @@ namespace GetStream.Tests
                 commentId,
                 new UpdateCommentRequest
                 {
-                    Comment = "Updated comment text from .NET SDK"
+                    Comment = "Updated comment text from .NET SDK",
+                    UserID = _testUserId
                 }
             );
             // snippet-end: UpdateComment
@@ -1747,10 +1748,6 @@ namespace GetStream.Tests
                 ActivitySelectors = new List<ActivitySelectorConfig>
                 {
                     new() { Type = "popular" }
-                },
-                ActivityProcessors = new List<ActivityProcessorConfig>
-                {
-                    new() { Type = "proximity" }
                 },
                 Aggregation = new AggregationConfig
                 {

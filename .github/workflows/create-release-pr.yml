@@ -82,6 +82,12 @@ jobs:
           NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
           sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" src/stream-feed-net.csproj
           echo "Updated version to $NEW_VERSION"
+      
+      - name: Update version in Client.cs
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+          sed -i "s/private const string VersionName = \".*\";/private const string VersionName = \"$NEW_VERSION\";/" src/Client.cs
+          echo "Updated version constant in Client.cs to $NEW_VERSION"
 
       - name: Run tests
         env:
@@ -98,7 +104,7 @@ jobs:
           VERSION_TYPE="${{ github.event.inputs.version_type }}"
           RELEASE_NOTES="${{ github.event.inputs.release_notes }}"
           
-          git add src/stream-feed-net.csproj
+          git add src/stream-feed-net.csproj src/Client.cs
           git commit -m "Bump version to $NEW_VERSION
 
           Version type: $VERSION_TYPE
