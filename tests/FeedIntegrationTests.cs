@@ -717,7 +717,7 @@ namespace GetStream.Tests
             // User 2 adds a reaction to the comment
             var reactionResponse = await _feedsV3Client.AddCommentReactionAsync(
                 commentId,
-                new AddReactionRequest
+                new AddCommentReactionRequest
                 {
                     Type = "like",
                     UserID = _testUserId2
@@ -806,7 +806,7 @@ namespace GetStream.Tests
             // User 2 adds a reaction to the reply
             var reactionResponse = await _feedsV3Client.AddCommentReactionAsync(
                 replyId,
-                new AddReactionRequest
+                new AddCommentReactionRequest
                 {
                     Type = "love",
                     UserID = _testUserId2
