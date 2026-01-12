@@ -678,6 +678,170 @@ namespace GetStream.Tests
             Console.WriteLine("✅ Updated comment");
         }
 
+        [Test, Order(11)]
+        public async Task Test10a_GetCommentsWithOwnReactions()
+        {
+            Console.WriteLine("\n💬👍 Testing GetComments with OwnReactions using user_id parameter...");
+            
+            // Create an activity to comment on
+            var activity = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "Activity for OwnReactions test",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" }
+            };
+            
+            var createResponse = await _feedsV3Client.AddActivityAsync(activity);
+            Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
+            
+            var activityId = createResponse.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+
+            // User 1 adds a comment
+            var commentResponse = await _feedsV3Client.AddCommentAsync(
+                new AddCommentRequest
+                {
+                    Comment = "Test comment for reactions",
+                    ObjectID = activityId,
+                    ObjectType = "activity",
+                    UserID = _testUserId
+                }
+            );
+            Assert.That(commentResponse, Is.Not.Null);
+            Assert.That(commentResponse.Data?.Comment?.ID, Is.Not.Null);
+            
+            var commentId = commentResponse.Data!.Comment!.ID!;
+            _createdCommentIds.Add(commentId);
+
+            // User 2 adds a reaction to the comment
+            var reactionResponse = await _feedsV3Client.AddCommentReactionAsync(
+                commentId,
+                new AddCommentReactionRequest
+                {
+                    Type = "like",
+                    UserID = _testUserId2
+                }
+            );
+            Assert.That(reactionResponse, Is.Not.Null);
+
+            // snippet-start: GetCommentsWithOwnReactions
+            // Now get comments using user_id parameter for user2
+            // This should populate OwnReactions for user2
+            var getCommentsResponse = await _feedsV3Client.GetCommentsAsync(
+                new 
+                {
+                    object_type = "activity",
+                    object_id = activityId,
+                    user_id = _testUserId2  // Specify user_id for server-side auth
+                }
+            );
+            // snippet-end: GetCommentsWithOwnReactions
+
+            Assert.That(getCommentsResponse, Is.Not.Null);
+            Assert.That(getCommentsResponse.Data, Is.Not.Null);
+            Assert.That(getCommentsResponse.Data!.Comments, Is.Not.Null.And.Not.Empty);
+            
+            var comment = getCommentsResponse.Data.Comments![0];
+            
+            // Verify OwnReactions is populated for user2
+            Assert.That(comment.OwnReactions, Is.Not.Null, "OwnReactions should not be null");
+            Assert.That(comment.OwnReactions, Is.Not.Empty, "OwnReactions should contain user2's like reaction");
+            Assert.That(comment.OwnReactions!.Count, Is.EqualTo(1), "Should have exactly 1 own reaction");
+            Assert.That(comment.OwnReactions[0].Type, Is.EqualTo("like"), "Reaction type should be 'like'");
+            Assert.That(comment.OwnReactions[0].User?.ID, Is.EqualTo(_testUserId2), "Reaction should belong to user2");
+            
+            Console.WriteLine("✅ GetComments with user_id correctly populated OwnReactions");
+        }
+
+        [Test, Order(11)]
+        public async Task Test10b_GetCommentRepliesWithOwnReactions()
+        {
+            Console.WriteLine("\n💬💬👍 Testing GetCommentReplies with OwnReactions using user_id parameter...");
+            
+            // Create an activity and parent comment
+            var activity = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "Activity for reply OwnReactions test",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" }
+            };
+            
+            var createResponse = await _feedsV3Client.AddActivityAsync(activity);
+            Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
+            
+            var activityId = createResponse.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+
+            // Add parent comment
+            var parentCommentResponse = await _feedsV3Client.AddCommentAsync(
+                new AddCommentRequest
+                {
+                    Comment = "Parent comment",
+                    ObjectID = activityId,
+                    ObjectType = "activity",
+                    UserID = _testUserId
+                }
+            );
+            Assert.That(parentCommentResponse.Data?.Comment?.ID, Is.Not.Null);
+            var parentCommentId = parentCommentResponse.Data!.Comment!.ID!;
+            _createdCommentIds.Add(parentCommentId);
+
+            // Add a reply to the parent comment
+            var replyResponse = await _feedsV3Client.AddCommentAsync(
+                new AddCommentRequest
+                {
+                    Comment = "Reply comment",
+                    ObjectID = activityId,
+                    ObjectType = "activity",
+                    ParentID = parentCommentId,
+                    UserID = _testUserId
+                }
+            );
+            Assert.That(replyResponse.Data?.Comment?.ID, Is.Not.Null);
+            var replyId = replyResponse.Data!.Comment!.ID!;
+            _createdCommentIds.Add(replyId);
+
+            // User 2 adds a reaction to the reply
+            var reactionResponse = await _feedsV3Client.AddCommentReactionAsync(
+                replyId,
+                new AddCommentReactionRequest
+                {
+                    Type = "love",
+                    UserID = _testUserId2
+                }
+            );
+            Assert.That(reactionResponse, Is.Not.Null);
+
+            // snippet-start: GetCommentRepliesWithOwnReactions
+            // Get comment replies using user_id parameter for user2
+            // This should populate OwnReactions for user2
+            var getRepliesResponse = await _feedsV3Client.GetCommentRepliesAsync(
+                parentCommentId,
+                new 
+                {
+                    user_id = _testUserId2  // Specify user_id for server-side auth
+                }
+            );
+            // snippet-end: GetCommentRepliesWithOwnReactions
+
+            Assert.That(getRepliesResponse, Is.Not.Null);
+            Assert.That(getRepliesResponse.Data, Is.Not.Null);
+            Assert.That(getRepliesResponse.Data!.Comments, Is.Not.Null.And.Not.Empty);
+            
+            var reply = getRepliesResponse.Data.Comments![0];
+            
+            // Verify OwnReactions is populated for user2
+            Assert.That(reply.OwnReactions, Is.Not.Null, "OwnReactions should not be null");
+            Assert.That(reply.OwnReactions, Is.Not.Empty, "OwnReactions should contain user2's love reaction");
+            Assert.That(reply.OwnReactions!.Count, Is.EqualTo(1), "Should have exactly 1 own reaction");
+            Assert.That(reply.OwnReactions[0].Type, Is.EqualTo("love"), "Reaction type should be 'love'");
+            Assert.That(reply.OwnReactions[0].User?.ID, Is.EqualTo(_testUserId2), "Reaction should belong to user2");
+            
+            Console.WriteLine("✅ GetCommentReplies with user_id correctly populated OwnReactions");
+        }
+
         // =================================================================
         // 5. BOOKMARK OPERATIONS
         // =================================================================
@@ -1605,7 +1769,7 @@ namespace GetStream.Tests
         }
 
         [Test, Order(30)]
-        public async Task Test35_UploadImage()
+        public async Task Test35_ImageUpload()
         {
             Console.WriteLine("\n📸 Testing image upload...");
 
@@ -1641,7 +1805,7 @@ namespace GetStream.Tests
 
             Console.WriteLine($"Using test image: {testImagePath}");
 
-            // snippet-start: UploadImage
+            // snippet-start: ImageUpload
             var uploadRequest = new ImageUploadRequest
             {
                 File = testImagePath,
@@ -1657,7 +1821,7 @@ namespace GetStream.Tests
             };
 
             var response = await _client.ImageUploadAsync(uploadRequest);
-            // snippet-end: UploadImage
+            // snippet-end: ImageUpload
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
@@ -1668,7 +1832,7 @@ namespace GetStream.Tests
         }
 
         [Test, Order(31)]
-        public async Task Test36_UploadFile()
+        public async Task Test36_FileUpload()
         {
             Console.WriteLine("\n📄 Testing file upload...");
 
@@ -1679,7 +1843,7 @@ namespace GetStream.Tests
 
             try
             {
-                // snippet-start: UploadFile
+                // snippet-start: FileUpload
                 var uploadRequest = new FileUploadRequest
                 {
                     File = tempFile,
@@ -1690,7 +1854,7 @@ namespace GetStream.Tests
                 };
 
                 var response = await _client.FileUploadAsync(uploadRequest);
-                // snippet-end: UploadFile
+                // snippet-end: FileUpload
 
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response.Data, Is.Not.Null);

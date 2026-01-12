@@ -333,6 +333,59 @@ namespace GetStream
                 
             return result;
         }
+        public async Task<StreamResponse<ListImportV2TasksResponse>> ListImportV2TasksAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await MakeRequestAsync<object, ListImportV2TasksResponse>(
+                "GET",
+                "/api/v2/imports/v2",queryParams,null,null,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<CreateImportV2TaskResponse>> CreateImportV2TaskAsync(CreateImportV2TaskRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<CreateImportV2TaskRequest, CreateImportV2TaskResponse>(
+                "POST",
+                "/api/v2/imports/v2",null,request,null,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<DeleteImportV2TaskResponse>> DeleteImportV2TaskAsync(string id,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<object, DeleteImportV2TaskResponse>(
+                "DELETE",
+                "/api/v2/imports/v2/{id}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
+        public async Task<StreamResponse<GetImportV2TaskResponse>> GetImportV2TaskAsync(string id,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<object, GetImportV2TaskResponse>(
+                "GET",
+                "/api/v2/imports/v2/{id}",null,null,pathParams,
+                cancellationToken);
+                
+            return result;
+        }
         public async Task<StreamResponse<GetImportResponse>> GetImportAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
