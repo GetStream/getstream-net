@@ -43,6 +43,43 @@ namespace GetStream
 
             return queryParams;
         }
+        public async Task<StreamResponse<AppealResponse>> AppealAsync(AppealRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<AppealRequest, AppealResponse>(
+                "POST",
+                "/api/v2/moderation/appeal", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, GetAppealResponse>(
+                "GET",
+                "/api/v2/moderation/appeal/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryAppealsResponse>> QueryAppealsAsync(QueryAppealsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryAppealsRequest, QueryAppealsResponse>(
+                "POST",
+                "/api/v2/moderation/appeals", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<BanResponse>> BanAsync(BanRequest request,
             CancellationToken cancellationToken = default)
         {

@@ -383,7 +383,7 @@ namespace GetStream.Tests
         public async Task AddActivityReactionAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            var request = new AddReactionRequest();
+            var request = new AddActivityReactionRequest();
             var activityID = "test-activityID";
 
             var expectedResponse = new StreamResponse<AddReactionResponse>
@@ -395,7 +395,7 @@ namespace GetStream.Tests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<AddReactionRequest>(),
+                It.IsAny<AddActivityReactionRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
@@ -411,7 +411,7 @@ namespace GetStream.Tests
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<AddReactionRequest>(),
+                It.IsAny<AddActivityReactionRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2604,7 +2604,7 @@ namespace GetStream.Tests
         public async Task GetOrCreateFollowsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            var request = new FollowBatchRequest();
+            var request = new GetOrCreateFollowsRequest();
 
             var expectedResponse = new StreamResponse<FollowBatchResponse>
             {
@@ -2615,7 +2615,7 @@ namespace GetStream.Tests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<FollowBatchRequest>(),
+                It.IsAny<GetOrCreateFollowsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
@@ -2631,7 +2631,7 @@ namespace GetStream.Tests
                 "POST",
                 "/api/v2/feeds/follows/batch/upsert",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<FollowBatchRequest>(),
+                It.IsAny<GetOrCreateFollowsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -2958,7 +2958,7 @@ namespace GetStream.Tests
         public async Task GetOrCreateUnfollowsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            var request = new UnfollowBatchRequest();
+            var request = new GetOrCreateUnfollowsRequest();
 
             var expectedResponse = new StreamResponse<UnfollowBatchResponse>
             {
@@ -2969,7 +2969,7 @@ namespace GetStream.Tests
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<UnfollowBatchRequest>(),
+                It.IsAny<GetOrCreateUnfollowsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
@@ -2985,7 +2985,7 @@ namespace GetStream.Tests
                 "POST",
                 "/api/v2/feeds/unfollow/batch/upsert",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<UnfollowBatchRequest>(),
+                It.IsAny<GetOrCreateUnfollowsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
