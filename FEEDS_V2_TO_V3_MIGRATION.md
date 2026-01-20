@@ -27,6 +27,9 @@ var activity = response.Data.Activity;  // Access via .Data property
 **V2:** Uses `Actor`, `Verb`, `Object` pattern
 ```
 var activity = new Activity("user:123", "post", "article:456");
+// Object field is a string reference (e.g., "article:456")
+// Some customers store custom_data inside Object as JSON string
+activity.SetData("custom_field", "value");  // Custom data via SetData
 ```
 
 **V3:** Uses `UserID`, `Type`, `Text` pattern
@@ -35,8 +38,13 @@ var request = new AddActivityRequest {
     UserID = "123",
     Type = "post",
     Text = "Hello world",
-    Feeds = new List<string> { "user:123" }
+    Feeds = new List<string> { "user:123" },
+    Custom = new { custom_field = "value" },  // Use custom field
+    FilterTags = new List<string> { "tag1" },  // For filtering
+    SearchData = new { ... }  // For searching
 };
+// No Object field - use filter_tags/search_data for filtering/searching
+// Use custom field for custom data (not in Object)
 ```
 
 ### 4. Pagination
@@ -158,6 +166,63 @@ await client.UpdateActivityAsync(activityId, new UpdateActivityRequest {
 });
 ```
 
+### Reactions
+**V2:** Separate reactions service
+```
+var reaction = await client.Reactions.AddAsync("like", activityId, userId);
+var reactions = await client.Reactions.FilterAsync(filtering, pagination);
+```
+
+**V3:** Reactions tied to activities/comments
+```
+// Activity reactions
+await client.AddActivityReactionAsync(activityId, new AddReactionRequest {
+    Type = "like",
+    UserID = userId
+});
+var reactions = await client.QueryActivityReactionsAsync(activityId, request);
+
+// Comment reactions (NEW in V3)
+await client.AddCommentReactionAsync(commentId, new AddCommentReactionRequest {
+    Type = "like",
+    UserID = userId
+});
+```
+
+### Comments
+**V2:** Not available - comments don't exist
+
+**V3:** First-class comments feature
+```
+// Add comment
+await client.AddCommentAsync(new AddCommentRequest {
+    Comment = "Great post!",
+    ObjectID = activityId,
+    ObjectType = "activity",
+    UserID = userId
+});
+
+// Query comments
+var response = await client.QueryCommentsAsync(new QueryCommentsRequest {
+    filter = new { object_id = activityId }
+});
+```
+
+### Polls
+**V2:** Not available - polls don't exist
+
+**V3:** Polls feature available
+```
+// Cast vote
+await client.CastPollVoteAsync(activityId, pollId, new CastPollVoteRequest {
+    UserID = userId,
+    Vote = new VoteData { ... }
+});
+
+// Delete vote
+await client.DeletePollVoteAsync(activityId, pollId, voteId);
+```
+
 ### Enrich Activities
 **V2:**
 ```
@@ -170,6 +235,23 @@ var response = await client.QueryActivitiesAsync(new QueryActivitiesRequest {
     filter = new { id = new[] { "id1", "id2" } },
     // Add enrichment options to request
 });
+```
+
+### Object Field and Custom Data
+**V2:** `Object` field stores string reference, custom data via `SetData()`
+```
+var activity = new Activity("user:123", "post", "article:456");
+activity.SetData("category", "tech");  // Custom data
+// Some customers store JSON in Object field itself
+```
+
+**V3:** No `Object` field, use separate fields
+```
+var request = new AddActivityRequest {
+    Custom = new { category = "tech" },  // Custom data here
+    FilterTags = new List<string> { "tech", "news" },  // For filtering
+    SearchData = new { category = "tech", author = "john" }  // For searching
+};
 ```
 
 ## Function Mappings
@@ -187,6 +269,10 @@ var response = await client.QueryActivitiesAsync(new QueryActivitiesRequest {
 | `feed.RemoveActivityAsync()` | `client.DeleteActivityAsync(id)` | Renamed |
 | `feed.AddActivitiesAsync()` | `client.UpsertActivitiesAsync(request)` | Batch upsert |
 | `feed.UpdateActivityToTargetsAsync()` | `client.UpdateActivityAsync(id, request)` | Replace all feeds |
+| `client.Reactions.AddAsync()` | `client.AddActivityReactionAsync()` / `AddCommentReactionAsync()` | Reactions tied to activities/comments |
+| `client.Reactions.FilterAsync()` | `client.QueryActivityReactionsAsync()` / `QueryCommentReactionsAsync()` | Query-based |
+| Comments | `client.AddCommentAsync()` / `QueryCommentsAsync()` | NEW in V3 |
+| Polls | `client.CastPollVoteAsync()` / `DeletePollVoteAsync()` | NEW in V3 |
 | `batchOps.FollowManyAsync()` | `client.FollowBatchAsync(request)` | Batch follow |
 | `batchOps.UnfollowManyAsync()` | `client.UnfollowBatchAsync(request)` | Batch unfollow |
 | `feed.FollowStatsAsync()` | Not available | Custom implementation needed |
@@ -197,5 +283,10 @@ var response = await client.QueryActivitiesAsync(new QueryActivitiesRequest {
 2. **Pagination**: V2 uses `offset`, V3 uses token-based (`next`/`prev`)
 3. **Feed Context**: V2 implicit, V3 explicit in requests
 4. **Activity Model**: V2 uses Actor/Verb/Object, V3 uses UserID/Type/Text
-5. **Query Pattern**: V3 uses request objects instead of method parameters
-6. **To-Targets**: V2 incremental, V3 replace-all (must combine manually)
+5. **Object Field**: V2 has `Object` (string reference), V3 removed - use `filter_tags`/`search_data` for filtering/searching
+6. **Custom Data**: V2 can store in Object field, V3 use `custom` field (not in Object)
+7. **Reactions**: V2 separate service, V3 tied to activities/comments with different API
+8. **Comments**: V2 not available, V3 first-class feature
+9. **Polls**: V2 not available, V3 available
+10. **Query Pattern**: V3 uses request objects instead of method parameters
+11. **To-Targets**: V2 incremental, V3 replace-all (must combine manually)
