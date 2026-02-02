@@ -633,6 +633,42 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task RestoreActivityAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new RestoreActivityRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<RestoreActivityResponse>
+            {
+                Data = new RestoreActivityResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<RestoreActivityRequest, RestoreActivityResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<RestoreActivityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.RestoreActivityAsync(id,request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<RestoreActivityRequest, RestoreActivityResponse>(
+                "POST",
+                "/api/v2/feeds/activities/{id}/restore",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<RestoreActivityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task QueryBookmarkFoldersAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange

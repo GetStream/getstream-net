@@ -293,6 +293,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<RestoreActivityResponse>> RestoreActivityAsync(string id,RestoreActivityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<RestoreActivityRequest, RestoreActivityResponse>(
+                "POST",
+                "/api/v2/feeds/activities/{id}/restore",null,request,pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(QueryBookmarkFoldersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1085,10 +1100,11 @@ namespace GetStream
                 ["source"] = source,
                 ["target"] = target,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, UnfollowResponse>(
                 "DELETE",
-                "/api/v2/feeds/follows/{source}/{target}",null,null,pathParams,
+                "/api/v2/feeds/follows/{source}/{target}",queryParams,null,pathParams,
                 cancellationToken);
 
             return result;
