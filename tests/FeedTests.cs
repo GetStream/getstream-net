@@ -91,6 +91,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task UpdateActivitiesPartialBatchAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new UpdateActivitiesPartialBatchRequest();
+
+            var expectedResponse = new StreamResponse<UpdateActivitiesPartialBatchResponse>
+            {
+                Data = new UpdateActivitiesPartialBatchResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<UpdateActivitiesPartialBatchRequest, UpdateActivitiesPartialBatchResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateActivitiesPartialBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.UpdateActivitiesPartialBatchAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+            
+            _mockClient.Verify(x => x.MakeRequestAsync<UpdateActivitiesPartialBatchRequest, UpdateActivitiesPartialBatchResponse>(
+                "PATCH",
+                "/api/v2/feeds/activities/batch/partial",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateActivitiesPartialBatchRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task DeleteActivitiesAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange

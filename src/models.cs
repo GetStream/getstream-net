@@ -6261,6 +6261,20 @@ namespace GetStream.Models
         public UserResponseCommonFields? User { get; set; }
     }
 
+    public class NotificationParentActivity
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("text")]
+        public string? Text { get; set; }
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("attachments")]
+        public List<Attachment> Attachments { get; set; }
+    }
+
     public class NotificationSettings
     {
         [JsonPropertyName("enabled")]
@@ -6309,6 +6323,8 @@ namespace GetStream.Models
         public List<Attachment> Attachments { get; set; }
         [JsonPropertyName("comment")]
         public NotificationComment? Comment { get; set; }
+        [JsonPropertyName("parent_activity")]
+        public NotificationParentActivity? ParentActivity { get; set; }
     }
 
     public class NotificationTrigger
@@ -8609,10 +8625,38 @@ namespace GetStream.Models
         public ActivityResponse Activity { get; set; }
     }
 
+    public class UpdateActivitiesPartialBatchRequest
+    {
+        [JsonPropertyName("changes")]
+        public List<UpdateActivityPartialChangeRequest> Changes { get; set; }
+    }
+
+    public class UpdateActivitiesPartialBatchResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("activities")]
+        public List<ActivityResponse> Activities { get; set; }
+    }
+
+    public class UpdateActivityPartialChangeRequest
+    {
+        [JsonPropertyName("activity_id")]
+        public string ActivityID { get; set; }
+        [JsonPropertyName("handle_mention_notifications")]
+        public bool? HandleMentionNotifications { get; set; }
+        [JsonPropertyName("unset")]
+        public List<string> Unset { get; set; }
+        [JsonPropertyName("set")]
+        public object Set { get; set; }
+    }
+
     public class UpdateActivityPartialRequest
     {
         [JsonPropertyName("handle_mention_notifications")]
         public bool? HandleMentionNotifications { get; set; }
+        [JsonPropertyName("run_activity_processors")]
+        public bool? RunActivityProcessors { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
         [JsonPropertyName("unset")]
@@ -8641,6 +8685,8 @@ namespace GetStream.Models
         public string? PollID { get; set; }
         [JsonPropertyName("restrict_replies")]
         public string? RestrictReplies { get; set; }
+        [JsonPropertyName("run_activity_processors")]
+        public bool? RunActivityProcessors { get; set; }
         [JsonPropertyName("skip_enrich_url")]
         public bool? SkipEnrichUrl { get; set; }
         [JsonPropertyName("text")]
