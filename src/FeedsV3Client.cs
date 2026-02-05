@@ -68,6 +68,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<UpdateActivitiesPartialBatchResponse>> UpdateActivitiesPartialBatchAsync(UpdateActivitiesPartialBatchRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<UpdateActivitiesPartialBatchRequest, UpdateActivitiesPartialBatchResponse>(
+                "PATCH",
+                "/api/v2/feeds/activities/batch/partial",null,request,null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteActivitiesResponse>> DeleteActivitiesAsync(DeleteActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
