@@ -1164,6 +1164,99 @@ namespace GetStream.Tests
             Console.WriteLine("✅ Upserted batch activities");
         }
 
+        [Test, Order(10)]
+        public async Task Test16a_UpdateActivitiesPartialBatch()
+        {
+            Console.WriteLine("\n✏️ Testing batch partial activity updates...");
+            
+            // Create some activities to update
+            var activity1 = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "Activity 1 for partial batch update",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" },
+                Custom = new Dictionary<string, object>
+                {
+                    ["likes"] = 10,
+                    ["views"] = 100,
+                    ["status"] = "published"
+                }
+            };
+            
+            var activity2 = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "Activity 2 for partial batch update",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" },
+                Custom = new Dictionary<string, object>
+                {
+                    ["likes"] = 5,
+                    ["views"] = 50,
+                    ["status"] = "draft"
+                }
+            };
+
+            var createResponse1 = await _feedsV3Client.AddActivityAsync(activity1);
+            var createResponse2 = await _feedsV3Client.AddActivityAsync(activity2);
+            
+            Assert.That(createResponse1.Data?.Activity?.ID, Is.Not.Null);
+            Assert.That(createResponse2.Data?.Activity?.ID, Is.Not.Null);
+            
+            var activityId1 = createResponse1.Data!.Activity!.ID!;
+            var activityId2 = createResponse2.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId1);
+            _createdActivityIds.Add(activityId2);
+
+            // snippet-start: UpdateActivitiesPartialBatch
+            // Perform partial batch updates - update specific fields without replacing entire activity
+            var partialUpdateRequest = new UpdateActivitiesPartialBatchRequest
+            {
+                Changes = new List<UpdateActivityPartialChangeRequest>
+                {
+                    new UpdateActivityPartialChangeRequest
+                    {
+                        ActivityID = activityId1,
+                        Set = new Dictionary<string, object>
+                        {
+                            ["likes"] = 25,  // Update likes count
+                            ["status"] = "featured"  // Change status
+                        }
+                    },
+                    new UpdateActivityPartialChangeRequest
+                    {
+                        ActivityID = activityId2,
+                        Set = new Dictionary<string, object>
+                        {
+                            ["likes"] = 15,  // Update likes count
+                            ["status"] = "published"  // Publish the draft
+                        },
+                        Unset = new List<string> { "views" }  // Remove views field
+                    }
+                }
+            };
+
+            var response = await _feedsV3Client.UpdateActivitiesPartialBatchAsync(partialUpdateRequest);
+            // snippet-end: UpdateActivitiesPartialBatch
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            Assert.That(response.Data!.Activities, Is.Not.Null);
+            Assert.That(response.Data.Activities!.Count, Is.EqualTo(2), "Should return 2 updated activities");
+            
+            Console.WriteLine($"✅ Partially updated {response.Data.Activities.Count} activities in batch");
+            
+            // Verify the updates by fetching the activities
+            var verifyResponse1 = await _feedsV3Client.GetActivityAsync(activityId1);
+            var verifyResponse2 = await _feedsV3Client.GetActivityAsync(activityId2);
+            
+            Assert.That(verifyResponse1.Data?.Activity, Is.Not.Null);
+            Assert.That(verifyResponse2.Data?.Activity, Is.Not.Null);
+            
+            Console.WriteLine("✅ Verified partial batch updates were applied correctly");
+        }
+
         [Test, Order(19)]
         public async Task Test20_DeleteReaction()
         {
