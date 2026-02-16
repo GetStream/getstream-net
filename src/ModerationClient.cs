@@ -25,7 +25,6 @@ namespace GetStream
             var client = new StreamClient(apiKey, apiSecret);
             _client = client;
         }
-
         private Dictionary<string, string> ExtractQueryParams(object request)
         {
             if (request == null)
@@ -54,7 +53,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id,
+        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -124,17 +123,14 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key,string? team,
+        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
                 ["key"] = key,
             };
-            var queryParams = new Dictionary<string, string>
-            {
-                ["team"] = team,
-            };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteModerationConfigResponse>(
                 "DELETE",
@@ -143,17 +139,14 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key,string? team,
+        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
             {
                 ["key"] = key,
             };
-            var queryParams = new Dictionary<string, string>
-            {
-                ["team"] = team,
-            };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, GetConfigResponse>(
                 "GET",
@@ -184,7 +177,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationTemplateResponse>> V2DeleteTemplateAsync(
+        public async Task<StreamResponse<DeleteModerationTemplateResponse>> V2DeleteTemplateAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
 
@@ -195,7 +188,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryFeedModerationTemplatesResponse>> V2QueryTemplatesAsync(
+        public async Task<StreamResponse<QueryFeedModerationTemplatesResponse>> V2QueryTemplatesAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
 
@@ -261,7 +254,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationRuleResponse>> DeleteModerationRuleAsync(
+        public async Task<StreamResponse<DeleteModerationRuleResponse>> DeleteModerationRuleAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
 
@@ -272,7 +265,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetModerationRuleResponse>> GetModerationRuleAsync(
+        public async Task<StreamResponse<GetModerationRuleResponse>> GetModerationRuleAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
 
@@ -316,7 +309,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id,
+        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -342,15 +335,10 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UnbanResponse>> UnbanAsync(string targetUserID, string? channelCid, string? createdBy,UnbanRequest request,
+        public async Task<StreamResponse<UnbanResponse>> UnbanAsync(UnbanRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = new Dictionary<string, string>
-            {
-                ["target_user_id"] = targetUserID,
-                ["channel_cid"] = channelCid,
-                ["created_by"] = createdBy,
-            };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<UnbanRequest, UnbanResponse>(
                 "POST",

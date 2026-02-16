@@ -57,7 +57,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetApplicationResponse>(
                 "GET",
-                "/api/v2/app",null,null,null,
+                "/api/v2/app", null, null, null,
                 cancellationToken);
                 
             return result;
@@ -68,7 +68,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdateAppRequest, Response>(
                 "PATCH",
-                "/api/v2/app",null,request,null,
+                "/api/v2/app", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -80,7 +80,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListBlockListResponse>(
                 "GET",
-                "/api/v2/blocklists",queryParams,null,null,
+                "/api/v2/blocklists", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -91,7 +91,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateBlockListRequest, CreateBlockListResponse>(
                 "POST",
-                "/api/v2/blocklists",null,request,null,
+                "/api/v2/blocklists", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -107,7 +107,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/blocklists/{name}",queryParams,null,pathParams,
+                "/api/v2/blocklists/{name}", queryParams, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -123,7 +123,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetBlockListResponse>(
                 "GET",
-                "/api/v2/blocklists/{name}",queryParams,null,pathParams,
+                "/api/v2/blocklists/{name}", queryParams, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -138,7 +138,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdateBlockListRequest, UpdateBlockListResponse>(
                 "PUT",
-                "/api/v2/blocklists/{name}",null,request,pathParams,
+                "/api/v2/blocklists/{name}", null, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -149,7 +149,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CheckPushRequest, CheckPushResponse>(
                 "POST",
-                "/api/v2/check_push",null,request,null,
+                "/api/v2/check_push", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -160,7 +160,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CheckSNSRequest, CheckSNSResponse>(
                 "POST",
-                "/api/v2/check_sns",null,request,null,
+                "/api/v2/check_sns", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -171,7 +171,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CheckSQSRequest, CheckSQSResponse>(
                 "POST",
-                "/api/v2/check_sqs",null,request,null,
+                "/api/v2/check_sqs", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -183,7 +183,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/devices",queryParams,null,null,
+                "/api/v2/devices", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -195,7 +195,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListDevicesResponse>(
                 "GET",
-                "/api/v2/devices",queryParams,null,null,
+                "/api/v2/devices", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -206,7 +206,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateDeviceRequest, Response>(
                 "POST",
-                "/api/v2/devices",null,request,null,
+                "/api/v2/devices", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -217,7 +217,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<ExportUsersRequest, ExportUsersResponse>(
                 "POST",
-                "/api/v2/export/users",null,request,null,
+                "/api/v2/export/users", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -228,7 +228,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListExternalStorageResponse>(
                 "GET",
-                "/api/v2/external_storage",null,null,null,
+                "/api/v2/external_storage", null, null, null,
                 cancellationToken);
                 
             return result;
@@ -239,7 +239,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateExternalStorageRequest, CreateExternalStorageResponse>(
                 "POST",
-                "/api/v2/external_storage",null,request,null,
+                "/api/v2/external_storage", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -254,7 +254,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, DeleteExternalStorageResponse>(
                 "DELETE",
-                "/api/v2/external_storage/{name}",null,null,pathParams,
+                "/api/v2/external_storage/{name}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -269,7 +269,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdateExternalStorageRequest, UpdateExternalStorageResponse>(
                 "PUT",
-                "/api/v2/external_storage/{name}",null,request,pathParams,
+                "/api/v2/external_storage/{name}", null, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -284,7 +284,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, CheckExternalStorageResponse>(
                 "GET",
-                "/api/v2/external_storage/{name}/check",null,null,pathParams,
+                "/api/v2/external_storage/{name}/check", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -295,7 +295,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateGuestRequest, CreateGuestResponse>(
                 "POST",
-                "/api/v2/guest",null,request,null,
+                "/api/v2/guest", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -306,7 +306,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateImportURLRequest, CreateImportURLResponse>(
                 "POST",
-                "/api/v2/import_urls",null,request,null,
+                "/api/v2/import_urls", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -317,7 +317,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListImportsResponse>(
                 "GET",
-                "/api/v2/imports",null,null,null,
+                "/api/v2/imports", null, null, null,
                 cancellationToken);
                 
             return result;
@@ -328,7 +328,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateImportRequest, CreateImportResponse>(
                 "POST",
-                "/api/v2/imports",null,request,null,
+                "/api/v2/imports", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -340,7 +340,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListImportV2TasksResponse>(
                 "GET",
-                "/api/v2/imports/v2",queryParams,null,null,
+                "/api/v2/imports/v2", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -351,7 +351,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateImportV2TaskRequest, CreateImportV2TaskResponse>(
                 "POST",
-                "/api/v2/imports/v2",null,request,null,
+                "/api/v2/imports/v2", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -366,7 +366,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, DeleteImportV2TaskResponse>(
                 "DELETE",
-                "/api/v2/imports/v2/{id}",null,null,pathParams,
+                "/api/v2/imports/v2/{id}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -381,7 +381,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetImportV2TaskResponse>(
                 "GET",
-                "/api/v2/imports/v2/{id}",null,null,pathParams,
+                "/api/v2/imports/v2/{id}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -396,7 +396,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetImportResponse>(
                 "GET",
-                "/api/v2/imports/{id}",null,null,pathParams,
+                "/api/v2/imports/{id}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -408,7 +408,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetOGResponse>(
                 "GET",
-                "/api/v2/og",queryParams,null,null,
+                "/api/v2/og", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -419,7 +419,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListPermissionsResponse>(
                 "GET",
-                "/api/v2/permissions",null,null,null,
+                "/api/v2/permissions", null, null, null,
                 cancellationToken);
                 
             return result;
@@ -434,7 +434,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetCustomPermissionResponse>(
                 "GET",
-                "/api/v2/permissions/{id}",null,null,pathParams,
+                "/api/v2/permissions/{id}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -445,7 +445,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreatePollRequest, PollResponse>(
                 "POST",
-                "/api/v2/polls",null,request,null,
+                "/api/v2/polls", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -456,7 +456,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdatePollRequest, PollResponse>(
                 "PUT",
-                "/api/v2/polls",null,request,null,
+                "/api/v2/polls", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -468,7 +468,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<QueryPollsRequest, QueryPollsResponse>(
                 "POST",
-                "/api/v2/polls/query",queryParams,request,null,
+                "/api/v2/polls/query", queryParams, request, null,
                 cancellationToken);
                 
             return result;
@@ -484,7 +484,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/polls/{poll_id}",queryParams,null,pathParams,
+                "/api/v2/polls/{poll_id}", queryParams, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -500,7 +500,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, PollResponse>(
                 "GET",
-                "/api/v2/polls/{poll_id}",queryParams,null,pathParams,
+                "/api/v2/polls/{poll_id}", queryParams, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -515,7 +515,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdatePollPartialRequest, PollResponse>(
                 "PATCH",
-                "/api/v2/polls/{poll_id}",null,request,pathParams,
+                "/api/v2/polls/{poll_id}", null, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -530,7 +530,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreatePollOptionRequest, PollOptionResponse>(
                 "POST",
-                "/api/v2/polls/{poll_id}/options",null,request,pathParams,
+                "/api/v2/polls/{poll_id}/options", null, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -545,7 +545,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdatePollOptionRequest, PollOptionResponse>(
                 "PUT",
-                "/api/v2/polls/{poll_id}/options",null,request,pathParams,
+                "/api/v2/polls/{poll_id}/options", null, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -562,7 +562,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/polls/{poll_id}/options/{option_id}",queryParams,null,pathParams,
+                "/api/v2/polls/{poll_id}/options/{option_id}", queryParams, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -579,7 +579,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, PollOptionResponse>(
                 "GET",
-                "/api/v2/polls/{poll_id}/options/{option_id}",queryParams,null,pathParams,
+                "/api/v2/polls/{poll_id}/options/{option_id}", queryParams, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -595,7 +595,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<QueryPollVotesRequest, PollVotesResponse>(
                 "POST",
-                "/api/v2/polls/{poll_id}/votes",queryParams,request,pathParams,
+                "/api/v2/polls/{poll_id}/votes", queryParams, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -606,7 +606,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpsertPushPreferencesRequest, UpsertPushPreferencesResponse>(
                 "POST",
-                "/api/v2/push_preferences",null,request,null,
+                "/api/v2/push_preferences", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -617,7 +617,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListPushProvidersResponse>(
                 "GET",
-                "/api/v2/push_providers",null,null,null,
+                "/api/v2/push_providers", null, null, null,
                 cancellationToken);
                 
             return result;
@@ -628,7 +628,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpsertPushProviderRequest, UpsertPushProviderResponse>(
                 "POST",
-                "/api/v2/push_providers",null,request,null,
+                "/api/v2/push_providers", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -644,7 +644,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/push_providers/{type}/{name}",null,null,pathParams,
+                "/api/v2/push_providers/{type}/{name}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -656,7 +656,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetPushTemplatesResponse>(
                 "GET",
-                "/api/v2/push_templates",queryParams,null,null,
+                "/api/v2/push_templates", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -667,7 +667,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpsertPushTemplateRequest, UpsertPushTemplateResponse>(
                 "POST",
-                "/api/v2/push_templates",null,request,null,
+                "/api/v2/push_templates", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -679,7 +679,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetRateLimitsResponse>(
                 "GET",
-                "/api/v2/rate_limits",queryParams,null,null,
+                "/api/v2/rate_limits", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -690,7 +690,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ListRolesResponse>(
                 "GET",
-                "/api/v2/roles",null,null,null,
+                "/api/v2/roles", null, null, null,
                 cancellationToken);
                 
             return result;
@@ -701,7 +701,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<CreateRoleRequest, CreateRoleResponse>(
                 "POST",
-                "/api/v2/roles",null,request,null,
+                "/api/v2/roles", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -716,7 +716,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/roles/{name}",null,null,pathParams,
+                "/api/v2/roles/{name}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -731,7 +731,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetTaskResponse>(
                 "GET",
-                "/api/v2/tasks/{id}",null,null,pathParams,
+                "/api/v2/tasks/{id}", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -743,7 +743,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/uploads/file",queryParams,null,null,
+                "/api/v2/uploads/file", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -754,7 +754,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<FileUploadRequest, FileUploadResponse>(
                 "POST",
-                "/api/v2/uploads/file",null,request,null,
+                "/api/v2/uploads/file", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -766,7 +766,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, Response>(
                 "DELETE",
-                "/api/v2/uploads/image",queryParams,null,null,
+                "/api/v2/uploads/image", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -777,7 +777,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<ImageUploadRequest, ImageUploadResponse>(
                 "POST",
-                "/api/v2/uploads/image",null,request,null,
+                "/api/v2/uploads/image", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -789,7 +789,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, QueryUsersResponse>(
                 "GET",
-                "/api/v2/users",queryParams,null,null,
+                "/api/v2/users", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -800,7 +800,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdateUsersPartialRequest, UpdateUsersResponse>(
                 "PATCH",
-                "/api/v2/users",null,request,null,
+                "/api/v2/users", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -811,7 +811,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdateUsersRequest, UpdateUsersResponse>(
                 "POST",
-                "/api/v2/users",null,request,null,
+                "/api/v2/users", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -823,7 +823,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, GetBlockedUsersResponse>(
                 "GET",
-                "/api/v2/users/block",queryParams,null,null,
+                "/api/v2/users/block", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -834,7 +834,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<BlockUsersRequest, BlockUsersResponse>(
                 "POST",
-                "/api/v2/users/block",null,request,null,
+                "/api/v2/users/block", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -845,7 +845,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<DeactivateUsersRequest, DeactivateUsersResponse>(
                 "POST",
-                "/api/v2/users/deactivate",null,request,null,
+                "/api/v2/users/deactivate", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -856,7 +856,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<DeleteUsersRequest, DeleteUsersResponse>(
                 "POST",
-                "/api/v2/users/delete",null,request,null,
+                "/api/v2/users/delete", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -868,7 +868,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, SharedLocationsResponse>(
                 "GET",
-                "/api/v2/users/live_locations",queryParams,null,null,
+                "/api/v2/users/live_locations", queryParams, null, null,
                 cancellationToken);
                 
             return result;
@@ -880,7 +880,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UpdateLiveLocationRequest, SharedLocationResponse>(
                 "PUT",
-                "/api/v2/users/live_locations",queryParams,request,null,
+                "/api/v2/users/live_locations", queryParams, request, null,
                 cancellationToken);
                 
             return result;
@@ -891,7 +891,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<ReactivateUsersRequest, ReactivateUsersResponse>(
                 "POST",
-                "/api/v2/users/reactivate",null,request,null,
+                "/api/v2/users/reactivate", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -902,7 +902,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<RestoreUsersRequest, Response>(
                 "POST",
-                "/api/v2/users/restore",null,request,null,
+                "/api/v2/users/restore", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -913,7 +913,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<UnblockUsersRequest, UnblockUsersResponse>(
                 "POST",
-                "/api/v2/users/unblock",null,request,null,
+                "/api/v2/users/unblock", null, request, null,
                 cancellationToken);
                 
             return result;
@@ -928,7 +928,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<DeactivateUserRequest, DeactivateUserResponse>(
                 "POST",
-                "/api/v2/users/{user_id}/deactivate",null,request,pathParams,
+                "/api/v2/users/{user_id}/deactivate", null, request, pathParams,
                 cancellationToken);
                 
             return result;
@@ -943,7 +943,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<object, ExportUserResponse>(
                 "GET",
-                "/api/v2/users/{user_id}/export",null,null,pathParams,
+                "/api/v2/users/{user_id}/export", null, null, pathParams,
                 cancellationToken);
                 
             return result;
@@ -958,7 +958,7 @@ namespace GetStream
 
             var result = await MakeRequestAsync<ReactivateUserRequest, ReactivateUserResponse>(
                 "POST",
-                "/api/v2/users/{user_id}/reactivate",null,request,pathParams,
+                "/api/v2/users/{user_id}/reactivate", null, request, pathParams,
                 cancellationToken);
                 
             return result;
