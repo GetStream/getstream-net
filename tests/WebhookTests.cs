@@ -3,11 +3,11 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using StreamChat;
-using StreamChat.Models;
+using GetStream;
+using GetStream.Models;
 using Xunit;
 
-namespace StreamChat.Tests
+namespace GetStream.Tests
 {
     public class WebhookTests
     {

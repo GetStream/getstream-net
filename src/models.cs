@@ -5935,6 +5935,8 @@ namespace GetStream.Models
         public bool? PlatformCircumvented { get; set; }
         [JsonPropertyName("semantic_filter_matched")]
         public string? SemanticFilterMatched { get; set; }
+        [JsonPropertyName("blocklists_matched")]
+        public List<string> BlocklistsMatched { get; set; }
         [JsonPropertyName("image_harms")]
         public List<string> ImageHarms { get; set; }
         [JsonPropertyName("text_harms")]

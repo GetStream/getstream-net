@@ -4,9 +4,9 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using StreamChat.Models;
+using GetStream.Models;
 
-namespace StreamChat
+namespace GetStream
 {
     /// <summary>
     /// Webhook event type constants.
