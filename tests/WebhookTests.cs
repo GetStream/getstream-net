@@ -5,10 +5,11 @@ using System.Security.Cryptography;
 using System.Text;
 using GetStream;
 using GetStream.Models;
-using Xunit;
+using NUnit.Framework;
 
 namespace GetStream.Tests
 {
+    [TestFixture]
     public class WebhookTests
     {
         private const string TestSecret = "test-webhook-secret";
@@ -21,487 +22,487 @@ namespace GetStream.Tests
             return Convert.ToHexString(hash).ToLowerInvariant();
         }
 
-        [Fact]
+        [Test]
         public void VerifySignature_ValidSignature_ReturnsTrue()
         {
             var signature = ComputeSignature(TestBody, TestSecret);
-            Assert.True(Webhook.VerifySignature(TestBody, signature, TestSecret));
+            Assert.That(Webhook.VerifySignature(TestBody, signature, TestSecret), Is.True);
         }
 
-        [Fact]
+        [Test]
         public void VerifySignature_WrongSignature_ReturnsFalse()
         {
-            Assert.False(Webhook.VerifySignature(TestBody, "invalidsignature", TestSecret));
+            Assert.That(Webhook.VerifySignature(TestBody, "invalidsignature", TestSecret), Is.False);
         }
 
-        [Fact]
+        [Test]
         public void VerifySignature_TamperedBody_ReturnsFalse()
         {
             var signature = ComputeSignature(TestBody, TestSecret);
-            Assert.False(Webhook.VerifySignature("{\"type\":\"tampered\"}", signature, TestSecret));
+            Assert.That(Webhook.VerifySignature("{\"type\":\"tampered\"}", signature, TestSecret), Is.False);
         }
 
-        [Fact]
+        [Test]
         public void VerifySignature_WrongSecret_ReturnsFalse()
         {
             var signature = ComputeSignature(TestBody, TestSecret);
-            Assert.False(Webhook.VerifySignature(TestBody, signature, "wrong-secret"));
+            Assert.That(Webhook.VerifySignature(TestBody, signature, "wrong-secret"), Is.False);
         }
 
-        [Fact]
+        [Test]
         public void VerifySignature_EmptySignature_ReturnsFalse()
         {
-            Assert.False(Webhook.VerifySignature(TestBody, "", TestSecret));
+            Assert.That(Webhook.VerifySignature(TestBody, "", TestSecret), Is.False);
         }
 
-        [Fact]
+        [Test]
         public void GetEventType_ValidPayload_ReturnsType()
         {
-            Assert.Equal("message.new", Webhook.GetEventType("{\"type\":\"message.new\"}"));
+            Assert.That(Webhook.GetEventType("{\"type\":\"message.new\"}"), Is.EqualTo("message.new"));
         }
 
-        [Fact]
+        [Test]
         public void GetEventType_MissingTypeField_ReturnsNull()
         {
-            Assert.Null(Webhook.GetEventType("{\"foo\":\"bar\"}"));
+            Assert.That(Webhook.GetEventType("{\"foo\":\"bar\"}"), Is.Null);
         }
 
-        [Fact]
+        [Test]
         public void GetEventType_InvalidJson_ReturnsNull()
         {
-            Assert.Null(Webhook.GetEventType("not json"));
+            Assert.That(Webhook.GetEventType("not json"), Is.Null);
         }
 
-        [Fact]
+        [Test]
         public void GetEventType_EmptyObject_ReturnsNull()
         {
-            Assert.Null(Webhook.GetEventType("{}"));
+            Assert.That(Webhook.GetEventType("{}"), Is.Null);
         }
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_AppealAccepted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"appeal.accepted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AppealAcceptedEvent>(result);
+            Assert.That(result, Is.InstanceOf<AppealAcceptedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_AppealCreated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"appeal.created\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AppealCreatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<AppealCreatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_AppealRejected_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"appeal.rejected\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AppealRejectedEvent>(result);
+            Assert.That(result, Is.InstanceOf<AppealRejectedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ExportBulkImageModerationError_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.bulk_image_moderation.error\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AsyncExportErrorEvent>(result);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ExportBulkImageModerationSuccess_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.bulk_image_moderation.success\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AsyncBulkImageModerationEvent>(result);
+            Assert.That(result, Is.InstanceOf<AsyncBulkImageModerationEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ExportModerationLogsError_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.moderation_logs.error\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AsyncExportErrorEvent>(result);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ExportModerationLogsSuccess_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.moderation_logs.success\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<AsyncExportModerationLogsEvent>(result);
+            Assert.That(result, Is.InstanceOf<AsyncExportModerationLogsEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.added\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityAddedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityAddedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityFeedback_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.feedback\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityFeedbackEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityFeedbackEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityMarked_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.marked\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityMarkEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityMarkEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityPinned_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.pinned\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityPinnedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityPinnedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityReactionAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.reaction.added\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityReactionAddedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityReactionAddedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityReactionDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.reaction.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityReactionDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityReactionDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityReactionUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.reaction.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityReactionUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityReactionUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityRemovedFromFeed_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.removed_from_feed\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityRemovedFromFeedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityRemovedFromFeedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityRestored_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.restored\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityRestoredEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityRestoredEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityUnpinned_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.unpinned\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityUnpinnedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityUnpinnedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsActivityUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.activity.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ActivityUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ActivityUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsBookmarkAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.bookmark.added\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<BookmarkAddedEvent>(result);
+            Assert.That(result, Is.InstanceOf<BookmarkAddedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsBookmarkDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.bookmark.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<BookmarkDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<BookmarkDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsBookmarkUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.bookmark.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<BookmarkUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<BookmarkUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsBookmarkFolderDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.bookmark_folder.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<BookmarkFolderDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<BookmarkFolderDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsBookmarkFolderUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.bookmark_folder.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<BookmarkFolderUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<BookmarkFolderUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsCommentAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.added\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<CommentAddedEvent>(result);
+            Assert.That(result, Is.InstanceOf<CommentAddedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsCommentDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<CommentDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<CommentDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsCommentReactionAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.reaction.added\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<CommentReactionAddedEvent>(result);
+            Assert.That(result, Is.InstanceOf<CommentReactionAddedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsCommentReactionDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.reaction.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<CommentReactionDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<CommentReactionDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsCommentReactionUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.reaction.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<CommentReactionUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<CommentReactionUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsCommentUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<CommentUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<CommentUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedCreated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed.created\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedCreatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedCreatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedGroupChanged_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed_group.changed\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedGroupChangedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedGroupChangedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedGroupDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed_group.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedGroupDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedGroupDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedMemberAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed_member.added\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedMemberAddedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedMemberAddedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedMemberRemoved_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed_member.removed\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedMemberRemovedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedMemberRemovedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFeedMemberUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed_member.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FeedMemberUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FeedMemberUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFollowCreated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.follow.created\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FollowCreatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FollowCreatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFollowDeleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.follow.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FollowDeletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FollowDeletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsFollowUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.follow.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<FollowUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<FollowUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsNotificationFeedUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.notification_feed.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<NotificationFeedUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<NotificationFeedUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_FeedsStoriesFeedUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.stories_feed.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<StoriesFeedUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<StoriesFeedUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ModerationCustomAction_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.custom_action\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ModerationCustomActionEvent>(result);
+            Assert.That(result, Is.InstanceOf<ModerationCustomActionEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ModerationFlagged_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.flagged\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ModerationFlaggedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ModerationFlaggedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ModerationMarkReviewed_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.mark_reviewed\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ModerationMarkReviewedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ModerationMarkReviewedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ModerationCheckCompleted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation_check.completed\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ModerationCheckCompletedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ModerationCheckCompletedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ReviewQueueItemNew_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"review_queue_item.new\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ReviewQueueItemNewEvent>(result);
+            Assert.That(result, Is.InstanceOf<ReviewQueueItemNewEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_ReviewQueueItemUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"review_queue_item.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<ReviewQueueItemUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<ReviewQueueItemUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_UserBanned_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"user.banned\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<UserBannedEvent>(result);
+            Assert.That(result, Is.InstanceOf<UserBannedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_UserDeactivated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"user.deactivated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<UserDeactivatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<UserDeactivatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_UserReactivated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"user.reactivated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<UserReactivatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<UserReactivatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_UserUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"user.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
-            Assert.IsType<UserUpdatedEvent>(result);
+            Assert.That(result, Is.InstanceOf<UserUpdatedEvent>());
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_UnknownType_ThrowsException()
         {
             Assert.Throws<Webhook.WebhookException>(() =>
@@ -510,7 +511,7 @@ namespace GetStream.Tests
             });
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_MissingType_ThrowsException()
         {
             Assert.Throws<Webhook.WebhookException>(() =>
@@ -519,7 +520,7 @@ namespace GetStream.Tests
             });
         }
 
-        [Fact]
+        [Test]
         public void ParseWebhookEvent_InvalidJson_ThrowsException()
         {
             Assert.Throws<Webhook.WebhookException>(() =>
