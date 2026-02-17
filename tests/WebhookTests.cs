@@ -79,6 +79,14 @@ namespace GetStream.Tests
             Assert.That(Webhook.GetEventType("{}"), Is.Null);
         }
         [Test]
+        public void ParseWebhookEvent__ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"*\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CustomEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_AppealAccepted_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"appeal.accepted\"}";
@@ -103,6 +111,558 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_CallAccepted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.accepted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallAcceptedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallBlockedUser_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.blocked_user\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<BlockedUserEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallClosedCaption_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.closed_caption\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ClosedCaptionEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallClosedCaptionsFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.closed_captions_failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallClosedCaptionsFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallClosedCaptionsStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.closed_captions_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallClosedCaptionsStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallClosedCaptionsStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.closed_captions_stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallClosedCaptionsStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallCreated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.created\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallCreatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallDtmf_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.dtmf\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallDTMFEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallEnded_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.ended\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallEndedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallFrameRecordingFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.frame_recording_failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallFrameRecordingFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallFrameRecordingReady_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.frame_recording_ready\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallFrameRecordingFrameReadyEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallFrameRecordingStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.frame_recording_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallFrameRecordingStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallFrameRecordingStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.frame_recording_stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallFrameRecordingStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallHLSBroadcastingFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.hls_broadcasting_failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallHLSBroadcastingFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallHLSBroadcastingStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.hls_broadcasting_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallHLSBroadcastingStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallHLSBroadcastingStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.hls_broadcasting_stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallHLSBroadcastingStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallKickedUser_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.kicked_user\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<KickedUserEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallLiveStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.live_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallLiveStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallMemberAdded_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.member_added\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallMemberAddedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallMemberRemoved_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.member_removed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallMemberRemovedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallMemberUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.member_updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallMemberUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallMemberUpdatedPermission_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.member_updated_permission\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallMemberUpdatedPermissionEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallMissed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.missed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallMissedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallModerationBlur_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.moderation_blur\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallModerationBlurEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallModerationWarning_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.moderation_warning\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallModerationWarningEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallNotification_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.notification\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallNotificationEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallPermissionRequest_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.permission_request\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PermissionRequestEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallPermissionsUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.permissions_updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UpdatedCallPermissionsEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallReactionNew_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.reaction_new\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallReactionEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRecordingFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.recording_failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRecordingFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRecordingReady_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.recording_ready\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRecordingReadyEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRecordingStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.recording_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRecordingStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRecordingStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.recording_stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRecordingStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRejected_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.rejected\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRejectedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRing_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.ring\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRingEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRTMPBroadcastFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.rtmp_broadcast_failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRtmpBroadcastFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRTMPBroadcastStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.rtmp_broadcast_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRtmpBroadcastStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallRTMPBroadcastStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.rtmp_broadcast_stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRtmpBroadcastStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallSessionEnded_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.session_ended\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallSessionEndedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallSessionParticipantCountUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.session_participant_count_updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallSessionParticipantCountsUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallSessionParticipantJoined_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.session_participant_joined\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallSessionParticipantJoinedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallSessionParticipantLeft_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.session_participant_left\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallSessionParticipantLeftEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallSessionStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.session_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallSessionStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallStatsReportReady_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.stats_report_ready\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallStatsReportReadyEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallTranscriptionFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.transcription_failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallTranscriptionFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallTranscriptionReady_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.transcription_ready\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallTranscriptionReadyEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallTranscriptionStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.transcription_started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallTranscriptionStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallTranscriptionStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.transcription_stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallTranscriptionStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallUnblockedUser_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.unblocked_user\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UnblockedUserEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallUserFeedbackSubmitted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.user_feedback_submitted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallUserFeedbackSubmittedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CallUserMuted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.user_muted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallUserMutedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CampaignCompleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"campaign.completed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CampaignCompletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_CampaignStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"campaign.started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CampaignStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelCreated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.created\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelCreatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelFrozen_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.frozen\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelFrozenEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelHidden_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.hidden\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelHiddenEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelMaxStreakChanged_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.max_streak_changed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MaxStreakChangedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelMuted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.muted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelMutedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelTruncated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.truncated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelTruncatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelUnfrozen_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.unfrozen\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelUnFrozenEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelUnmuted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.unmuted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelUnmutedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelVisible_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.visible\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelVisibleEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelBatchUpdateCompleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel_batch_update.completed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelBatchCompletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelBatchUpdateStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel_batch_update.started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelBatchStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_Custom_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"custom\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CustomVideoEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ExportBulkImageModerationError_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.bulk_image_moderation.error\"}";
@@ -119,6 +679,22 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ExportChannelsError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.channels.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportChannelsSuccess_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.channels.success\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportChannelsEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ExportModerationLogsError_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.moderation_logs.error\"}";
@@ -132,6 +708,22 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"export.moderation_logs.success\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<AsyncExportModerationLogsEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportUsersError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.users.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportUsersSuccess_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.users.success\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportUsersEvent>());
         }
 
         [Test]
@@ -423,6 +1015,126 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_FlagUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"flag.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<FlagUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_IngressError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"ingress.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<IngressErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_IngressStarted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"ingress.started\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<IngressStartedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_IngressStopped_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"ingress.stopped\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<IngressStoppedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MemberAdded_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"member.added\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MemberAddedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MemberRemoved_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"member.removed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MemberRemovedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MemberUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"member.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MemberUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageFlagged_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.flagged\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageFlaggedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageNew_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.new\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageNewEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessagePending_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.pending\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PendingMessageEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageRead_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.read\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageReadEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageUnblocked_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.unblocked\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageUnblockedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageUndeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.undeleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageUndeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_MessageUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"message.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<MessageUpdatedEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ModerationCustomAction_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.custom_action\"}";
@@ -455,6 +1167,86 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ModerationRuleTriggered_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"moderation_rule.triggered\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ModerationRulesTriggeredEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_NotificationMarkUnread_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"notification.mark_unread\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<NotificationMarkUnreadEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_NotificationReminderDue_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"notification.reminder_due\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReminderNotificationEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_NotificationThreadMessageNew_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"notification.thread_message_new\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<NotificationThreadMessageNewEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ReactionDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"reaction.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReactionDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ReactionNew_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"reaction.new\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReactionNewEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ReactionUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"reaction.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReactionUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ReminderCreated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"reminder.created\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReminderCreatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ReminderDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"reminder.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReminderDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ReminderUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"reminder.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ReminderUpdatedEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ReviewQueueItemNew_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"review_queue_item.new\"}";
@@ -468,6 +1260,14 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"review_queue_item.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<ReviewQueueItemUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ThreadUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"thread.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ThreadUpdatedEvent>());
         }
 
         [Test]
@@ -487,11 +1287,67 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_UserDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserFlagged_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.flagged\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserFlaggedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserMessagesDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.messages.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserMessagesDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserMuted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.muted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserMutedEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_UserReactivated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"user.reactivated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<UserReactivatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserUnbanned_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.unbanned\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserUnbannedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserUnmuted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.unmuted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserUnmutedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserUnreadMessageReminder_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.unread_message_reminder\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserUnreadReminderEvent>());
         }
 
         [Test]
