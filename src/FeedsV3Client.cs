@@ -769,6 +769,22 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(string feedGroupID, string feedID,QueryPinnedActivitiesRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = feedGroupID,
+                ["feed_id"] = feedID,
+            };
+
+            var result = await _client.MakeRequestAsync<QueryPinnedActivitiesRequest, QueryPinnedActivitiesResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/pinned_activities/query", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string feedGroupID,object request = null,
             CancellationToken cancellationToken = default)
         {

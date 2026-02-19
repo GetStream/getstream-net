@@ -9,7 +9,7 @@ namespace GetStream
         private readonly FeedsV3Client _client = client ?? throw new ArgumentNullException(nameof(client));
         private readonly string _feedGroup = feedGroup ?? throw new ArgumentNullException(nameof(feedGroup));
         private readonly string _feedId = feedId ?? throw new ArgumentNullException(nameof(feedId));
-        
+
 // Delete a single feed by its ID
 public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(
     object request = null,
@@ -18,7 +18,7 @@ public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(
     return await _client.DeleteFeedAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Create a single feed for a given feed group
 public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(
     GetOrCreateFeedRequest request,
@@ -27,7 +27,7 @@ public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(
     return await _client.GetOrCreateFeedAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Update an existing feed
 public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(
     UpdateFeedRequest request,
@@ -36,7 +36,7 @@ public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(
     return await _client.UpdateFeedAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Mark activities as read/seen/watched. Can mark by timestamp (seen), activity IDs (read), or all as read.
 public async Task<StreamResponse<Response>> MarkActivityAsync(
     MarkActivityRequest request,
@@ -45,7 +45,7 @@ public async Task<StreamResponse<Response>> MarkActivityAsync(
     return await _client.MarkActivityAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Unpin an activity from a feed. This removes the pin, so the activity will no longer be displayed at the top of the feed.
 public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string activityID,
     object request = null,
@@ -54,7 +54,7 @@ public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(stri
     return await _client.UnpinActivityAsync(_feedGroup, _feedId,
     activityID,request, cancellationToken);
 }
-        
+
 // Pin an activity to a feed. Pinned activities are typically displayed at the top of a feed.
 public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string activityID,
     PinActivityRequest request,
@@ -63,7 +63,7 @@ public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string a
     return await _client.PinActivityAsync(_feedGroup, _feedId,
     activityID,request, cancellationToken);
 }
-        
+
 // Add, remove, or set members for a feed
 public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(
     UpdateFeedMembersRequest request,
@@ -72,7 +72,7 @@ public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAs
     return await _client.UpdateFeedMembersAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Accepts a pending feed member request
 public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(
     AcceptFeedMemberInviteRequest request,
@@ -81,7 +81,7 @@ public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemb
     return await _client.AcceptFeedMemberInviteAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Query feed members based on filters with pagination and sorting options
 public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(
     QueryFeedMembersRequest request,
@@ -90,13 +90,22 @@ public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsyn
     return await _client.QueryFeedMembersAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
-        
+
 // Rejects a pending feed member request
 public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(
     RejectFeedMemberInviteRequest request,
     CancellationToken cancellationToken = default)
 {
     return await _client.RejectFeedMemberInviteAsync(_feedGroup, _feedId,
+    request, cancellationToken);
+}
+
+// Query pinned activities for a feed with filter query
+public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(
+    QueryPinnedActivitiesRequest request,
+    CancellationToken cancellationToken = default)
+{
+    return await _client.QueryPinnedActivitiesAsync(_feedGroup, _feedId,
     request, cancellationToken);
 }
     }

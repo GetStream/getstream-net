@@ -7625,6 +7625,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
+        [JsonPropertyName("sort")]
+        public string Sort { get; set; }
         [JsonPropertyName("comments")]
         public List<ThreadedCommentResponse> Comments { get; set; }
         [JsonPropertyName("next")]
@@ -7645,6 +7647,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
+        [JsonPropertyName("sort")]
+        public string Sort { get; set; }
         [JsonPropertyName("comments")]
         public List<ThreadedCommentResponse> Comments { get; set; }
         [JsonPropertyName("next")]
@@ -9513,6 +9517,8 @@ namespace GetStream.Models
         public string? ID { get; set; }
         [JsonPropertyName("mentioned_channel")]
         public bool? MentionedChannel { get; set; }
+        [JsonPropertyName("mentioned_here")]
+        public bool? MentionedHere { get; set; }
         [JsonPropertyName("mml")]
         public string? Mml { get; set; }
         [JsonPropertyName("parent_id")]
@@ -9565,6 +9571,8 @@ namespace GetStream.Models
         public string ID { get; set; }
         [JsonPropertyName("mentioned_channel")]
         public bool MentionedChannel { get; set; }
+        [JsonPropertyName("mentioned_here")]
+        public bool MentionedHere { get; set; }
         [JsonPropertyName("pinned")]
         public bool Pinned { get; set; }
         [JsonPropertyName("reply_count")]
@@ -9757,6 +9765,8 @@ namespace GetStream.Models
         public string ID { get; set; }
         [JsonPropertyName("mentioned_channel")]
         public bool MentionedChannel { get; set; }
+        [JsonPropertyName("mentioned_here")]
+        public bool MentionedHere { get; set; }
         [JsonPropertyName("pinned")]
         public bool Pinned { get; set; }
         [JsonPropertyName("reply_count")]
@@ -12419,6 +12429,32 @@ namespace GetStream.Models
         public string? Prev { get; set; }
     }
 
+    public class QueryPinnedActivitiesRequest
+    {
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
+
+    public class QueryPinnedActivitiesResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("pinned_activities")]
+        public List<ActivityPinResponse> PinnedActivities { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+    }
+
     public class QueryPollVotesRequest
     {
         [JsonPropertyName("limit")]
@@ -13953,6 +13989,8 @@ namespace GetStream.Models
         public string ID { get; set; }
         [JsonPropertyName("mentioned_channel")]
         public bool MentionedChannel { get; set; }
+        [JsonPropertyName("mentioned_here")]
+        public bool MentionedHere { get; set; }
         [JsonPropertyName("pinned")]
         public bool Pinned { get; set; }
         [JsonPropertyName("reply_count")]
