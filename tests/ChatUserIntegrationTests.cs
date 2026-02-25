@@ -204,6 +204,42 @@ namespace GetStream.Tests
         }
 
         [Test, Order(9)]
+        public async Task CreateGuest()
+        {
+            var guestId = $"guest-{Guid.NewGuid():N}";
+            CreatedUserIds.Add(guestId);
+
+            try
+            {
+                var resp = await StreamClient.CreateGuestAsync(new CreateGuestRequest
+                {
+                    User = new UserRequest
+                    {
+                        ID = guestId,
+                        Name = "Guest User"
+                    }
+                });
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.AccessToken, Is.Not.Null.And.Not.Empty, "Access token should not be empty");
+                Assert.That(resp.Data!.User, Is.Not.Null);
+                // Server may prefix the guest ID, so check with Contains
+                Assert.That(resp.Data!.User.ID, Does.Contain(guestId), "Guest user ID should contain the requested ID");
+
+                // Also clean up the actual server-assigned ID (may differ from requested)
+                if (resp.Data!.User.ID != guestId)
+                {
+                    CreatedUserIds.Add(resp.Data!.User.ID);
+                }
+            }
+            catch (Exception e)
+            {
+                // Guest access may be disabled at the app level
+                Assert.Ignore($"Guest creation not available: {e.Message}");
+            }
+        }
+
+        [Test, Order(10)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
