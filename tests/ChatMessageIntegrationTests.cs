@@ -293,6 +293,54 @@ namespace GetStream.Tests
             Assert.That(repliesResp.Data!.Messages.Count, Is.GreaterThanOrEqualTo(1));
         }
 
+        [Test, Order(12)]
+        public async Task PendingMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            SendMessageResponse sendData;
+            try
+            {
+                var sendResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                    "POST",
+                    "/api/v2/chat/channels/{type}/{id}/message",
+                    null,
+                    new SendMessageRequest
+                    {
+                        Message = new MessageRequest { Text = "Pending message text", UserID = userId },
+                        Pending = true,
+                        SkipPush = true
+                    },
+                    new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+                Assert.That(sendResp.Data, Is.Not.Null);
+                Assert.That(sendResp.Data!.Message, Is.Not.Null);
+                Assert.That(sendResp.Data!.Message.ID, Is.Not.Null.And.Not.Empty);
+                sendData = sendResp.Data!;
+            }
+            catch (Exception e) when (e.Message.Contains("pending messages not enabled") || e.Message.Contains("feature flag"))
+            {
+                Assert.Ignore("Pending messages not enabled for this app");
+                return;
+            }
+
+            var msgId = sendData.Message.ID;
+
+            // Commit the pending message
+            var commitResp = await StreamClient.MakeRequestAsync<CommitMessageRequest, MessageActionResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/commit",
+                null,
+                new CommitMessageRequest(),
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(commitResp.Data, Is.Not.Null);
+            Assert.That(commitResp.Data!.Message, Is.Not.Null);
+            Assert.That(commitResp.Data!.Message!.ID, Is.EqualTo(msgId));
+        }
+
         [Test, Order(11)]
         public async Task SilentMessage()
         {
