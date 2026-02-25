@@ -665,6 +665,52 @@ namespace GetStream.Tests
             Assert.That(qResp2.Data!.Channels.Count, Is.EqualTo(1), "Unmuted channel should appear in muted=false query");
         }
 
+        [Test, Order(17)]
+        public async Task MemberPartialUpdate()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Set custom fields on member
+            var setResp = await StreamClient.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}/member",
+                new Dictionary<string, string> { ["user_id"] = memberId },
+                new UpdateMemberPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["role_label"] = "moderator",
+                        ["score"] = 42
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(setResp.Data, Is.Not.Null);
+            Assert.That(setResp.Data!.ChannelMember, Is.Not.Null);
+            var custom = (System.Text.Json.JsonElement)setResp.Data!.ChannelMember!.Custom;
+            Assert.That(custom.GetProperty("role_label").GetString(), Is.EqualTo("moderator"));
+
+            // Unset score field
+            var unsetResp = await StreamClient.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}/member",
+                new Dictionary<string, string> { ["user_id"] = memberId },
+                new UpdateMemberPartialRequest
+                {
+                    Unset = new List<string> { "score" }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unsetResp.Data, Is.Not.Null);
+            Assert.That(unsetResp.Data!.ChannelMember, Is.Not.Null);
+            var custom2 = (System.Text.Json.JsonElement)unsetResp.Data!.ChannelMember!.Custom;
+            Assert.That(custom2.TryGetProperty("score", out _), Is.False, "score should be unset");
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
