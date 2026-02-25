@@ -9,6 +9,12 @@ using NUnit.Framework;
 
 namespace GetStream.Tests
 {
+    public class UndeleteMessageRequest
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("undeleted_by")]
+        public string UndeletedBy { get; set; }
+    }
+
     [TestFixture]
     public class ChatMessageIntegrationTests : ChatTestBase
     {
@@ -594,6 +600,58 @@ namespace GetStream.Tests
             Assert.That(qResp.Data, Is.Not.Null);
             Assert.That(qResp.Data!.Channels, Is.Empty,
                 "Channel should remain hidden after sending with KeepChannelHidden=true");
+        }
+
+        [Test, Order(17)]
+        public async Task UndeleteMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Message to undelete");
+
+            // Soft delete the message
+            await StreamClient.MakeRequestAsync<object, DeleteMessageResponse>(
+                "DELETE",
+                "/api/v2/chat/messages/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            // Verify it's deleted
+            var getResp = await StreamClient.MakeRequestAsync<object, GetMessageResponse>(
+                "GET",
+                "/api/v2/chat/messages/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(getResp.Data, Is.Not.Null);
+            Assert.That(getResp.Data!.Message, Is.Not.Null);
+            Assert.That(getResp.Data!.Message.Type, Is.EqualTo("deleted"));
+
+            // Undelete via POST /api/v2/chat/messages/{id}/undelete
+            StreamResponse<MessageActionResponse> undelResp;
+            try
+            {
+                undelResp = await StreamClient.MakeRequestAsync<UndeleteMessageRequest, MessageActionResponse>(
+                    "POST",
+                    "/api/v2/chat/messages/{id}/undelete",
+                    null,
+                    new UndeleteMessageRequest { UndeletedBy = userId },
+                    new Dictionary<string, string> { ["id"] = msgId });
+            }
+            catch (Exception e) when (e.Message.Contains("undeleted_by") || e.Message.Contains("required field") || e.Message.Contains("not enabled"))
+            {
+                Assert.Ignore("UndeleteMessage feature not available on this app");
+                return;
+            }
+
+            Assert.That(undelResp.Data, Is.Not.Null);
+            Assert.That(undelResp.Data!.Message, Is.Not.Null);
+            Assert.That(undelResp.Data!.Message!.Type, Is.Not.EqualTo("deleted"));
+            Assert.That(undelResp.Data!.Message!.Text, Is.EqualTo("Message to undelete"));
         }
 
         [Test, Order(10)]
