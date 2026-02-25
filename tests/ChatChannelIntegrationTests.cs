@@ -297,6 +297,59 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Channel, Is.Not.Null);
         }
 
+        [Test, Order(9)]
+        public async Task AddRemoveMembers()
+        {
+            var userIds = await CreateTestUsers(4);
+            var creatorId = userIds[0];
+            var memberId1 = userIds[1];
+            var memberId2 = userIds[2];
+            var memberId3 = userIds[3];
+
+            // Create channel with creator + member1
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId1 });
+
+            // Add member2 and member3
+            var addResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    AddMembers = new List<ChannelMemberRequest>
+                    {
+                        new ChannelMemberRequest { UserID = memberId2 },
+                        new ChannelMemberRequest { UserID = memberId3 }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(addResp.Data, Is.Not.Null);
+            Assert.That(addResp.Data!.Members, Is.Not.Null);
+            Assert.That(addResp.Data!.Members.Count, Is.GreaterThanOrEqualTo(4));
+
+            // Remove member3
+            var removeResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    RemoveMembers = new List<string> { memberId3 }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(removeResp.Data, Is.Not.Null);
+            Assert.That(removeResp.Data!.Members, Is.Not.Null);
+
+            // Verify member3 is no longer in the list
+            var memberIds = removeResp.Data!.Members
+                .Where(m => m.UserID != null)
+                .Select(m => m.UserID)
+                .ToHashSet();
+            Assert.That(memberIds, Does.Not.Contain(memberId3));
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
