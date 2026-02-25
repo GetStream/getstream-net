@@ -162,5 +162,27 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Message, Is.Not.Null);
             Assert.That(resp.Data!.Message.Type, Is.EqualTo("deleted"));
         }
+
+        [Test, Order(6)]
+        public async Task HardDeleteMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Message to hard delete " + RandomString(6));
+
+            // Hard delete: DELETE /api/v2/chat/messages/{id}?hard=true
+            var resp = await StreamClient.MakeRequestAsync<object, DeleteMessageResponse>(
+                "DELETE",
+                "/api/v2/chat/messages/{id}",
+                new Dictionary<string, string> { ["hard"] = "true" },
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null);
+            Assert.That(resp.Data!.Message.Type, Is.EqualTo("deleted"));
+        }
     }
 }
