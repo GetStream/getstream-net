@@ -864,6 +864,39 @@ namespace GetStream.Tests
             Assert.That(unreadResp.Data, Is.Not.Null);
         }
 
+        [Test, Order(21)]
+        public async Task TruncateWithOptions()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Send 2 messages
+            await SendTestMessage("messaging", channelId, creatorId, "Truncate msg 1");
+            await SendTestMessage("messaging", channelId, creatorId, "Truncate msg 2");
+
+            // Truncate with message, skip_push=true, hard_delete=true
+            var truncResp = await StreamClient.MakeRequestAsync<TruncateChannelRequest, TruncateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/truncate",
+                null,
+                new TruncateChannelRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "Channel was truncated",
+                        UserID = creatorId
+                    },
+                    SkipPush = true,
+                    HardDelete = true
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(truncResp.Data, Is.Not.Null);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
