@@ -184,5 +184,45 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Message, Is.Not.Null);
             Assert.That(resp.Data!.Message.Type, Is.EqualTo("deleted"));
         }
+
+        [Test, Order(7)]
+        public async Task PinUnpinMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            // Send a pinned message
+            var sendResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest { Text = "Pinned message", UserID = userId, Pinned = true }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(sendResp.Data, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message.Pinned, Is.True);
+            var msgId = sendResp.Data!.Message.ID;
+
+            // Unpin via partial update
+            var unpinResp = await StreamClient.MakeRequestAsync<UpdateMessagePartialRequest, UpdateMessagePartialResponse>(
+                "PUT",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessagePartialRequest
+                {
+                    UserID = userId,
+                    Set = new Dictionary<string, object> { ["pinned"] = false }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(unpinResp.Data, Is.Not.Null);
+            Assert.That(unpinResp.Data!.Message, Is.Not.Null);
+            Assert.That(unpinResp.Data!.Message.Pinned, Is.False);
+        }
     }
 }
