@@ -971,6 +971,80 @@ namespace GetStream.Tests
             Assert.That(qResp2.Data!.Channels.Count, Is.EqualTo(1), "Should find channel with pinned=false");
         }
 
+        [Test, Order(23)]
+        public async Task ArchiveUnarchiveChannel()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+            var cid = $"messaging:{channelId}";
+
+            // Archive channel for memberId via UpdateMemberPartial
+            var archiveResp = await StreamClient.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}/member",
+                new Dictionary<string, string> { ["user_id"] = memberId },
+                new UpdateMemberPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["archived"] = true
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(archiveResp.Data, Is.Not.Null);
+
+            // Verify via QueryChannels with archived=true
+            var qResp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["archived"] = true,
+                    ["cid"] = cid
+                },
+                UserID = memberId
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels.Count, Is.EqualTo(1), "Should find 1 archived channel");
+            Assert.That(qResp.Data!.Channels[0].Channel!.Cid, Is.EqualTo(cid));
+
+            // Unarchive channel
+            var unarchiveResp = await StreamClient.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}/member",
+                new Dictionary<string, string> { ["user_id"] = memberId },
+                new UpdateMemberPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["archived"] = false
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unarchiveResp.Data, Is.Not.Null);
+
+            // Verify unarchived via QueryChannels with archived=false
+            var qResp2 = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["archived"] = false,
+                    ["cid"] = cid
+                },
+                UserID = memberId
+            });
+
+            Assert.That(qResp2.Data, Is.Not.Null);
+            Assert.That(qResp2.Data!.Channels, Is.Not.Null);
+            Assert.That(qResp2.Data!.Channels.Count, Is.EqualTo(1), "Should find channel with archived=false");
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
