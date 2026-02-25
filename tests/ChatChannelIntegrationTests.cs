@@ -1262,6 +1262,51 @@ namespace GetStream.Tests
             Assert.That(channel!.MessageCount, Is.Null, "MessageCount should be null when count_messages is disabled");
         }
 
+        [Test, Order(30)]
+        public async Task HideForCreator()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = $"test-hide-{RandomString(12)}";
+
+            // Create channel with hide_for_creator=true
+            await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest
+                {
+                    HideForCreator = true,
+                    Data = new ChannelInput
+                    {
+                        CreatedByID = creatorId,
+                        Members = new List<ChannelMemberRequest>
+                        {
+                            new ChannelMemberRequest { UserID = creatorId },
+                            new ChannelMemberRequest { UserID = memberId }
+                        }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            CreatedChannels.Add(("messaging", channelId));
+
+            // Channel should be hidden for creator — query without show_hidden should not find it
+            var resp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["cid"] = "messaging:" + channelId
+                },
+                UserID = creatorId
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Channels, Is.Empty, "Channel should be hidden for creator");
+        }
+
         [Test, Order(29)]
         public async Task MarkUnreadWithTimestamp()
         {
