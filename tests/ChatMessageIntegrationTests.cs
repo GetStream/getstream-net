@@ -483,6 +483,52 @@ namespace GetStream.Tests
             Assert.That(histData.MessageHistory[0].MessageUpdatedByID, Is.EqualTo(userId));
         }
 
+        [Test, Order(15)]
+        public async Task SkipEnrichUrl()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            // Send a message with a URL but skip enrichment
+            var sendResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "Check out https://getstream.io for more info",
+                        UserID = userId
+                    },
+                    SkipEnrichUrl = true
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(sendResp.Data, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message.Attachments, Is.Null.Or.Empty,
+                "Attachments should be empty when SkipEnrichUrl is true");
+
+            var msgId = sendResp.Data!.Message.ID;
+
+            // Wait a moment then verify attachments remain empty
+            await Task.Delay(1000);
+
+            var getResp = await StreamClient.MakeRequestAsync<object, GetMessageResponse>(
+                "GET",
+                "/api/v2/chat/messages/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(getResp.Data, Is.Not.Null);
+            Assert.That(getResp.Data!.Message, Is.Not.Null);
+            Assert.That(getResp.Data!.Message.Attachments, Is.Null.Or.Empty,
+                "Attachments should remain empty after enrichment window");
+        }
+
         [Test, Order(11)]
         public async Task SilentMessage()
         {
