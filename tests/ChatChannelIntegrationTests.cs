@@ -1100,6 +1100,37 @@ namespace GetStream.Tests
             Assert.That(roleMap[memberUserId], Is.EqualTo("channel_member"), "Second user should be channel_member");
         }
 
+        [Test, Order(25)]
+        public async Task MessageCount()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Send a message
+            await SendTestMessage("messaging", channelId, creatorId, "Hello message count!");
+
+            // Query the channel and verify message_count >= 1
+            var resp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = channelId
+                }
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Channels, Is.Not.Null.And.Not.Empty);
+            var channel = resp.Data!.Channels[0].Channel;
+            Assert.That(channel, Is.Not.Null);
+            // MessageCount may be null if count_messages is disabled on the channel type
+            if (channel!.MessageCount.HasValue)
+            {
+                Assert.That(channel!.MessageCount.Value, Is.GreaterThanOrEqualTo(1));
+            }
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
