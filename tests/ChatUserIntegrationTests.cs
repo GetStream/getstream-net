@@ -162,5 +162,33 @@ namespace GetStream.Tests
                 Assert.That(stillBlockedIds, Does.Not.Contain(bob), "Bob should no longer be blocked");
             }
         }
+
+        [Test, Order(6)]
+        public async Task DeactivateReactivateUser()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            // Deactivate
+            var deactivateResp = await StreamClient.DeactivateUserAsync(userId, new DeactivateUserRequest());
+            Assert.That(deactivateResp.Data, Is.Not.Null);
+
+            // Reactivate
+            var reactivateResp = await StreamClient.ReactivateUserAsync(userId, new ReactivateUserRequest());
+            Assert.That(reactivateResp.Data, Is.Not.Null);
+
+            // Verify user is active again by querying
+            var queryResp = await QueryUsers(new QueryUsersPayload
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = userId
+                }
+            });
+
+            Assert.That(queryResp.Data, Is.Not.Null);
+            Assert.That(queryResp.Data!.Users.Count, Is.EqualTo(1));
+            Assert.That(queryResp.Data!.Users[0].ID, Is.EqualTo(userId));
+        }
     }
 }
