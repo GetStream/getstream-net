@@ -156,6 +156,52 @@ namespace GetStream.Tests
             Assert.That(customElement.GetProperty("color").GetString(), Is.EqualTo("blue"));
         }
 
+        [Test, Order(6)]
+        public async Task PartialUpdateChannel()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Set fields (color + description)
+            var setResp = await StreamClient.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["color"] = "red",
+                        ["description"] = "A test channel"
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(setResp.Data, Is.Not.Null);
+            Assert.That(setResp.Data!.Channel, Is.Not.Null);
+            var custom = (System.Text.Json.JsonElement)setResp.Data!.Channel!.Custom;
+            Assert.That(custom.GetProperty("color").GetString(), Is.EqualTo("red"));
+
+            // Unset color
+            var unsetResp = await StreamClient.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelPartialRequest
+                {
+                    Unset = new List<string> { "color" }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unsetResp.Data, Is.Not.Null);
+            Assert.That(unsetResp.Data!.Channel, Is.Not.Null);
+            var custom2 = (System.Text.Json.JsonElement)unsetResp.Data!.Channel!.Custom;
+            // color should be unset
+            Assert.That(custom2.TryGetProperty("color", out _), Is.False);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
