@@ -190,5 +190,50 @@ namespace GetStream.Tests
             Assert.That(queryResp.Data!.Users.Count, Is.EqualTo(1));
             Assert.That(queryResp.Data!.Users[0].ID, Is.EqualTo(userId));
         }
+
+        [Test, Order(7)]
+        public async Task DeleteUsers()
+        {
+            // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
+            var ids = Enumerable.Range(0, 2)
+                .Select(_ => $"test-user-{Guid.NewGuid():N}")
+                .ToList();
+
+            var users = ids.ToDictionary(
+                id => id,
+                id => new UserRequest { ID = id, Name = $"Test User {id[..8]}", Role = "user" }
+            );
+            await StreamClient.UpdateUsersAsync(new UpdateUsersRequest { Users = users });
+
+            // Delete users with retry for rate limiting
+            StreamResponse<DeleteUsersResponse>? deleteResp = null;
+            Exception? deleteErr = null;
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    deleteResp = await StreamClient.DeleteUsersAsync(new DeleteUsersRequest
+                    {
+                        UserIds = ids
+                    });
+                    deleteErr = null;
+                    break;
+                }
+                catch (Exception e)
+                {
+                    deleteErr = e;
+                    if (!e.Message.Contains("Too many requests")) break;
+                    await Task.Delay((i + 1) * 5000);
+                }
+            }
+
+            Assert.That(deleteErr, Is.Null, $"DeleteUsers failed: {deleteErr?.Message}");
+            Assert.That(deleteResp, Is.Not.Null);
+            Assert.That(deleteResp!.Data, Is.Not.Null);
+            Assert.That(deleteResp!.Data!.TaskID, Is.Not.Null.And.Not.Empty, "Task ID should not be empty");
+
+            // Poll task until completed
+            await WaitForTask(deleteResp!.Data!.TaskID);
+        }
     }
 }
