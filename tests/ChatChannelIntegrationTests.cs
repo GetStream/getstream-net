@@ -202,6 +202,36 @@ namespace GetStream.Tests
             Assert.That(custom2.TryGetProperty("color", out _), Is.False);
         }
 
+        [Test, Order(7)]
+        public async Task DeleteChannel()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            // Create a channel specifically for deletion (don't track in CreatedChannels - we're deleting it)
+            var channelId = $"test-ch-{RandomString(12)}";
+            await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest
+                {
+                    Data = new ChannelInput { CreatedByID = creatorId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            // Soft delete
+            var resp = await StreamClient.MakeRequestAsync<object, DeleteChannelResponse>(
+                "DELETE",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Channel, Is.Not.Null);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
