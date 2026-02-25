@@ -1307,6 +1307,53 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Channels, Is.Empty, "Channel should be hidden for creator");
         }
 
+        [Test, Order(31)]
+        public async Task UploadAndDeleteFile()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId });
+
+            // Create a temp file to upload
+            var tmpPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"chat-test-{Guid.NewGuid():N}.txt");
+            await System.IO.File.WriteAllTextAsync(tmpPath, "hello world test file content");
+
+            try
+            {
+                // Upload file
+                var uploadResp = await StreamClient.MakeRequestAsync<FileUploadRequest, FileUploadResponse>(
+                    "POST",
+                    "/api/v2/chat/channels/{type}/{id}/file",
+                    null,
+                    new FileUploadRequest
+                    {
+                        File = tmpPath,
+                        User = new OnlyUserID { ID = creatorId }
+                    },
+                    new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+                Assert.That(uploadResp.Data, Is.Not.Null);
+                Assert.That(uploadResp.Data!.File, Is.Not.Null.And.Not.Empty);
+                var fileUrl = uploadResp.Data!.File!;
+                Assert.That(fileUrl, Does.Contain("http"));
+
+                // Delete file
+                var deleteResp = await StreamClient.MakeRequestAsync<object, Response>(
+                    "DELETE",
+                    "/api/v2/chat/channels/{type}/{id}/file",
+                    new Dictionary<string, string> { ["url"] = fileUrl },
+                    null,
+                    new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+                Assert.That(deleteResp.Data, Is.Not.Null);
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tmpPath))
+                    System.IO.File.Delete(tmpPath);
+            }
+        }
+
         [Test, Order(29)]
         public async Task MarkUnreadWithTimestamp()
         {
