@@ -202,6 +202,71 @@ namespace GetStream.Tests
             Assert.That(custom2.TryGetProperty("color", out _), Is.False);
         }
 
+        [Test, Order(8)]
+        public async Task HardDeleteChannels()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            // Create 2 channels specifically for hard deletion (don't track - we're deleting them)
+            var channelId1 = $"test-ch-{RandomString(12)}";
+            await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest
+                {
+                    Data = new ChannelInput { CreatedByID = creatorId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId1 });
+
+            var channelId2 = $"test-ch-{RandomString(12)}";
+            await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest
+                {
+                    Data = new ChannelInput { CreatedByID = creatorId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId2 });
+
+            var cid1 = $"messaging:{channelId1}";
+            var cid2 = $"messaging:{channelId2}";
+
+            // Hard delete both channels via batch endpoint
+            StreamResponse<DeleteChannelsResponse> resp = null;
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    resp = await StreamClient.MakeRequestAsync<DeleteChannelsRequest, DeleteChannelsResponse>(
+                        "POST",
+                        "/api/v2/chat/channels/delete",
+                        null,
+                        new DeleteChannelsRequest
+                        {
+                            Cids = new List<string> { cid1, cid2 },
+                            HardDelete = true
+                        },
+                        null);
+                    break;
+                }
+                catch (Exception e)
+                {
+                    if (!e.Message.Contains("Too many requests")) throw;
+                    await Task.Delay((i + 1) * 3000);
+                }
+            }
+
+            Assert.That(resp, Is.Not.Null);
+            Assert.That(resp!.Data, Is.Not.Null);
+            Assert.That(resp!.Data!.TaskID, Is.Not.Null.And.Not.Empty);
+
+            // Poll task until completed
+            await WaitForTask(resp.Data!.TaskID);
+        }
+
         [Test, Order(7)]
         public async Task DeleteChannel()
         {
