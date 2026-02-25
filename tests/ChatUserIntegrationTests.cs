@@ -489,6 +489,45 @@ namespace GetStream.Tests
         }
 
         [Test, Order(15)]
+        public async Task DeactivateUsersPlural()
+        {
+            var userIds = await CreateTestUsers(2);
+
+            try
+            {
+                // Deactivate multiple users at once (async task)
+                var resp = await StreamClient.DeactivateUsersAsync(new DeactivateUsersRequest
+                {
+                    UserIds = userIds
+                });
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.TaskID, Is.Not.Null.And.Not.Empty, "Task ID should not be empty");
+
+                // Wait for deactivation task to complete
+                await WaitForTask(resp.Data!.TaskID);
+
+                // Verify deactivated users don't appear in default query
+                var queryResp = await QueryUsers(new QueryUsersPayload
+                {
+                    FilterConditions = InFilter("id", userIds)
+                });
+
+                Assert.That(queryResp.Data, Is.Not.Null);
+                Assert.That(queryResp.Data!.Users.Count, Is.EqualTo(0), "Deactivated users should not appear in default query");
+            }
+            finally
+            {
+                // Reactivate users so cleanup can hard-delete them
+                foreach (var userId in userIds)
+                {
+                    try { await StreamClient.ReactivateUserAsync(userId, new ReactivateUserRequest()); }
+                    catch { /* ignore */ }
+                }
+            }
+        }
+
+        [Test, Order(16)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
