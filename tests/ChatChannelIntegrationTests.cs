@@ -434,6 +434,42 @@ namespace GetStream.Tests
             Assert.That(rejectResp.Data, Is.Not.Null);
         }
 
+        [Test, Order(12)]
+        public async Task HideShowChannel()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Hide the channel for memberId
+            var hideResp = await StreamClient.MakeRequestAsync<HideChannelRequest, HideChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/hide",
+                null,
+                new HideChannelRequest
+                {
+                    UserID = memberId
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(hideResp.Data, Is.Not.Null);
+
+            // Show the channel for memberId
+            var showResp = await StreamClient.MakeRequestAsync<ShowChannelRequest, ShowChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/show",
+                null,
+                new ShowChannelRequest
+                {
+                    UserID = memberId
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(showResp.Data, Is.Not.Null);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
