@@ -552,6 +552,46 @@ namespace GetStream.Tests
             Assert.That(unfreezeResp.Data!.Channel!.Frozen, Is.False);
         }
 
+        [Test, Order(15)]
+        public async Task MarkReadUnread()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Send a message
+            var msgId = await SendTestMessage("messaging", channelId, creatorId, "Message to mark read");
+
+            // Mark read for memberId
+            var readResp = await StreamClient.MakeRequestAsync<MarkReadRequest, MarkReadResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/read",
+                null,
+                new MarkReadRequest
+                {
+                    UserID = memberId
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(readResp.Data, Is.Not.Null);
+
+            // Mark unread from this message
+            var unreadResp = await StreamClient.MakeRequestAsync<MarkUnreadRequest, Response>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/unread",
+                null,
+                new MarkUnreadRequest
+                {
+                    UserID = memberId,
+                    MessageID = msgId
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unreadResp.Data, Is.Not.Null);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
