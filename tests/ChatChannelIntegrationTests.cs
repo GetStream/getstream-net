@@ -507,6 +507,51 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Messages.Count, Is.EqualTo(0), "Messages should be empty after truncation");
         }
 
+        [Test, Order(14)]
+        public async Task FreezeUnfreezeChannel()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Freeze the channel
+            var freezeResp = await StreamClient.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["frozen"] = true
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(freezeResp.Data, Is.Not.Null);
+            Assert.That(freezeResp.Data!.Channel, Is.Not.Null);
+            Assert.That(freezeResp.Data!.Channel!.Frozen, Is.True);
+
+            // Unfreeze the channel
+            var unfreezeResp = await StreamClient.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["frozen"] = false
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unfreezeResp.Data, Is.Not.Null);
+            Assert.That(unfreezeResp.Data!.Channel, Is.Not.Null);
+            Assert.That(unfreezeResp.Data!.Channel!.Frozen, Is.False);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
