@@ -818,6 +818,52 @@ namespace GetStream.Tests
             Assert.That(qResp2.Data!.Members[0].ChannelRole, Is.EqualTo("channel_member"));
         }
 
+        [Test, Order(20)]
+        public async Task MarkUnreadWithThread()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Send parent message
+            var parentMsgId = await SendTestMessage("messaging", channelId, creatorId, "Parent for mark unread thread");
+
+            // Send a reply to create a thread
+            var replyResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "Reply in thread",
+                        UserID = creatorId,
+                        ParentID = parentMsgId
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(replyResp.Data, Is.Not.Null);
+            Assert.That(replyResp.Data!.Message, Is.Not.Null);
+
+            // Mark unread from thread (using thread_id = parent message ID)
+            var unreadResp = await StreamClient.MakeRequestAsync<MarkUnreadRequest, Response>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/unread",
+                null,
+                new MarkUnreadRequest
+                {
+                    UserID = memberId,
+                    ThreadID = parentMsgId
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unreadResp.Data, Is.Not.Null);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
