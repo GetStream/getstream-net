@@ -1354,6 +1354,65 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(32)]
+        public async Task UploadAndDeleteImage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId });
+
+            // Create a minimal valid PNG file for upload
+            var imagePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"chat-test-{Guid.NewGuid():N}.png");
+            // Minimal 1x1 pixel PNG bytes
+            byte[] pngBytes = new byte[]
+            {
+                0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+                0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+                0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+                0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xDE,
+                0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54,
+                0x08, 0xD7, 0x63, 0xF8, 0xCF, 0xC0, 0x00, 0x00,
+                0x00, 0x02, 0x00, 0x01, 0xE2, 0x21, 0xBC, 0x33,
+                0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
+            };
+            await System.IO.File.WriteAllBytesAsync(imagePath, pngBytes);
+
+            try
+            {
+                // Upload image
+                var uploadResp = await StreamClient.MakeRequestAsync<ImageUploadRequest, ImageUploadResponse>(
+                    "POST",
+                    "/api/v2/chat/channels/{type}/{id}/image",
+                    null,
+                    new ImageUploadRequest
+                    {
+                        File = imagePath,
+                        User = new OnlyUserID { ID = creatorId }
+                    },
+                    new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+                Assert.That(uploadResp.Data, Is.Not.Null);
+                Assert.That(uploadResp.Data!.File, Is.Not.Null.And.Not.Empty);
+                var imageUrl = uploadResp.Data!.File!;
+                Assert.That(imageUrl, Does.Contain("http"));
+
+                // Delete image
+                var deleteResp = await StreamClient.MakeRequestAsync<object, Response>(
+                    "DELETE",
+                    "/api/v2/chat/channels/{type}/{id}/image",
+                    new Dictionary<string, string> { ["url"] = imageUrl },
+                    null,
+                    new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+                Assert.That(deleteResp.Data, Is.Not.Null);
+            }
+            finally
+            {
+                if (System.IO.File.Exists(imagePath))
+                    System.IO.File.Delete(imagePath);
+            }
+        }
+
         [Test, Order(29)]
         public async Task MarkUnreadWithTimestamp()
         {
