@@ -1178,5 +1178,42 @@ namespace GetStream.Tests
             Assert.That(resp.Data, Is.Not.Null);
             Assert.That(resp.Data!.Duration, Is.Not.Null.And.Not.Empty);
         }
+
+        [Test, Order(27)]
+        public async Task FilterTags()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Add filter tags
+            var addResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    AddFilterTags = new List<string> { "sports", "news" }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(addResp.Data, Is.Not.Null);
+            Assert.That(addResp.Data!.Channel, Is.Not.Null);
+
+            // Remove a filter tag
+            var removeResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    RemoveFilterTags = new List<string> { "sports" }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(removeResp.Data, Is.Not.Null);
+            Assert.That(removeResp.Data!.Channel, Is.Not.Null);
+        }
     }
 }
