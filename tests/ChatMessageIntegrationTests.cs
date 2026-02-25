@@ -556,6 +556,46 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Message.Silent, Is.True);
         }
 
+        [Test, Order(16)]
+        public async Task KeepChannelHidden()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+            var cid = "messaging:" + channelId;
+
+            // Hide the channel for the user
+            await StreamClient.MakeRequestAsync<HideChannelRequest, HideChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/hide",
+                null,
+                new HideChannelRequest { UserID = userId },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            // Send a message with keep_channel_hidden=true
+            await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest { Text = "Hidden message", UserID = userId },
+                    KeepChannelHidden = true
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            // Query channels — the channel should still be hidden (not returned)
+            var qResp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object> { ["cid"] = cid },
+                UserID = userId
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels, Is.Empty,
+                "Channel should remain hidden after sending with KeepChannelHidden=true");
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
