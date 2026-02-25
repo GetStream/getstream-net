@@ -38,7 +38,7 @@ namespace GetStream
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
-                Converters = { new NanosecondTimestampConverter(), new FeedOwnCapabilityConverter() }
+                Converters = { new NanosecondTimestampConverter(), new FeedOwnCapabilityConverter(), new ChannelOwnCapabilityConverter(), new OwnCapabilityConverter() }
             };
         }
 

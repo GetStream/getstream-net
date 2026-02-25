@@ -142,6 +142,66 @@ namespace GetStream
     }
 
     /// <summary>
+    /// Handles ChannelOwnCapability serialization/deserialization.
+    /// This is a workaround for API inconsistencies where ChannelOwnCapability is sometimes returned as a string.
+    /// </summary>
+    public class ChannelOwnCapabilityConverter : JsonConverter<ChannelOwnCapability>
+    {
+        public override ChannelOwnCapability Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                reader.GetString();
+                return new ChannelOwnCapability();
+            }
+
+            throw new JsonException($"Cannot convert {reader.TokenType} to ChannelOwnCapability");
+        }
+
+        public override void Write(Utf8JsonWriter writer, ChannelOwnCapability value, JsonSerializerOptions options)
+        {
+            if (value != null)
+            {
+                writer.WriteStringValue("channel_own");
+            }
+            else
+            {
+                writer.WriteNullValue();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles OwnCapability serialization/deserialization.
+    /// This is a workaround for API inconsistencies where OwnCapability is sometimes returned as a string.
+    /// </summary>
+    public class OwnCapabilityConverter : JsonConverter<OwnCapability>
+    {
+        public override OwnCapability Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                reader.GetString();
+                return new OwnCapability();
+            }
+
+            throw new JsonException($"Cannot convert {reader.TokenType} to OwnCapability");
+        }
+
+        public override void Write(Utf8JsonWriter writer, OwnCapability value, JsonSerializerOptions options)
+        {
+            if (value != null)
+            {
+                writer.WriteStringValue("own");
+            }
+            else
+            {
+                writer.WriteNullValue();
+            }
+        }
+    }
+
+    /// <summary>
     /// Custom StreamResponse wrapper for API responses
     /// </summary>
     public class StreamResponse<T>
