@@ -48,5 +48,22 @@ namespace GetStream.Tests
                 Assert.That(foundIds, Does.Contain(id), $"User {id} should be found in query results");
             }
         }
+
+        [Test, Order(3)]
+        public async Task QueryUsersWithOffsetLimit()
+        {
+            var userIds = await CreateTestUsers(3);
+
+            var resp = await QueryUsers(new QueryUsersPayload
+            {
+                FilterConditions = InFilter("id", userIds),
+                Offset = 1,
+                Limit = 2
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Users, Is.Not.Null);
+            Assert.That(resp.Data!.Users.Count, Is.EqualTo(2), "Should return exactly 2 users with offset=1 limit=2");
+        }
     }
 }
