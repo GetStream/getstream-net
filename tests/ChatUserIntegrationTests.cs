@@ -528,6 +528,62 @@ namespace GetStream.Tests
         }
 
         [Test, Order(16)]
+        public async Task UserCustomData()
+        {
+            var userId = $"custom-{Guid.NewGuid():N}";
+            CreatedUserIds.Add(userId);
+
+            var custom = new Dictionary<string, object>
+            {
+                ["favorite_color"] = "blue",
+                ["age"] = 30,
+                ["tags"] = new List<string> { "vip", "early_adopter" }
+            };
+
+            // Create user with custom fields
+            var resp = await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest
+                    {
+                        ID = userId,
+                        Name = "Custom User",
+                        Custom = custom
+                    }
+                }
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Users.ContainsKey(userId), Is.True);
+
+            var u = resp.Data!.Users[userId];
+            Assert.That(u.Custom, Is.Not.Null);
+
+            // Custom comes back as JsonElement, cast to access values
+            var customJson = (System.Text.Json.JsonElement)u.Custom;
+            Assert.That(customJson.GetProperty("favorite_color").GetString(), Is.EqualTo("blue"));
+            Assert.That(customJson.GetProperty("age").GetInt32(), Is.EqualTo(30));
+
+            // Verify persistence by querying back
+            var queryResp = await QueryUsers(new QueryUsersPayload
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = userId
+                }
+            });
+
+            Assert.That(queryResp.Data, Is.Not.Null);
+            Assert.That(queryResp.Data!.Users.Count, Is.EqualTo(1));
+
+            var queried = queryResp.Data!.Users[0];
+            Assert.That(queried.Custom, Is.Not.Null);
+            var queriedJson = (System.Text.Json.JsonElement)queried.Custom;
+            Assert.That(queriedJson.GetProperty("favorite_color").GetString(), Is.EqualTo("blue"));
+        }
+
+        [Test, Order(17)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
