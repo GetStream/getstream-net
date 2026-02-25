@@ -240,6 +240,38 @@ namespace GetStream.Tests
         }
 
         [Test, Order(10)]
+        public async Task UpsertUsersWithRoleAndTeamsRole()
+        {
+            var userId = $"teams-{Guid.NewGuid():N}";
+            CreatedUserIds.Add(userId);
+
+            var resp = await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest
+                    {
+                        ID = userId,
+                        Name = "Teams User",
+                        Role = "admin",
+                        Teams = new List<string> { "blue" },
+                        TeamsRole = new Dictionary<string, string> { ["blue"] = "admin" }
+                    }
+                }
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Users, Is.Not.Null);
+            Assert.That(resp.Data!.Users.ContainsKey(userId), Is.True, "User should be in response");
+
+            var u = resp.Data!.Users[userId];
+            Assert.That(u.Role, Is.EqualTo("admin"));
+            Assert.That(u.Teams, Is.Not.Null.And.Contains("blue"));
+            Assert.That(u.TeamsRole, Is.Not.Null);
+            Assert.That(u.TeamsRole["blue"], Is.EqualTo("admin"));
+        }
+
+        [Test, Order(11)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
