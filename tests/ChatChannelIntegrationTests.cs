@@ -592,6 +592,79 @@ namespace GetStream.Tests
             Assert.That(unreadResp.Data, Is.Not.Null);
         }
 
+        [Test, Order(16)]
+        public async Task MuteUnmuteChannel()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+            var cid = $"messaging:{channelId}";
+
+            // Mute the channel for memberId
+            var muteResp = await StreamClient.MakeRequestAsync<MuteChannelRequest, MuteChannelResponse>(
+                "POST",
+                "/api/v2/chat/moderation/mute/channel",
+                null,
+                new MuteChannelRequest
+                {
+                    ChannelCids = new List<string> { cid },
+                    UserID = memberId
+                },
+                null);
+
+            Assert.That(muteResp.Data, Is.Not.Null);
+            Assert.That(muteResp.Data!.ChannelMute, Is.Not.Null, "Mute response should contain ChannelMute");
+            Assert.That(muteResp.Data!.ChannelMute!.Channel, Is.Not.Null, "ChannelMute should have Channel");
+            Assert.That(muteResp.Data!.ChannelMute!.Channel!.Cid, Is.EqualTo(cid));
+
+            // Verify via QueryChannels with muted=true
+            var qResp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["muted"] = true,
+                    ["cid"] = cid
+                },
+                UserID = memberId
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels.Count, Is.EqualTo(1), "Should find exactly 1 muted channel");
+            Assert.That(qResp.Data!.Channels[0].Channel!.Cid, Is.EqualTo(cid));
+
+            // Unmute the channel
+            var unmuteResp = await StreamClient.MakeRequestAsync<UnmuteChannelRequest, UnmuteResponse>(
+                "POST",
+                "/api/v2/chat/moderation/unmute/channel",
+                null,
+                new UnmuteChannelRequest
+                {
+                    ChannelCids = new List<string> { cid },
+                    UserID = memberId
+                },
+                null);
+
+            Assert.That(unmuteResp.Data, Is.Not.Null);
+
+            // Verify unmute via query with muted=false
+            var qResp2 = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["muted"] = false,
+                    ["cid"] = cid
+                },
+                UserID = memberId
+            });
+
+            Assert.That(qResp2.Data, Is.Not.Null);
+            Assert.That(qResp2.Data!.Channels, Is.Not.Null);
+            Assert.That(qResp2.Data!.Channels.Count, Is.EqualTo(1), "Unmuted channel should appear in muted=false query");
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
