@@ -752,6 +752,72 @@ namespace GetStream.Tests
             Assert.That(qResp.Data!.Members[0].ChannelRole, Is.EqualTo("channel_moderator"));
         }
 
+        [Test, Order(19)]
+        public async Task AddDemoteModerators()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Add member as moderator via UpdateChannelRequest.AddModerators
+            var addResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    AddModerators = new List<string> { memberId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(addResp.Data, Is.Not.Null);
+
+            // Verify via QueryMembers that role is channel_moderator
+            var qResp = await QueryMembers(new QueryMembersPayload
+            {
+                Type = "messaging",
+                ID = channelId,
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = memberId
+                }
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Members, Is.Not.Null.And.Not.Empty);
+            Assert.That(qResp.Data!.Members[0].ChannelRole, Is.EqualTo("channel_moderator"));
+
+            // Demote moderator back to member
+            var demoteResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    DemoteModerators = new List<string> { memberId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(demoteResp.Data, Is.Not.Null);
+
+            // Verify via QueryMembers that role is back to channel_member
+            var qResp2 = await QueryMembers(new QueryMembersPayload
+            {
+                Type = "messaging",
+                ID = channelId,
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = memberId
+                }
+            });
+
+            Assert.That(qResp2.Data, Is.Not.Null);
+            Assert.That(qResp2.Data!.Members, Is.Not.Null.And.Not.Empty);
+            Assert.That(qResp2.Data!.Members[0].ChannelRole, Is.EqualTo("channel_member"));
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
