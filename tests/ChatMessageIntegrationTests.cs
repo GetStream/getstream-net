@@ -245,5 +245,49 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Message, Is.Not.Null, "Message should be present in translate response");
             Assert.That(resp.Data!.Message!.I18n, Is.Not.Null, "i18n field should be set after translation");
         }
+
+        [Test, Order(9)]
+        public async Task ThreadReply()
+        {
+            var userIds = await CreateTestUsers(2);
+            var userId = userIds[0];
+            var userId2 = userIds[1];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId, userId2 });
+
+            // Send parent message
+            var parentId = await SendTestMessage("messaging", channelId, userId, "Parent message for thread");
+
+            // Send reply with parent_id set
+            var replyResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "Reply to parent",
+                        UserID = userId2,
+                        ParentID = parentId
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(replyResp.Data, Is.Not.Null);
+            Assert.That(replyResp.Data!.Message, Is.Not.Null);
+            Assert.That(replyResp.Data!.Message.ID, Is.Not.Null.And.Not.Empty);
+
+            // Get replies for the parent message
+            var repliesResp = await StreamClient.MakeRequestAsync<object, GetRepliesResponse>(
+                "GET",
+                "/api/v2/chat/messages/{id}/replies",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = parentId });
+
+            Assert.That(repliesResp.Data, Is.Not.Null);
+            Assert.That(repliesResp.Data!.Messages, Is.Not.Null);
+            Assert.That(repliesResp.Data!.Messages.Count, Is.GreaterThanOrEqualTo(1));
+        }
     }
 }
