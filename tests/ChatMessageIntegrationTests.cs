@@ -140,5 +140,27 @@ namespace GetStream.Tests
             Assert.That(unsetResp.Data, Is.Not.Null);
             Assert.That(unsetResp.Data!.Message, Is.Not.Null);
         }
+
+        [Test, Order(5)]
+        public async Task DeleteMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Message to soft delete " + RandomString(6));
+
+            // Soft delete: DELETE /api/v2/chat/messages/{id} with no query params
+            var resp = await StreamClient.MakeRequestAsync<object, DeleteMessageResponse>(
+                "DELETE",
+                "/api/v2/chat/messages/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null);
+            Assert.That(resp.Data!.Message.Type, Is.EqualTo("deleted"));
+        }
     }
 }
