@@ -305,6 +305,74 @@ namespace GetStream.Tests
         }
 
         [Test, Order(12)]
+        public async Task UpdatePrivacySettings()
+        {
+            var userId = $"privacy-{Guid.NewGuid():N}";
+            CreatedUserIds.Add(userId);
+
+            // Create user without privacy settings
+            var createResp = await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest { ID = userId, Name = "Privacy User" }
+                }
+            });
+
+            Assert.That(createResp.Data, Is.Not.Null);
+            var u = createResp.Data!.Users[userId];
+            Assert.That(u.PrivacySettings, Is.Null, "PrivacySettings should be nil initially");
+
+            // Update with TypingIndicators disabled
+            var resp1 = await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest
+                    {
+                        ID = userId,
+                        PrivacySettings = new PrivacySettingsResponse
+                        {
+                            TypingIndicators = new TypingIndicatorsResponse { Enabled = false }
+                        }
+                    }
+                }
+            });
+
+            Assert.That(resp1.Data, Is.Not.Null);
+            u = resp1.Data!.Users[userId];
+            Assert.That(u.PrivacySettings, Is.Not.Null);
+            Assert.That(u.PrivacySettings!.TypingIndicators, Is.Not.Null);
+            Assert.That(u.PrivacySettings!.TypingIndicators!.Enabled, Is.EqualTo(false));
+            Assert.That(u.PrivacySettings!.ReadReceipts, Is.Null, "ReadReceipts should still be nil");
+
+            // Update with both TypingIndicators=true and ReadReceipts=false
+            var resp2 = await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest
+                    {
+                        ID = userId,
+                        PrivacySettings = new PrivacySettingsResponse
+                        {
+                            TypingIndicators = new TypingIndicatorsResponse { Enabled = true },
+                            ReadReceipts = new ReadReceiptsResponse { Enabled = false }
+                        }
+                    }
+                }
+            });
+
+            Assert.That(resp2.Data, Is.Not.Null);
+            u = resp2.Data!.Users[userId];
+            Assert.That(u.PrivacySettings, Is.Not.Null);
+            Assert.That(u.PrivacySettings!.TypingIndicators, Is.Not.Null);
+            Assert.That(u.PrivacySettings!.TypingIndicators!.Enabled, Is.EqualTo(true));
+            Assert.That(u.PrivacySettings!.ReadReceipts, Is.Not.Null);
+            Assert.That(u.PrivacySettings!.ReadReceipts!.Enabled, Is.EqualTo(false));
+        }
+
+        [Test, Order(13)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
