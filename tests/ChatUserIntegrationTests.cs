@@ -272,6 +272,39 @@ namespace GetStream.Tests
         }
 
         [Test, Order(11)]
+        public async Task PartialUpdateUserWithTeam()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            // Partial update to add teams and teams_role
+            var resp = await StreamClient.UpdateUsersPartialAsync(new UpdateUsersPartialRequest
+            {
+                Users = new List<UpdateUserPartialRequest>
+                {
+                    new UpdateUserPartialRequest
+                    {
+                        ID = userId,
+                        Set = new Dictionary<string, object>
+                        {
+                            ["teams"] = new List<string> { "blue" },
+                            ["teams_role"] = new Dictionary<string, string> { ["blue"] = "admin" }
+                        }
+                    }
+                }
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Users, Is.Not.Null);
+            Assert.That(resp.Data!.Users.ContainsKey(userId), Is.True);
+
+            var u = resp.Data!.Users[userId];
+            Assert.That(u.Teams, Is.Not.Null.And.Contains("blue"));
+            Assert.That(u.TeamsRole, Is.Not.Null);
+            Assert.That(u.TeamsRole["blue"], Is.EqualTo("admin"));
+        }
+
+        [Test, Order(12)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
