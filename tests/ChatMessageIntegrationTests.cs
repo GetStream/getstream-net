@@ -47,5 +47,29 @@ namespace GetStream.Tests
             Assert.That(getResp.Data!.Message.ID, Is.EqualTo(msgId));
             Assert.That(getResp.Data!.Message.Text, Is.EqualTo(msgText));
         }
+
+        [Test, Order(2)]
+        public async Task GetManyMessages()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var id1 = await SendTestMessage("messaging", channelId, userId, "Msg 1 " + RandomString(6));
+            var id2 = await SendTestMessage("messaging", channelId, userId, "Msg 2 " + RandomString(6));
+            var id3 = await SendTestMessage("messaging", channelId, userId, "Msg 3 " + RandomString(6));
+
+            // GET /api/v2/chat/channels/{type}/{id}/messages?ids=id1,id2,id3
+            var resp = await StreamClient.MakeRequestAsync<object, GetManyMessagesResponse>(
+                "GET",
+                "/api/v2/chat/channels/{type}/{id}/messages",
+                new Dictionary<string, string> { ["ids"] = string.Join(",", id1, id2, id3) },
+                null,
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Messages, Is.Not.Null);
+            Assert.That(resp.Data!.Messages.Count, Is.EqualTo(3));
+        }
     }
 }
