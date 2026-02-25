@@ -116,6 +116,46 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Channels[0].Channel!.ID, Is.EqualTo(channelId));
         }
 
+        [Test, Order(5)]
+        public async Task UpdateChannel()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Update channel with custom data + message
+            var resp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    Data = new ChannelInputRequest
+                    {
+                        Custom = new Dictionary<string, object>
+                        {
+                            ["color"] = "blue"
+                        }
+                    },
+                    Message = new MessageRequest
+                    {
+                        Text = "Channel updated!",
+                        UserID = creatorId
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Channel, Is.Not.Null);
+
+            // Verify custom field
+            var custom = resp.Data!.Channel!.Custom;
+            Assert.That(custom, Is.Not.Null);
+            var customElement = (System.Text.Json.JsonElement)custom;
+            Assert.That(customElement.GetProperty("color").GetString(), Is.EqualTo("blue"));
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
