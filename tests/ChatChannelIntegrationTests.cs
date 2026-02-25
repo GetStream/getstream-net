@@ -1151,5 +1151,32 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Members, Is.Not.Null);
             Assert.That(resp.Data!.Members.Count, Is.GreaterThanOrEqualTo(3));
         }
+
+        [Test, Order(26)]
+        public async Task SendChannelEvent()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            var resp = await StreamClient.MakeRequestAsync<SendEventRequest, EventResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/event",
+                null,
+                new SendEventRequest
+                {
+                    Event = new EventRequest
+                    {
+                        Type = "typing.start",
+                        UserID = creatorId
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+        }
     }
 }
