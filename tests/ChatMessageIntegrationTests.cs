@@ -341,6 +341,148 @@ namespace GetStream.Tests
             Assert.That(commitResp.Data!.Message!.ID, Is.EqualTo(msgId));
         }
 
+        [Test, Order(13)]
+        public async Task QueryMessageHistory()
+        {
+            var userIds = await CreateTestUsers(2);
+            var userId = userIds[0];
+            var userId2 = userIds[1];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId, userId2 });
+
+            // Send initial message
+            var msgId = await SendTestMessage("messaging", channelId, userId, "initial text");
+
+            // Update by user1 with new text
+            await StreamClient.MakeRequestAsync<UpdateMessageRequest, UpdateMessageResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessageRequest
+                {
+                    Message = new MessageRequest { Text = "updated text", UserID = userId }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            // Update by user2 with new text
+            await StreamClient.MakeRequestAsync<UpdateMessageRequest, UpdateMessageResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessageRequest
+                {
+                    Message = new MessageRequest { Text = "updated text 2", UserID = userId2 }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            // Query message history (requires feature flag)
+            QueryMessageHistoryResponse histData;
+            try
+            {
+                var histResp = await StreamClient.MakeRequestAsync<QueryMessageHistoryRequest, QueryMessageHistoryResponse>(
+                    "POST",
+                    "/api/v2/chat/messages/history",
+                    null,
+                    new QueryMessageHistoryRequest
+                    {
+                        Filter = new Dictionary<string, object> { ["message_id"] = msgId },
+                        Sort = new List<SortParamRequest>()
+                    },
+                    null);
+
+                Assert.That(histResp.Data, Is.Not.Null);
+                histData = histResp.Data!;
+            }
+            catch (Exception e) when (e.Message.Contains("feature flag") || e.Message.Contains("not enabled"))
+            {
+                Assert.Ignore("QueryMessageHistory feature not enabled for this app");
+                return;
+            }
+
+            Assert.That(histData.MessageHistory, Is.Not.Null);
+            Assert.That(histData.MessageHistory.Count, Is.GreaterThanOrEqualTo(2), "Should have at least 2 history entries");
+
+            // Verify all entries reference the correct message
+            foreach (var entry in histData.MessageHistory)
+            {
+                Assert.That(entry.MessageID, Is.EqualTo(msgId));
+            }
+
+            // Verify text values in descending order (most recent first)
+            // history[0] = most recent prior version = "updated text"
+            // history[1] = original = "initial text"
+            Assert.That(histData.MessageHistory[0].Text, Is.EqualTo("updated text"));
+            Assert.That(histData.MessageHistory[0].MessageUpdatedByID, Is.EqualTo(userId));
+            Assert.That(histData.MessageHistory[1].Text, Is.EqualTo("initial text"));
+            Assert.That(histData.MessageHistory[1].MessageUpdatedByID, Is.EqualTo(userId));
+        }
+
+        [Test, Order(14)]
+        public async Task QueryMessageHistorySort()
+        {
+            var userIds = await CreateTestUsers(2);
+            var userId = userIds[0];
+            var userId2 = userIds[1];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId, userId2 });
+
+            // Send initial message
+            var msgId = await SendTestMessage("messaging", channelId, userId, "sort initial");
+
+            // Update twice
+            await StreamClient.MakeRequestAsync<UpdateMessageRequest, UpdateMessageResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessageRequest
+                {
+                    Message = new MessageRequest { Text = "sort updated 1", UserID = userId }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            await StreamClient.MakeRequestAsync<UpdateMessageRequest, UpdateMessageResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessageRequest
+                {
+                    Message = new MessageRequest { Text = "sort updated 2", UserID = userId }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            // Query with ascending sort by message_updated_at
+            QueryMessageHistoryResponse histData;
+            try
+            {
+                var histResp = await StreamClient.MakeRequestAsync<QueryMessageHistoryRequest, QueryMessageHistoryResponse>(
+                    "POST",
+                    "/api/v2/chat/messages/history",
+                    null,
+                    new QueryMessageHistoryRequest
+                    {
+                        Filter = new Dictionary<string, object> { ["message_id"] = msgId },
+                        Sort = new List<SortParamRequest>
+                        {
+                            new SortParamRequest { Field = "message_updated_at", Direction = 1 }
+                        }
+                    },
+                    null);
+
+                Assert.That(histResp.Data, Is.Not.Null);
+                histData = histResp.Data!;
+            }
+            catch (Exception e) when (e.Message.Contains("feature flag") || e.Message.Contains("not enabled"))
+            {
+                Assert.Ignore("QueryMessageHistory feature not enabled for this app");
+                return;
+            }
+
+            Assert.That(histData.MessageHistory, Is.Not.Null);
+            Assert.That(histData.MessageHistory.Count, Is.GreaterThanOrEqualTo(2));
+
+            // Ascending: oldest first
+            Assert.That(histData.MessageHistory[0].Text, Is.EqualTo("sort initial"));
+            Assert.That(histData.MessageHistory[0].MessageUpdatedByID, Is.EqualTo(userId));
+        }
+
         [Test, Order(11)]
         public async Task SilentMessage()
         {
