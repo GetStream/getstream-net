@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Models;
@@ -288,6 +291,46 @@ namespace GetStream.Tests
             Assert.That(repliesResp.Data, Is.Not.Null);
             Assert.That(repliesResp.Data!.Messages, Is.Not.Null);
             Assert.That(repliesResp.Data!.Messages.Count, Is.GreaterThanOrEqualTo(1));
+        }
+
+        [Test, Order(10)]
+        public async Task SearchMessages()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var searchTerm = "uniquesearch" + RandomString(8);
+            await SendTestMessage("messaging", channelId, userId, "This message contains " + searchTerm + " for testing");
+
+            // Wait for search indexing
+            await Task.Delay(2000);
+
+            var payload = new SearchPayload
+            {
+                Query = searchTerm,
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["cid"] = "messaging:" + channelId
+                }
+            };
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+            var json = JsonSerializer.Serialize(payload, jsonOptions);
+
+            var resp = await StreamClient.MakeRequestAsync<object, SearchResponse>(
+                "GET",
+                "/api/v2/chat/search",
+                new Dictionary<string, string> { ["payload"] = json },
+                null,
+                null);
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Results, Is.Not.Null.And.Not.Empty);
         }
     }
 }
