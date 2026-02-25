@@ -191,7 +191,19 @@ namespace GetStream.Tests
             Assert.That(queryResp.Data!.Users[0].ID, Is.EqualTo(userId));
         }
 
-        [Test, Order(7)]
+        [Test, Order(8)]
+        public async Task ExportUser()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var resp = await StreamClient.ExportUserAsync(userId);
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.User, Is.Not.Null);
+            Assert.That(resp.Data!.User!.ID, Is.EqualTo(userId));
+        }
+
+        [Test, Order(9)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
