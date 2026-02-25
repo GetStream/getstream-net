@@ -26,5 +26,27 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Users, Is.Not.Null);
             Assert.That(resp.Data!.Users.Count, Is.GreaterThanOrEqualTo(2));
         }
+
+        [Test, Order(2)]
+        public async Task QueryUsersTest()
+        {
+            var userIds = await CreateTestUsers(2);
+
+            var resp = await QueryUsers(new QueryUsersPayload
+            {
+                FilterConditions = InFilter("id", userIds)
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Users, Is.Not.Null);
+            Assert.That(resp.Data!.Users.Count, Is.GreaterThanOrEqualTo(2));
+
+            // Verify both specific user IDs are in the results
+            var foundIds = resp.Data!.Users.Select(u => u.ID).ToHashSet();
+            foreach (var id in userIds)
+            {
+                Assert.That(foundIds, Does.Contain(id), $"User {id} should be found in query results");
+            }
+        }
     }
 }
