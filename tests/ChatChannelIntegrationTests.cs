@@ -1045,6 +1045,61 @@ namespace GetStream.Tests
             Assert.That(qResp2.Data!.Channels.Count, Is.EqualTo(1), "Should find channel with archived=false");
         }
 
+        [Test, Order(24)]
+        public async Task AddMembersWithRoles()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Create 2 new users with specific roles to add
+            var newUserIds = await CreateTestUsers(2);
+            var modUserId = newUserIds[0];
+            var memberUserId = newUserIds[1];
+
+            // Add members with specific channel roles
+            var addResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    AddMembers = new List<ChannelMemberRequest>
+                    {
+                        new ChannelMemberRequest { UserID = modUserId, ChannelRole = "channel_moderator" },
+                        new ChannelMemberRequest { UserID = memberUserId, ChannelRole = "channel_member" }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(addResp.Data, Is.Not.Null);
+
+            // Query members to verify roles
+            var qResp = await QueryMembers(new QueryMembersPayload
+            {
+                Type = "messaging",
+                ID = channelId,
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = new Dictionary<string, object> { ["$in"] = newUserIds }
+                }
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Members, Is.Not.Null.And.Not.Empty);
+
+            // Build a role map keyed by user ID
+            var roleMap = qResp.Data!.Members
+                .Where(m => m.UserID != null)
+                .ToDictionary(m => m.UserID!, m => m.ChannelRole);
+
+            Assert.That(roleMap.ContainsKey(modUserId), Is.True, "modUser should be in members");
+            Assert.That(roleMap[modUserId], Is.EqualTo("channel_moderator"), "First user should be channel_moderator");
+            Assert.That(roleMap.ContainsKey(memberUserId), Is.True, "memberUser should be in members");
+            Assert.That(roleMap[memberUserId], Is.EqualTo("channel_member"), "Second user should be channel_member");
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
