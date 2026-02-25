@@ -124,5 +124,43 @@ namespace GetStream.Tests
             Assert.That(unsetResp.Data!.Users, Is.Not.Null);
             Assert.That(unsetResp.Data!.Users.ContainsKey(userId), Is.True);
         }
+
+        [Test, Order(5)]
+        public async Task BlockUnblockUser()
+        {
+            var userIds = await CreateTestUsers(2);
+            var alice = userIds[0];
+            var bob = userIds[1];
+
+            // Block bob from alice's perspective
+            await StreamClient.BlockUsersAsync(new BlockUsersRequest
+            {
+                BlockedUserID = bob,
+                UserID = alice
+            });
+
+            // Verify bob is in alice's blocked list
+            var blockedResp = await StreamClient.GetBlockedUsersAsync(new { user_id = alice });
+            Assert.That(blockedResp.Data, Is.Not.Null);
+            Assert.That(blockedResp.Data!.Blocks, Is.Not.Empty, "Should have at least one block");
+            var blockedIds = blockedResp.Data!.Blocks.Select(b => b.BlockedUserID).ToList();
+            Assert.That(blockedIds, Does.Contain(bob), "Bob should be in Alice's blocked list");
+
+            // Unblock bob
+            await StreamClient.UnblockUsersAsync(new UnblockUsersRequest
+            {
+                BlockedUserID = bob,
+                UserID = alice
+            });
+
+            // Verify bob is no longer in alice's blocked list
+            var unblockedResp = await StreamClient.GetBlockedUsersAsync(new { user_id = alice });
+            Assert.That(unblockedResp.Data, Is.Not.Null);
+            if (unblockedResp.Data!.Blocks != null)
+            {
+                var stillBlockedIds = unblockedResp.Data!.Blocks.Select(b => b.BlockedUserID).ToList();
+                Assert.That(stillBlockedIds, Does.Not.Contain(bob), "Bob should no longer be blocked");
+            }
+        }
     }
 }
