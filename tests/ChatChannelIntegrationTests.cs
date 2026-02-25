@@ -1215,5 +1215,51 @@ namespace GetStream.Tests
             Assert.That(removeResp.Data, Is.Not.Null);
             Assert.That(removeResp.Data!.Channel, Is.Not.Null);
         }
+
+        [Test, Order(28)]
+        public async Task MessageCountDisabled()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Disable count_messages via config_overrides partial update
+            await StreamClient.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["config_overrides"] = new Dictionary<string, object>
+                        {
+                            ["count_messages"] = false
+                        }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            // Send a message
+            await SendTestMessage("messaging", channelId, creatorId, "hello world disabled count");
+
+            // Query the channel — MessageCount should be null when count_messages is disabled
+            var resp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["cid"] = "messaging:" + channelId
+                },
+                UserID = creatorId
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Channels, Is.Not.Null.And.Not.Empty);
+            var channel = resp.Data!.Channels[0].Channel;
+            Assert.That(channel, Is.Not.Null);
+            Assert.That(channel!.MessageCount, Is.Null, "MessageCount should be null when count_messages is disabled");
+        }
     }
 }
