@@ -350,6 +350,27 @@ namespace GetStream.Tests
             Assert.That(memberIds, Does.Not.Contain(memberId3));
         }
 
+        [Test, Order(10)]
+        public async Task QueryMembers()
+        {
+            var userIds = await CreateTestUsers(3);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, userIds);
+
+            // Query members of the channel
+            var resp = await QueryMembers(new QueryMembersPayload
+            {
+                Type = "messaging",
+                ID = channelId,
+                FilterConditions = new Dictionary<string, object>()
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Members, Is.Not.Null);
+            Assert.That(resp.Data!.Members.Count, Is.GreaterThanOrEqualTo(3));
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {

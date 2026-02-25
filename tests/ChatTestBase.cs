@@ -222,6 +222,21 @@ namespace GetStream.Tests
         }
 
         /// <summary>
+        /// Query channel members. Encodes payload as JSON query param for GET endpoint.
+        /// </summary>
+        protected async Task<StreamResponse<MembersResponse>> QueryMembers(QueryMembersPayload payload)
+        {
+            var json = JsonSerializer.Serialize(payload, JsonOptions);
+            var queryParams = new Dictionary<string, string> { ["payload"] = json };
+            return await StreamClient.MakeRequestAsync<object, MembersResponse>(
+                "GET",
+                "/api/v2/chat/members",
+                queryParams,
+                null,
+                null);
+        }
+
+        /// <summary>
         /// Helper to build $in filter condition for IDs.
         /// </summary>
         protected static Dictionary<string, object> InFilter(string field, List<string> values)
