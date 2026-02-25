@@ -71,5 +71,30 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Messages, Is.Not.Null);
             Assert.That(resp.Data!.Messages.Count, Is.EqualTo(3));
         }
+
+        [Test, Order(3)]
+        public async Task UpdateMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Original text " + RandomString(6));
+
+            var updatedText = "Updated text " + RandomString(8);
+            var resp = await StreamClient.MakeRequestAsync<UpdateMessageRequest, UpdateMessageResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessageRequest
+                {
+                    Message = new MessageRequest { Text = updatedText, UserID = userId }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null);
+            Assert.That(resp.Data!.Message.Text, Is.EqualTo(updatedText));
+        }
     }
 }
