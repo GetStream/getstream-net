@@ -96,5 +96,49 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Message, Is.Not.Null);
             Assert.That(resp.Data!.Message.Text, Is.EqualTo(updatedText));
         }
+
+        [Test, Order(4)]
+        public async Task PartialUpdateMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Partial update test " + RandomString(6));
+
+            // Set custom fields
+            var setResp = await StreamClient.MakeRequestAsync<UpdateMessagePartialRequest, UpdateMessagePartialResponse>(
+                "PUT",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessagePartialRequest
+                {
+                    UserID = userId,
+                    Set = new Dictionary<string, object>
+                    {
+                        ["priority"] = "high",
+                        ["status"] = "reviewed"
+                    }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(setResp.Data, Is.Not.Null);
+            Assert.That(setResp.Data!.Message, Is.Not.Null);
+
+            // Unset one custom field
+            var unsetResp = await StreamClient.MakeRequestAsync<UpdateMessagePartialRequest, UpdateMessagePartialResponse>(
+                "PUT",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessagePartialRequest
+                {
+                    UserID = userId,
+                    Unset = new List<string> { "status" }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(unsetResp.Data, Is.Not.Null);
+            Assert.That(unsetResp.Data!.Message, Is.Not.Null);
+        }
     }
 }
