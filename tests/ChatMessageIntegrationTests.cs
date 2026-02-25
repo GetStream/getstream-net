@@ -224,5 +224,26 @@ namespace GetStream.Tests
             Assert.That(unpinResp.Data!.Message, Is.Not.Null);
             Assert.That(unpinResp.Data!.Message.Pinned, Is.False);
         }
+
+        [Test, Order(8)]
+        public async Task TranslateMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Hello, how are you?");
+
+            var resp = await StreamClient.MakeRequestAsync<TranslateMessageRequest, MessageActionResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/translate",
+                null,
+                new TranslateMessageRequest { Language = "es" },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null, "Message should be present in translate response");
+            Assert.That(resp.Data!.Message!.I18n, Is.Not.Null, "i18n field should be set after translation");
+        }
     }
 }
