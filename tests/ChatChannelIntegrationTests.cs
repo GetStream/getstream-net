@@ -711,6 +711,47 @@ namespace GetStream.Tests
             Assert.That(custom2.TryGetProperty("score", out _), Is.False, "score should be unset");
         }
 
+        [Test, Order(18)]
+        public async Task AssignRoles()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Assign channel_moderator role to memberId
+            var resp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    AssignRoles = new List<ChannelMemberRequest>
+                    {
+                        new ChannelMemberRequest { UserID = memberId, ChannelRole = "channel_moderator" }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+
+            // Verify via QueryMembers that the role is set
+            var qResp = await QueryMembers(new QueryMembersPayload
+            {
+                Type = "messaging",
+                ID = channelId,
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["id"] = memberId
+                }
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Members, Is.Not.Null.And.Not.Empty);
+            Assert.That(qResp.Data!.Members[0].ChannelRole, Is.EqualTo("channel_moderator"));
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
