@@ -92,6 +92,30 @@ namespace GetStream.Tests
             Assert.That(resp2.Data!.Channel!.Cid, Is.EqualTo(cid1));
         }
 
+        [Test, Order(4)]
+        public async Task QueryChannelsTest()
+        {
+            var userIds = await CreateTestUsers(1);
+            var creatorId = userIds[0];
+
+            var channelId = await CreateTestChannel(creatorId);
+
+            // Query by both type and id
+            var resp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["type"] = "messaging",
+                    ["id"] = channelId
+                }
+            });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Channels, Is.Not.Null.And.Not.Empty);
+            Assert.That(resp.Data!.Channels[0].Channel, Is.Not.Null);
+            Assert.That(resp.Data!.Channels[0].Channel!.ID, Is.EqualTo(channelId));
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
