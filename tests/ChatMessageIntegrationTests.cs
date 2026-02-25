@@ -293,6 +293,33 @@ namespace GetStream.Tests
             Assert.That(repliesResp.Data!.Messages.Count, Is.GreaterThanOrEqualTo(1));
         }
 
+        [Test, Order(11)]
+        public async Task SilentMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var resp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "This is a silent message",
+                        UserID = userId,
+                        Silent = true
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null);
+            Assert.That(resp.Data!.Message.Silent, Is.True);
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
