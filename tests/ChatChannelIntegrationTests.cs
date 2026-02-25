@@ -371,6 +371,69 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Members.Count, Is.GreaterThanOrEqualTo(3));
         }
 
+        [Test, Order(11)]
+        public async Task InviteAcceptReject()
+        {
+            var userIds = await CreateTestUsers(3);
+            var creatorId = userIds[0];
+            var invitee1 = userIds[1];
+            var invitee2 = userIds[2];
+
+            // Create channel with creator as member and 2 invited users
+            var channelId = $"test-ch-{RandomString(12)}";
+            await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest
+                {
+                    Data = new ChannelInput
+                    {
+                        CreatedByID = creatorId,
+                        Members = new List<ChannelMemberRequest>
+                        {
+                            new ChannelMemberRequest { UserID = creatorId }
+                        },
+                        Invites = new List<ChannelMemberRequest>
+                        {
+                            new ChannelMemberRequest { UserID = invitee1 },
+                            new ChannelMemberRequest { UserID = invitee2 }
+                        }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            CreatedChannels.Add(("messaging", channelId));
+
+            // Accept invite for invitee1
+            var acceptResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    AcceptInvite = true,
+                    UserID = invitee1
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(acceptResp.Data, Is.Not.Null);
+
+            // Reject invite for invitee2
+            var rejectResp = await StreamClient.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}",
+                null,
+                new UpdateChannelRequest
+                {
+                    RejectInvite = true,
+                    UserID = invitee2
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(rejectResp.Data, Is.Not.Null);
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
