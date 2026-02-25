@@ -897,6 +897,80 @@ namespace GetStream.Tests
             Assert.That(truncResp.Data, Is.Not.Null);
         }
 
+        [Test, Order(22)]
+        public async Task PinUnpinChannel()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+            var cid = $"messaging:{channelId}";
+
+            // Pin channel for memberId via UpdateMemberPartial
+            var pinResp = await StreamClient.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}/member",
+                new Dictionary<string, string> { ["user_id"] = memberId },
+                new UpdateMemberPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["pinned"] = true
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(pinResp.Data, Is.Not.Null);
+
+            // Verify via QueryChannels with pinned=true
+            var qResp = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["pinned"] = true,
+                    ["cid"] = cid
+                },
+                UserID = memberId
+            });
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels, Is.Not.Null);
+            Assert.That(qResp.Data!.Channels.Count, Is.EqualTo(1), "Should find 1 pinned channel");
+            Assert.That(qResp.Data!.Channels[0].Channel!.Cid, Is.EqualTo(cid));
+
+            // Unpin channel
+            var unpinResp = await StreamClient.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
+                "PATCH",
+                "/api/v2/chat/channels/{type}/{id}/member",
+                new Dictionary<string, string> { ["user_id"] = memberId },
+                new UpdateMemberPartialRequest
+                {
+                    Set = new Dictionary<string, object>
+                    {
+                        ["pinned"] = false
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unpinResp.Data, Is.Not.Null);
+
+            // Verify unpinned via QueryChannels with pinned=false
+            var qResp2 = await QueryChannels(new QueryChannelsRequest
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["pinned"] = false,
+                    ["cid"] = cid
+                },
+                UserID = memberId
+            });
+
+            Assert.That(qResp2.Data, Is.Not.Null);
+            Assert.That(qResp2.Data!.Channels, Is.Not.Null);
+            Assert.That(qResp2.Data!.Channels.Count, Is.EqualTo(1), "Should find channel with pinned=false");
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
