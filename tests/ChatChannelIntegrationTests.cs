@@ -1261,5 +1261,51 @@ namespace GetStream.Tests
             Assert.That(channel, Is.Not.Null);
             Assert.That(channel!.MessageCount, Is.Null, "MessageCount should be null when count_messages is disabled");
         }
+
+        [Test, Order(29)]
+        public async Task MarkUnreadWithTimestamp()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Send a message to get a valid timestamp
+            var sendResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest { Text = "test message for timestamp unread", UserID = creatorId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(sendResp.Data, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message, Is.Not.Null);
+            var msgTimestamp = sendResp.Data!.Message.CreatedAt;
+
+            // The NanosecondTimestampConverter writes DateTime as a nanosecond integer,
+            // but the API's message_timestamp field expects an RFC 3339 string.
+            // Pass the timestamp as a pre-formatted string via a raw dictionary to bypass
+            // the converter.
+            var timestampStr = new DateTimeOffset(msgTimestamp, TimeSpan.Zero)
+                .ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ");
+
+            // Mark unread using message timestamp instead of message ID
+            var unreadResp = await StreamClient.MakeRequestAsync<Dictionary<string, object>, Response>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/unread",
+                null,
+                new Dictionary<string, object>
+                {
+                    ["user_id"] = memberId,
+                    ["message_timestamp"] = timestampStr
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(unreadResp.Data, Is.Not.Null);
+        }
     }
 }
