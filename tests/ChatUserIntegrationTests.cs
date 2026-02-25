@@ -373,6 +373,85 @@ namespace GetStream.Tests
         }
 
         [Test, Order(13)]
+        public async Task PartialUpdatePrivacySettings()
+        {
+            var userId = $"privacy-partial-{Guid.NewGuid():N}";
+            CreatedUserIds.Add(userId);
+
+            // Create user without privacy settings
+            var createResp = await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest { ID = userId, Name = "Privacy Partial User" }
+                }
+            });
+
+            Assert.That(createResp.Data, Is.Not.Null);
+            var u = createResp.Data!.Users[userId];
+            Assert.That(u.PrivacySettings, Is.Null, "PrivacySettings should be nil initially");
+
+            // Partial update: set typing_indicators.enabled = true
+            var partialResp = await StreamClient.UpdateUsersPartialAsync(new UpdateUsersPartialRequest
+            {
+                Users = new List<UpdateUserPartialRequest>
+                {
+                    new UpdateUserPartialRequest
+                    {
+                        ID = userId,
+                        Set = new Dictionary<string, object>
+                        {
+                            ["privacy_settings"] = new Dictionary<string, object>
+                            {
+                                ["typing_indicators"] = new Dictionary<string, object>
+                                {
+                                    ["enabled"] = true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            Assert.That(partialResp.Data, Is.Not.Null);
+            var u2 = partialResp.Data!.Users[userId];
+            Assert.That(u2.PrivacySettings, Is.Not.Null);
+            Assert.That(u2.PrivacySettings!.TypingIndicators, Is.Not.Null);
+            Assert.That(u2.PrivacySettings!.TypingIndicators!.Enabled, Is.EqualTo(true));
+            Assert.That(u2.PrivacySettings!.ReadReceipts, Is.Null, "ReadReceipts should still be nil");
+
+            // Partial update: set read_receipts.enabled = false (typing_indicators should be preserved)
+            var partialResp2 = await StreamClient.UpdateUsersPartialAsync(new UpdateUsersPartialRequest
+            {
+                Users = new List<UpdateUserPartialRequest>
+                {
+                    new UpdateUserPartialRequest
+                    {
+                        ID = userId,
+                        Set = new Dictionary<string, object>
+                        {
+                            ["privacy_settings"] = new Dictionary<string, object>
+                            {
+                                ["read_receipts"] = new Dictionary<string, object>
+                                {
+                                    ["enabled"] = false
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            Assert.That(partialResp2.Data, Is.Not.Null);
+            var u3 = partialResp2.Data!.Users[userId];
+            Assert.That(u3.PrivacySettings, Is.Not.Null);
+            Assert.That(u3.PrivacySettings!.TypingIndicators, Is.Not.Null);
+            Assert.That(u3.PrivacySettings!.TypingIndicators!.Enabled, Is.EqualTo(true), "TypingIndicators should still be true");
+            Assert.That(u3.PrivacySettings!.ReadReceipts, Is.Not.Null);
+            Assert.That(u3.PrivacySettings!.ReadReceipts!.Enabled, Is.EqualTo(false));
+        }
+
+        [Test, Order(14)]
         public async Task DeleteUsers()
         {
             // Create 2 users specifically for deletion (don't track in CreatedUserIds since we delete them here)
