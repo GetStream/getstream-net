@@ -470,6 +470,43 @@ namespace GetStream.Tests
             Assert.That(showResp.Data, Is.Not.Null);
         }
 
+        [Test, Order(13)]
+        public async Task TruncateChannel()
+        {
+            var userIds = await CreateTestUsers(2);
+            var creatorId = userIds[0];
+            var memberId = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(creatorId, new List<string> { creatorId, memberId });
+
+            // Send 3 messages
+            await SendTestMessage("messaging", channelId, creatorId, "Message 1");
+            await SendTestMessage("messaging", channelId, creatorId, "Message 2");
+            await SendTestMessage("messaging", channelId, creatorId, "Message 3");
+
+            // Truncate
+            var truncResp = await StreamClient.MakeRequestAsync<TruncateChannelRequest, TruncateChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/truncate",
+                null,
+                new TruncateChannelRequest(),
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(truncResp.Data, Is.Not.Null);
+
+            // Verify messages are gone by re-querying the channel
+            var resp = await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest(),
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Messages, Is.Not.Null);
+            Assert.That(resp.Data!.Messages.Count, Is.EqualTo(0), "Messages should be empty after truncation");
+        }
+
         [Test, Order(3)]
         public async Task CreateChannelWithMembers()
         {
