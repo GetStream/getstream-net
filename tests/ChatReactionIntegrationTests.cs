@@ -60,6 +60,56 @@ namespace GetStream.Tests
             Assert.That(getResp.Data!.Reactions.Count, Is.GreaterThanOrEqualTo(2));
         }
 
+        [Test, Order(3)]
+        public async Task EnforceUniqueReaction()
+        {
+            var userIds = await CreateTestUsers(2);
+            var userId = userIds[0];
+            var userId2 = userIds[1];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId, userId2 });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Enforce unique reaction test " + RandomString(8));
+
+            // Send a "like" reaction from user2 with enforce_unique=true
+            await StreamClient.MakeRequestAsync<SendReactionRequest, SendReactionResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/reaction",
+                null,
+                new SendReactionRequest
+                {
+                    Reaction = new ReactionRequest { Type = "like", UserID = userId2 },
+                    EnforceUnique = true
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            // Send a "love" reaction from user2 with enforce_unique=true (should replace "like")
+            await StreamClient.MakeRequestAsync<SendReactionRequest, SendReactionResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/reaction",
+                null,
+                new SendReactionRequest
+                {
+                    Reaction = new ReactionRequest { Type = "love", UserID = userId2 },
+                    EnforceUnique = true
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            // Get all reactions and verify only 1 reaction from user2 (the "love" one)
+            var getResp = await StreamClient.MakeRequestAsync<object, GetReactionsResponse>(
+                "GET",
+                "/api/v2/chat/messages/{id}/reactions",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(getResp.Data, Is.Not.Null);
+            Assert.That(getResp.Data!.Reactions, Is.Not.Null);
+
+            var user2Reactions = getResp.Data!.Reactions.FindAll(r => r.UserID == userId2);
+            Assert.That(user2Reactions.Count, Is.EqualTo(1), "enforce_unique should result in only 1 reaction per user");
+            Assert.That(user2Reactions[0].Type, Is.EqualTo("love"), "The 'love' reaction should replace the 'like' reaction");
+        }
+
         [Test, Order(2)]
         public async Task DeleteReaction()
         {
