@@ -1028,6 +1028,76 @@ namespace GetStream
 
             return result;
         }
+
+        public async Task<StreamResponse<ListChannelTypesResponse>> ListChannelTypesAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await MakeRequestAsync<object, ListChannelTypesResponse>(
+                "GET",
+                "/api/v2/chat/channeltypes", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+
+        public async Task<StreamResponse<CreateChannelTypeResponse>> CreateChannelTypeAsync(CreateChannelTypeRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await MakeRequestAsync<CreateChannelTypeRequest, CreateChannelTypeResponse>(
+                "POST",
+                "/api/v2/chat/channeltypes", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+
+        public async Task<StreamResponse<GetChannelTypeResponse>> GetChannelTypeAsync(string name, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await MakeRequestAsync<object, GetChannelTypeResponse>(
+                "GET",
+                "/api/v2/chat/channeltypes/{name}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+
+        public async Task<StreamResponse<UpdateChannelTypeResponse>> UpdateChannelTypeAsync(string name, UpdateChannelTypeRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await MakeRequestAsync<UpdateChannelTypeRequest, UpdateChannelTypeResponse>(
+                "PUT",
+                "/api/v2/chat/channeltypes/{name}", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+
+        public async Task<StreamResponse<Response>> DeleteChannelTypeAsync(string name, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await MakeRequestAsync<object, Response>(
+                "DELETE",
+                "/api/v2/chat/channeltypes/{name}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
             }
         }
 

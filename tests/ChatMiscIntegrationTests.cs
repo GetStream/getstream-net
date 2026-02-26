@@ -110,6 +110,102 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(4)]
+        public async Task CreateUpdateDeleteChannelType()
+        {
+            // Channel type names must be lowercase alphanumeric
+            var typeName = "testtype" + RandomString(6);
+
+            try
+            {
+                // Create the channel type
+                var createResp = await StreamClient.CreateChannelTypeAsync(new CreateChannelTypeRequest
+                {
+                    Name = typeName,
+                    Automod = "disabled",
+                    AutomodBehavior = "flag",
+                    MaxMessageLength = 5000
+                });
+                Assert.That(createResp.Data, Is.Not.Null);
+                Assert.That(createResp.Data!.Name, Is.EqualTo(typeName));
+                Assert.That(createResp.Data!.MaxMessageLength, Is.EqualTo(5000));
+
+                // Channel types are eventually consistent — wait before proceeding
+                await Task.Delay(6000);
+
+                // Get the channel type with retry
+                GetChannelTypeResponse getResult = null;
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        var getResp = await StreamClient.GetChannelTypeAsync(typeName);
+                        getResult = getResp.Data;
+                        break;
+                    }
+                    catch
+                    {
+                        await Task.Delay(1000);
+                    }
+                }
+                Assert.That(getResult, Is.Not.Null);
+                Assert.That(getResult!.Name, Is.EqualTo(typeName));
+
+                // Update the channel type settings
+                var updateResp = await StreamClient.UpdateChannelTypeAsync(typeName, new UpdateChannelTypeRequest
+                {
+                    Automod = "disabled",
+                    AutomodBehavior = "flag",
+                    MaxMessageLength = 10000,
+                    TypingEvents = false
+                });
+                Assert.That(updateResp.Data, Is.Not.Null);
+                Assert.That(updateResp.Data!.MaxMessageLength, Is.EqualTo(10000));
+                Assert.That(updateResp.Data!.TypingEvents, Is.False);
+
+                // List channel types and verify our type appears
+                bool found = false;
+                for (int i = 0; i < 5; i++)
+                {
+                    var listResp = await StreamClient.ListChannelTypesAsync();
+                    Assert.That(listResp.Data, Is.Not.Null);
+                    Assert.That(listResp.Data!.ChannelTypes, Is.Not.Null);
+
+                    if (listResp.Data!.ChannelTypes.ContainsKey(typeName))
+                    {
+                        found = true;
+                        break;
+                    }
+                    await Task.Delay(1000);
+                }
+                Assert.That(found, Is.True, "Created channel type should appear in list");
+
+                // Delete the channel type with retry
+                Exception lastErr = null;
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        await StreamClient.DeleteChannelTypeAsync(typeName);
+                        lastErr = null;
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        lastErr = e;
+                        await Task.Delay(1000);
+                    }
+                }
+                if (lastErr != null)
+                    throw lastErr;
+            }
+            finally
+            {
+                // Cleanup in case test fails midway
+                try { await StreamClient.DeleteChannelTypeAsync(typeName); } catch { /* ignore */ }
+            }
+        }
+
         [Test, Order(3)]
         public async Task CreateListDeleteCommand()
         {
