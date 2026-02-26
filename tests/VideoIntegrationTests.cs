@@ -675,6 +675,97 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(11)]
+        public async Task CreateCallWithBackstageAndJoinAhead()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call with backstage enabled + join_ahead_time_seconds = 300
+                var createResp = await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest
+                        {
+                            CreatedByID = userId,
+                            SettingsOverride = new CallSettingsRequest
+                            {
+                                Backstage = new BackstageSettingsRequest
+                                {
+                                    Enabled = true,
+                                    JoinAheadTimeSeconds = 300
+                                }
+                            }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(createResp.Data, Is.Not.Null);
+                Assert.That(createResp.Data!.Call.JoinAheadTimeSeconds, Is.EqualTo(300));
+
+                // Update join_ahead_time_seconds to 600
+                var updateResp = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
+                    "PATCH",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new UpdateCallRequest
+                    {
+                        SettingsOverride = new CallSettingsRequest
+                        {
+                            Backstage = new BackstageSettingsRequest
+                            {
+                                JoinAheadTimeSeconds = 600
+                            }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(updateResp.Data, Is.Not.Null);
+                Assert.That(updateResp.Data!.Call.JoinAheadTimeSeconds, Is.EqualTo(600));
+
+                // Update join_ahead_time_seconds to 0 (disabled)
+                var updateResp2 = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
+                    "PATCH",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new UpdateCallRequest
+                    {
+                        SettingsOverride = new CallSettingsRequest
+                        {
+                            Backstage = new BackstageSettingsRequest
+                            {
+                                JoinAheadTimeSeconds = 0
+                            }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(updateResp2.Data, Is.Not.Null);
+                Assert.That(updateResp2.Data!.Call.JoinAheadTimeSeconds, Is.EqualTo(0));
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
