@@ -851,6 +851,106 @@ namespace GetStream.Tests
             await WaitForTask(deleteResp.Data.TaskID!);
         }
 
+        [Test, Order(14)]
+        public async Task Teams()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            // Update user to have teams
+            await StreamClient.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    [userId] = new UserRequest { ID = userId, Teams = new List<string> { "red", "blue" } }
+                }
+            });
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call with team="blue"
+                var createResp = await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest
+                        {
+                            CreatedByID = userId,
+                            Team = "blue"
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(createResp.Data, Is.Not.Null);
+                Assert.That(createResp.Data!.Call, Is.Not.Null);
+                Assert.That(createResp.Data.Call.Team, Is.EqualTo("blue"));
+
+                // Query users with teams $in ["red", "blue"] filter, verify our user found
+                var usersResp = await QueryUsers(new QueryUsersPayload
+                {
+                    FilterConditions = new Dictionary<string, object>
+                    {
+                        ["id"] = userId,
+                        ["teams"] = new Dictionary<string, object>
+                        {
+                            ["$in"] = new List<string> { "red", "blue" }
+                        }
+                    }
+                });
+                Assert.That(usersResp.Data, Is.Not.Null);
+                Assert.That(usersResp.Data!.Users, Is.Not.Null);
+                var foundUserIds = new HashSet<string>(usersResp.Data.Users.Select(u => u.ID));
+                Assert.That(foundUserIds, Does.Contain(userId));
+
+                // Query users with teams=null (users without teams) - just verify no error
+                var noTeamsResp = await QueryUsers(new QueryUsersPayload
+                {
+                    FilterConditions = new Dictionary<string, object>
+                    {
+                        ["teams"] = null!
+                    }
+                });
+                Assert.That(noTeamsResp.Data, Is.Not.Null);
+
+                // Query calls with team="blue" filter, verify our call found
+                var callsResp = await StreamClient.MakeRequestAsync<QueryCallsRequest, QueryCallsResponse>(
+                    "POST",
+                    "/api/v2/video/calls",
+                    null,
+                    new QueryCallsRequest
+                    {
+                        FilterConditions = new Dictionary<string, object>
+                        {
+                            ["id"] = callId,
+                            ["team"] = new Dictionary<string, object> { ["$eq"] = "blue" }
+                        }
+                    },
+                    null);
+
+                Assert.That(callsResp.Data, Is.Not.Null);
+                Assert.That(callsResp.Data!.Calls, Is.Not.Null);
+                Assert.That(callsResp.Data.Calls.Count, Is.GreaterThan(0));
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
