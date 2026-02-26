@@ -343,6 +343,67 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(6)]
+        public async Task MuteSomeUsers()
+        {
+            // Create 2 users: one to be the muter, one to be muted
+            var userIds = await CreateTestUsers(2);
+            var muterId = userIds[0];
+            var targetId = userIds[1];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call with both users as members
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest
+                        {
+                            CreatedByID = muterId,
+                            Members = userIds.Select(id => new MemberRequest { UserID = id }).ToList()
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Mute specific users (audio, video, screenshare)
+                var muteResp = await StreamClient.MakeRequestAsync<MuteUsersRequest, MuteUsersResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/mute_users",
+                    null,
+                    new MuteUsersRequest
+                    {
+                        MutedByID = muterId,
+                        UserIds = new List<string> { targetId },
+                        Audio = true,
+                        Video = true,
+                        Screenshare = true
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(muteResp.Data, Is.Not.Null);
+                Assert.That(muteResp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(4)]
         public async Task SendCustomEvent()
         {
