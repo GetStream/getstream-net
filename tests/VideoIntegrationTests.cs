@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Models;
@@ -8,9 +9,9 @@ using NUnit.Framework;
 namespace GetStream.Tests
 {
     [TestFixture]
-    public class VideoIntegrationTests : TestBase
+    public class VideoIntegrationTests : ChatTestBase
     {
-        [Test]
+        [Test, Order(1)]
         public async Task CRUDCallTypeOperations()
         {
             var callTypeName = "calltype-" + Guid.NewGuid().ToString("N")[..16];
@@ -203,6 +204,54 @@ namespace GetStream.Tests
                             await Task.Delay(3000);
                     }
                 }
+            }
+        }
+
+        [Test, Order(2)]
+        public async Task CreateCallWithMembers()
+        {
+            // Create 2 test users to add as members
+            var userIds = await CreateTestUsers(2);
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call with members
+                var createResp = await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest
+                        {
+                            CreatedByID = userIds[0],
+                            Members = userIds.Select(id => new MemberRequest { UserID = id }).ToList()
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(createResp.Data, Is.Not.Null);
+                Assert.That(createResp.Data!.Call, Is.Not.Null);
+                Assert.That(createResp.Data.Call.ID, Is.EqualTo(callId));
+                Assert.That(createResp.Data.Members, Is.Not.Null);
+                Assert.That(createResp.Data.Members.Count, Is.GreaterThanOrEqualTo(2));
+            }
+            finally
+            {
+                // Clean up: delete the call
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
             }
         }
     }
