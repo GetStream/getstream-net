@@ -218,6 +218,16 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.ChannelTypes.ContainsKey("messaging"), Is.True, "Default 'messaging' channel type should be present");
         }
 
+        [Test, Order(6)]
+        public async Task ListPermissions()
+        {
+            // List all permissions - should return a non-empty list
+            var resp = await StreamClient.ListPermissionsAsync();
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Permissions, Is.Not.Null);
+            Assert.That(resp.Data!.Permissions, Is.Not.Empty, "Should have at least one permission");
+        }
+
         [Test, Order(3)]
         public async Task CreateListDeleteCommand()
         {
