@@ -552,6 +552,48 @@ namespace GetStream.Tests
             await WaitForTask(batchResp.Data.TaskID);
         }
 
+        [Test, Order(10)]
+        public async Task UserBlocking()
+        {
+            // Create 2 users: alice (blocker) and bob (to be blocked)
+            var userIds = await CreateTestUsers(2);
+            var aliceId = userIds[0];
+            var bobId = userIds[1];
+
+            // Block bob from alice's perspective
+            var blockResp = await StreamClient.BlockUsersAsync(new BlockUsersRequest
+            {
+                BlockedUserID = bobId,
+                UserID = aliceId
+            });
+            Assert.That(blockResp.Data, Is.Not.Null);
+
+            // Verify bob is in alice's blocked list
+            var getBlockedResp = await StreamClient.GetBlockedUsersAsync(new { user_id = aliceId });
+            Assert.That(getBlockedResp.Data, Is.Not.Null);
+            Assert.That(getBlockedResp.Data!.Blocks, Is.Not.Null);
+            Assert.That(getBlockedResp.Data.Blocks.Count, Is.GreaterThanOrEqualTo(1));
+
+            var bobBlock = getBlockedResp.Data.Blocks.Find(b => b.BlockedUserID == bobId);
+            Assert.That(bobBlock, Is.Not.Null);
+            Assert.That(bobBlock!.UserID, Is.EqualTo(aliceId));
+            Assert.That(bobBlock.BlockedUserID, Is.EqualTo(bobId));
+
+            // Unblock bob from alice's perspective
+            var unblockResp = await StreamClient.UnblockUsersAsync(new UnblockUsersRequest
+            {
+                BlockedUserID = bobId,
+                UserID = aliceId
+            });
+            Assert.That(unblockResp.Data, Is.Not.Null);
+
+            // Verify bob is no longer in alice's blocked list
+            var getBlockedResp2 = await StreamClient.GetBlockedUsersAsync(new { user_id = aliceId });
+            Assert.That(getBlockedResp2.Data, Is.Not.Null);
+            var bobBlockAfter = getBlockedResp2.Data!.Blocks?.Find(b => b.BlockedUserID == bobId);
+            Assert.That(bobBlockAfter, Is.Null);
+        }
+
         [Test, Order(9)]
         public async Task CreateCallWithSessionTimer()
         {
