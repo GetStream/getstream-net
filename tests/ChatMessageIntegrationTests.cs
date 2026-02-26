@@ -715,6 +715,54 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Message, Is.Not.Null);
         }
 
+        [Test, Order(20)]
+        public async Task PinExpiration()
+        {
+            var userIds = await CreateTestUsers(2);
+            var userId = userIds[0];
+            var userId2 = userIds[1];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId, userId2 });
+
+            // Send a message from user2
+            var msgId = await SendTestMessage("messaging", channelId, userId2, "Message to pin with expiry " + RandomString(6));
+
+            // Pin with 3-second expiry
+            var expiry = DateTime.UtcNow.AddSeconds(3).ToString("o");
+            var pinResp = await StreamClient.MakeRequestAsync<UpdateMessagePartialRequest, UpdateMessagePartialResponse>(
+                "PUT",
+                "/api/v2/chat/messages/{id}",
+                null,
+                new UpdateMessagePartialRequest
+                {
+                    UserID = userId,
+                    Set = new Dictionary<string, object>
+                    {
+                        ["pinned"] = true,
+                        ["pin_expires"] = expiry
+                    }
+                },
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(pinResp.Data, Is.Not.Null);
+            Assert.That(pinResp.Data!.Message, Is.Not.Null);
+            Assert.That(pinResp.Data!.Message.Pinned, Is.True, "Message should be pinned");
+
+            // Wait for pin to expire
+            await Task.Delay(4000);
+
+            // Verify pin has expired
+            var getResp = await StreamClient.MakeRequestAsync<object, GetMessageResponse>(
+                "GET",
+                "/api/v2/chat/messages/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(getResp.Data, Is.Not.Null);
+            Assert.That(getResp.Data!.Message, Is.Not.Null);
+            Assert.That(getResp.Data!.Message.Pinned, Is.False, "Pin should have expired after 4 seconds");
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
