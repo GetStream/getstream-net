@@ -498,6 +498,34 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.TotalUnreadCount, Is.GreaterThanOrEqualTo(0));
         }
 
+        [Test, Order(15)]
+        public async Task GetUnreadCountsBatch()
+        {
+            // Create 2 users and a channel with a message so there's something to count
+            var userIds = await CreateTestUsers(2);
+            var userId1 = userIds[0];
+            var userId2 = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(userId1, new List<string> { userId1, userId2 });
+            await SendTestMessage("messaging", channelId, userId1, "Message for batch unread counts test");
+
+            // Get unread counts for both users in batch
+            var resp = await StreamClient.MakeRequestAsync<UnreadCountsBatchRequest, UnreadCountsBatchResponse>(
+                "POST",
+                "/api/v2/chat/unread_batch",
+                null,
+                new UnreadCountsBatchRequest
+                {
+                    UserIds = new List<string> { userId1, userId2 }
+                },
+                null);
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.CountsByUser, Is.Not.Null);
+            Assert.That(resp.Data!.CountsByUser.ContainsKey(userId1), Is.True, "Should have counts for user1");
+            Assert.That(resp.Data!.CountsByUser.ContainsKey(userId2), Is.True, "Should have counts for user2");
+        }
+
         [Test, Order(13)]
         public async Task Threads()
         {
