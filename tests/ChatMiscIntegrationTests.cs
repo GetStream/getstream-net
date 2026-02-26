@@ -228,6 +228,16 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Permissions, Is.Not.Empty, "Should have at least one permission");
         }
 
+        [Test, Order(7)]
+        public async Task CreatePermission()
+        {
+            // CreatePermission is hidden from the generated spec (Ignore: true in backend).
+            // The Go reference also does not test this endpoint for the same reason.
+            // See: chat_misc_integration_test.go lines 1644-1646
+            Assert.Ignore("CreatePermission is not available in the generated API spec (backend marks it as Ignore: true)");
+            await Task.CompletedTask;
+        }
+
         [Test, Order(3)]
         public async Task CreateListDeleteCommand()
         {
