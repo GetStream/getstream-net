@@ -729,5 +729,30 @@ namespace GetStream.Tests
             var deleteResp = await StreamClient.DeleteReminderAsync(msgId, userId);
             Assert.That(deleteResp.Data, Is.Not.Null);
         }
+
+        [Test, Order(18)]
+        public async Task QueryTeamUsageStats()
+        {
+            try
+            {
+                var resp = await StreamClient.MakeRequestAsync<Dictionary<string, object>, Response>(
+                    "POST",
+                    "/api/v2/chat/stats/team_usage",
+                    null,
+                    new Dictionary<string, object>(),
+                    null);
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.Duration, Is.Not.Null);
+            }
+            catch (Exception e) when (
+                e.Message.Contains("not available") ||
+                e.Message.Contains("not found") ||
+                e.Message.Contains("Not Found") ||
+                e.Message.Contains("Token signature"))
+            {
+                Assert.Ignore("QueryTeamUsageStats not available on this app");
+            }
+        }
     }
 }
