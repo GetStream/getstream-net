@@ -816,6 +816,41 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(13)]
+        public async Task HardDeleteCall()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            // Create call
+            await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                "POST",
+                "/api/v2/video/call/{type}/{id}",
+                null,
+                new GetOrCreateCallRequest
+                {
+                    Data = new CallRequest { CreatedByID = userId }
+                },
+                new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+            // Hard delete the call
+            var deleteResp = await StreamClient.MakeRequestAsync<DeleteCallRequest, DeleteCallResponse>(
+                "POST",
+                "/api/v2/video/call/{type}/{id}/delete",
+                null,
+                new DeleteCallRequest { Hard = true },
+                new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+            Assert.That(deleteResp.Data, Is.Not.Null);
+            Assert.That(deleteResp.Data!.TaskID, Is.Not.Null.And.Not.Empty);
+
+            // Poll task until completed
+            await WaitForTask(deleteResp.Data.TaskID!);
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
