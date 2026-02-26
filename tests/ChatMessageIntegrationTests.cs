@@ -654,6 +654,67 @@ namespace GetStream.Tests
             Assert.That(undelResp.Data!.Message!.Text, Is.EqualTo("Message to undelete"));
         }
 
+        [Test, Order(18)]
+        public async Task RestrictedVisibility()
+        {
+            var userIds = await CreateTestUsers(2);
+            var userId = userIds[0];
+            var userId2 = userIds[1];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId, userId2 });
+
+            SendMessageResponse sendData;
+            try
+            {
+                var sendResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                    "POST",
+                    "/api/v2/chat/channels/{type}/{id}/message",
+                    null,
+                    new SendMessageRequest
+                    {
+                        Message = new MessageRequest
+                        {
+                            Text = "Secret message",
+                            UserID = userId,
+                            RestrictedVisibility = new List<string> { userId }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+                Assert.That(sendResp.Data, Is.Not.Null);
+                Assert.That(sendResp.Data!.Message, Is.Not.Null);
+                sendData = sendResp.Data!;
+            }
+            catch (Exception e) when (e.Message.Contains("private messaging is not allowed") || e.Message.Contains("not enabled") || e.Message.Contains("feature flag"))
+            {
+                Assert.Ignore("RestrictedVisibility (private messaging) is not enabled for this app");
+                return;
+            }
+
+            Assert.That(sendData.Message.RestrictedVisibility, Is.Not.Null);
+            Assert.That(sendData.Message.RestrictedVisibility, Contains.Item(userId));
+        }
+
+        [Test, Order(19)]
+        public async Task DeleteMessageForMe()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var msgId = await SendTestMessage("messaging", channelId, userId, "Message to delete for me " + RandomString(6));
+
+            // Delete the message only for the sender (not for everyone)
+            var resp = await StreamClient.MakeRequestAsync<object, DeleteMessageResponse>(
+                "DELETE",
+                "/api/v2/chat/messages/{id}",
+                new Dictionary<string, string> { ["delete_for_me"] = "true", ["deleted_by"] = userId },
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null);
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
