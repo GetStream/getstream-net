@@ -206,6 +206,18 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(5)]
+        public async Task ListChannelTypes()
+        {
+            var resp = await StreamClient.ListChannelTypesAsync();
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.ChannelTypes, Is.Not.Null);
+            Assert.That(resp.Data!.ChannelTypes, Is.Not.Empty);
+
+            // Default channel types should always be present
+            Assert.That(resp.Data!.ChannelTypes.ContainsKey("messaging"), Is.True, "Default 'messaging' channel type should be present");
+        }
+
         [Test, Order(3)]
         public async Task CreateListDeleteCommand()
         {
