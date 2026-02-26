@@ -207,6 +207,89 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(3)]
+        public async Task BlockUnblockUserFromCalls()
+        {
+            // Create a user to block
+            var userIds = await CreateTestUsers(1);
+            var badUserId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest { CreatedByID = badUserId }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Block user from call
+                var blockResp = await StreamClient.MakeRequestAsync<BlockUserRequest, BlockUserResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/block",
+                    null,
+                    new BlockUserRequest { UserID = badUserId },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(blockResp.Data, Is.Not.Null);
+
+                // Get call and verify user is blocked
+                var getResp = await StreamClient.MakeRequestAsync<object, GetCallResponse>(
+                    "GET",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    null,
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(getResp.Data, Is.Not.Null);
+                Assert.That(getResp.Data!.Call, Is.Not.Null);
+                Assert.That(getResp.Data.Call.BlockedUserIds, Does.Contain(badUserId));
+
+                // Unblock user from call
+                var unblockResp = await StreamClient.MakeRequestAsync<UnblockUserRequest, UnblockUserResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/unblock",
+                    null,
+                    new UnblockUserRequest { UserID = badUserId },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(unblockResp.Data, Is.Not.Null);
+
+                // Get call and verify user is no longer blocked
+                var getResp2 = await StreamClient.MakeRequestAsync<object, GetCallResponse>(
+                    "GET",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    null,
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(getResp2.Data, Is.Not.Null);
+                Assert.That(getResp2.Data!.Call, Is.Not.Null);
+                Assert.That(getResp2.Data.Call.BlockedUserIds, Does.Not.Contain(badUserId));
+            }
+            finally
+            {
+                // Clean up: delete the call
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
