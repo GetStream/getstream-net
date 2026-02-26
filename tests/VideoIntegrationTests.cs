@@ -523,6 +523,35 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(8)]
+        public async Task DeactivateUser()
+        {
+            var userIds = await CreateTestUsers(2);
+            var aliceId = userIds[0];
+            var bobId = userIds[1];
+
+            // Deactivate single user
+            var deactivateResp = await StreamClient.DeactivateUserAsync(aliceId, new DeactivateUserRequest());
+            Assert.That(deactivateResp.Data, Is.Not.Null);
+            Assert.That(deactivateResp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+
+            // Reactivate single user
+            var reactivateResp = await StreamClient.ReactivateUserAsync(aliceId, new ReactivateUserRequest());
+            Assert.That(reactivateResp.Data, Is.Not.Null);
+            Assert.That(reactivateResp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+
+            // Batch deactivate multiple users
+            var batchResp = await StreamClient.DeactivateUsersAsync(new DeactivateUsersRequest
+            {
+                UserIds = new List<string> { aliceId, bobId }
+            });
+            Assert.That(batchResp.Data, Is.Not.Null);
+            Assert.That(batchResp.Data!.TaskID, Is.Not.Null.And.Not.Empty);
+
+            // Poll task until complete
+            await WaitForTask(batchResp.Data.TaskID);
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
