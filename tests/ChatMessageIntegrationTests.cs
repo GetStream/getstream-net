@@ -1049,5 +1049,65 @@ namespace GetStream.Tests
             Assert.That(resp.Data, Is.Not.Null);
             Assert.That(resp.Data!.Results, Is.Not.Null.And.Not.Empty);
         }
+
+        [Test, Order(27)]
+        public async Task ChannelRoleInMember()
+        {
+            var userIds = await CreateTestUsers(2);
+            var memberUserId = userIds[0];
+            var moderatorUserId = userIds[1];
+
+            var channelId = $"test-ch-{RandomString(12)}";
+            await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest
+                {
+                    Data = new ChannelInput
+                    {
+                        CreatedByID = memberUserId,
+                        Members = new List<ChannelMemberRequest>
+                        {
+                            new ChannelMemberRequest { UserID = memberUserId, ChannelRole = "channel_member" },
+                            new ChannelMemberRequest { UserID = moderatorUserId, ChannelRole = "channel_moderator" }
+                        }
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+            CreatedChannels.Add(("messaging", channelId));
+
+            // Send message from channel_member and verify role in response
+            var memberMsgResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest { Text = "message from channel_member", UserID = memberUserId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(memberMsgResp.Data, Is.Not.Null);
+            Assert.That(memberMsgResp.Data!.Message, Is.Not.Null);
+            Assert.That(memberMsgResp.Data!.Message.Member, Is.Not.Null, "Member should be present in message response");
+            Assert.That(memberMsgResp.Data!.Message.Member!.ChannelRole, Is.EqualTo("channel_member"));
+
+            // Send message from channel_moderator and verify role in response
+            var modMsgResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest { Text = "message from channel_moderator", UserID = moderatorUserId }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(modMsgResp.Data, Is.Not.Null);
+            Assert.That(modMsgResp.Data!.Message, Is.Not.Null);
+            Assert.That(modMsgResp.Data!.Message.Member, Is.Not.Null, "Member should be present in message response");
+            Assert.That(modMsgResp.Data!.Message.Member!.ChannelRole, Is.EqualTo("channel_moderator"));
+        }
     }
 }
