@@ -475,6 +475,29 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(14)]
+        public async Task GetUnreadCounts()
+        {
+            // Create 2 users and a channel with a message so there's something to count
+            var userIds = await CreateTestUsers(2);
+            var userId1 = userIds[0];
+            var userId2 = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(userId1, new List<string> { userId1, userId2 });
+            await SendTestMessage("messaging", channelId, userId1, "Message for unread counts test");
+
+            // Get unread counts for user2 (who received a message)
+            var resp = await StreamClient.MakeRequestAsync<object, WrappedUnreadCountsResponse>(
+                "GET",
+                "/api/v2/chat/unread",
+                new Dictionary<string, string> { ["user_id"] = userId2 },
+                null,
+                null);
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.TotalUnreadCount, Is.GreaterThanOrEqualTo(0));
+        }
+
         [Test, Order(13)]
         public async Task Threads()
         {
