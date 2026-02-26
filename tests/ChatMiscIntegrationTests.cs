@@ -474,5 +474,101 @@ namespace GetStream.Tests
                 try { await StreamClient.DeleteCommandAsync(cmdName); } catch { /* ignore */ }
             }
         }
+
+        [Test, Order(13)]
+        public async Task Threads()
+        {
+            // Create 2 users and a channel with both as members
+            var userIds = await CreateTestUsers(2);
+            var userId1 = userIds[0];
+            var userId2 = userIds[1];
+
+            var channelId = await CreateTestChannelWithMembers(userId1, new List<string> { userId1, userId2 });
+            var channelCid = "messaging:" + channelId;
+
+            // Create a thread: send a parent message then two replies
+            var parentId = await SendTestMessage("messaging", channelId, userId1, "Thread parent message");
+
+            // First reply from user2
+            await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "First reply in thread",
+                        UserID = userId2,
+                        ParentID = parentId
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            // Second reply from user1
+            await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "Second reply in thread",
+                        UserID = userId1,
+                        ParentID = parentId
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            // Query threads filtering by channel_cid
+            var queryResp = await StreamClient.MakeRequestAsync<QueryThreadsRequest, QueryThreadsResponse>(
+                "POST",
+                "/api/v2/chat/threads",
+                null,
+                new QueryThreadsRequest
+                {
+                    UserID = userId1,
+                    Filter = new Dictionary<string, object>
+                    {
+                        ["channel_cid"] = new Dictionary<string, object>
+                        {
+                            ["$eq"] = channelCid
+                        }
+                    }
+                },
+                null);
+
+            Assert.That(queryResp.Data, Is.Not.Null);
+            Assert.That(queryResp.Data!.Threads, Is.Not.Null);
+            Assert.That(queryResp.Data!.Threads, Is.Not.Empty, "Should have at least one thread");
+
+            // Verify our thread appears and was created by user2 (first reply sender)
+            bool found = false;
+            foreach (var thread in queryResp.Data!.Threads)
+            {
+                if (thread.ParentMessageID == parentId)
+                {
+                    found = true;
+                    Assert.That(thread.CreatedByUserID, Is.EqualTo(userId2),
+                        "Thread's CreatedByUserID should be the first reply sender");
+                    break;
+                }
+            }
+            Assert.That(found, Is.True, $"Thread with parent {parentId} should appear in query results");
+
+            // Also verify GetThread works for the parent message
+            var getResp = await StreamClient.MakeRequestAsync<object, GetThreadResponse>(
+                "GET",
+                "/api/v2/chat/threads/{message_id}",
+                new Dictionary<string, string> { ["reply_limit"] = "10" },
+                null,
+                new Dictionary<string, string> { ["message_id"] = parentId });
+
+            Assert.That(getResp.Data, Is.Not.Null);
+            Assert.That(getResp.Data!.Thread, Is.Not.Null);
+            Assert.That(getResp.Data!.Thread.ParentMessageID, Is.EqualTo(parentId));
+            Assert.That(getResp.Data!.Thread.LatestReplies.Count, Is.GreaterThanOrEqualTo(2));
+        }
     }
 }
