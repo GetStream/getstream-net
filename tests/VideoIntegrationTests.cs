@@ -1104,6 +1104,89 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(17)]
+        public async Task DeleteRecordingsAndTranscriptions()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest { CreatedByID = userId }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Attempt to delete a non-existent recording - expect an error
+                bool recordingErrorThrown = false;
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, DeleteRecordingResponse>(
+                        "DELETE",
+                        "/api/v2/video/call/{type}/{id}/{session}/recordings/{filename}",
+                        null,
+                        null,
+                        new Dictionary<string, string>
+                        {
+                            ["type"] = callType,
+                            ["id"] = callId,
+                            ["session"] = "non-existent-session",
+                            ["filename"] = "non-existent-recording.mp4"
+                        });
+                }
+                catch (Exception)
+                {
+                    recordingErrorThrown = true;
+                }
+                Assert.That(recordingErrorThrown, Is.True, "Expected error when deleting non-existent recording");
+
+                // Attempt to delete a non-existent transcription - expect an error
+                bool transcriptionErrorThrown = false;
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, DeleteTranscriptionResponse>(
+                        "DELETE",
+                        "/api/v2/video/call/{type}/{id}/{session}/transcriptions/{filename}",
+                        null,
+                        null,
+                        new Dictionary<string, string>
+                        {
+                            ["type"] = callType,
+                            ["id"] = callId,
+                            ["session"] = "non-existent-session",
+                            ["filename"] = "non-existent-transcription.vtt"
+                        });
+                }
+                catch (Exception)
+                {
+                    transcriptionErrorThrown = true;
+                }
+                Assert.That(transcriptionErrorThrown, Is.True, "Expected error when deleting non-existent transcription");
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
