@@ -322,6 +322,15 @@ namespace GetStream.Tests
             Assert.That(qResp2.Data!.Bans, Is.Empty, "Bans should be empty after unban");
         }
 
+        [Test, Order(11)]
+        public async Task GetAppSettings()
+        {
+            var resp = await StreamClient.GetAppAsync();
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.App, Is.Not.Null);
+            Assert.That(resp.Data!.App.Name, Is.Not.Empty, "App name should not be empty");
+        }
+
         [Test, Order(10)]
         public async Task MuteUnmuteUser()
         {
