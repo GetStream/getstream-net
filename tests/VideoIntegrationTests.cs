@@ -552,6 +552,87 @@ namespace GetStream.Tests
             await WaitForTask(batchResp.Data.TaskID);
         }
 
+        [Test, Order(9)]
+        public async Task CreateCallWithSessionTimer()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call with max_duration_seconds = 3600
+                var createResp = await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest
+                        {
+                            CreatedByID = userId,
+                            SettingsOverride = new CallSettingsRequest
+                            {
+                                Limits = new LimitsSettingsRequest { MaxDurationSeconds = 3600 }
+                            }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(createResp.Data, Is.Not.Null);
+                Assert.That(createResp.Data!.Call.Settings.Limits.MaxDurationSeconds, Is.EqualTo(3600));
+
+                // Update call with max_duration_seconds = 7200
+                var updateResp = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
+                    "PATCH",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new UpdateCallRequest
+                    {
+                        SettingsOverride = new CallSettingsRequest
+                        {
+                            Limits = new LimitsSettingsRequest { MaxDurationSeconds = 7200 }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(updateResp.Data, Is.Not.Null);
+                Assert.That(updateResp.Data!.Call.Settings.Limits.MaxDurationSeconds, Is.EqualTo(7200));
+
+                // Update call with max_duration_seconds = 0 (disabled)
+                var updateResp2 = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
+                    "PATCH",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new UpdateCallRequest
+                    {
+                        SettingsOverride = new CallSettingsRequest
+                        {
+                            Limits = new LimitsSettingsRequest { MaxDurationSeconds = 0 }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(updateResp2.Data, Is.Not.Null);
+                Assert.That(updateResp2.Data!.Call.Settings.Limits.MaxDurationSeconds, Is.EqualTo(0));
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
