@@ -1098,6 +1098,61 @@ namespace GetStream
 
             return result;
         }
+
+        public async Task<StreamResponse<ReminderResponseData>> CreateReminderAsync(string messageId, CreateReminderRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["message_id"] = messageId,
+            };
+
+            return await MakeRequestAsync<CreateReminderRequest, ReminderResponseData>(
+                "POST",
+                "/api/v2/chat/messages/{message_id}/reminders", null, request, pathParams,
+                cancellationToken);
+        }
+
+        public async Task<StreamResponse<UpdateReminderResponse>> UpdateReminderAsync(string messageId, UpdateReminderRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["message_id"] = messageId,
+            };
+
+            return await MakeRequestAsync<UpdateReminderRequest, UpdateReminderResponse>(
+                "PATCH",
+                "/api/v2/chat/messages/{message_id}/reminders", null, request, pathParams,
+                cancellationToken);
+        }
+
+        public async Task<StreamResponse<DeleteReminderResponse>> DeleteReminderAsync(string messageId, string userId,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["message_id"] = messageId,
+            };
+            var queryParams = new Dictionary<string, string>
+            {
+                ["user_id"] = userId,
+            };
+
+            return await MakeRequestAsync<object, DeleteReminderResponse>(
+                "DELETE",
+                "/api/v2/chat/messages/{message_id}/reminders", queryParams, null, pathParams,
+                cancellationToken);
+        }
+
+        public async Task<StreamResponse<QueryRemindersResponse>> QueryRemindersAsync(QueryRemindersRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            return await MakeRequestAsync<QueryRemindersRequest, QueryRemindersResponse>(
+                "POST",
+                "/api/v2/chat/reminders/query", null, request, null,
+                cancellationToken);
+        }
             }
         }
 
