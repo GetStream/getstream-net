@@ -331,6 +331,40 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.App.Name, Is.Not.Empty, "App name should not be empty");
         }
 
+        [Test, Order(12)]
+        public async Task ExportChannels()
+        {
+            // Create 1 user and a channel with that user as member
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannel(userId);
+
+            // Send a message so the channel has content to export
+            await SendTestMessage("messaging", channelId, userId, "Message for export test");
+
+            var cid = "messaging:" + channelId;
+
+            // Export the channel
+            var exportResp = await StreamClient.MakeRequestAsync<ExportChannelsRequest, ExportChannelsResponse>(
+                "POST",
+                "/api/v2/chat/export_channels",
+                null,
+                new ExportChannelsRequest
+                {
+                    Channels = new List<ChannelExport>
+                    {
+                        new ChannelExport { Cid = cid }
+                    }
+                },
+                null);
+
+            Assert.That(exportResp.Data, Is.Not.Null);
+            Assert.That(exportResp.Data!.TaskID, Is.Not.Empty, "Export should return a task ID");
+
+            // Wait for the export task to complete
+            await WaitForTask(exportResp.Data!.TaskID);
+        }
+
         [Test, Order(10)]
         public async Task MuteUnmuteUser()
         {
