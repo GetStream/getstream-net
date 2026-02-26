@@ -766,6 +766,56 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(12)]
+        public async Task DeleteCall()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            // Create call
+            await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                "POST",
+                "/api/v2/video/call/{type}/{id}",
+                null,
+                new GetOrCreateCallRequest
+                {
+                    Data = new CallRequest { CreatedByID = userId }
+                },
+                new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+            // Soft delete the call
+            var deleteResp = await StreamClient.MakeRequestAsync<DeleteCallRequest, DeleteCallResponse>(
+                "POST",
+                "/api/v2/video/call/{type}/{id}/delete",
+                null,
+                new DeleteCallRequest(),
+                new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+            Assert.That(deleteResp.Data, Is.Not.Null);
+            Assert.That(deleteResp.Data!.Call, Is.Not.Null);
+            Assert.That(deleteResp.Data.TaskID, Is.Null);
+
+            // Verify the call is no longer accessible
+            try
+            {
+                await StreamClient.MakeRequestAsync<object, GetCallResponse>(
+                    "GET",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    null,
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                Assert.Fail("Expected an error when getting deleted call, but none was thrown");
+            }
+            catch (Exception ex)
+            {
+                Assert.That(ex.Message, Does.Contain("Can't find call with id").Or.Contain("404").Or.Contain("not found"),
+                    $"Expected error about call not found but got: {ex.Message}");
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
