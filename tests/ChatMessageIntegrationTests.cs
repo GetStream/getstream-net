@@ -968,6 +968,48 @@ namespace GetStream.Tests
             Assert.That(errorThrown, Is.False, "Using Offset with Sort should succeed (API allows this combination)");
         }
 
+        [Test, Order(26)]
+        public async Task SearchOffsetAndNextError()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            // Using Offset with Next together should error
+            var payload = new SearchPayload
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["members"] = new Dictionary<string, object> { ["$in"] = new List<string> { userId } }
+                },
+                Query = "test",
+                Offset = 1,
+                Next = RandomString(5)
+            };
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+            var json = JsonSerializer.Serialize(payload, jsonOptions);
+
+            bool exceptionThrown = false;
+            try
+            {
+                await StreamClient.MakeRequestAsync<object, SearchResponse>(
+                    "GET",
+                    "/api/v2/chat/search",
+                    new Dictionary<string, string> { ["payload"] = json },
+                    null,
+                    null);
+            }
+            catch (Exception)
+            {
+                exceptionThrown = true;
+            }
+            Assert.That(exceptionThrown, Is.True, "Using Offset with Next should return an error");
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
