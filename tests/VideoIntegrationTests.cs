@@ -455,6 +455,74 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(7)]
+        public async Task UpdateUserPermissions()
+        {
+            // Create a user to grant/revoke permissions for
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest { CreatedByID = userId }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Revoke permissions
+                var revokeResp = await StreamClient.MakeRequestAsync<UpdateUserPermissionsRequest, UpdateUserPermissionsResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/user_permissions",
+                    null,
+                    new UpdateUserPermissionsRequest
+                    {
+                        UserID = userId,
+                        RevokePermissions = new List<string> { "send-audio" }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(revokeResp.Data, Is.Not.Null);
+                Assert.That(revokeResp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+
+                // Grant permissions back
+                var grantResp = await StreamClient.MakeRequestAsync<UpdateUserPermissionsRequest, UpdateUserPermissionsResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/user_permissions",
+                    null,
+                    new UpdateUserPermissionsRequest
+                    {
+                        UserID = userId,
+                        GrantPermissions = new List<string> { "send-audio" }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(grantResp.Data, Is.Not.Null);
+                Assert.That(grantResp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
