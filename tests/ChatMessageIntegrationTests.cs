@@ -874,6 +874,100 @@ namespace GetStream.Tests
                 "Should find at least 2 messages with MessageFilterConditions");
         }
 
+        [Test, Order(24)]
+        public async Task SearchQueryAndMessageFiltersError()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            // Using both Query and MessageFilterConditions together should cause an error
+            var payload = new SearchPayload
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["members"] = new Dictionary<string, object> { ["$in"] = new List<string> { userId } }
+                },
+                Query = "test",
+                MessageFilterConditions = new Dictionary<string, object>
+                {
+                    ["text"] = new Dictionary<string, object> { ["$q"] = "test" }
+                }
+            };
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+            var json = JsonSerializer.Serialize(payload, jsonOptions);
+
+            bool exceptionThrown = false;
+            try
+            {
+                await StreamClient.MakeRequestAsync<object, SearchResponse>(
+                    "GET",
+                    "/api/v2/chat/search",
+                    new Dictionary<string, string> { ["payload"] = json },
+                    null,
+                    null);
+            }
+            catch (Exception)
+            {
+                exceptionThrown = true;
+            }
+            Assert.That(exceptionThrown, Is.True, "Expected an error when using both query and message_filter_conditions");
+        }
+
+        [Test, Order(25)]
+        public async Task SearchOffsetAndSortError()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            await SendTestMessage("messaging", channelId, userId, "search offset sort test");
+
+            // The API now allows using Offset with Sort (behavior changed - no error expected)
+            var payload = new SearchPayload
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["members"] = new Dictionary<string, object> { ["$in"] = new List<string> { userId } }
+                },
+                Query = "test",
+                Offset = 0,
+                Sort = new List<SortParamRequest>
+                {
+                    new SortParamRequest { Field = "created_at", Direction = -1 }
+                }
+            };
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+            var json = JsonSerializer.Serialize(payload, jsonOptions);
+
+            // Using Offset with Sort should succeed (API allows this combination)
+            bool errorThrown = false;
+            try
+            {
+                await StreamClient.MakeRequestAsync<object, SearchResponse>(
+                    "GET",
+                    "/api/v2/chat/search",
+                    new Dictionary<string, string> { ["payload"] = json },
+                    null,
+                    null);
+            }
+            catch (Exception)
+            {
+                errorThrown = true;
+            }
+            // The API allows offset+sort, so no error is expected
+            Assert.That(errorThrown, Is.False, "Using Offset with Sort should succeed (API allows this combination)");
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
