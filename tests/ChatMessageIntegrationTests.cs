@@ -763,6 +763,44 @@ namespace GetStream.Tests
             Assert.That(getResp.Data!.Message.Pinned, Is.False, "Pin should have expired after 4 seconds");
         }
 
+        [Test, Order(22)]
+        public async Task PendingFalse()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            // Send message with Pending explicitly set to false (non-pending)
+            var sendResp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest { Text = "Non-pending message", UserID = userId },
+                    Pending = false
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(sendResp.Data, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message, Is.Not.Null);
+            Assert.That(sendResp.Data!.Message.ID, Is.Not.Null.And.Not.Empty);
+
+            var msgId = sendResp.Data!.Message.ID;
+
+            // Get the message to verify it's immediately available (no commit needed)
+            var getResp = await StreamClient.MakeRequestAsync<object, GetMessageResponse>(
+                "GET",
+                "/api/v2/chat/messages/{id}",
+                null,
+                null,
+                new Dictionary<string, string> { ["id"] = msgId });
+
+            Assert.That(getResp.Data, Is.Not.Null);
+            Assert.That(getResp.Data!.Message, Is.Not.Null);
+            Assert.That(getResp.Data!.Message.Text, Is.EqualTo("Non-pending message"));
+        }
+
         [Test, Order(21)]
         public async Task SystemMessage()
         {
