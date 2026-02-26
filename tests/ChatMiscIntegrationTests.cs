@@ -60,5 +60,54 @@ namespace GetStream.Tests
             var stillPresent = listResp2.Data!.Devices?.Any(d => d.ID == deviceId) ?? false;
             Assert.That(stillPresent, Is.False, "Deleted device should not appear in list");
         }
+
+        [Test, Order(2)]
+        public async Task CreateListDeleteBlocklist()
+        {
+            var blocklistName = "test-blocklist-" + RandomString(8);
+
+            try
+            {
+                // Create the blocklist
+                var createResp = await StreamClient.CreateBlockListAsync(new CreateBlockListRequest
+                {
+                    Name = blocklistName,
+                    Words = new List<string> { "badword1", "badword2", "badword3" }
+                });
+                Assert.That(createResp.Data, Is.Not.Null);
+
+                // Small delay for eventual consistency
+                await Task.Delay(500);
+
+                // Get the blocklist and verify
+                var getResp = await StreamClient.GetBlockListAsync(blocklistName);
+                Assert.That(getResp.Data, Is.Not.Null);
+                Assert.That(getResp.Data!.Blocklist, Is.Not.Null);
+                Assert.That(getResp.Data!.Blocklist!.Name, Is.EqualTo(blocklistName));
+                Assert.That(getResp.Data!.Blocklist!.Words, Has.Count.EqualTo(3));
+
+                // List blocklists and verify ours is found
+                var listResp = await StreamClient.ListBlockListsAsync();
+                Assert.That(listResp.Data, Is.Not.Null);
+                Assert.That(listResp.Data!.Blocklists, Is.Not.Null);
+
+                var found = listResp.Data!.Blocklists.Any(bl => bl.Name == blocklistName);
+                Assert.That(found, Is.True, "Created blocklist should appear in list");
+
+                // Delete the blocklist
+                await StreamClient.DeleteBlockListAsync(blocklistName);
+
+                // Verify it's gone
+                await Task.Delay(500);
+                var listResp2 = await StreamClient.ListBlockListsAsync();
+                var stillPresent2 = listResp2.Data!.Blocklists?.Any(bl => bl.Name == blocklistName) ?? false;
+                Assert.That(stillPresent2, Is.False, "Deleted blocklist should not appear in list");
+            }
+            finally
+            {
+                // Cleanup in case test fails midway
+                try { await StreamClient.DeleteBlockListAsync(blocklistName); } catch { /* ignore */ }
+            }
+        }
     }
 }
