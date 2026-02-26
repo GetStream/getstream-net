@@ -1026,6 +1026,84 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(16)]
+        public async Task EnableCallRecordingAndBackstageMode()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest { CreatedByID = userId }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Enable recording with mode="available" and audio_only=true
+                var recordingResp = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
+                    "PATCH",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new UpdateCallRequest
+                    {
+                        SettingsOverride = new CallSettingsRequest
+                        {
+                            Recording = new RecordSettingsRequest
+                            {
+                                Mode = "available",
+                                AudioOnly = true
+                            }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(recordingResp.Data, Is.Not.Null);
+                Assert.That(recordingResp.Data!.Call.Settings.Recording.Mode, Is.EqualTo("available"));
+
+                // Enable backstage mode
+                var backstageResp = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
+                    "PATCH",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new UpdateCallRequest
+                    {
+                        SettingsOverride = new CallSettingsRequest
+                        {
+                            Backstage = new BackstageSettingsRequest
+                            {
+                                Enabled = true
+                            }
+                        }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(backstageResp.Data, Is.Not.Null);
+                Assert.That(backstageResp.Data!.Call.Settings.Backstage.Enabled, Is.True);
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
