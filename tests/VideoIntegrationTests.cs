@@ -290,6 +290,59 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(5)]
+        public async Task MuteAll()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest { CreatedByID = userId }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Mute all users in the call
+                var muteResp = await StreamClient.MakeRequestAsync<MuteUsersRequest, MuteUsersResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/mute_users",
+                    null,
+                    new MuteUsersRequest
+                    {
+                        MutedByID = userId,
+                        MuteAllUsers = true,
+                        Audio = true
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(muteResp.Data, Is.Not.Null);
+                Assert.That(muteResp.Data!.Duration, Is.Not.Null.And.Not.Empty);
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(4)]
         public async Task SendCustomEvent()
         {
