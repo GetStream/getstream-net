@@ -763,6 +763,33 @@ namespace GetStream.Tests
             Assert.That(getResp.Data!.Message.Pinned, Is.False, "Pin should have expired after 4 seconds");
         }
 
+        [Test, Order(21)]
+        public async Task SystemMessage()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+            var channelId = await CreateTestChannelWithMembers(userId, new List<string> { userId });
+
+            var resp = await StreamClient.MakeRequestAsync<SendMessageRequest, SendMessageResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/message",
+                null,
+                new SendMessageRequest
+                {
+                    Message = new MessageRequest
+                    {
+                        Text = "User joined the channel",
+                        UserID = userId,
+                        Type = "system"
+                    }
+                },
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Message, Is.Not.Null);
+            Assert.That(resp.Data!.Message.Type, Is.EqualTo("system"));
+        }
+
         [Test, Order(10)]
         public async Task SearchMessages()
         {
