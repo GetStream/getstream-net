@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using GetStream;
 using GetStream.Models;
@@ -247,6 +248,78 @@ namespace GetStream.Tests
             Assert.That(resp.Data!.Permission, Is.Not.Null);
             Assert.That(resp.Data!.Permission.ID, Is.EqualTo("create-channel"));
             Assert.That(resp.Data!.Permission.Action, Is.Not.Empty, "Permission should have a non-empty action");
+        }
+
+        [Test, Order(9)]
+        public async Task QueryBannedUsers()
+        {
+            // Create 2 users: admin (banner) and target (to be banned)
+            var userIds = await CreateTestUsers(2);
+            var adminId = userIds[0];
+            var targetId = userIds[1];
+
+            var moderationClient = new ModerationClient(StreamClient);
+
+            // Ban the target user with a reason and timeout
+            await moderationClient.BanAsync(new BanRequest
+            {
+                TargetUserID = targetId,
+                BannedByID = adminId,
+                Reason = "test ban reason",
+                Timeout = 60 // 60 minutes
+            });
+
+            // Query banned users filtering by the target user ID
+            var payload = new QueryBannedUsersPayload
+            {
+                FilterConditions = new Dictionary<string, object>
+                {
+                    ["user_id"] = new Dictionary<string, object> { ["$eq"] = targetId }
+                }
+            };
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+            var payloadJson = JsonSerializer.Serialize(payload, jsonOptions);
+            var queryParams = new Dictionary<string, string> { ["payload"] = payloadJson };
+
+            var qResp = await StreamClient.MakeRequestAsync<object, QueryBannedUsersResponse>(
+                "GET",
+                "/api/v2/chat/query_banned_users",
+                queryParams,
+                null,
+                null);
+
+            Assert.That(qResp.Data, Is.Not.Null);
+            Assert.That(qResp.Data!.Bans, Is.Not.Null);
+            Assert.That(qResp.Data!.Bans, Is.Not.Empty, "Should find the banned user");
+
+            var ban = qResp.Data!.Bans[0];
+            Assert.That(ban.User, Is.Not.Null);
+            Assert.That(ban.User!.ID, Is.EqualTo(targetId));
+            Assert.That(ban.Reason, Is.EqualTo("test ban reason"));
+            Assert.That(ban.Expires, Is.Not.Null, "Ban with timeout should have Expires set");
+
+            // Unban the user by passing target_user_id as a query param
+            await StreamClient.MakeRequestAsync<object, UnbanResponse>(
+                "POST",
+                "/api/v2/moderation/unban",
+                new Dictionary<string, string> { ["target_user_id"] = targetId },
+                null,
+                null);
+
+            // Verify ban is gone after unban
+            var qResp2 = await StreamClient.MakeRequestAsync<object, QueryBannedUsersResponse>(
+                "GET",
+                "/api/v2/chat/query_banned_users",
+                queryParams,
+                null,
+                null);
+
+            Assert.That(qResp2.Data, Is.Not.Null);
+            Assert.That(qResp2.Data!.Bans, Is.Empty, "Bans should be empty after unban");
         }
 
         [Test, Order(3)]
