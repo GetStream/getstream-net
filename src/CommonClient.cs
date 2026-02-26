@@ -960,7 +960,72 @@ namespace GetStream
                 "POST",
                 "/api/v2/users/{user_id}/reactivate", null, request, pathParams,
                 cancellationToken);
-                
+
+            return result;
+        }
+        public async Task<StreamResponse<ListCommandsResponse>> ListCommandsAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await MakeRequestAsync<object, ListCommandsResponse>(
+                "GET",
+                "/api/v2/chat/commands", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<CreateCommandResponse>> CreateCommandAsync(CreateCommandRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await MakeRequestAsync<CreateCommandRequest, CreateCommandResponse>(
+                "POST",
+                "/api/v2/chat/commands", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<DeleteCommandResponse>> DeleteCommandAsync(string name, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await MakeRequestAsync<object, DeleteCommandResponse>(
+                "DELETE",
+                "/api/v2/chat/commands/{name}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetCommandResponse>> GetCommandAsync(string name, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await MakeRequestAsync<object, GetCommandResponse>(
+                "GET",
+                "/api/v2/chat/commands/{name}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateCommandResponse>> UpdateCommandAsync(string name, UpdateCommandRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await MakeRequestAsync<UpdateCommandRequest, UpdateCommandResponse>(
+                "PUT",
+                "/api/v2/chat/commands/{name}", null, request, pathParams,
+                cancellationToken);
+
             return result;
         }
             }

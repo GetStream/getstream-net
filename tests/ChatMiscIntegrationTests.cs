@@ -109,5 +109,69 @@ namespace GetStream.Tests
                 try { await StreamClient.DeleteBlockListAsync(blocklistName); } catch { /* ignore */ }
             }
         }
+
+        [Test, Order(3)]
+        public async Task CreateListDeleteCommand()
+        {
+            // Command names must be lowercase alphanumeric
+            var cmdName = "testcmd" + RandomString(6);
+
+            try
+            {
+                // Create the command
+                var createResp = await StreamClient.CreateCommandAsync(new CreateCommandRequest
+                {
+                    Name = cmdName,
+                    Description = "A test command"
+                });
+                Assert.That(createResp.Data, Is.Not.Null);
+                Assert.That(createResp.Data!.Command, Is.Not.Null);
+                Assert.That(createResp.Data!.Command!.Name, Is.EqualTo(cmdName));
+                Assert.That(createResp.Data!.Command!.Description, Is.EqualTo("A test command"));
+
+                // Wait for eventual consistency
+                await Task.Delay(500);
+
+                // Get the command and verify
+                var getResp = await StreamClient.GetCommandAsync(cmdName);
+                Assert.That(getResp.Data, Is.Not.Null);
+                Assert.That(getResp.Data!.Name, Is.EqualTo(cmdName));
+                Assert.That(getResp.Data!.Description, Is.EqualTo("A test command"));
+
+                // List commands and verify ours is found
+                var listResp = await StreamClient.ListCommandsAsync();
+                Assert.That(listResp.Data, Is.Not.Null);
+                Assert.That(listResp.Data!.Commands, Is.Not.Null);
+
+                var found = listResp.Data!.Commands.Any(c => c.Name == cmdName);
+                Assert.That(found, Is.True, "Created command should appear in list");
+
+                // Delete the command with retry for eventual consistency
+                Exception? lastErr = null;
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        var deleteResp = await StreamClient.DeleteCommandAsync(cmdName);
+                        Assert.That(deleteResp.Data, Is.Not.Null);
+                        Assert.That(deleteResp.Data!.Name, Is.EqualTo(cmdName));
+                        lastErr = null;
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                        lastErr = e;
+                        await Task.Delay(1000);
+                    }
+                }
+                if (lastErr != null)
+                    throw lastErr;
+            }
+            finally
+            {
+                // Cleanup in case test fails midway
+                try { await StreamClient.DeleteCommandAsync(cmdName); } catch { /* ignore */ }
+            }
+        }
     }
 }
