@@ -622,6 +622,34 @@ namespace GetStream.Tests
             Assert.That(getResp.Data!.Thread.LatestReplies.Count, Is.GreaterThanOrEqualTo(2));
         }
 
+        [Test, Order(17)]
+        public async Task SendUserCustomEvent()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            // Send a custom event to the user (dots not allowed in event type)
+            var resp = await StreamClient.MakeRequestAsync<SendUserCustomEventRequest, Response>(
+                "POST",
+                "/api/v2/chat/users/{user_id}/event",
+                null,
+                new SendUserCustomEventRequest
+                {
+                    Event = new UserCustomEventRequest
+                    {
+                        Type = "friendship_request",
+                        Custom = new Dictionary<string, object>
+                        {
+                            ["message"] = "Let's be friends!"
+                        }
+                    }
+                },
+                new Dictionary<string, string> { ["user_id"] = userId });
+
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Duration, Is.Not.Empty, "Response should have a duration");
+        }
+
         [Test, Order(16)]
         public async Task Reminders()
         {
