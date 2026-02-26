@@ -238,6 +238,17 @@ namespace GetStream.Tests
             await Task.CompletedTask;
         }
 
+        [Test, Order(8)]
+        public async Task GetPermission()
+        {
+            // Get a specific well-known permission by ID
+            var resp = await StreamClient.GetPermissionAsync("create-channel");
+            Assert.That(resp.Data, Is.Not.Null);
+            Assert.That(resp.Data!.Permission, Is.Not.Null);
+            Assert.That(resp.Data!.Permission.ID, Is.EqualTo("create-channel"));
+            Assert.That(resp.Data!.Permission.Action, Is.Not.Empty, "Permission should have a non-empty action");
+        }
+
         [Test, Order(3)]
         public async Task CreateListDeleteCommand()
         {
