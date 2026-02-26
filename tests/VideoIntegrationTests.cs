@@ -951,6 +951,81 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(15)]
+        public async Task ExternalStorageOperations()
+        {
+            var uniqueName = "test-storage-" + RandomString(10);
+
+            // List existing external storages; if > 1, delete them to avoid accumulation
+            var listResp = await StreamClient.ListExternalStorageAsync();
+            Assert.That(listResp.Data, Is.Not.Null);
+
+            if (listResp.Data!.ExternalStorages != null && listResp.Data.ExternalStorages.Count > 1)
+            {
+                foreach (var storage in listResp.Data.ExternalStorages.Values)
+                {
+                    try
+                    {
+                        await StreamClient.DeleteExternalStorageAsync(storage.Name);
+                    }
+                    catch { /* ignore cleanup errors */ }
+                }
+            }
+
+            try
+            {
+                // Create external storage with S3 type (test credentials)
+                var createResp = await StreamClient.CreateExternalStorageAsync(new CreateExternalStorageRequest
+                {
+                    Bucket = "test-bucket",
+                    Name = uniqueName,
+                    StorageType = "s3",
+                    Path = "test-directory/",
+                    AWSS3 = new S3Request
+                    {
+                        S3Region = "us-east-1",
+                        S3APIKey = "test-access-key",
+                        S3Secret = "test-secret"
+                    }
+                });
+                Assert.That(createResp.Data, Is.Not.Null);
+
+                // Wait for eventual consistency - list may return empty for up to 24s
+                // Retry with 3s intervals, up to 8 attempts
+                bool found = false;
+                for (int attempt = 0; attempt < 8; attempt++)
+                {
+                    await Task.Delay(3000);
+                    var listResp2 = await StreamClient.ListExternalStorageAsync();
+                    if (listResp2.Data?.ExternalStorages != null &&
+                        listResp2.Data.ExternalStorages.ContainsKey(uniqueName))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                Assert.That(found, Is.True, $"External storage '{uniqueName}' should appear in list after creation");
+            }
+            finally
+            {
+                // Delete the storage (with retry since delete may fail with "does not exist")
+                for (int attempt = 0; attempt < 5; attempt++)
+                {
+                    try
+                    {
+                        await StreamClient.DeleteExternalStorageAsync(uniqueName);
+                        break;
+                    }
+                    catch
+                    {
+                        if (attempt < 4)
+                            await Task.Delay(3000);
+                    }
+                }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
