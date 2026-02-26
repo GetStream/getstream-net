@@ -70,6 +70,72 @@ namespace GetStream.Tests
             Assert.That(unmuteResp.Data, Is.Not.Null);
         }
 
+        [Test, Order(3)]
+        public async Task FlagMessageAndUser()
+        {
+            // Create 2 users: message author and flagger
+            var userIds = await CreateTestUsers(2);
+            var authorId = userIds[0];
+            var flaggerId = userIds[1];
+
+            // Create a channel with both as members and send a test message
+            var channelId = await CreateTestChannelWithMembers(authorId, new List<string> { authorId, flaggerId });
+
+            var msgId = await SendTestMessage("messaging", channelId, authorId, "Message to be flagged");
+
+            // Flag the message using the moderation v2 API
+            var flagMsgResp = await _moderationClient.FlagAsync(new FlagRequest
+            {
+                EntityID = msgId,
+                EntityType = "stream:chat:v1:message",
+                EntityCreatorID = authorId,
+                UserID = flaggerId,
+                Reason = "inappropriate content"
+            });
+            Assert.That(flagMsgResp.Data, Is.Not.Null);
+            Assert.That(flagMsgResp.Data!.ItemID, Is.Not.Empty, "Flag message should return an item ID");
+
+            // Flag a user using the moderation v2 API
+            var flagUserResp = await _moderationClient.FlagAsync(new FlagRequest
+            {
+                EntityID = authorId,
+                EntityType = "stream:user",
+                UserID = flaggerId,
+                Reason = "spam"
+            });
+            Assert.That(flagUserResp.Data, Is.Not.Null);
+            Assert.That(flagUserResp.Data!.ItemID, Is.Not.Empty, "Flag user should return an item ID");
+
+            // Verify QueryMessageFlags endpoint works (may return empty since v2 flags don't always populate v1 store)
+            var cid = "messaging:" + channelId;
+            var payload1 = new QueryMessageFlagsPayload
+            {
+                FilterConditions = new Dictionary<string, object> { ["channel_cid"] = cid }
+            };
+            var payload1Json = JsonSerializer.Serialize(payload1, _jsonOptions);
+            var qResp1 = await StreamClient.MakeRequestAsync<object, QueryMessageFlagsResponse>(
+                "GET",
+                "/api/v2/chat/moderation/flags/message",
+                new Dictionary<string, string> { ["payload"] = payload1Json },
+                null,
+                null);
+            Assert.That(qResp1.Data, Is.Not.Null);
+
+            // Also verify QueryMessageFlags works with user_id filter
+            var payload2 = new QueryMessageFlagsPayload
+            {
+                FilterConditions = new Dictionary<string, object> { ["user_id"] = flaggerId }
+            };
+            var payload2Json = JsonSerializer.Serialize(payload2, _jsonOptions);
+            var qResp2 = await StreamClient.MakeRequestAsync<object, QueryMessageFlagsResponse>(
+                "GET",
+                "/api/v2/chat/moderation/flags/message",
+                new Dictionary<string, string> { ["payload"] = payload2Json },
+                null,
+                null);
+            Assert.That(qResp2.Data, Is.Not.Null);
+        }
+
         [Test, Order(1)]
         public async Task BanUnbanUser()
         {
