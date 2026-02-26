@@ -290,6 +290,57 @@ namespace GetStream.Tests
             }
         }
 
+        [Test, Order(4)]
+        public async Task SendCustomEvent()
+        {
+            var userIds = await CreateTestUsers(1);
+            var userId = userIds[0];
+
+            var callType = "default";
+            var callId = "test-call-" + Guid.NewGuid().ToString("N")[..16];
+
+            try
+            {
+                // Create call
+                await StreamClient.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}",
+                    null,
+                    new GetOrCreateCallRequest
+                    {
+                        Data = new CallRequest { CreatedByID = userId }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                // Send a custom event to the call
+                var sendEventResp = await StreamClient.MakeRequestAsync<SendCallEventRequest, SendCallEventResponse>(
+                    "POST",
+                    "/api/v2/video/call/{type}/{id}/event",
+                    null,
+                    new SendCallEventRequest
+                    {
+                        UserID = userId,
+                        Custom = new Dictionary<string, object> { ["bananas"] = "good" }
+                    },
+                    new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+
+                Assert.That(sendEventResp.Data, Is.Not.Null);
+            }
+            finally
+            {
+                try
+                {
+                    await StreamClient.MakeRequestAsync<object, object>(
+                        "POST",
+                        "/api/v2/video/call/{type}/{id}/delete",
+                        null,
+                        null,
+                        new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
+                }
+                catch { /* ignore cleanup errors */ }
+            }
+        }
+
         [Test, Order(2)]
         public async Task CreateCallWithMembers()
         {
