@@ -122,6 +122,7 @@ namespace GetStream
         public const string FeedsFeedUpdated = "feeds.feed.updated";
         public const string FeedsFeedGroupChanged = "feeds.feed_group.changed";
         public const string FeedsFeedGroupDeleted = "feeds.feed_group.deleted";
+        public const string FeedsFeedGroupRestored = "feeds.feed_group.restored";
         public const string FeedsFeedMemberAdded = "feeds.feed_member.added";
         public const string FeedsFeedMemberRemoved = "feeds.feed_member.removed";
         public const string FeedsFeedMemberUpdated = "feeds.feed_member.updated";
@@ -173,6 +174,11 @@ namespace GetStream
         public const string UserUnmuted = "user.unmuted";
         public const string UserUnreadMessageReminder = "user.unread_message_reminder";
         public const string UserUpdated = "user.updated";
+        public const string UserGroupCreated = "user_group.created";
+        public const string UserGroupDeleted = "user_group.deleted";
+        public const string UserGroupMemberAdded = "user_group.member_added";
+        public const string UserGroupMemberRemoved = "user_group.member_removed";
+        public const string UserGroupUpdated = "user_group.updated";
     }
 
     /// <summary>
@@ -366,6 +372,7 @@ namespace GetStream
                 "feeds.feed.updated" => typeof(FeedUpdatedEvent),
                 "feeds.feed_group.changed" => typeof(FeedGroupChangedEvent),
                 "feeds.feed_group.deleted" => typeof(FeedGroupDeletedEvent),
+                "feeds.feed_group.restored" => typeof(FeedGroupRestoredEvent),
                 "feeds.feed_member.added" => typeof(FeedMemberAddedEvent),
                 "feeds.feed_member.removed" => typeof(FeedMemberRemovedEvent),
                 "feeds.feed_member.updated" => typeof(FeedMemberUpdatedEvent),
@@ -417,6 +424,11 @@ namespace GetStream
                 "user.unmuted" => typeof(UserUnmutedEvent),
                 "user.unread_message_reminder" => typeof(UserUnreadReminderEvent),
                 "user.updated" => typeof(UserUpdatedEvent),
+                "user_group.created" => typeof(UserGroupCreatedEvent),
+                "user_group.deleted" => typeof(UserGroupDeletedEvent),
+                "user_group.member_added" => typeof(UserGroupMemberAddedEvent),
+                "user_group.member_removed" => typeof(UserGroupMemberRemovedEvent),
+                "user_group.updated" => typeof(UserGroupUpdatedEvent),
                 _ => null
             };
         }

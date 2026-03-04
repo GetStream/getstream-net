@@ -53,7 +53,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id,object request = null,
+        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -112,6 +112,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CheckS3AccessResponse>> CheckS3AccessAsync(CheckS3AccessRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CheckS3AccessRequest, CheckS3AccessResponse>(
+                "POST",
+                "/api/v2/moderation/check_s3_access", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UpsertConfigResponse>> UpsertConfigAsync(UpsertConfigRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -123,7 +134,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key,object request = null,
+        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -139,7 +150,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key,object request = null,
+        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -309,7 +320,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id,object request = null,
+        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -358,5 +369,5 @@ namespace GetStream
 
             return result;
         }
-            }
-        }
+    }
+}

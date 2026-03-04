@@ -951,6 +951,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_FeedsFeedGroupRestored_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"feeds.feed_group.restored\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<FeedGroupRestoredEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_FeedsFeedMemberAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.feed_member.added\"}";
@@ -1356,6 +1364,46 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"user.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<UserUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserGroupCreated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user_group.created\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserGroupCreatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserGroupDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user_group.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserGroupDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserGroupMemberAdded_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user_group.member_added\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserGroupMemberAddedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserGroupMemberRemoved_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user_group.member_removed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserGroupMemberRemovedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserGroupUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user_group.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserGroupUpdatedEvent>());
         }
 
         [Test]

@@ -29,3 +29,7 @@ sed -i '' 's/UploadFile/FileUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/Feed
 sed -i '' 's/UploadImage/ImageUpload/g' $DST_PATH/src/feed.cs $DST_PATH/tests/FeedIntegrationTests.cs $DST_PATH/src/CommonClient.cs
 
 echo "Generated .NET SDK for feeds in $DST_PATH" 
+
+echo "Formatting code..."
+dotnet format
+echo "Finished"

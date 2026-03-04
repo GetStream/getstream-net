@@ -4,4 +4,4 @@ using GetStream.Models;
 
 namespace GetStream.Requests
 {
-} 
+}

@@ -8,11 +8,11 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    public class BaseClient :IClient
+    public class BaseClient : IClient
     {
         private const string VersionName = "5.1.0";
         private static readonly string VersionHeader = $"getstream-net-{VersionName}";
-        
+
         private readonly HttpClient _httpClient;
         protected string ApiKey;
         protected string ApiSecret;
@@ -23,16 +23,16 @@ namespace GetStream
         // public string ApiKey => _apiKey;
         // public string ApiSecret => _apiSecret;
         // public string BaseUrl => _baseUrl;
-        
-        
-        
+
+
+
         public BaseClient(string apiKey, string apiSecret, string baseUrl = "https://chat-edge-ohio-ce1.stream-io-api.com")
         {
             ApiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
             ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
             BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
             _httpClient = new HttpClient();
-            
+
             // Configure JSON options once
             _jsonOptions = new JsonSerializerOptions
             {
@@ -94,7 +94,7 @@ namespace GetStream
             {
                 return new StreamResponse<TResponse> { Data = directResult };
             }
-            
+
             return new StreamResponse<TResponse>();
         }
 
@@ -200,7 +200,7 @@ namespace GetStream
                     allQueryParams[param.Key] = param.Value;
                 }
             }
-            
+
             // Add API key to query parameters
             allQueryParams["api_key"] = ApiKey;
 
@@ -227,7 +227,7 @@ namespace GetStream
                 // new System.Security.Claims.Claim("user_id", "*"),
                 // new System.Security.Claims.Claim("user", "*")
             };
-            
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(claims),
@@ -252,7 +252,7 @@ namespace GetStream
             }
 
             var content = new MultipartFormDataContent();
-            
+
             // Add file
             var fileStream = File.OpenRead(request.File);
             var fileName = Path.GetFileName(request.File);
@@ -281,7 +281,7 @@ namespace GetStream
             }
 
             var content = new MultipartFormDataContent();
-            
+
             // Add file
             var fileStream = File.OpenRead(request.File);
             var fileName = Path.GetFileName(request.File);
@@ -304,4 +304,4 @@ namespace GetStream
             return content;
         }
     }
-} 
+}

@@ -19,7 +19,7 @@ namespace GetStream.Tests
                 // Try to find .env file in the solution root (going up from tests directory)
                 var solutionRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), ".."));
                 var envFilePath = Path.Combine(solutionRoot, ".env");
-                
+
                 ClientBuilder builder;
                 if (File.Exists(envFilePath))
                 {
@@ -31,10 +31,10 @@ namespace GetStream.Tests
                     Console.WriteLine("No .env file found, using environment variables");
                     builder = ClientBuilder.FromEnv();
                 }
-                
+
                 StreamClient = builder.Build();
                 FeedsV3Client = builder.BuildFeedsClient();
-                
+
                 Console.WriteLine("Successfully loaded GetStream configuration");
             }
             catch (InvalidOperationException ex)
@@ -53,4 +53,4 @@ namespace GetStream.Tests
             }
         }
     }
-} 
+}

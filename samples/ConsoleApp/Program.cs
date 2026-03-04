@@ -17,7 +17,7 @@ namespace GetStream.Example
             // Clients automatically load credentials from .env file or environment variables
             var feedsClient = new FeedsV3Client();
             var client = new StreamClient();
-            
+
             Console.WriteLine("✅ Successfully initialized clients with automatic credential loading!");
             var feed = feedsClient.Feed("user", "example-feed-2");
             try
@@ -27,25 +27,25 @@ namespace GetStream.Example
                 var userRes = await client.UpdateUsersAsync(
                     new UpdateUsersRequest
                     {
-                        Users = new Dictionary<string, UserRequest> 
-                        { 
-                            { 
+                        Users = new Dictionary<string, UserRequest>
+                        {
+                            {
                                 "okabe", // Changed from "sara" to match the user ID
-                                new UserRequest 
-                                { 
+                                new UserRequest
+                                {
                                     ID = "okabe",
                                     Name = "Okabe",
                                     Custom = new Dictionary<string, object>
                                     {
                                         { "occupation", "Scientist" }
                                     }
-                                } 
-                            } 
+                                }
+                            }
                         }
                     }
                 );
 
-                
+
                 // 1. Create a feed
                 Console.WriteLine("1. Creating feed...");
                 var feedRes = await feed.GetOrCreateFeedAsync(
@@ -123,4 +123,4 @@ namespace GetStream.Example
             }
         }
     }
-} 
+}

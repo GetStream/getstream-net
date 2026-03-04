@@ -30,14 +30,14 @@ namespace GetStream
         public int StatusCode { get; }
         public string ResponseBody { get; }
 
-        public GetStreamApiException(string message, int statusCode, string responseBody) 
+        public GetStreamApiException(string message, int statusCode, string responseBody)
             : base(message)
         {
             StatusCode = statusCode;
             ResponseBody = responseBody;
         }
 
-        public GetStreamApiException(string message, int statusCode, string responseBody, Exception innerException) 
+        public GetStreamApiException(string message, int statusCode, string responseBody, Exception innerException)
             : base(message, innerException)
         {
             StatusCode = statusCode;
@@ -57,7 +57,7 @@ namespace GetStream
             FeedId = feedId;
         }
 
-        public GetStreamFeedException(string message, string feedId, Exception innerException) 
+        public GetStreamFeedException(string message, string feedId, Exception innerException)
             : base(message, innerException)
         {
             FeedId = feedId;
@@ -76,7 +76,7 @@ namespace GetStream
             FieldName = fieldName;
         }
 
-        public GetStreamValidationException(string message, string fieldName, Exception innerException) 
+        public GetStreamValidationException(string message, string fieldName, Exception innerException)
             : base(message, innerException)
         {
             FieldName = fieldName;
@@ -95,12 +95,13 @@ namespace GetStream
                 var timestamp = reader.GetInt64();
                 // Convert nanoseconds to DateTime (assuming Unix epoch)
                 return DateTimeOffset.FromUnixTimeMilliseconds(timestamp / 1000000).DateTime;
-            } else if (reader.TokenType == JsonTokenType.String)
+            }
+            else if (reader.TokenType == JsonTokenType.String)
             {
                 var tsString = reader.GetString();
-                return tsString == null?DateTimeOffset.FromUnixTimeMilliseconds(0).DateTime:DateTimeOffset.Parse(tsString).DateTime;
+                return tsString == null ? DateTimeOffset.FromUnixTimeMilliseconds(0).DateTime : DateTimeOffset.Parse(tsString).DateTime;
             }
-            
+
             throw new JsonException($"Cannot convert {reader.TokenType} to DateTime");
         }
 
@@ -124,7 +125,7 @@ namespace GetStream
                 var stringValue = reader.GetString();
                 return new FeedOwnCapability();
             }
-            
+
             throw new JsonException($"Cannot convert {reader.TokenType} to FeedOwnCapability");
         }
 
@@ -235,4 +236,4 @@ namespace GetStream
             return queryParams.Count > 0 ? queryParams : null;
         }
     }
-} 
+}
