@@ -211,7 +211,7 @@ namespace GetStream.Tests
             finally
             {
                 // Cleanup in case test fails midway
-                try { await StreamClient.DeleteChannelTypeAsync(typeName); } catch { /* ignore */ }
+                try { await _chatClient.DeleteChannelTypeAsync(typeName); } catch { /* ignore */ }
             }
         }
 
