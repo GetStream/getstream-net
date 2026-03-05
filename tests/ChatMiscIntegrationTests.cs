@@ -12,6 +12,14 @@ namespace GetStream.Tests
     [TestFixture]
     public class ChatMiscIntegrationTests : ChatTestBase
     {
+        private ChatClient _chatClient;
+
+        [OneTimeSetUp]
+        public void ChatMiscSetup()
+        {
+            _chatClient = new ChatClient(StreamClient);
+        }
+
         [Test, Order(1)]
         public async Task CreateListDeleteDevice()
         {
@@ -120,7 +128,7 @@ namespace GetStream.Tests
             try
             {
                 // Create the channel type
-                var createResp = await StreamClient.CreateChannelTypeAsync(new CreateChannelTypeRequest
+                var createResp = await _chatClient.CreateChannelTypeAsync(new CreateChannelTypeRequest
                 {
                     Name = typeName,
                     Automod = "disabled",
@@ -140,7 +148,7 @@ namespace GetStream.Tests
                 {
                     try
                     {
-                        var getResp = await StreamClient.GetChannelTypeAsync(typeName);
+                        var getResp = await _chatClient.GetChannelTypeAsync(typeName);
                         getResult = getResp.Data;
                         break;
                     }
@@ -153,7 +161,7 @@ namespace GetStream.Tests
                 Assert.That(getResult!.Name, Is.EqualTo(typeName));
 
                 // Update the channel type settings
-                var updateResp = await StreamClient.UpdateChannelTypeAsync(typeName, new UpdateChannelTypeRequest
+                var updateResp = await _chatClient.UpdateChannelTypeAsync(typeName, new UpdateChannelTypeRequest
                 {
                     Automod = "disabled",
                     AutomodBehavior = "flag",
@@ -168,7 +176,7 @@ namespace GetStream.Tests
                 bool found = false;
                 for (int i = 0; i < 5; i++)
                 {
-                    var listResp = await StreamClient.ListChannelTypesAsync();
+                    var listResp = await _chatClient.ListChannelTypesAsync();
                     Assert.That(listResp.Data, Is.Not.Null);
                     Assert.That(listResp.Data!.ChannelTypes, Is.Not.Null);
 
@@ -187,7 +195,7 @@ namespace GetStream.Tests
                 {
                     try
                     {
-                        await StreamClient.DeleteChannelTypeAsync(typeName);
+                        await _chatClient.DeleteChannelTypeAsync(typeName);
                         lastErr = null;
                         break;
                     }
@@ -210,7 +218,7 @@ namespace GetStream.Tests
         [Test, Order(5)]
         public async Task ListChannelTypes()
         {
-            var resp = await StreamClient.ListChannelTypesAsync();
+            var resp = await _chatClient.ListChannelTypesAsync();
             Assert.That(resp.Data, Is.Not.Null);
             Assert.That(resp.Data!.ChannelTypes, Is.Not.Null);
             Assert.That(resp.Data!.ChannelTypes, Is.Not.Empty);
@@ -420,7 +428,7 @@ namespace GetStream.Tests
             try
             {
                 // Create the command
-                var createResp = await StreamClient.CreateCommandAsync(new CreateCommandRequest
+                var createResp = await _chatClient.CreateCommandAsync(new CreateCommandRequest
                 {
                     Name = cmdName,
                     Description = "A test command"
@@ -434,13 +442,13 @@ namespace GetStream.Tests
                 await Task.Delay(500);
 
                 // Get the command and verify
-                var getResp = await StreamClient.GetCommandAsync(cmdName);
+                var getResp = await _chatClient.GetCommandAsync(cmdName);
                 Assert.That(getResp.Data, Is.Not.Null);
                 Assert.That(getResp.Data!.Name, Is.EqualTo(cmdName));
                 Assert.That(getResp.Data!.Description, Is.EqualTo("A test command"));
 
                 // List commands and verify ours is found
-                var listResp = await StreamClient.ListCommandsAsync();
+                var listResp = await _chatClient.ListCommandsAsync();
                 Assert.That(listResp.Data, Is.Not.Null);
                 Assert.That(listResp.Data!.Commands, Is.Not.Null);
 
@@ -453,7 +461,7 @@ namespace GetStream.Tests
                 {
                     try
                     {
-                        var deleteResp = await StreamClient.DeleteCommandAsync(cmdName);
+                        var deleteResp = await _chatClient.DeleteCommandAsync(cmdName);
                         Assert.That(deleteResp.Data, Is.Not.Null);
                         Assert.That(deleteResp.Data!.Name, Is.EqualTo(cmdName));
                         lastErr = null;
@@ -471,7 +479,7 @@ namespace GetStream.Tests
             finally
             {
                 // Cleanup in case test fails midway
-                try { await StreamClient.DeleteCommandAsync(cmdName); } catch { /* ignore */ }
+                try { await _chatClient.DeleteCommandAsync(cmdName); } catch { /* ignore */ }
             }
         }
 
@@ -692,7 +700,7 @@ namespace GetStream.Tests
             }
 
             // Query reminders for the user
-            var queryResp = await StreamClient.QueryRemindersAsync(new QueryRemindersRequest
+            var queryResp = await _chatClient.QueryRemindersAsync(new QueryRemindersRequest
             {
                 UserID = userId,
                 Filter = new Dictionary<string, object>
@@ -726,7 +734,7 @@ namespace GetStream.Tests
             Assert.That(updateResp.Data!.Reminder.UserID, Is.EqualTo(userId));
 
             // Delete reminder
-            var deleteResp = await StreamClient.DeleteReminderAsync(msgId, userId);
+            var deleteResp = await _chatClient.DeleteReminderAsync(msgId, userId);
             Assert.That(deleteResp.Data, Is.Not.Null);
         }
 

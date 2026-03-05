@@ -161,6 +161,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task TrackActivityMetricsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new TrackActivityMetricsRequest();
+
+            var expectedResponse = new StreamResponse<TrackActivityMetricsResponse>
+            {
+                Data = new TrackActivityMetricsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<TrackActivityMetricsRequest, TrackActivityMetricsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TrackActivityMetricsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.TrackActivityMetricsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<TrackActivityMetricsRequest, TrackActivityMetricsResponse>(
+                "POST",
+                "/api/v2/feeds/activities/metrics/track",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TrackActivityMetricsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task QueryActivitiesAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange

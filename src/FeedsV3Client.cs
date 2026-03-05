@@ -90,6 +90,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<TrackActivityMetricsResponse>> TrackActivityMetricsAsync(TrackActivityMetricsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<TrackActivityMetricsRequest, TrackActivityMetricsResponse>(
+                "POST",
+                "/api/v2/feeds/activities/metrics/track", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(QueryActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -311,10 +322,11 @@ namespace GetStream
             {
                 ["id"] = id,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<RestoreActivityRequest, RestoreActivityResponse>(
                 "POST",
-                "/api/v2/feeds/activities/{id}/restore", null, request, pathParams,
+                "/api/v2/feeds/activities/{id}/restore", queryParams, request, pathParams,
                 cancellationToken);
 
             return result;

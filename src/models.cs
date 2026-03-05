@@ -695,6 +695,8 @@ namespace GetStream.Models
         public FeedResponse? CurrentFeed { get; set; }
         [JsonPropertyName("location")]
         public ActivityLocation? Location { get; set; }
+        [JsonPropertyName("metrics")]
+        public Dictionary<string, int> Metrics { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         [JsonPropertyName("notification_context")]
@@ -811,6 +813,8 @@ namespace GetStream.Models
         public bool? CopyCustomToNotification { get; set; }
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("expires_at")]
         public string? ExpiresAt { get; set; }
         [JsonPropertyName("id")]
@@ -5215,6 +5219,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("feeds")]
         public List<FeedRequest> Feeds { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
     }
 
     public class CreateFeedsBatchResponse
@@ -7271,6 +7277,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("follows")]
         public List<FollowRequest> Follows { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
     }
 
     public class FollowBatchResponse
@@ -7337,6 +7345,8 @@ namespace GetStream.Models
         public bool? CopyCustomToNotification { get; set; }
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("push_preference")]
         public string? PushPreference { get; set; }
         [JsonPropertyName("skip_push")]
@@ -11139,6 +11149,8 @@ namespace GetStream.Models
 
     public class PinActivityRequest
     {
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
         [JsonPropertyName("user")]
@@ -11731,6 +11743,8 @@ namespace GetStream.Models
 
     public class QueryActivitiesRequest
     {
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("include_expired_activities")]
         public bool? IncludeExpiredActivities { get; set; }
         [JsonPropertyName("include_private_activities")]
@@ -11903,6 +11917,8 @@ namespace GetStream.Models
 
     public class QueryBookmarksRequest
     {
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -12333,6 +12349,8 @@ namespace GetStream.Models
 
     public class QueryFeedsRequest
     {
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -12657,6 +12675,8 @@ namespace GetStream.Models
 
     public class QueryPinnedActivitiesRequest
     {
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -13543,6 +13563,14 @@ namespace GetStream.Models
         public DateTime? ReceivedAt { get; set; }
         [JsonPropertyName("reminder")]
         public ReminderResponseData? Reminder { get; set; }
+    }
+
+    public class RemoveUserGroupMembersRequest
+    {
+        [JsonPropertyName("member_ids")]
+        public List<string> MemberIds { get; set; }
+        [JsonPropertyName("team_id")]
+        public string? TeamID { get; set; }
     }
 
     public class RemoveUserGroupMembersResponse
@@ -15361,6 +15389,46 @@ namespace GetStream.Models
     {
     }
 
+    public class TrackActivityMetricsEvent
+    {
+        [JsonPropertyName("activity_id")]
+        public string ActivityID { get; set; }
+        [JsonPropertyName("metric")]
+        public string Metric { get; set; }
+        [JsonPropertyName("delta")]
+        public int? Delta { get; set; }
+    }
+
+    public class TrackActivityMetricsEventResult
+    {
+        [JsonPropertyName("activity_id")]
+        public string ActivityID { get; set; }
+        [JsonPropertyName("allowed")]
+        public bool Allowed { get; set; }
+        [JsonPropertyName("metric")]
+        public string Metric { get; set; }
+        [JsonPropertyName("error")]
+        public string? Error { get; set; }
+    }
+
+    public class TrackActivityMetricsRequest
+    {
+        [JsonPropertyName("events")]
+        public List<TrackActivityMetricsEvent> Events { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+
+    public class TrackActivityMetricsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("results")]
+        public List<TrackActivityMetricsEventResult> Results { get; set; }
+    }
+
     public class TrackStatsResponse
     {
         [JsonPropertyName("duration_seconds")]
@@ -15547,6 +15615,8 @@ namespace GetStream.Models
         public List<FollowPair> Follows { get; set; }
         [JsonPropertyName("delete_notification_activity")]
         public bool? DeleteNotificationActivity { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
     }
 
     public class UnfollowBatchResponse
@@ -15715,6 +15785,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("copy_custom_to_notification")]
         public bool? CopyCustomToNotification { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("handle_mention_notifications")]
         public bool? HandleMentionNotifications { get; set; }
         [JsonPropertyName("run_activity_processors")]
@@ -15741,6 +15813,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("copy_custom_to_notification")]
         public bool? CopyCustomToNotification { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("expires_at")]
         public DateTime? ExpiresAt { get; set; }
         [JsonPropertyName("handle_mention_notifications")]
@@ -16423,6 +16497,8 @@ namespace GetStream.Models
         public string? CreatedByID { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonPropertyName("filter_tags")]
@@ -16481,6 +16557,8 @@ namespace GetStream.Models
         public bool? CopyCustomToNotification { get; set; }
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
         [JsonPropertyName("follower_role")]
         public string? FollowerRole { get; set; }
         [JsonPropertyName("push_preference")]
@@ -16865,6 +16943,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("activities")]
         public List<ActivityRequest> Activities { get; set; }
+        [JsonPropertyName("enrich_own_fields")]
+        public bool? EnrichOwnFields { get; set; }
     }
 
     public class UpsertActivitiesResponse

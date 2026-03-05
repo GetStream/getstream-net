@@ -864,21 +864,6 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<RemoveUserGroupMembersResponse>> RemoveUserGroupMembersAsync(string id, object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await MakeRequestAsync<object, RemoveUserGroupMembersResponse>(
-                "DELETE",
-                "/api/v2/usergroups/{id}/members", null, null, pathParams,
-                cancellationToken);
-
-            return result;
-        }
         public async Task<StreamResponse<AddUserGroupMembersResponse>> AddUserGroupMembersAsync(string id, AddUserGroupMembersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -890,6 +875,21 @@ namespace GetStream
             var result = await MakeRequestAsync<AddUserGroupMembersRequest, AddUserGroupMembersResponse>(
                 "POST",
                 "/api/v2/usergroups/{id}/members", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<RemoveUserGroupMembersResponse>> RemoveUserGroupMembersAsync(string id, RemoveUserGroupMembersRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<RemoveUserGroupMembersRequest, RemoveUserGroupMembersResponse>(
+                "POST",
+                "/api/v2/usergroups/{id}/members/delete", null, request, pathParams,
                 cancellationToken);
 
             return result;
