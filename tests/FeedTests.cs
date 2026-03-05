@@ -46,7 +46,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AddActivityRequest, AddActivityResponse>(
                 "POST",
                 "/api/v2/feeds/activities",
@@ -81,7 +81,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpsertActivitiesRequest, UpsertActivitiesResponse>(
                 "POST",
                 "/api/v2/feeds/activities/batch",
@@ -116,7 +116,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateActivitiesPartialBatchRequest, UpdateActivitiesPartialBatchResponse>(
                 "PATCH",
                 "/api/v2/feeds/activities/batch/partial",
@@ -151,12 +151,47 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<DeleteActivitiesRequest, DeleteActivitiesResponse>(
                 "POST",
                 "/api/v2/feeds/activities/delete",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<DeleteActivitiesRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task TrackActivityMetricsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new TrackActivityMetricsRequest();
+
+            var expectedResponse = new StreamResponse<TrackActivityMetricsResponse>
+            {
+                Data = new TrackActivityMetricsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<TrackActivityMetricsRequest, TrackActivityMetricsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TrackActivityMetricsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.TrackActivityMetricsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<TrackActivityMetricsRequest, TrackActivityMetricsResponse>(
+                "POST",
+                "/api/v2/feeds/activities/metrics/track",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TrackActivityMetricsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -186,7 +221,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>(
                 "POST",
                 "/api/v2/feeds/activities/query",
@@ -217,12 +252,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkAsync(activityID,null!);
+            var result = await _client.DeleteBookmarkAsync(activityID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteBookmarkResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",
@@ -253,12 +288,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateBookmarkAsync(activityID,request);
+            var result = await _client.UpdateBookmarkAsync(activityID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateBookmarkRequest, UpdateBookmarkResponse>(
                 "PATCH",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",
@@ -289,12 +324,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddBookmarkAsync(activityID,request);
+            var result = await _client.AddBookmarkAsync(activityID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AddBookmarkRequest, AddBookmarkResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/bookmarks",
@@ -325,12 +360,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ActivityFeedbackAsync(activityID,request);
+            var result = await _client.ActivityFeedbackAsync(activityID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<ActivityFeedbackRequest, ActivityFeedbackResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/feedback",
@@ -362,12 +397,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.CastPollVoteAsync(activityID, pollID,request);
+            var result = await _client.CastPollVoteAsync(activityID, pollID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<CastPollVoteRequest, PollVoteResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote",
@@ -400,12 +435,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeletePollVoteAsync(activityID, pollID, voteID,null!);
+            var result = await _client.DeletePollVoteAsync(activityID, pollID, voteID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, PollVoteResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/polls/{poll_id}/vote/{vote_id}",
@@ -436,12 +471,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddActivityReactionAsync(activityID,request);
+            var result = await _client.AddActivityReactionAsync(activityID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AddReactionRequest, AddReactionResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions",
@@ -472,12 +507,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryActivityReactionsAsync(activityID,request);
+            var result = await _client.QueryActivityReactionsAsync(activityID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryActivityReactionsRequest, QueryActivityReactionsResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{activity_id}/reactions/query",
@@ -509,12 +544,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityReactionAsync(activityID, type,null!);
+            var result = await _client.DeleteActivityReactionAsync(activityID, type, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteActivityReactionResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/reactions/{type}",
@@ -545,12 +580,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityAsync(id,null!);
+            var result = await _client.DeleteActivityAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteActivityResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{id}",
@@ -581,12 +616,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetActivityAsync(id,null!);
+            var result = await _client.GetActivityAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetActivityResponse>(
                 "GET",
                 "/api/v2/feeds/activities/{id}",
@@ -617,12 +652,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateActivityPartialAsync(id,request);
+            var result = await _client.UpdateActivityPartialAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateActivityPartialRequest, UpdateActivityPartialResponse>(
                 "PATCH",
                 "/api/v2/feeds/activities/{id}",
@@ -653,12 +688,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateActivityAsync(id,request);
+            var result = await _client.UpdateActivityAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateActivityRequest, UpdateActivityResponse>(
                 "PUT",
                 "/api/v2/feeds/activities/{id}",
@@ -689,12 +724,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RestoreActivityAsync(id,request);
+            var result = await _client.RestoreActivityAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<RestoreActivityRequest, RestoreActivityResponse>(
                 "POST",
                 "/api/v2/feeds/activities/{id}/restore",
@@ -729,7 +764,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryBookmarkFoldersRequest, QueryBookmarkFoldersResponse>(
                 "POST",
                 "/api/v2/feeds/bookmark_folders/query",
@@ -760,12 +795,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkFolderAsync(folderID,null!);
+            var result = await _client.DeleteBookmarkFolderAsync(folderID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteBookmarkFolderResponse>(
                 "DELETE",
                 "/api/v2/feeds/bookmark_folders/{folder_id}",
@@ -796,12 +831,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateBookmarkFolderAsync(folderID,request);
+            var result = await _client.UpdateBookmarkFolderAsync(folderID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateBookmarkFolderRequest, UpdateBookmarkFolderResponse>(
                 "PATCH",
                 "/api/v2/feeds/bookmark_folders/{folder_id}",
@@ -836,7 +871,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryBookmarksRequest, QueryBookmarksResponse>(
                 "POST",
                 "/api/v2/feeds/bookmarks/query",
@@ -871,7 +906,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteCollectionsResponse>(
                 "DELETE",
                 "/api/v2/feeds/collections",
@@ -906,7 +941,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, ReadCollectionsResponse>(
                 "GET",
                 "/api/v2/feeds/collections",
@@ -941,7 +976,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateCollectionsRequest, UpdateCollectionsResponse>(
                 "PATCH",
                 "/api/v2/feeds/collections",
@@ -976,7 +1011,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<CreateCollectionsRequest, CreateCollectionsResponse>(
                 "POST",
                 "/api/v2/feeds/collections",
@@ -1011,7 +1046,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpsertCollectionsRequest, UpsertCollectionsResponse>(
                 "PUT",
                 "/api/v2/feeds/collections",
@@ -1046,7 +1081,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetCommentsResponse>(
                 "GET",
                 "/api/v2/feeds/comments",
@@ -1081,7 +1116,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AddCommentRequest, AddCommentResponse>(
                 "POST",
                 "/api/v2/feeds/comments",
@@ -1116,7 +1151,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AddCommentsBatchRequest, AddCommentsBatchResponse>(
                 "POST",
                 "/api/v2/feeds/comments/batch",
@@ -1151,7 +1186,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>(
                 "POST",
                 "/api/v2/feeds/comments/query",
@@ -1182,12 +1217,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentAsync(id,null!);
+            var result = await _client.DeleteCommentAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteCommentResponse>(
                 "DELETE",
                 "/api/v2/feeds/comments/{id}",
@@ -1218,12 +1253,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentAsync(id,null!);
+            var result = await _client.GetCommentAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetCommentResponse>(
                 "GET",
                 "/api/v2/feeds/comments/{id}",
@@ -1254,12 +1289,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateCommentAsync(id,request);
+            var result = await _client.UpdateCommentAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateCommentRequest, UpdateCommentResponse>(
                 "PATCH",
                 "/api/v2/feeds/comments/{id}",
@@ -1290,12 +1325,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddCommentReactionAsync(id,request);
+            var result = await _client.AddCommentReactionAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AddCommentReactionRequest, AddCommentReactionResponse>(
                 "POST",
                 "/api/v2/feeds/comments/{id}/reactions",
@@ -1326,12 +1361,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryCommentReactionsAsync(id,request);
+            var result = await _client.QueryCommentReactionsAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryCommentReactionsRequest, QueryCommentReactionsResponse>(
                 "POST",
                 "/api/v2/feeds/comments/{id}/reactions/query",
@@ -1363,12 +1398,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentReactionAsync(id, type,null!);
+            var result = await _client.DeleteCommentReactionAsync(id, type, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteCommentReactionResponse>(
                 "DELETE",
                 "/api/v2/feeds/comments/{id}/reactions/{type}",
@@ -1399,12 +1434,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentRepliesAsync(id,null!);
+            var result = await _client.GetCommentRepliesAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetCommentRepliesResponse>(
                 "GET",
                 "/api/v2/feeds/comments/{id}/replies",
@@ -1439,7 +1474,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, ListFeedGroupsResponse>(
                 "GET",
                 "/api/v2/feeds/feed_groups",
@@ -1474,7 +1509,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<CreateFeedGroupRequest, CreateFeedGroupResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups",
@@ -1506,12 +1541,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedAsync(feedGroupID, feedID,null!);
+            var result = await _client.DeleteFeedAsync(feedGroupID, feedID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteFeedResponse>(
                 "DELETE",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",
@@ -1543,12 +1578,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedAsync(feedGroupID, feedID,request);
+            var result = await _client.GetOrCreateFeedAsync(feedGroupID, feedID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateFeedRequest, GetOrCreateFeedResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",
@@ -1580,12 +1615,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedAsync(feedGroupID, feedID,request);
+            var result = await _client.UpdateFeedAsync(feedGroupID, feedID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateFeedRequest, UpdateFeedResponse>(
                 "PUT",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}",
@@ -1617,12 +1652,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.MarkActivityAsync(feedGroupID, feedID,request);
+            var result = await _client.MarkActivityAsync(feedGroupID, feedID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<MarkActivityRequest, Response>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/mark/batch",
@@ -1655,12 +1690,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnpinActivityAsync(feedGroupID, feedID, activityID,null!);
+            var result = await _client.UnpinActivityAsync(feedGroupID, feedID, activityID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, UnpinActivityResponse>(
                 "DELETE",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",
@@ -1693,12 +1728,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.PinActivityAsync(feedGroupID, feedID, activityID,request);
+            var result = await _client.PinActivityAsync(feedGroupID, feedID, activityID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<PinActivityRequest, PinActivityResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/activities/{activity_id}/pin",
@@ -1730,12 +1765,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedMembersAsync(feedGroupID, feedID,request);
+            var result = await _client.UpdateFeedMembersAsync(feedGroupID, feedID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateFeedMembersRequest, UpdateFeedMembersResponse>(
                 "PATCH",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members",
@@ -1767,12 +1802,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AcceptFeedMemberInviteAsync(feedID, feedGroupID,request);
+            var result = await _client.AcceptFeedMemberInviteAsync(feedID, feedGroupID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AcceptFeedMemberInviteRequest, AcceptFeedMemberInviteResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/accept",
@@ -1804,12 +1839,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryFeedMembersAsync(feedGroupID, feedID,request);
+            var result = await _client.QueryFeedMembersAsync(feedGroupID, feedID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedMembersRequest, QueryFeedMembersResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/query",
@@ -1841,17 +1876,54 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RejectFeedMemberInviteAsync(feedGroupID, feedID,request);
+            var result = await _client.RejectFeedMemberInviteAsync(feedGroupID, feedID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<RejectFeedMemberInviteRequest, RejectFeedMemberInviteResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/members/reject",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<RejectFeedMemberInviteRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task QueryPinnedActivitiesAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new QueryPinnedActivitiesRequest();
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
+
+            var expectedResponse = new StreamResponse<QueryPinnedActivitiesResponse>
+            {
+                Data = new QueryPinnedActivitiesResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<QueryPinnedActivitiesRequest, QueryPinnedActivitiesResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryPinnedActivitiesRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryPinnedActivitiesAsync(feedGroupID, feedID, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<QueryPinnedActivitiesRequest, QueryPinnedActivitiesResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/pinned_activities/query",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryPinnedActivitiesRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -1877,15 +1949,51 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFollowSuggestionsAsync(feedGroupID,null!);
+            var result = await _client.GetFollowSuggestionsAsync(feedGroupID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetFollowSuggestionsResponse>(
                 "GET",
                 "/api/v2/feeds/feed_groups/{feed_group_id}/follow_suggestions",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task RestoreFeedGroupAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var feedGroupID = "test-feedGroupID";
+
+            var expectedResponse = new StreamResponse<RestoreFeedGroupResponse>
+            {
+                Data = new RestoreFeedGroupResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, RestoreFeedGroupResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.RestoreFeedGroupAsync(feedGroupID, null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, RestoreFeedGroupResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/restore",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),
@@ -1913,12 +2021,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedGroupAsync(id,null!);
+            var result = await _client.DeleteFeedGroupAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteFeedGroupResponse>(
                 "DELETE",
                 "/api/v2/feeds/feed_groups/{id}",
@@ -1949,12 +2057,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedGroupAsync(id,null!);
+            var result = await _client.GetFeedGroupAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedGroupResponse>(
                 "GET",
                 "/api/v2/feeds/feed_groups/{id}",
@@ -1985,12 +2093,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedGroupAsync(id,request);
+            var result = await _client.GetOrCreateFeedGroupAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateFeedGroupRequest, GetOrCreateFeedGroupResponse>(
                 "POST",
                 "/api/v2/feeds/feed_groups/{id}",
@@ -2021,12 +2129,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedGroupAsync(id,request);
+            var result = await _client.UpdateFeedGroupAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateFeedGroupRequest, UpdateFeedGroupResponse>(
                 "PUT",
                 "/api/v2/feeds/feed_groups/{id}",
@@ -2061,7 +2169,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, ListFeedViewsResponse>(
                 "GET",
                 "/api/v2/feeds/feed_views",
@@ -2096,7 +2204,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<CreateFeedViewRequest, CreateFeedViewResponse>(
                 "POST",
                 "/api/v2/feeds/feed_views",
@@ -2127,12 +2235,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedViewAsync(id,null!);
+            var result = await _client.DeleteFeedViewAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteFeedViewResponse>(
                 "DELETE",
                 "/api/v2/feeds/feed_views/{id}",
@@ -2163,12 +2271,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedViewAsync(id,null!);
+            var result = await _client.GetFeedViewAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedViewResponse>(
                 "GET",
                 "/api/v2/feeds/feed_views/{id}",
@@ -2199,12 +2307,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedViewAsync(id,request);
+            var result = await _client.GetOrCreateFeedViewAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateFeedViewRequest, GetOrCreateFeedViewResponse>(
                 "POST",
                 "/api/v2/feeds/feed_views/{id}",
@@ -2235,12 +2343,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedViewAsync(id,request);
+            var result = await _client.UpdateFeedViewAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateFeedViewRequest, UpdateFeedViewResponse>(
                 "PUT",
                 "/api/v2/feeds/feed_views/{id}",
@@ -2275,7 +2383,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, ListFeedVisibilitiesResponse>(
                 "GET",
                 "/api/v2/feeds/feed_visibilities",
@@ -2306,12 +2414,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedVisibilityAsync(name,null!);
+            var result = await _client.GetFeedVisibilityAsync(name, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedVisibilityResponse>(
                 "GET",
                 "/api/v2/feeds/feed_visibilities/{name}",
@@ -2342,12 +2450,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedVisibilityAsync(name,request);
+            var result = await _client.UpdateFeedVisibilityAsync(name, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateFeedVisibilityRequest, UpdateFeedVisibilityResponse>(
                 "PUT",
                 "/api/v2/feeds/feed_visibilities/{name}",
@@ -2382,7 +2490,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<CreateFeedsBatchRequest, CreateFeedsBatchResponse>(
                 "POST",
                 "/api/v2/feeds/feeds/batch",
@@ -2417,7 +2525,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<DeleteFeedsBatchRequest, DeleteFeedsBatchResponse>(
                 "POST",
                 "/api/v2/feeds/feeds/delete",
@@ -2452,7 +2560,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<OwnBatchRequest, OwnBatchResponse>(
                 "POST",
                 "/api/v2/feeds/feeds/own/batch",
@@ -2487,7 +2595,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedsRequest, QueryFeedsResponse>(
                 "POST",
                 "/api/v2/feeds/feeds/query",
@@ -2522,7 +2630,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedsRateLimitsResponse>(
                 "GET",
                 "/api/v2/feeds/feeds/rate_limits",
@@ -2557,7 +2665,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateFollowRequest, UpdateFollowResponse>(
                 "PATCH",
                 "/api/v2/feeds/follows",
@@ -2592,7 +2700,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<FollowRequest, SingleFollowResponse>(
                 "POST",
                 "/api/v2/feeds/follows",
@@ -2627,7 +2735,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<AcceptFollowRequest, AcceptFollowResponse>(
                 "POST",
                 "/api/v2/feeds/follows/accept",
@@ -2662,7 +2770,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>(
                 "POST",
                 "/api/v2/feeds/follows/batch",
@@ -2697,7 +2805,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<FollowBatchRequest, FollowBatchResponse>(
                 "POST",
                 "/api/v2/feeds/follows/batch/upsert",
@@ -2732,7 +2840,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryFollowsRequest, QueryFollowsResponse>(
                 "POST",
                 "/api/v2/feeds/follows/query",
@@ -2767,7 +2875,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<RejectFollowRequest, RejectFollowResponse>(
                 "POST",
                 "/api/v2/feeds/follows/reject",
@@ -2799,12 +2907,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnfollowAsync(source, target,null!);
+            var result = await _client.UnfollowAsync(source, target, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, UnfollowResponse>(
                 "DELETE",
                 "/api/v2/feeds/follows/{source}/{target}",
@@ -2839,7 +2947,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<CreateMembershipLevelRequest, CreateMembershipLevelResponse>(
                 "POST",
                 "/api/v2/feeds/membership_levels",
@@ -2874,7 +2982,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryMembershipLevelsRequest, QueryMembershipLevelsResponse>(
                 "POST",
                 "/api/v2/feeds/membership_levels/query",
@@ -2905,12 +3013,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteMembershipLevelAsync(id,null!);
+            var result = await _client.DeleteMembershipLevelAsync(id, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, Response>(
                 "DELETE",
                 "/api/v2/feeds/membership_levels/{id}",
@@ -2941,12 +3049,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateMembershipLevelAsync(id,request);
+            var result = await _client.UpdateMembershipLevelAsync(id, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UpdateMembershipLevelRequest, UpdateMembershipLevelResponse>(
                 "PATCH",
                 "/api/v2/feeds/membership_levels/{id}",
@@ -2981,7 +3089,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedsUsageStatsRequest, QueryFeedsUsageStatsResponse>(
                 "POST",
                 "/api/v2/feeds/stats/usage",
@@ -3016,7 +3124,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UnfollowBatchRequest, UnfollowBatchResponse>(
                 "POST",
                 "/api/v2/feeds/unfollow/batch",
@@ -3051,7 +3159,7 @@ namespace GetStream.Tests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<UnfollowBatchRequest, UnfollowBatchResponse>(
                 "POST",
                 "/api/v2/feeds/unfollow/batch/upsert",
@@ -3082,12 +3190,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedUserDataAsync(userID,request);
+            var result = await _client.DeleteFeedUserDataAsync(userID, request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<DeleteFeedUserDataRequest, DeleteFeedUserDataResponse>(
                 "POST",
                 "/api/v2/feeds/users/{user_id}/delete",
@@ -3118,12 +3226,12 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ExportFeedUserDataAsync(userID,null!);
+            var result = await _client.ExportFeedUserDataAsync(userID, null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
-            
+
             _mockClient.Verify(x => x.MakeRequestAsync<object, ExportFeedUserDataResponse>(
                 "POST",
                 "/api/v2/feeds/users/{user_id}/export",
@@ -3132,5 +3240,5 @@ namespace GetStream.Tests
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
-            }
-        }
+    }
+}

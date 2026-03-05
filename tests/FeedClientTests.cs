@@ -28,9 +28,9 @@ namespace GetStream.Tests
                     }
                 }
             };
-            
-            var res=await StreamClient.UpdateUsersAsync(userRequest);
-            
+
+            var res = await StreamClient.UpdateUsersAsync(userRequest);
+
             // Create a test feed
             var feed = FeedsV3Client.Feed("user", "test-feed-1");
             var createResponse = await feed.GetOrCreateFeedAsync(
@@ -44,7 +44,7 @@ namespace GetStream.Tests
             createResponse.Data.Should().NotBeNull();
 
             // Get the same feed
-            var getResponse = await FeedsV3Client.GetOrCreateFeedAsync("user","test-feed-1",
+            var getResponse = await FeedsV3Client.GetOrCreateFeedAsync("user", "test-feed-1",
                 request: new GetOrCreateFeedRequest
                 {
                     UserID = "sara"
@@ -73,7 +73,7 @@ namespace GetStream.Tests
                     UserID = "sara"
                 }
             );
-        
+
             // Verify activity was added successfully
             addActivityResponse.Data.Should().NotBeNull();
             addActivityResponse.Data!.Activity.Should().NotBeNull();
@@ -83,7 +83,7 @@ namespace GetStream.Tests
             activity.User.Should().NotBeNull();
             activity.User!.ID.Should().Be("sara");
         }
-        
+
         [Test]
         public async Task AddCommentAndVerify_ShouldSucceed()
         {
@@ -94,11 +94,11 @@ namespace GetStream.Tests
                     Limit = 1
                 }
             );
-        
+
             queryResponse.Data.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeEmpty();
-        
+
             queryResponse.Data.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeNull();
             var activities = queryResponse.Data.Activities!;
@@ -106,7 +106,7 @@ namespace GetStream.Tests
             var firstActivity = activities.First();
             firstActivity.Should().NotBeNull();
             var activityId = firstActivity!.ID;
-        
+
             // Add a comment to the activity
             var addCommentResponse = await FeedsV3Client.AddActivityAsync(
                 new AddActivityRequest
@@ -117,11 +117,11 @@ namespace GetStream.Tests
                     UserID = "sara"
                 }
             );
-        
+
             // Verify comment was added successfully
             addCommentResponse.Data.Should().NotBeNull();
             addCommentResponse.Data!.Activity.Should().NotBeNull();
-        
+
             addCommentResponse.Data.Should().NotBeNull();
             addCommentResponse.Data!.Activity.Should().NotBeNull();
             var comment = addCommentResponse.Data.Activity!;
@@ -130,7 +130,7 @@ namespace GetStream.Tests
             comment.User.Should().NotBeNull();
             comment.User!.ID.Should().Be("sara");
         }
-        
+
         [Test]
         public async Task GetFeedActivities_ShouldSucceed()
         {
@@ -141,32 +141,32 @@ namespace GetStream.Tests
                     Limit = 10
                 }
             );
-        
+
             // Verify we got activities
             queryResponse.Data.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeNull();
-        
+
             queryResponse.Data.Should().NotBeNull();
             queryResponse.Data!.Activities.Should().NotBeNull();
             var activities = queryResponse.Data.Activities!.ToList();
             activities.Should().NotBeEmpty();
-        
+
             // Verify that we can find our test activities in the results
-            var testActivities = activities.Where(a => 
-                a?.Text == "This is a test activity for verification" || 
+            var testActivities = activities.Where(a =>
+                a?.Text == "This is a test activity for verification" ||
                 a?.Text == "This is a test comment"
             ).ToList();
-        
+
             testActivities.Should().HaveCountGreaterThanOrEqualTo(2);
         }
-        
+
         [Test]
         public async Task MultipleFeeds_ShouldSucceed()
         {
             // Create multiple feeds
             var feedIds = new[] { "test-feed-2", "test-feed-3", "test-feed-4" };
             var createdFeeds = new List<string>();
-        
+
             foreach (var feedId in feedIds)
             {
                 var response = await FeedsV3Client.GetOrCreateFeedAsync("user", feedId,
@@ -175,14 +175,14 @@ namespace GetStream.Tests
                         UserID = "sara"
                     }
                 );
-        
+
                 response.Data.Should().NotBeNull();
                 response.Data.Should().NotBeNull();
                 var data = response.Data!;
                 data.Should().NotBeNull();
                 createdFeeds.Add(data.ToString() ?? "");
             }
-        
+
             // Verify we can retrieve all feeds
             foreach (var feedId in feedIds)
             {
@@ -192,9 +192,9 @@ namespace GetStream.Tests
                         UserID = "sara"
                     }
                 );
-        
+
                 response.Data.Should().NotBeNull();
             }
         }
     }
-} 
+}

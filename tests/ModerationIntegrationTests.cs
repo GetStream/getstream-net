@@ -51,7 +51,7 @@ namespace GetStream.Tests
             // Try to find .env file in the solution root (going up from tests directory)
             var solutionRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), ".."));
             var envFilePath = Path.Combine(solutionRoot, ".env");
-            
+
             ClientBuilder builder;
             if (File.Exists(envFilePath))
             {
@@ -108,7 +108,7 @@ namespace GetStream.Tests
                         [_testUserId2] = new UserRequest
                         {
                             ID = _testUserId2,
-                            Name = "Test User 2", 
+                            Name = "Test User 2",
                             Role = "user"
                         },
                         [_moderatorUserId] = new UserRequest
@@ -189,7 +189,7 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             _bannedUserIds.Add(_testUserId);
-            
+
             Console.WriteLine($"Successfully banned user: {_testUserId}");
         }
 
@@ -216,7 +216,7 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             _mutedUserIds.Add(_testUserId2);
-            
+
             Console.WriteLine($"Successfully muted user: {_testUserId2}");
         }
 
@@ -243,10 +243,10 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             // Remove from muted list
             _mutedUserIds.Remove(_testUserId2);
-            
+
             Console.WriteLine($"Successfully unmuted user: {_testUserId2}");
         }
 
@@ -274,7 +274,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine($"Successfully flagged user: {_testUserId}");
         }
 
@@ -314,7 +314,7 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             _createdConfigs.Add(configKey);
-            
+
             Console.WriteLine($"Successfully created moderation config: {configKey}");
         }
 
@@ -335,7 +335,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully queried moderation configs");
         }
 
@@ -360,7 +360,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully queried review queue");
         }
 
@@ -385,7 +385,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully queried moderation flags");
         }
 
@@ -406,7 +406,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully queried moderation logs");
         }
 
@@ -425,10 +425,10 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully queried moderation templates");
         }
-        
+
         // =================================================================
         // 10. RULE OPERATIONS
         // =================================================================
@@ -457,7 +457,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully upserted moderation rule");
         }
 
@@ -478,7 +478,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             Console.WriteLine("Successfully queried moderation rules");
         }
 
@@ -489,7 +489,7 @@ namespace GetStream.Tests
         private async Task CleanupResources()
         {
             Console.WriteLine("\n🧹 Cleaning up moderation test resources...");
-            
+
             // Unmute any remaining muted users
             foreach (var userId in _mutedUserIds.ToArray())
             {
@@ -508,7 +508,7 @@ namespace GetStream.Tests
                     Console.WriteLine($"Warning: Failed to unmute user {userId}: {ex.Message}");
                 }
             }
-            
+
             // Delete any created moderation configs
             foreach (var configKey in _createdConfigs.ToArray())
             {
@@ -522,7 +522,7 @@ namespace GetStream.Tests
                     Console.WriteLine($"Warning: Failed to delete config {configKey}: {ex.Message}");
                 }
             }
-            
+
             Console.WriteLine("🧹 Moderation cleanup completed");
         }
     }

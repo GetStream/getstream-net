@@ -30,14 +30,14 @@ namespace GetStream
         public int StatusCode { get; }
         public string ResponseBody { get; }
 
-        public GetStreamApiException(string message, int statusCode, string responseBody) 
+        public GetStreamApiException(string message, int statusCode, string responseBody)
             : base(message)
         {
             StatusCode = statusCode;
             ResponseBody = responseBody;
         }
 
-        public GetStreamApiException(string message, int statusCode, string responseBody, Exception innerException) 
+        public GetStreamApiException(string message, int statusCode, string responseBody, Exception innerException)
             : base(message, innerException)
         {
             StatusCode = statusCode;
@@ -57,7 +57,7 @@ namespace GetStream
             FeedId = feedId;
         }
 
-        public GetStreamFeedException(string message, string feedId, Exception innerException) 
+        public GetStreamFeedException(string message, string feedId, Exception innerException)
             : base(message, innerException)
         {
             FeedId = feedId;
@@ -76,7 +76,7 @@ namespace GetStream
             FieldName = fieldName;
         }
 
-        public GetStreamValidationException(string message, string fieldName, Exception innerException) 
+        public GetStreamValidationException(string message, string fieldName, Exception innerException)
             : base(message, innerException)
         {
             FieldName = fieldName;
@@ -95,12 +95,13 @@ namespace GetStream
                 var timestamp = reader.GetInt64();
                 // Convert nanoseconds to DateTime (assuming Unix epoch)
                 return DateTimeOffset.FromUnixTimeMilliseconds(timestamp / 1000000).DateTime;
-            } else if (reader.TokenType == JsonTokenType.String)
+            }
+            else if (reader.TokenType == JsonTokenType.String)
             {
                 var tsString = reader.GetString();
-                return tsString == null?DateTimeOffset.FromUnixTimeMilliseconds(0).DateTime:DateTimeOffset.Parse(tsString).DateTime;
+                return tsString == null ? DateTimeOffset.FromUnixTimeMilliseconds(0).DateTime : DateTimeOffset.Parse(tsString).DateTime;
             }
-            
+
             throw new JsonException($"Cannot convert {reader.TokenType} to DateTime");
         }
 
@@ -124,7 +125,7 @@ namespace GetStream
                 var stringValue = reader.GetString();
                 return new FeedOwnCapability();
             }
-            
+
             throw new JsonException($"Cannot convert {reader.TokenType} to FeedOwnCapability");
         }
 
@@ -133,6 +134,66 @@ namespace GetStream
             if (value != null)
             {
                 writer.WriteStringValue("feed_own");
+            }
+            else
+            {
+                writer.WriteNullValue();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles ChannelOwnCapability serialization/deserialization.
+    /// This is a workaround for API inconsistencies where ChannelOwnCapability is sometimes returned as a string.
+    /// </summary>
+    public class ChannelOwnCapabilityConverter : JsonConverter<ChannelOwnCapability>
+    {
+        public override ChannelOwnCapability Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                reader.GetString();
+                return new ChannelOwnCapability();
+            }
+
+            throw new JsonException($"Cannot convert {reader.TokenType} to ChannelOwnCapability");
+        }
+
+        public override void Write(Utf8JsonWriter writer, ChannelOwnCapability value, JsonSerializerOptions options)
+        {
+            if (value != null)
+            {
+                writer.WriteStringValue("channel_own");
+            }
+            else
+            {
+                writer.WriteNullValue();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles OwnCapability serialization/deserialization.
+    /// This is a workaround for API inconsistencies where OwnCapability is sometimes returned as a string.
+    /// </summary>
+    public class OwnCapabilityConverter : JsonConverter<OwnCapability>
+    {
+        public override OwnCapability Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                reader.GetString();
+                return new OwnCapability();
+            }
+
+            throw new JsonException($"Cannot convert {reader.TokenType} to OwnCapability");
+        }
+
+        public override void Write(Utf8JsonWriter writer, OwnCapability value, JsonSerializerOptions options)
+        {
+            if (value != null)
+            {
+                writer.WriteStringValue("own");
             }
             else
             {
@@ -175,4 +236,4 @@ namespace GetStream
             return queryParams.Count > 0 ? queryParams : null;
         }
     }
-} 
+}

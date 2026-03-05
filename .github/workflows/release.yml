@@ -19,6 +19,11 @@ on:
         required: false
         default: false
         type: boolean
+      use_current_version:
+        description: 'Skip version bump and publish the version already in .csproj (version_bump is ignored)'
+        required: false
+        default: false
+        type: boolean
 
 env:
   DOTNET_VERSION: '9.0.x'
@@ -115,7 +120,14 @@ jobs:
       run: |
         CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
         VERSION_BUMP="${{ needs.check-release.outputs.version_bump }}"
-        
+
+        # Publish whatever version is already set in .csproj, no bump
+        if [ "${{ github.event.inputs.use_current_version }}" = "true" ]; then
+          echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Release version (current): $CURRENT_VERSION"
+          exit 0
+        fi
+
         # If version was already bumped in a release PR, use that version
         if [ "$VERSION_BUMP" = "from_pr" ]; then
           NEW_VERSION="$CURRENT_VERSION"

@@ -42,7 +42,7 @@ namespace GetStream.Tests
             // Try to find .env file in the solution root (going up from tests directory)
             var solutionRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), ".."));
             var envFilePath = Path.Combine(solutionRoot, ".env");
-            
+
             // snippet-start: Getting_Started
             ClientBuilder builder;
             if (File.Exists(envFilePath))
@@ -55,7 +55,7 @@ namespace GetStream.Tests
             }
 
             // snippet-end: Getting_Started
-            
+
             _client = builder.Build();
             _feedsV3Client = builder.BuildFeedsClient();
 
@@ -65,7 +65,7 @@ namespace GetStream.Tests
             _testFeedId = "test-feed-" + Guid.NewGuid().ToString("N")[..8];
             _testFeedId2 = "test-feed-2-" + Guid.NewGuid().ToString("N")[..8];
             _testFeedId3 = "test-feed-3-" + Guid.NewGuid().ToString("N")[..8];
-            
+
 
             // Setup environment for each test
             await SetupEnvironment();
@@ -103,13 +103,13 @@ namespace GetStream.Tests
                         [_testUserId2] = new UserRequest
                         {
                             ID = _testUserId2,
-                            Name = "Test User 2", 
+                            Name = "Test User 2",
                             Role = "user"
                         },
                         [_testUserId3] = new UserRequest
                         {
                             ID = _testUserId3,
-                            Name = "Test User 3", 
+                            Name = "Test User 3",
                             Role = "user"
                         }
                     }
@@ -203,7 +203,7 @@ namespace GetStream.Tests
 
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             Console.WriteLine($"✅ Created activity with ID: {activityId}");
         }
 
@@ -240,10 +240,10 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             Assert.That(response.Data!.Activity, Is.Not.Null);
-            
+
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             Console.WriteLine($"✅ Created activity with image attachment: {activityId}");
         }
 
@@ -267,10 +267,10 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             Assert.That(response.Data!.Activity, Is.Not.Null);
-            
+
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             Console.WriteLine($"✅ Created video activity: {activityId}");
         }
 
@@ -313,10 +313,10 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             Assert.That(response.Data!.Activity, Is.Not.Null);
-            
+
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             Console.WriteLine($"✅ Created story activity with expiration: {activityId}");
         }
 
@@ -331,8 +331,8 @@ namespace GetStream.Tests
                 Type = "post",
                 Text = "This post appears in multiple feeds!",
                 UserID = _testUserId,
-                Feeds = new List<string> 
-                { 
+                Feeds = new List<string>
+                {
                     $"user:{_testFeedId}",
                     $"user:{_testFeedId2}"
                 },
@@ -348,10 +348,10 @@ namespace GetStream.Tests
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
             Assert.That(response.Data!.Activity, Is.Not.Null);
-            
+
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             Console.WriteLine($"✅ Created activity in multiple feeds: {activityId}");
         }
 
@@ -359,7 +359,7 @@ namespace GetStream.Tests
         public async Task Test03_QueryActivities()
         {
             Console.WriteLine("\n🔍 Testing activity querying...");
-            
+
             // snippet-start: QueryActivities
             var response = await _feedsV3Client.QueryActivitiesAsync(
                 new QueryActivitiesRequest
@@ -380,7 +380,7 @@ namespace GetStream.Tests
         public async Task Test04_GetSingleActivity()
         {
             Console.WriteLine("\n📄 Testing single activity retrieval...");
-            
+
             // First create an activity to retrieve
             var activity = new AddActivityRequest
             {
@@ -392,7 +392,7 @@ namespace GetStream.Tests
 
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -411,7 +411,7 @@ namespace GetStream.Tests
         public async Task Test05_UpdateActivity()
         {
             Console.WriteLine("\n✏️ Testing activity update...");
-            
+
             // First create an activity to update
             var activity = new AddActivityRequest
             {
@@ -420,10 +420,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -455,7 +455,7 @@ namespace GetStream.Tests
         public async Task Test06_AddReaction()
         {
             Console.WriteLine("\n👍 Testing reaction addition...");
-            
+
             // First create an activity to react to
             var activity = new AddActivityRequest
             {
@@ -464,10 +464,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -490,7 +490,7 @@ namespace GetStream.Tests
         public async Task Test07_QueryReactions()
         {
             Console.WriteLine("\n🔍 Testing reaction querying...");
-            
+
             // Create an activity and add a reaction to it
             var activity = new AddActivityRequest
             {
@@ -499,13 +499,13 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             // Add a reaction first
             var reactionResponse = await _feedsV3Client.AddActivityReactionAsync(
                 activityId,
@@ -517,20 +517,20 @@ namespace GetStream.Tests
             );
             Assert.That(reactionResponse, Is.Not.Null);
 
-                // snippet-start: QueryActivityReactions
-                var response = await _feedsV3Client.QueryActivityReactionsAsync(
-                    activityId,
-                    new QueryActivityReactionsRequest
-                    {
-                        Limit = 10,
-                        Filter = new Dictionary<string, object> { ["reaction_type"] = "like" }
-                    }
-                );
-                // snippet-end: QueryActivityReactions
+            // snippet-start: QueryActivityReactions
+            var response = await _feedsV3Client.QueryActivityReactionsAsync(
+                activityId,
+                new QueryActivityReactionsRequest
+                {
+                    Limit = 10,
+                    Filter = new Dictionary<string, object> { ["reaction_type"] = "like" }
+                }
+            );
+            // snippet-end: QueryActivityReactions
 
-                Assert.That(response, Is.Not.Null);
-                Console.WriteLine("✅ Queried reactions");
-            
+            Assert.That(response, Is.Not.Null);
+            Console.WriteLine("✅ Queried reactions");
+
         }
 
         // =================================================================
@@ -541,7 +541,7 @@ namespace GetStream.Tests
         public async Task Test08_AddComment()
         {
             Console.WriteLine("\n💬 Testing comment addition...");
-            
+
             // First create an activity to comment on
             var activity = new AddActivityRequest
             {
@@ -550,10 +550,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -571,7 +571,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             if (response.Data!.Comment?.ID != null)
             {
                 _createdCommentIds.Add(response.Data.Comment.ID);
@@ -587,7 +587,7 @@ namespace GetStream.Tests
         public async Task Test09_QueryComments()
         {
             Console.WriteLine("\n🔍 Testing comment querying...");
-            
+
             // Create an activity and add a comment to it
             var activity = new AddActivityRequest
             {
@@ -596,13 +596,13 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             // Add a comment first
             var commentResponse = await _feedsV3Client.AddCommentAsync(
                 new AddCommentRequest
@@ -633,7 +633,7 @@ namespace GetStream.Tests
         public async Task Test10_UpdateComment()
         {
             Console.WriteLine("\n✏️ Testing comment update...");
-            
+
             // Create an activity and add a comment to update
             var activity = new AddActivityRequest
             {
@@ -642,13 +642,13 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
-            
+
             // Add a comment to update
             var commentResponse = await _feedsV3Client.AddCommentAsync(
                 new AddCommentRequest
@@ -660,7 +660,7 @@ namespace GetStream.Tests
                 }
             );
             Assert.That(commentResponse, Is.Not.Null);
-            
+
             var commentId = commentResponse.Data?.Comment?.ID ?? "comment-id";  // Fallback if ID not returned
 
             // snippet-start: UpdateComment
@@ -682,7 +682,7 @@ namespace GetStream.Tests
         public async Task Test10a_GetCommentsWithOwnReactions()
         {
             Console.WriteLine("\n💬👍 Testing GetComments with OwnReactions using user_id parameter...");
-            
+
             // Create an activity to comment on
             var activity = new AddActivityRequest
             {
@@ -691,10 +691,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -710,7 +710,7 @@ namespace GetStream.Tests
             );
             Assert.That(commentResponse, Is.Not.Null);
             Assert.That(commentResponse.Data?.Comment?.ID, Is.Not.Null);
-            
+
             var commentId = commentResponse.Data!.Comment!.ID!;
             _createdCommentIds.Add(commentId);
 
@@ -729,7 +729,7 @@ namespace GetStream.Tests
             // Now get comments using user_id parameter for user2
             // This should populate OwnReactions for user2
             var getCommentsResponse = await _feedsV3Client.GetCommentsAsync(
-                new 
+                new
                 {
                     object_type = "activity",
                     object_id = activityId,
@@ -741,16 +741,16 @@ namespace GetStream.Tests
             Assert.That(getCommentsResponse, Is.Not.Null);
             Assert.That(getCommentsResponse.Data, Is.Not.Null);
             Assert.That(getCommentsResponse.Data!.Comments, Is.Not.Null.And.Not.Empty);
-            
+
             var comment = getCommentsResponse.Data.Comments![0];
-            
+
             // Verify OwnReactions is populated for user2
             Assert.That(comment.OwnReactions, Is.Not.Null, "OwnReactions should not be null");
             Assert.That(comment.OwnReactions, Is.Not.Empty, "OwnReactions should contain user2's like reaction");
             Assert.That(comment.OwnReactions!.Count, Is.EqualTo(1), "Should have exactly 1 own reaction");
             Assert.That(comment.OwnReactions[0].Type, Is.EqualTo("like"), "Reaction type should be 'like'");
             Assert.That(comment.OwnReactions[0].User?.ID, Is.EqualTo(_testUserId2), "Reaction should belong to user2");
-            
+
             Console.WriteLine("✅ GetComments with user_id correctly populated OwnReactions");
         }
 
@@ -758,7 +758,7 @@ namespace GetStream.Tests
         public async Task Test10b_GetCommentRepliesWithOwnReactions()
         {
             Console.WriteLine("\n💬💬👍 Testing GetCommentReplies with OwnReactions using user_id parameter...");
-            
+
             // Create an activity and parent comment
             var activity = new AddActivityRequest
             {
@@ -767,10 +767,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -819,7 +819,7 @@ namespace GetStream.Tests
             // This should populate OwnReactions for user2
             var getRepliesResponse = await _feedsV3Client.GetCommentRepliesAsync(
                 parentCommentId,
-                new 
+                new
                 {
                     user_id = _testUserId2  // Specify user_id for server-side auth
                 }
@@ -829,16 +829,16 @@ namespace GetStream.Tests
             Assert.That(getRepliesResponse, Is.Not.Null);
             Assert.That(getRepliesResponse.Data, Is.Not.Null);
             Assert.That(getRepliesResponse.Data!.Comments, Is.Not.Null.And.Not.Empty);
-            
+
             var reply = getRepliesResponse.Data.Comments![0];
-            
+
             // Verify OwnReactions is populated for user2
             Assert.That(reply.OwnReactions, Is.Not.Null, "OwnReactions should not be null");
             Assert.That(reply.OwnReactions, Is.Not.Empty, "OwnReactions should contain user2's love reaction");
             Assert.That(reply.OwnReactions!.Count, Is.EqualTo(1), "Should have exactly 1 own reaction");
             Assert.That(reply.OwnReactions[0].Type, Is.EqualTo("love"), "Reaction type should be 'love'");
             Assert.That(reply.OwnReactions[0].User?.ID, Is.EqualTo(_testUserId2), "Reaction should belong to user2");
-            
+
             Console.WriteLine("✅ GetCommentReplies with user_id correctly populated OwnReactions");
         }
 
@@ -850,7 +850,7 @@ namespace GetStream.Tests
         public async Task Test11_AddBookmark()
         {
             Console.WriteLine("\n🔖 Testing bookmark addition...");
-            
+
             // Create an activity to bookmark
             var activity = new AddActivityRequest
             {
@@ -859,26 +859,26 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
-                // snippet-start: AddBookmark
-                var response = await _feedsV3Client.AddBookmarkAsync(
-                    activityId,
-                    new AddBookmarkRequest
-                    {
-                        UserID = _testUserId,
-                        NewFolder = new AddFolderRequest { Name = "test-bookmarks1" }
-                    }
-                );
-                // snippet-end: AddBookmark
+            // snippet-start: AddBookmark
+            var response = await _feedsV3Client.AddBookmarkAsync(
+                activityId,
+                new AddBookmarkRequest
+                {
+                    UserID = _testUserId,
+                    NewFolder = new AddFolderRequest { Name = "test-bookmarks1" }
+                }
+            );
+            // snippet-end: AddBookmark
 
-                Assert.That(response, Is.Not.Null);
-                Console.WriteLine("✅ Added bookmark");
+            Assert.That(response, Is.Not.Null);
+            Console.WriteLine("✅ Added bookmark");
         }
 
         [Test, Order(13)]
@@ -904,7 +904,7 @@ namespace GetStream.Tests
         public async Task Test13_UpdateBookmark()
         {
             Console.WriteLine("\n✏️ Testing bookmark update...");
-            
+
             // Create an activity to bookmark first
             var activity = new AddActivityRequest
             {
@@ -913,41 +913,41 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Add a bookmark first
-                var addResponse = await _feedsV3Client.AddBookmarkAsync(
-                    activityId,
-                    new AddBookmarkRequest
-                    {
-                        UserID = _testUserId,
-                        NewFolder = new AddFolderRequest { Name = "test-bookmarks-update" }
-                    }
-                );
-                Assert.That(addResponse, Is.Not.Null);
-                Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
+            var addResponse = await _feedsV3Client.AddBookmarkAsync(
+                activityId,
+                new AddBookmarkRequest
+                {
+                    UserID = _testUserId,
+                    NewFolder = new AddFolderRequest { Name = "test-bookmarks-update" }
+                }
+            );
+            Assert.That(addResponse, Is.Not.Null);
+            Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
 
-                // Get the folder ID from the bookmark response
-                var folderId = addResponse.Data!.Bookmark!.Folder!.ID;
+            // Get the folder ID from the bookmark response
+            var folderId = addResponse.Data!.Bookmark!.Folder!.ID;
 
-                // snippet-start: UpdateBookmark
-                var response = await _feedsV3Client.UpdateBookmarkAsync(
-                    activityId,
-                    new UpdateBookmarkRequest
-                    {
-                        UserID = _testUserId,
-                        FolderID = folderId  // Use existing folder ID, not create new folder
-                    }
-                );
-                // snippet-end: UpdateBookmark
+            // snippet-start: UpdateBookmark
+            var response = await _feedsV3Client.UpdateBookmarkAsync(
+                activityId,
+                new UpdateBookmarkRequest
+                {
+                    UserID = _testUserId,
+                    FolderID = folderId  // Use existing folder ID, not create new folder
+                }
+            );
+            // snippet-end: UpdateBookmark
 
-                Assert.That(response, Is.Not.Null);
-                Console.WriteLine("✅ Updated bookmark");
+            Assert.That(response, Is.Not.Null);
+            Console.WriteLine("✅ Updated bookmark");
         }
 
         [Test, Order(14)]
@@ -955,18 +955,18 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n👥 Testing follow operation...");
 
-                // snippet-start: Follow
-                var response = await _feedsV3Client.FollowAsync(
-                    new FollowRequest
-                    {
-                        Source = $"user:{_testFeedId}",
-                        Target = $"user:{_testFeedId2}"
-                    }
-                );
-                // snippet-end: Follow
+            // snippet-start: Follow
+            var response = await _feedsV3Client.FollowAsync(
+                new FollowRequest
+                {
+                    Source = $"user:{_testFeedId}",
+                    Target = $"user:{_testFeedId2}"
+                }
+            );
+            // snippet-end: Follow
 
-                Assert.That(response, Is.Not.Null);
-                Console.WriteLine("✅ Followed user");
+            Assert.That(response, Is.Not.Null);
+            Console.WriteLine("✅ Followed user");
         }
 
         [Test, Order(15)]
@@ -991,7 +991,7 @@ namespace GetStream.Tests
         public async Task Test17_PinActivity()
         {
             Console.WriteLine("\n📌 Testing activity pinning...");
-            
+
             // Create an activity to pin
             var activity = new AddActivityRequest
             {
@@ -1000,10 +1000,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -1027,7 +1027,7 @@ namespace GetStream.Tests
         public async Task Test18_UnpinActivity()
         {
             Console.WriteLine("\n📌 Testing activity unpinning...");
-            
+
             // Create and pin an activity first
             var activity = new AddActivityRequest
             {
@@ -1036,10 +1036,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -1071,7 +1071,7 @@ namespace GetStream.Tests
         public async Task Test19_DeleteBookmark()
         {
             Console.WriteLine("\n🗑️ Testing bookmark deletion...");
-            
+
             // Create an activity to bookmark first
             var activity = new AddActivityRequest
             {
@@ -1080,37 +1080,37 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
             // Add a bookmark first
-                var addResponse = await _feedsV3Client.AddBookmarkAsync(
-                    activityId,
-                    new AddBookmarkRequest
-                    {
-                        UserID = _testUserId,
-                        NewFolder = new AddFolderRequest { Name = "test-bookmarks-delete" }
-                    }
-                );
-                Assert.That(addResponse, Is.Not.Null);
-                Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
+            var addResponse = await _feedsV3Client.AddBookmarkAsync(
+                activityId,
+                new AddBookmarkRequest
+                {
+                    UserID = _testUserId,
+                    NewFolder = new AddFolderRequest { Name = "test-bookmarks-delete" }
+                }
+            );
+            Assert.That(addResponse, Is.Not.Null);
+            Assert.That(addResponse.Data?.Bookmark?.Folder?.ID, Is.Not.Null);
 
-                // Get the folder ID from the bookmark response
-                var folderId = addResponse.Data!.Bookmark!.Folder!.ID;
+            // Get the folder ID from the bookmark response
+            var folderId = addResponse.Data!.Bookmark!.Folder!.ID;
 
-                // snippet-start: DeleteBookmark
-                var response = await _feedsV3Client.DeleteBookmarkAsync(
-                    activityId,
-                    new { folder_id = folderId, user_id = _testUserId }
-                );
-                // snippet-end: DeleteBookmark
+            // snippet-start: DeleteBookmark
+            var response = await _feedsV3Client.DeleteBookmarkAsync(
+                activityId,
+                new { folder_id = folderId, user_id = _testUserId }
+            );
+            // snippet-end: DeleteBookmark
 
-                Assert.That(response, Is.Not.Null);
-                Console.WriteLine("✅ Deleted bookmark");
+            Assert.That(response, Is.Not.Null);
+            Console.WriteLine("✅ Deleted bookmark");
         }
 
         // =================================================================
@@ -1134,7 +1134,7 @@ namespace GetStream.Tests
                 },
                 new ActivityRequest
                 {
-                    Type = "post", 
+                    Type = "post",
                     Text = "Batch activity 2",
                     UserID = _testUserId,
                     Feeds = new List<string> { $"user:{_testFeedId}" }
@@ -1148,7 +1148,7 @@ namespace GetStream.Tests
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Data, Is.Not.Null);
-            
+
             // Track created activities for cleanup
             if (response.Data!.Activities != null)
             {
@@ -1160,7 +1160,7 @@ namespace GetStream.Tests
                     }
                 }
             }
-            
+
             Console.WriteLine("✅ Upserted batch activities");
         }
 
@@ -1168,7 +1168,7 @@ namespace GetStream.Tests
         public async Task Test16a_UpdateActivitiesPartialBatch()
         {
             Console.WriteLine("\n✏️ Testing batch partial activity updates...");
-            
+
             // Create some activities to update
             var activity1 = new AddActivityRequest
             {
@@ -1183,7 +1183,7 @@ namespace GetStream.Tests
                     ["status"] = "published"
                 }
             };
-            
+
             var activity2 = new AddActivityRequest
             {
                 Type = "post",
@@ -1200,10 +1200,10 @@ namespace GetStream.Tests
 
             var createResponse1 = await _feedsV3Client.AddActivityAsync(activity1);
             var createResponse2 = await _feedsV3Client.AddActivityAsync(activity2);
-            
+
             Assert.That(createResponse1.Data?.Activity?.ID, Is.Not.Null);
             Assert.That(createResponse2.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId1 = createResponse1.Data!.Activity!.ID!;
             var activityId2 = createResponse2.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId1);
@@ -1244,16 +1244,16 @@ namespace GetStream.Tests
             Assert.That(response.Data, Is.Not.Null);
             Assert.That(response.Data!.Activities, Is.Not.Null);
             Assert.That(response.Data.Activities!.Count, Is.EqualTo(2), "Should return 2 updated activities");
-            
+
             Console.WriteLine($"✅ Partially updated {response.Data.Activities.Count} activities in batch");
-            
+
             // Verify the updates by fetching the activities
             var verifyResponse1 = await _feedsV3Client.GetActivityAsync(activityId1);
             var verifyResponse2 = await _feedsV3Client.GetActivityAsync(activityId2);
-            
+
             Assert.That(verifyResponse1.Data?.Activity, Is.Not.Null);
             Assert.That(verifyResponse2.Data?.Activity, Is.Not.Null);
-            
+
             Console.WriteLine("✅ Verified partial batch updates were applied correctly");
         }
 
@@ -1261,7 +1261,7 @@ namespace GetStream.Tests
         public async Task Test20_DeleteReaction()
         {
             Console.WriteLine("\n🗑️ Testing reaction deletion...");
-            
+
             // Create an activity and add a reaction first
             var activity = new AddActivityRequest
             {
@@ -1270,10 +1270,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -1303,7 +1303,7 @@ namespace GetStream.Tests
         public async Task Test21_DeleteComment()
         {
             Console.WriteLine("\n🗑️ Testing comment deletion...");
-            
+
             // Create an activity and add a comment first
             var activity = new AddActivityRequest
             {
@@ -1312,10 +1312,10 @@ namespace GetStream.Tests
                 UserID = _testUserId,
                 Feeds = new List<string> { $"user:{_testFeedId}" }
             };
-            
+
             var createResponse = await _feedsV3Client.AddActivityAsync(activity);
             Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = createResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
 
@@ -1348,172 +1348,172 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n👥 Testing unfollow operation...");
 
-                // Follow first
-                await _feedsV3Client.FollowAsync(
-                    new FollowRequest
-                    {
-                        Source = $"user:{_testFeedId}",
-                        Target = $"user:{_testFeedId3}"
-                    }
-                );
+            // Follow first
+            await _feedsV3Client.FollowAsync(
+                new FollowRequest
+                {
+                    Source = $"user:{_testFeedId}",
+                    Target = $"user:{_testFeedId3}"
+                }
+            );
 
-                // snippet-start: Unfollow
-                var response = await _feedsV3Client.UnfollowAsync(
-                    $"user:{_testFeedId}",
-                    $"user:{_testFeedId3}",
-                    new { user_id = _testUserId }
-                );
-                // snippet-end: Unfollow
+            // snippet-start: Unfollow
+            var response = await _feedsV3Client.UnfollowAsync(
+                $"user:{_testFeedId}",
+                $"user:{_testFeedId3}",
+                new { user_id = _testUserId }
+            );
+            // snippet-end: Unfollow
 
-                Assert.That(response, Is.Not.Null);
-                Console.WriteLine("✅ Unfollowed user");
+            Assert.That(response, Is.Not.Null);
+            Console.WriteLine("✅ Unfollowed user");
         }
 
         [Test, Order(22)]
         public async Task Test24_CreatePoll()
         {
             Console.WriteLine("\n📊 Testing poll creation...");
-            
-                // snippet-start: CreatePoll
-                // First create a poll using the poll API
-                var poll = new CreatePollRequest
-                {
-                    Name = "Programming Language Poll",
-                    Description = "What's your favorite programming language?",
-                    UserID = _testUserId,
-                    Options = new List<PollOptionInput>
+
+            // snippet-start: CreatePoll
+            // First create a poll using the poll API
+            var poll = new CreatePollRequest
+            {
+                Name = "Programming Language Poll",
+                Description = "What's your favorite programming language?",
+                UserID = _testUserId,
+                Options = new List<PollOptionInput>
                     {
                         new PollOptionInput { Text = "C#" },
                         new PollOptionInput { Text = "Python" },
                         new PollOptionInput { Text = "JavaScript" },
                         new PollOptionInput { Text = "Go" }
                     }
-                };
-                
-                var pollResponse = await _client.CreatePollAsync(poll);
-                Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
-                
-                var pollId = pollResponse.Data!.Poll!.ID;
-                
-                // Create activity with the poll
-                var activity = new AddActivityRequest
-                {
-                    Type = "poll",
-                    Text = "What's your favorite programming language?",
-                    UserID = _testUserId,
-                    Feeds = new List<string> { $"user:{_testFeedId}" },
-                    PollID = pollId
-                };
-                
-                var response = await _feedsV3Client.AddActivityAsync(activity);
-                // snippet-end: CreatePoll
+            };
 
-                Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
-                _createdActivityIds.Add(response.Data!.Activity!.ID!);
-                Console.WriteLine("✅ Created poll activity");
+            var pollResponse = await _client.CreatePollAsync(poll);
+            Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
+
+            var pollId = pollResponse.Data!.Poll!.ID;
+
+            // Create activity with the poll
+            var activity = new AddActivityRequest
+            {
+                Type = "poll",
+                Text = "What's your favorite programming language?",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" },
+                PollID = pollId
+            };
+
+            var response = await _feedsV3Client.AddActivityAsync(activity);
+            // snippet-end: CreatePoll
+
+            Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
+            _createdActivityIds.Add(response.Data!.Activity!.ID!);
+            Console.WriteLine("✅ Created poll activity");
         }
 
         [Test, Order(23)]
         public async Task Test25_VotePoll()
         {
             Console.WriteLine("\n🗳️ Testing poll voting...");
-            
-                // Create a poll first using the proper API
-                var poll = new CreatePollRequest
-                {
-                    Name = "Favorite Color Poll",
-                    Description = "What is your favorite color?",
-                    UserID = _testUserId,
-                    Options = new List<PollOptionInput>
+
+            // Create a poll first using the proper API
+            var poll = new CreatePollRequest
+            {
+                Name = "Favorite Color Poll",
+                Description = "What is your favorite color?",
+                UserID = _testUserId,
+                Options = new List<PollOptionInput>
                     {
                         new PollOptionInput { Text = "Red" },
                         new PollOptionInput { Text = "Blue" },
                         new PollOptionInput { Text = "Green" }
                     }
-                };
-                
-                var pollResponse = await _client.CreatePollAsync(poll);
-                Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
-                Assert.That(pollResponse.Data?.Poll?.Options, Is.Not.Null.And.Not.Empty);
-                
-                var pollId = pollResponse.Data!.Poll!.ID;
-                var pollOptions = pollResponse.Data.Poll.Options;
-                
-                // Create activity with the poll
-                var activity = new AddActivityRequest
+            };
+
+            var pollResponse = await _client.CreatePollAsync(poll);
+            Assert.That(pollResponse.Data?.Poll?.ID, Is.Not.Null);
+            Assert.That(pollResponse.Data?.Poll?.Options, Is.Not.Null.And.Not.Empty);
+
+            var pollId = pollResponse.Data!.Poll!.ID;
+            var pollOptions = pollResponse.Data.Poll.Options;
+
+            // Create activity with the poll
+            var activity = new AddActivityRequest
+            {
+                Type = "poll",
+                Text = "Vote test poll",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" },
+                PollID = pollId
+            };
+
+            var createResponse = await _feedsV3Client.AddActivityAsync(activity);
+            Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
+
+            var activityId = createResponse.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+
+            // Get the first option ID for voting
+            var optionId = pollOptions[0].ID;
+
+            // snippet-start: VotePoll
+            var voteResponse = await _feedsV3Client.CastPollVoteAsync(
+                activityId,
+                pollId,
+                new CastPollVoteRequest
                 {
-                    Type = "poll",
-                    Text = "Vote test poll",
                     UserID = _testUserId,
-                    Feeds = new List<string> { $"user:{_testFeedId}" },
-                    PollID = pollId
-                };
-                
-                var createResponse = await _feedsV3Client.AddActivityAsync(activity);
-                Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-                
-                var activityId = createResponse.Data!.Activity!.ID!;
-                _createdActivityIds.Add(activityId);
-
-                // Get the first option ID for voting
-                var optionId = pollOptions[0].ID;
-
-                // snippet-start: VotePoll
-                var voteResponse = await _feedsV3Client.CastPollVoteAsync(
-                    activityId,
-                    pollId,
-                    new CastPollVoteRequest
+                    Vote = new VoteData
                     {
-                        UserID = _testUserId,
-                        Vote = new VoteData
-                        {
-                            OptionID = optionId
-                        }
+                        OptionID = optionId
                     }
-                );
-                // snippet-end: VotePoll
+                }
+            );
+            // snippet-end: VotePoll
 
-                Assert.That(voteResponse, Is.Not.Null);
-                Console.WriteLine("✅ Cast poll vote");
+            Assert.That(voteResponse, Is.Not.Null);
+            Console.WriteLine("✅ Cast poll vote");
         }
 
         [Test, Order(24)]
         public async Task Test26_ModerateActivity()
         {
             Console.WriteLine("\n🛡️ Testing activity moderation...");
-            
-                // Create an activity to moderate
-                var activity = new AddActivityRequest
-                {
-                    Type = "post",
-                    Text = "This content needs moderation",
-                    UserID = _testUserId,
-                    Feeds = new List<string> { $"user:{_testFeedId}" }
-                };
-                
-                var createResponse = await _feedsV3Client.AddActivityAsync(activity);
-                Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-                
-                var activityId = createResponse.Data!.Activity!.ID!;
-                _createdActivityIds.Add(activityId);
 
-                // snippet-start: ModerateActivity
-                // Note: Moderation typically requires admin permissions
-                // This test demonstrates the API structure
-                Console.WriteLine($"Activity {activityId} would be moderated here");
-                // In a real scenario, you would call moderation endpoints
-                // snippet-end: ModerateActivity
+            // Create an activity to moderate
+            var activity = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "This content needs moderation",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" }
+            };
 
-                Console.WriteLine("✅ Moderation test completed (demo only)");
+            var createResponse = await _feedsV3Client.AddActivityAsync(activity);
+            Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
+
+            var activityId = createResponse.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+
+            // snippet-start: ModerateActivity
+            // Note: Moderation typically requires admin permissions
+            // This test demonstrates the API structure
+            Console.WriteLine($"Activity {activityId} would be moderated here");
+            // In a real scenario, you would call moderation endpoints
+            // snippet-end: ModerateActivity
+
+            Console.WriteLine("✅ Moderation test completed (demo only)");
         }
 
         [Test, Order(25)]
         public async Task Test27_DeviceManagement()
         {
             Console.WriteLine("\n📱 Testing device management...");
-            
+
             var deviceToken = $"test-device-token-{Guid.NewGuid()}";
-            
+
             try
             {
                 // snippet-start: AddDevice
@@ -1526,16 +1526,16 @@ namespace GetStream.Tests
                     }
                 );
                 // snippet-end: AddDevice
-                
+
                 Assert.That(addDeviceResponse, Is.Not.Null);
                 Console.WriteLine($"✅ Added device: {deviceToken}");
-                
+
                 // snippet-start: RemoveDevice
                 var removeDeviceResponse = await _client.DeleteDeviceAsync(
                     deviceToken
                 );
                 // snippet-end: RemoveDevice
-                
+
                 Assert.That(removeDeviceResponse, Is.Not.Null);
                 Console.WriteLine($"✅ Removed device: {deviceToken}");
             }
@@ -1550,10 +1550,10 @@ namespace GetStream.Tests
         public async Task Test28_QueryActivitiesWithFilters()
         {
             Console.WriteLine("\n🔍 Testing activity queries with advanced filters...");
-            
+
             // Create activities with different types and metadata
             var activityTypes = new[] { "post", "photo", "video", "story" };
-            
+
             foreach (var type in activityTypes)
             {
                 var activity = new AddActivityRequest
@@ -1569,7 +1569,7 @@ namespace GetStream.Tests
                         ["tags"] = new[] { type, "test", "filter" }
                     }
                 };
-                
+
                 var response = await _feedsV3Client.AddActivityAsync(activity);
                 if (response.Data?.Activity?.ID != null)
                 {
@@ -1631,7 +1631,7 @@ namespace GetStream.Tests
             );
 
             Assert.That(firstPageResponse, Is.Not.Null);
-            
+
             // Get second page if there's a next token
             // snippet-start: GetFeedActivitiesSecondPage
             if (firstPageResponse.Data?.Next != null)
@@ -1644,7 +1644,7 @@ namespace GetStream.Tests
                         Next = firstPageResponse.Data.Next
                     }
                 );
-                
+
                 Assert.That(secondPageResponse, Is.Not.Null);
                 Console.WriteLine("✅ Retrieved second page of activities");
             }
@@ -1669,7 +1669,7 @@ namespace GetStream.Tests
                 // snippet-start: HandleInvalidActivityId
                 await _feedsV3Client.GetActivityAsync("invalid-activity-id-12345");
                 // snippet-end: HandleInvalidActivityId
-                
+
                 Assert.Fail("Expected exception was not thrown");
             }
             catch (GetStreamApiException ex)
@@ -1696,7 +1696,7 @@ namespace GetStream.Tests
                 };
                 await _feedsV3Client.AddActivityAsync(emptyActivity);
                 // snippet-end: HandleEmptyActivityText
-                
+
                 // If we reach here, the API allows empty text (which might be valid)
                 Console.WriteLine("✅ Empty activity text was accepted by API");
             }
@@ -1722,7 +1722,7 @@ namespace GetStream.Tests
                 };
                 await _feedsV3Client.AddActivityAsync(invalidUserActivity);
                 // snippet-end: HandleInvalidUserId
-                
+
                 Assert.Fail("Expected exception was not thrown for invalid user ID");
             }
             catch (GetStreamApiException ex)
@@ -1751,9 +1751,9 @@ namespace GetStream.Tests
             };
             var response = await _feedsV3Client.AddActivityAsync(activity);
             // snippet-end: ValidUserAuthentication
-            
+
             Assert.That(response.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var activityId = response.Data!.Activity!.ID!;
             _createdActivityIds.Add(activityId);
             Console.WriteLine($"✅ Successfully authenticated and created activity: {activityId}");
@@ -1769,7 +1769,7 @@ namespace GetStream.Tests
                 }
             );
             // snippet-end: UserPermissionUpdate
-            
+
             Assert.That(updateResponse, Is.Not.Null);
             Console.WriteLine("✅ Successfully updated activity with proper user permissions");
         }
@@ -1782,10 +1782,10 @@ namespace GetStream.Tests
         public async Task Test32_RealWorldUsageDemo()
         {
             Console.WriteLine("\n🌍 Testing real-world usage patterns...");
-            
+
             // Scenario: User posts content, gets reactions and comments
             // snippet-start: RealWorldScenario
-            
+
             // 1. User creates a post with image
             var postActivity = new AddActivityRequest
             {
@@ -1811,10 +1811,10 @@ namespace GetStream.Tests
             };
             var postResponse = await _feedsV3Client.AddActivityAsync(postActivity);
             Assert.That(postResponse.Data?.Activity?.ID, Is.Not.Null);
-            
+
             var postId = postResponse.Data!.Activity!.ID!;
             _createdActivityIds.Add(postId);
-            
+
             // 2. Other users react to the post
             var reactionTypes = new[] { "like", "love", "wow" };
             foreach (var reactionType in reactionTypes)
@@ -1829,7 +1829,7 @@ namespace GetStream.Tests
                 );
                 Assert.That(reactionResponse, Is.Not.Null);
             }
-            
+
             // 3. Users comment on the post
             var comments = new[]
             {
@@ -1837,7 +1837,7 @@ namespace GetStream.Tests
                 "I love their espresso! Great choice 😍",
                 "Adding this to my must-visit list!"
             };
-            
+
             foreach (var commentText in comments)
             {
                 var commentResponse = await _feedsV3Client.AddCommentAsync(
@@ -1851,13 +1851,13 @@ namespace GetStream.Tests
                 );
                 Assert.That(commentResponse, Is.Not.Null);
             }
-            
+
             // 4. Query the activity with all its interactions
             var enrichedResponse = await _feedsV3Client.GetActivityAsync(postId);
             Assert.That(enrichedResponse, Is.Not.Null);
-            
+
             // snippet-end: RealWorldScenario
-            
+
             Console.WriteLine("✅ Completed real-world usage scenario demonstration");
         }
 
@@ -1869,7 +1869,7 @@ namespace GetStream.Tests
             // Get the path to test-upload.png in the tests directory
             // The file is in the tests/ directory, but tests run from bin/Debug/net9.0/
             var testImagePath = Path.Combine(Directory.GetCurrentDirectory(), "test-upload.png");
-            
+
             if (!File.Exists(testImagePath))
             {
                 // Try relative to the test assembly location (bin/Debug/net9.0/)
@@ -1981,7 +1981,7 @@ namespace GetStream.Tests
             // snippet-start: ListFeedGroups
             var listResponse = await _feedsV3Client.ListFeedGroupsAsync();
             // snippet-end: ListFeedGroups
-            
+
             Assert.That(listResponse, Is.Not.Null);
             Console.WriteLine($"✅ Listed {listResponse.Data.Groups.Count} existing feed groups");
 
@@ -2048,40 +2048,40 @@ namespace GetStream.Tests
             await _feedsV3Client.DeleteFeedGroupAsync("groupID-123");
             // snippet-end: DeleteFeedGroup
 
-                    Console.WriteLine("✅ Completed Feed Group CRUD operations");
+            Console.WriteLine("✅ Completed Feed Group CRUD operations");
 
-        // Additional Feed Group Creation Examples
-        Console.WriteLine("\n📊 Testing create feed group with aggregation...");
-        // snippet-start: CreateFeedGroupWithAggregation
-        await _feedsV3Client.CreateFeedGroupAsync(new CreateFeedGroupRequest
-        {
-            ID = "aggregated-group",
-            DefaultVisibility = "public",
-            ActivityProcessors = new List<ActivityProcessorConfig>
+            // Additional Feed Group Creation Examples
+            Console.WriteLine("\n📊 Testing create feed group with aggregation...");
+            // snippet-start: CreateFeedGroupWithAggregation
+            await _feedsV3Client.CreateFeedGroupAsync(new CreateFeedGroupRequest
+            {
+                ID = "aggregated-group",
+                DefaultVisibility = "public",
+                ActivityProcessors = new List<ActivityProcessorConfig>
             {
                 new() { Type = "default" }
             },
-            Aggregation = new AggregationConfig
-            {
-                Format = "{{ type }}-{{ time.strftime(\"%Y-%m-%d\") }}"
-            }
-        });
-        // snippet-end: CreateFeedGroupWithAggregation
+                Aggregation = new AggregationConfig
+                {
+                    Format = "{{ type }}-{{ time.strftime(\"%Y-%m-%d\") }}"
+                }
+            });
+            // snippet-end: CreateFeedGroupWithAggregation
 
-        Console.WriteLine("\n🏆 Testing create feed group with ranking...");
-        // snippet-start: CreateFeedGroupWithRanking
-        await _feedsV3Client.CreateFeedGroupAsync(new CreateFeedGroupRequest
-        {
-            ID = "ranked-group",
-            DefaultVisibility = "public",
-            Ranking = new RankingConfig
+            Console.WriteLine("\n🏆 Testing create feed group with ranking...");
+            // snippet-start: CreateFeedGroupWithRanking
+            await _feedsV3Client.CreateFeedGroupAsync(new CreateFeedGroupRequest
             {
-                Type = "default",
-                Score = "decay_linear(time) * popularity"
-            }
-        });
-        // snippet-end: CreateFeedGroupWithRanking
-    }
+                ID = "ranked-group",
+                DefaultVisibility = "public",
+                Ranking = new RankingConfig
+                {
+                    Type = "default",
+                    Score = "decay_linear(time) * popularity"
+                }
+            });
+            // snippet-end: CreateFeedGroupWithRanking
+        }
 
         /// <summary>
         /// Test 34: Feed View CRUD Operations
@@ -2178,7 +2178,7 @@ namespace GetStream.Tests
         public async Task Test23_DeleteActivities()
         {
             Console.WriteLine("\n🗑️ Testing activity deletion...");
-            
+
             // Create some activities to delete
             var activitiesToDelete = new List<string>();
             for (int i = 1; i <= 2; i++)
@@ -2190,10 +2190,10 @@ namespace GetStream.Tests
                     UserID = _testUserId,
                     Feeds = new List<string> { $"user:{_testFeedId}" }
                 };
-                
+
                 var createResponse = await _feedsV3Client.AddActivityAsync(activity);
                 Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
-                
+
                 var activityId = createResponse.Data!.Activity!.ID!;
                 activitiesToDelete.Add(activityId);
                 _createdActivityIds.Add(activityId);
@@ -2207,7 +2207,7 @@ namespace GetStream.Tests
 
                 Assert.That(response, Is.Not.Null);
             }
-            
+
             Console.WriteLine($"✅ Deleted {activitiesToDelete.Count} activities");
             _createdActivityIds.Clear();
         }
@@ -2219,7 +2219,7 @@ namespace GetStream.Tests
         private async Task CleanupResources()
         {
             Console.WriteLine("\n🧹 Cleaning up test resources...");
-            
+
             // Delete any remaining activities
             if (_createdActivityIds.Count > 0)
             {
@@ -2236,7 +2236,7 @@ namespace GetStream.Tests
                     }
                 }
             }
-            
+
             // Delete any remaining comments
             if (_createdCommentIds.Count > 0)
             {
@@ -2253,7 +2253,7 @@ namespace GetStream.Tests
                     }
                 }
             }
-            
+
             Console.WriteLine("✅ Cleanup completed");
         }
     }

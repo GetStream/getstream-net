@@ -173,7 +173,7 @@ namespace GetStream
             try
             {
                 string envFilePath;
-                
+
                 if (_envFilePath != null)
                 {
                     // Use explicit file path if provided
@@ -208,7 +208,7 @@ namespace GetStream
         private string FindEnvFile()
         {
             var currentDir = Directory.GetCurrentDirectory();
-            
+
             while (currentDir != null)
             {
                 var envPath = Path.Combine(currentDir, ".env");
@@ -216,11 +216,11 @@ namespace GetStream
                 {
                     return envPath;
                 }
-                
+
                 var parent = Directory.GetParent(currentDir);
                 currentDir = parent?.FullName;
             }
-            
+
             return string.Empty;
         }
 
