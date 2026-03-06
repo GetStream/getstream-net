@@ -218,25 +218,39 @@ namespace GetStream
             return url;
         }
 
+        /// <summary>
+        /// Creates a JWT token for the given user ID.
+        /// </summary>
+        /// <param name="userId">The user ID to create the token for.</param>
+        /// <param name="expiration">Optional token lifetime. Defaults to 1 hour.</param>
+        /// <returns>A signed JWT token string.</returns>
+        public string CreateUserToken(string userId, TimeSpan? expiration = null)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+
+            return CreateJwtToken(new SecurityTokenDescriptor
+            {
+                Claims = new Dictionary<string, object> { { "user_id", userId } },
+                Expires = DateTime.UtcNow.Add(expiration ?? TimeSpan.FromHours(1)),
+            });
+        }
+
         private string GenerateServerSideToken()
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(ApiSecret);
-            var claims = new List<System.Security.Claims.Claim>
+            return CreateJwtToken(new SecurityTokenDescriptor
             {
-                // new System.Security.Claims.Claim("user_id", "*"),
-                // new System.Security.Claims.Claim("user", "*")
-            };
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new System.Security.Claims.ClaimsIdentity(claims),
+                Subject = new System.Security.Claims.ClaimsIdentity(),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+            });
+        }
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+        private string CreateJwtToken(SecurityTokenDescriptor descriptor)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(ApiSecret);
+            descriptor.SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+            return tokenHandler.WriteToken(tokenHandler.CreateToken(descriptor));
         }
 
         private MultipartFormDataContent CreateMultipartContent(FileUploadRequest request)
