@@ -226,31 +226,31 @@ namespace GetStream
         /// <returns>A signed JWT token string.</returns>
         public string CreateUserToken(string userId, TimeSpan? expiration = null)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(ApiSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+
+            return CreateJwtToken(new SecurityTokenDescriptor
             {
                 Claims = new Dictionary<string, object> { { "user_id", userId } },
                 Expires = DateTime.UtcNow.Add(expiration ?? TimeSpan.FromHours(1)),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+            });
         }
 
         private string GenerateServerSideToken()
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(ApiSecret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            return CreateJwtToken(new SecurityTokenDescriptor
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+            });
+        }
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+        private string CreateJwtToken(SecurityTokenDescriptor descriptor)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(ApiSecret);
+            descriptor.SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+            return tokenHandler.WriteToken(tokenHandler.CreateToken(descriptor));
         }
 
         private MultipartFormDataContent CreateMultipartContent(FileUploadRequest request)

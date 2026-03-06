@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using GetStream;
@@ -61,12 +60,13 @@ namespace GetStream.Tests
         public void CreateUserToken_IsValidSignature()
         {
             var token = _client.CreateUserToken("john");
-            var key = Encoding.ASCII.GetBytes(TestApiSecret);
+            var key = Encoding.UTF8.GetBytes(TestApiSecret);
 
             var validationParams = new TokenValidationParameters
             {
                 ValidateIssuer = false,
                 ValidateAudience = false,
+                ValidateLifetime = false,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
             };
 
