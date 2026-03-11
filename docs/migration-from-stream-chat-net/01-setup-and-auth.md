@@ -55,8 +55,17 @@ var moderationClient = new ModerationClient(client);
 
 **Key changes:**
 - Namespace changes from `StreamChat.Clients` to `GetStream` and `GetStream.Models`
-- Single `StreamClient` replaces the factory pattern; sub-clients (`ChatClient`, `ModerationClient`) wrap it for domain-specific methods
+- Single `StreamClient` replaces the factory pattern; sub-clients wrap it for domain-specific methods
 - Environment variables are `STREAM_API_KEY` and `STREAM_API_SECRET` instead of `STREAM_KEY` and `STREAM_SECRET`
+
+**Available sub-clients and builder methods:**
+
+| Sub-client | Direct | Builder |
+|------------|--------|---------|
+| Chat | `new ChatClient(client)` | `builder.BuildChatClient()` |
+| Video | `new VideoClient(client)` | `builder.BuildVideoClient()` |
+| Moderation | `new ModerationClient(client)` | `builder.BuildModerationClient()` |
+| Feeds | `new FeedsV3Client(client)` | `builder.BuildFeedsClient()` |
 
 ## Client Initialization with Options
 
