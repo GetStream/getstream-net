@@ -80,6 +80,8 @@ namespace GetStream.Tests
         [Test]
         public void SkipEnvLoad_IgnoresEnvironmentVariables()
         {
+            var originalKey = Environment.GetEnvironmentVariable("STREAM_API_KEY");
+            var originalSecret = Environment.GetEnvironmentVariable("STREAM_API_SECRET");
             Environment.SetEnvironmentVariable("STREAM_API_KEY", "env-key");
             Environment.SetEnvironmentVariable("STREAM_API_SECRET", "env-secret");
             try
@@ -89,8 +91,8 @@ namespace GetStream.Tests
             }
             finally
             {
-                Environment.SetEnvironmentVariable("STREAM_API_KEY", null);
-                Environment.SetEnvironmentVariable("STREAM_API_SECRET", null);
+                Environment.SetEnvironmentVariable("STREAM_API_KEY", originalKey);
+                Environment.SetEnvironmentVariable("STREAM_API_SECRET", originalSecret);
             }
         }
 
@@ -106,19 +108,21 @@ namespace GetStream.Tests
         [Test]
         public void SkipEnvLoad_IgnoresBaseUrlEnvironmentVariable()
         {
+            var originalBaseUrl = Environment.GetEnvironmentVariable("STREAM_BASE_URL");
             Environment.SetEnvironmentVariable("STREAM_BASE_URL", "https://custom.example.com");
             try
             {
+                var defaultBaseUrl = new ClientBuilder().BaseUrlValue;
                 var builder = new ClientBuilder()
                     .ApiKey(TestApiKey)
                     .ApiSecret(TestApiSecret)
                     .SkipEnvLoad();
                 builder.LoadCredentials();
-                Assert.That(builder.BaseUrlValue, Is.EqualTo("https://chat.stream-io-api.com"));
+                Assert.That(builder.BaseUrlValue, Is.EqualTo(defaultBaseUrl));
             }
             finally
             {
-                Environment.SetEnvironmentVariable("STREAM_BASE_URL", null);
+                Environment.SetEnvironmentVariable("STREAM_BASE_URL", originalBaseUrl);
             }
         }
     }
