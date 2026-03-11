@@ -76,5 +76,50 @@ namespace GetStream.Tests
             Assert.Throws<InvalidOperationException>(() => builder.BuildModerationClient());
             Assert.Throws<InvalidOperationException>(() => builder.BuildFeedsClient());
         }
+
+        [Test]
+        public void SkipEnvLoad_IgnoresEnvironmentVariables()
+        {
+            Environment.SetEnvironmentVariable("STREAM_API_KEY", "env-key");
+            Environment.SetEnvironmentVariable("STREAM_API_SECRET", "env-secret");
+            try
+            {
+                var builder = new ClientBuilder().SkipEnvLoad();
+                Assert.Throws<InvalidOperationException>(() => builder.Build());
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("STREAM_API_KEY", null);
+                Environment.SetEnvironmentVariable("STREAM_API_SECRET", null);
+            }
+        }
+
+        [Test]
+        public void SkipEnvLoad_ErrorMessage_OmitsEnvVarHint()
+        {
+            var builder = new ClientBuilder().SkipEnvLoad();
+            var ex = Assert.Throws<InvalidOperationException>(() => builder.Build());
+            Assert.That(ex.Message, Does.Contain("Call ApiKey()"));
+            Assert.That(ex.Message, Does.Not.Contain("Set STREAM_API_KEY"));
+        }
+
+        [Test]
+        public void SkipEnvLoad_IgnoresBaseUrlEnvironmentVariable()
+        {
+            Environment.SetEnvironmentVariable("STREAM_BASE_URL", "https://custom.example.com");
+            try
+            {
+                var builder = new ClientBuilder()
+                    .ApiKey(TestApiKey)
+                    .ApiSecret(TestApiSecret)
+                    .SkipEnvLoad();
+                builder.LoadCredentials();
+                Assert.That(builder.BaseUrlValue, Is.EqualTo("https://chat.stream-io-api.com"));
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("STREAM_BASE_URL", null);
+            }
+        }
     }
 }
