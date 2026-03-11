@@ -178,16 +178,18 @@ namespace GetStream
 
             if (string.IsNullOrEmpty(apiKey))
             {
-                throw new InvalidOperationException(
-                    "API key not provided. Set STREAM_API_KEY environment variable or call ApiKey() method."
-                );
+                var message = _loadEnv
+                    ? "API key not provided. Set STREAM_API_KEY environment variable or call ApiKey() method."
+                    : "API key not provided. Call ApiKey() method or remove SkipEnvLoad() to load from environment.";
+                throw new InvalidOperationException(message);
             }
 
             if (string.IsNullOrEmpty(apiSecret))
             {
-                throw new InvalidOperationException(
-                    "API secret not provided. Set STREAM_API_SECRET environment variable or call ApiSecret() method."
-                );
+                var message = _loadEnv
+                    ? "API secret not provided. Set STREAM_API_SECRET environment variable or call ApiSecret() method."
+                    : "API secret not provided. Call ApiSecret() method or remove SkipEnvLoad() to load from environment.";
+                throw new InvalidOperationException(message);
             }
 
             _apiKey = apiKey;

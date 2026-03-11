@@ -76,5 +76,54 @@ namespace GetStream.Tests
             Assert.Throws<InvalidOperationException>(() => builder.BuildModerationClient());
             Assert.Throws<InvalidOperationException>(() => builder.BuildFeedsClient());
         }
+
+        [Test]
+        public void SkipEnvLoad_IgnoresEnvironmentVariables()
+        {
+            var originalKey = Environment.GetEnvironmentVariable("STREAM_API_KEY");
+            var originalSecret = Environment.GetEnvironmentVariable("STREAM_API_SECRET");
+            Environment.SetEnvironmentVariable("STREAM_API_KEY", "env-key");
+            Environment.SetEnvironmentVariable("STREAM_API_SECRET", "env-secret");
+            try
+            {
+                var builder = new ClientBuilder().SkipEnvLoad();
+                Assert.Throws<InvalidOperationException>(() => builder.Build());
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("STREAM_API_KEY", originalKey);
+                Environment.SetEnvironmentVariable("STREAM_API_SECRET", originalSecret);
+            }
+        }
+
+        [Test]
+        public void SkipEnvLoad_ErrorMessage_OmitsEnvVarHint()
+        {
+            var builder = new ClientBuilder().SkipEnvLoad();
+            var ex = Assert.Throws<InvalidOperationException>(() => builder.Build());
+            Assert.That(ex.Message, Does.Contain("Call ApiKey()"));
+            Assert.That(ex.Message, Does.Not.Contain("Set STREAM_API_KEY"));
+        }
+
+        [Test]
+        public void SkipEnvLoad_IgnoresBaseUrlEnvironmentVariable()
+        {
+            var originalBaseUrl = Environment.GetEnvironmentVariable("STREAM_BASE_URL");
+            Environment.SetEnvironmentVariable("STREAM_BASE_URL", "https://custom.example.com");
+            try
+            {
+                var defaultBaseUrl = new ClientBuilder().BaseUrlValue;
+                var builder = new ClientBuilder()
+                    .ApiKey(TestApiKey)
+                    .ApiSecret(TestApiSecret)
+                    .SkipEnvLoad();
+                builder.LoadCredentials();
+                Assert.That(builder.BaseUrlValue, Is.EqualTo(defaultBaseUrl));
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("STREAM_BASE_URL", originalBaseUrl);
+            }
+        }
     }
 }
