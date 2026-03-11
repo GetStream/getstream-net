@@ -161,13 +161,13 @@ namespace GetStream
                 LoadEnvironmentVariables();
             }
 
-            // Get credentials from environment if not set
-            var apiKey = _apiKey ?? GetEnvVar("STREAM_API_KEY");
-            var apiSecret = _apiSecret ?? GetEnvVar("STREAM_API_SECRET");
+            // Get credentials from environment if not set (only when env loading is enabled)
+            var apiKey = _apiKey ?? (_loadEnv ? GetEnvVar("STREAM_API_KEY") : null);
+            var apiSecret = _apiSecret ?? (_loadEnv ? GetEnvVar("STREAM_API_SECRET") : null);
             var baseUrl = _baseUrl;
 
             // Override baseUrl with environment variable if not explicitly set and env var exists
-            if (_baseUrl == "https://chat.stream-io-api.com")
+            if (_loadEnv && _baseUrl == "https://chat.stream-io-api.com")
             {
                 var envBaseUrl = GetEnvVar("STREAM_BASE_URL");
                 if (!string.IsNullOrEmpty(envBaseUrl))
