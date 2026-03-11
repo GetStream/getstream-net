@@ -4,6 +4,13 @@ This is the official .NET SDK for GetStream's Feeds API.
 
 For detailed setup instructions, see [Example](samples/ConsoleApp/Program.cs).
 
+## Migrating from stream-chat-net?
+
+If you are coming from [`stream-chat-net`](https://github.com/GetStream/stream-chat-net), we have a detailed migration guide with
+side-by-side code examples for every common Chat use case.
+
+See the [Migration Guide](docs/migration-from-stream-chat-net/README.md).
+
 ## Environment Setup
 
 ### For Development

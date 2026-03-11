@@ -123,6 +123,36 @@ namespace GetStream
             return new FeedsV3Client(_apiKey!, _apiSecret!);
         }
 
+        /// <summary>
+        /// Build the ChatClient
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
+        public ChatClient BuildChatClient()
+        {
+            LoadCredentials();
+            return new ChatClient(new StreamClient(_apiKey!, _apiSecret!));
+        }
+
+        /// <summary>
+        /// Build the VideoClient
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
+        public VideoClient BuildVideoClient()
+        {
+            LoadCredentials();
+            return new VideoClient(new StreamClient(_apiKey!, _apiSecret!));
+        }
+
+        /// <summary>
+        /// Build the ModerationClient
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
+        public ModerationClient BuildModerationClient()
+        {
+            LoadCredentials();
+            return new ModerationClient(_apiKey!, _apiSecret!);
+        }
+
         public void LoadCredentials()
         {
             // Load environment variables if enabled
