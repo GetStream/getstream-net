@@ -31,9 +31,9 @@ var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secre
 
 await client.CreateDeviceAsync(new CreateDeviceRequest
 {
-    Id = "firebase-device-token",
+    ID = "firebase-device-token",
     PushProvider = "firebase",
-    UserId = "bob-1"
+    UserID = "bob-1"
 });
 ```
 
@@ -71,17 +71,17 @@ var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secre
 
 await client.CreateDeviceAsync(new CreateDeviceRequest
 {
-    Id = "apn-device-token",
+    ID = "apn-device-token",
     PushProvider = "apn",
-    UserId = "jane"
+    UserID = "jane"
 });
 
 // For VoIP push tokens
 await client.CreateDeviceAsync(new CreateDeviceRequest
 {
-    Id = "voip-device-token",
+    ID = "voip-device-token",
     PushProvider = "apn",
-    UserId = "jane",
+    UserID = "jane",
     VoipToken = true
 });
 ```

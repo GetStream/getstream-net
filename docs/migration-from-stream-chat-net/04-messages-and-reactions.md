@@ -32,7 +32,7 @@ var response = await chatClient.SendMessageAsync("messaging", "general",
         Message = new MessageRequest
         {
             Text = "Hello, world!",
-            UserId = "bob-1"
+            UserID = "bob-1"
         }
     });
 ```
@@ -73,7 +73,7 @@ var response = await chatClient.SendMessageAsync("messaging", "general",
         Message = new MessageRequest
         {
             Text = "Check this out!",
-            UserId = "bob-1",
+            UserID = "bob-1",
             Custom = new Dictionary<string, object> { { "location", "amsterdam" } }
         }
     });
@@ -113,7 +113,7 @@ var response = await chatClient.SendMessageAsync("messaging", "general",
         Message = new MessageRequest
         {
             Text = "Silent notification",
-            UserId = "bob-1"
+            UserID = "bob-1"
         },
         SkipPush = true
     });
@@ -153,14 +153,14 @@ var response = await chatClient.SendMessageAsync("messaging", "general",
         Message = new MessageRequest
         {
             Text = "Replying to thread!",
-            UserId = "jane",
-            ParentId = parentMessageId
+            UserID = "jane",
+            ParentID = parentMessageId
         }
     });
 ```
 
 **Key changes:**
-- No separate `SendMessageToThreadAsync()` method; use `SendMessageAsync()` with `ParentId` on the `MessageRequest`
+- No separate `SendMessageToThreadAsync()` method; use `SendMessageAsync()` with `ParentID` on the `MessageRequest`
 
 ## Get a Message
 
@@ -224,7 +224,7 @@ await chatClient.UpdateMessageAsync(messageId, new UpdateMessageRequest
     Message = new MessageRequest
     {
         Text = "Updated text",
-        UserId = "bob-1"
+        UserID = "bob-1"
     }
 });
 ```
@@ -265,7 +265,7 @@ await chatClient.UpdateMessagePartialAsync(messageId, new UpdateMessagePartialRe
 {
     Set = new Dictionary<string, object> { { "text", "Partially updated" } },
     Unset = new List<string> { "custom_field" },
-    UserId = "bob-1"
+    UserID = "bob-1"
 });
 ```
 
@@ -302,12 +302,13 @@ var chatClient = new ChatClient(client);
 // Soft delete
 await chatClient.DeleteMessageAsync(messageId);
 
-// Hard delete (pass as query parameter)
-await chatClient.DeleteMessageAsync(messageId);
+// Hard delete (pass hard_delete as query parameter)
+await chatClient.DeleteMessageAsync(messageId, new { hard_delete = true });
 ```
 
 **Key changes:**
 - Method moves from `IMessageClient` to `ChatClient`
+- Hard delete is specified via a query parameter object instead of a named argument
 
 ## Send a Reaction
 
@@ -336,7 +337,7 @@ await chatClient.SendReactionAsync(messageId, new SendReactionRequest
     Reaction = new ReactionRequest
     {
         Type = "like",
-        UserId = "bob-1"
+        UserID = "bob-1"
     }
 });
 ```
@@ -378,7 +379,7 @@ await chatClient.SendReactionAsync(messageId, new SendReactionRequest
     Reaction = new ReactionRequest
     {
         Type = "like",
-        UserId = "bob-1",
+        UserID = "bob-1",
         Score = 5
     },
     SkipPush = false,
@@ -440,9 +441,9 @@ using GetStream.Models;
 var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secret");
 var chatClient = new ChatClient(client);
 
-await chatClient.DeleteReactionAsync(messageId, "like");
+await chatClient.DeleteReactionAsync(messageId, "like", new { user_id = "bob-1" });
 ```
 
 **Key changes:**
 - `DeleteReactionAsync()` moves from `IReactionClient` to `ChatClient`
-- User ID is passed as a query parameter rather than a positional argument
+- User ID is passed as a query parameter object rather than a positional argument

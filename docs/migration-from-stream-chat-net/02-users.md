@@ -38,7 +38,7 @@ var response = await client.UpdateUsersAsync(new UpdateUsersRequest
     {
         ["bob-1"] = new UserRequest
         {
-            Id = "bob-1",
+            ID = "bob-1",
             Role = "admin",
             Teams = new List<string> { "red", "blue" },
             Custom = new Dictionary<string, object> { { "age", 27 } }
@@ -80,8 +80,8 @@ var response = await client.UpdateUsersAsync(new UpdateUsersRequest
 {
     Users = new Dictionary<string, UserRequest>
     {
-        ["jane"] = new UserRequest { Id = "jane" },
-        ["june"] = new UserRequest { Id = "june" }
+        ["jane"] = new UserRequest { ID = "jane" },
+        ["june"] = new UserRequest { ID = "june" }
     }
 });
 ```
@@ -116,26 +116,33 @@ var response = await userClient.QueryAsync(new QueryUserOptions
 **After (getstream-net):**
 
 ```csharp
+using System.Text.Json;
 using GetStream;
 using GetStream.Models;
 
 var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secret");
 
-var response = await client.QueryUsersAsync(new
+var payload = JsonSerializer.Serialize(new QueryUsersPayload
 {
-    filter_conditions = new Dictionary<string, object>
+    FilterConditions = new Dictionary<string, object>
     {
         { "role", new Dictionary<string, object> { { "$eq", "admin" } } }
     },
-    sort = new[] { new { field = "created_at", direction = -1 } },
-    offset = 0,
-    limit = 10
+    Sort = new List<SortParamRequest>
+    {
+        new SortParamRequest { Field = "created_at", Direction = -1 }
+    },
+    Offset = 0,
+    Limit = 10
 });
+
+var response = await client.QueryUsersAsync(new { payload });
 ```
 
 **Key changes:**
 - `QueryAsync()` on `IUserClient` becomes `QueryUsersAsync()` on `StreamClient`
-- Uses anonymous objects or dictionaries for filter/sort parameters
+- The request object is serialized as a JSON `payload` query parameter using the typed `QueryUsersPayload` class
+- Sort uses `SortParamRequest` with `Direction = -1` (descending) or `1` (ascending)
 
 ## Partial Update User
 
@@ -170,7 +177,7 @@ await client.UpdateUsersPartialAsync(new UpdateUsersPartialRequest
     {
         new UpdateUserPartialRequest
         {
-            Id = "bob-1",
+            ID = "bob-1",
             Set = new Dictionary<string, object> { { "age", 28 }, { "city", "Amsterdam" } },
             Unset = new List<string> { "nickname" }
         }
@@ -206,7 +213,7 @@ var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secre
 await client.DeactivateUserAsync("bob-1", new DeactivateUserRequest
 {
     MarkMessagesDeleted = true,
-    CreatedById = "admin-user"
+    CreatedByID = "admin-user"
 });
 ```
 
@@ -239,7 +246,7 @@ await client.ReactivateUserAsync("bob-1", new ReactivateUserRequest
 {
     RestoreMessages = true,
     Name = "Bob",
-    CreatedById = "admin-user"
+    CreatedByID = "admin-user"
 });
 ```
 

@@ -48,7 +48,7 @@ var response = await chatClient.SendMessageAsync("messaging", "general",
         Message = new MessageRequest
         {
             Text = "Hello from the new SDK!",
-            UserId = "bob-1"
+            UserID = "bob-1"
         }
     });
 ```

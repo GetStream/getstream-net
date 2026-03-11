@@ -42,10 +42,11 @@ var deviceClient = clientFactory.GetDeviceClient();
 using GetStream;
 using GetStream.Models;
 
+// Option 1: Provide credentials directly
 var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secret");
 
-// Or use environment variables (STREAM_API_KEY, STREAM_API_SECRET)
-var client = new ClientBuilder().Build();
+// Option 2: Use environment variables (STREAM_API_KEY, STREAM_API_SECRET)
+var clientFromEnv = new ClientBuilder().Build();
 
 // Access sub-clients
 var chatClient = new ChatClient(client);

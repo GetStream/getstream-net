@@ -97,7 +97,7 @@ var moderationClient = new ModerationClient(client);
 await moderationClient.BanAsync(new BanRequest
 {
     TargetUserID = "bad-user",
-    BannedById = "admin-user",
+    BannedByID = "admin-user",
     Reason = "spamming",
     Timeout = 60
 });
@@ -105,7 +105,7 @@ await moderationClient.BanAsync(new BanRequest
 
 **Key changes:**
 - `BanAsync()` moves from `IUserClient` to `ModerationClient`
-- `UserId` becomes `BannedById`; `TargetUserId` becomes `TargetUserID`
+- `UserId` becomes `BannedByID`; `TargetUserId` becomes `TargetUserID` (note the uppercase `ID` suffix)
 
 ## Ban a User (Channel-level)
 
@@ -140,7 +140,7 @@ var moderationClient = new ModerationClient(client);
 await moderationClient.BanAsync(new BanRequest
 {
     TargetUserID = "bad-user",
-    BannedById = "admin-user",
+    BannedByID = "admin-user",
     ChannelCid = "messaging:general",
     Reason = "off-topic"
 });
@@ -218,7 +218,7 @@ var moderationClient = new ModerationClient(client);
 await moderationClient.BanAsync(new BanRequest
 {
     TargetUserID = "bad-user",
-    BannedById = "admin-user",
+    BannedByID = "admin-user",
     Shadow = true
 });
 ```
@@ -252,7 +252,7 @@ var moderationClient = new ModerationClient(client);
 await moderationClient.MuteAsync(new MuteRequest
 {
     TargetIds = new List<string> { "noisy-user" },
-    UserId = "admin-user"
+    UserID = "admin-user"
 });
 ```
 
@@ -285,7 +285,7 @@ var moderationClient = new ModerationClient(client);
 await moderationClient.UnmuteAsync(new UnmuteRequest
 {
     TargetIds = new List<string> { "noisy-user" },
-    UserId = "admin-user"
+    UserID = "admin-user"
 });
 ```
 

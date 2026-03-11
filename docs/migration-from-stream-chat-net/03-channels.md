@@ -44,11 +44,11 @@ var response = await chatClient.GetOrCreateChannelAsync("messaging", "general",
     {
         Data = new ChannelInput
         {
-            CreatedById = "admin-user",
+            CreatedByID = "admin-user",
             Members = new List<ChannelMemberRequest>
             {
-                new ChannelMemberRequest { UserId = "user-1" },
-                new ChannelMemberRequest { UserId = "user-2" }
+                new ChannelMemberRequest { UserID = "user-1" },
+                new ChannelMemberRequest { UserID = "user-2" }
             }
         }
     });
@@ -57,7 +57,7 @@ var response = await chatClient.GetOrCreateChannelAsync("messaging", "general",
 **Key changes:**
 - `GetOrCreateAsync()` on `IChannelClient` becomes `GetOrCreateChannelAsync()` on `ChatClient`
 - `ChannelGetRequest` becomes `ChannelGetOrCreateRequest`; `ChannelRequest` becomes `ChannelInput`
-- `CreatedBy` (a `UserRequest` object) becomes `CreatedById` (a string)
+- `CreatedBy` (a `UserRequest` object) becomes `CreatedByID` (a string)
 - Members use `ChannelMemberRequest` objects instead of `ChannelMember`
 
 ## Create a Distinct (Member-based) Channel
@@ -100,11 +100,11 @@ var response = await chatClient.GetOrCreateDistinctChannelAsync("messaging",
     {
         Data = new ChannelInput
         {
-            CreatedById = "user-1",
+            CreatedByID = "user-1",
             Members = new List<ChannelMemberRequest>
             {
-                new ChannelMemberRequest { UserId = "user-1" },
-                new ChannelMemberRequest { UserId = "user-2" }
+                new ChannelMemberRequest { UserID = "user-1" },
+                new ChannelMemberRequest { UserID = "user-2" }
             }
         }
     });
@@ -145,8 +145,8 @@ await chatClient.UpdateChannelAsync("messaging", "general", new UpdateChannelReq
 {
     AddMembers = new List<ChannelMemberRequest>
     {
-        new ChannelMemberRequest { UserId = "user-3" },
-        new ChannelMemberRequest { UserId = "user-4" }
+        new ChannelMemberRequest { UserID = "user-3" },
+        new ChannelMemberRequest { UserID = "user-4" }
     }
 });
 
@@ -246,7 +246,7 @@ await chatClient.UpdateChannelAsync("messaging", "general", new UpdateChannelReq
     {
         Custom = new Dictionary<string, object> { { "name", "General Chat" } }
     },
-    Message = new MessageRequest { Text = "Channel name updated", UserId = "admin-user" }
+    Message = new MessageRequest { Text = "Channel name updated", UserID = "admin-user" }
 });
 ```
 
@@ -287,14 +287,14 @@ await chatClient.UpdateChannelPartialAsync("messaging", "general",
     {
         Set = new Dictionary<string, object> { { "color", "blue" } },
         Unset = new List<string> { "old_field" },
-        UserId = "admin-user"
+        UserID = "admin-user"
     });
 ```
 
 **Key changes:**
 - `PartialUpdateAsync()` becomes `UpdateChannelPartialAsync()`
 - `PartialUpdateChannelRequest` becomes `UpdateChannelPartialRequest`
-- New SDK requires `UserId` on the partial update request
+- New SDK requires `UserID` on the partial update request
 
 ## Delete a Channel
 
