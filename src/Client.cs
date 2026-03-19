@@ -38,6 +38,7 @@ namespace GetStream
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
                 Converters = { new NanosecondTimestampConverter(), new FeedOwnCapabilityConverter(), new ChannelOwnCapabilityConverter(), new OwnCapabilityConverter() }
             };
         }
