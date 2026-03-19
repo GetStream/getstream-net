@@ -1929,9 +1929,9 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📄 Testing file upload...");
 
-            // Create a temporary test file
+            // Create a temporary test file with .txt extension (API rejects .tmp)
             var testContent = "This is a test file for multipart upload integration test\nContains multiple lines\nWith various content";
-            var tempFile = Path.GetTempFileName();
+            var tempFile = Path.Combine(Path.GetTempPath(), $"stream-test-{Guid.NewGuid():N}.txt");
             await File.WriteAllTextAsync(tempFile, testContent);
 
             try
