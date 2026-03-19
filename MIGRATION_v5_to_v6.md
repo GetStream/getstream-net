@@ -222,7 +222,7 @@ await client.UpdateAppAsync(new UpdateAppRequest
 {
     EnforceUniqueUsernames = "no"
 });
-// Wire: {"enforceUniqueUsernames":"no"}
+// Wire: {"enforce_unique_usernames":"no"}
 // Backend: sets enforce_unique_usernames="no", all other fields preserved
 ```
 
