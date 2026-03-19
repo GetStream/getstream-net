@@ -102,25 +102,25 @@ namespace GetStream.Tests
                         [_testUserId] = new UserRequest
                         {
                             ID = _testUserId,
-                            Name = "Test User 1",
+                            Name = $"Test User {_testUserId}",
                             Role = "user"
                         },
                         [_testUserId2] = new UserRequest
                         {
                             ID = _testUserId2,
-                            Name = "Test User 2",
+                            Name = $"Test User {_testUserId2}",
                             Role = "user"
                         },
                         [_moderatorUserId] = new UserRequest
                         {
                             ID = _moderatorUserId,
-                            Name = "Moderator User",
+                            Name = $"Moderator {_moderatorUserId}",
                             Role = "admin"
                         },
                         [_reporterUserId] = new UserRequest
                         {
                             ID = _reporterUserId,
-                            Name = "Reporter User",
+                            Name = $"Reporter {_reporterUserId}",
                             Role = "user"
                         }
                     }

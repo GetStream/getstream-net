@@ -216,7 +216,7 @@ namespace GetStream.Tests
                     User = new UserRequest
                     {
                         ID = guestId,
-                        Name = "Guest User"
+                        Name = $"Guest User {guestId}"
                     }
                 });
 
@@ -252,7 +252,7 @@ namespace GetStream.Tests
                     [userId] = new UserRequest
                     {
                         ID = userId,
-                        Name = "Teams User",
+                        Name = $"Teams User {userId}",
                         Role = "admin",
                         Teams = new List<string> { "blue" },
                         TeamsRole = new Dictionary<string, string> { ["blue"] = "admin" }
@@ -315,7 +315,7 @@ namespace GetStream.Tests
             {
                 Users = new Dictionary<string, UserRequest>
                 {
-                    [userId] = new UserRequest { ID = userId, Name = "Privacy User" }
+                    [userId] = new UserRequest { ID = userId, Name = $"Privacy User {userId}" }
                 }
             });
 
@@ -383,7 +383,7 @@ namespace GetStream.Tests
             {
                 Users = new Dictionary<string, UserRequest>
                 {
-                    [userId] = new UserRequest { ID = userId, Name = "Privacy Partial User" }
+                    [userId] = new UserRequest { ID = userId, Name = $"Privacy Partial {userId}" }
                 }
             });
 
@@ -548,7 +548,7 @@ namespace GetStream.Tests
                     [userId] = new UserRequest
                     {
                         ID = userId,
-                        Name = "Custom User",
+                        Name = $"Custom User {userId}",
                         Custom = custom
                     }
                 }

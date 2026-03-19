@@ -97,19 +97,19 @@ namespace GetStream.Tests
                         [_testUserId] = new UserRequest
                         {
                             ID = _testUserId,
-                            Name = "Test User 1",
+                            Name = $"Test User {_testUserId}",
                             Role = "user"
                         },
                         [_testUserId2] = new UserRequest
                         {
                             ID = _testUserId2,
-                            Name = "Test User 2",
+                            Name = $"Test User {_testUserId2}",
                             Role = "user"
                         },
                         [_testUserId3] = new UserRequest
                         {
                             ID = _testUserId3,
-                            Name = "Test User 3",
+                            Name = $"Test User {_testUserId3}",
                             Role = "user"
                         }
                     }
@@ -1929,9 +1929,9 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📄 Testing file upload...");
 
-            // Create a temporary test file
+            // Create a temporary test file with .txt extension (API rejects .tmp)
             var testContent = "This is a test file for multipart upload integration test\nContains multiple lines\nWith various content";
-            var tempFile = Path.GetTempFileName();
+            var tempFile = Path.Combine(Path.GetTempPath(), $"stream-test-{Guid.NewGuid():N}.txt");
             await File.WriteAllTextAsync(tempFile, testContent);
 
             try

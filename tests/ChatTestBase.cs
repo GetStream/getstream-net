@@ -65,7 +65,7 @@ namespace GetStream.Tests
 
             var users = ids.ToDictionary(
                 id => id,
-                id => new UserRequest { ID = id, Name = $"Test User {id[..8]}", Role = "user" }
+                id => new UserRequest { ID = id, Name = $"Test User {id}", Role = "user" }
             );
 
             await StreamClient.UpdateUsersAsync(new UpdateUsersRequest { Users = users });
