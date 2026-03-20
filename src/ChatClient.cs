@@ -1207,6 +1207,55 @@ namespace GetStream
             return result;
         }
 
+        // Returns all retention policies configured for the app. Server-side only.
+        public async Task<StreamResponse<GetRetentionPolicyResponse>> GetRetentionPolicyAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, GetRetentionPolicyResponse>(
+                "GET",
+                "/api/v2/chat/retention_policy", null, null, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Creates or updates a retention policy for the app. Server-side only.
+        public async Task<StreamResponse<SetRetentionPolicyResponse>> SetRetentionPolicyAsync(SetRetentionPolicyRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SetRetentionPolicyRequest, SetRetentionPolicyResponse>(
+                "POST",
+                "/api/v2/chat/retention_policy", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Removes a retention policy for the app. Server-side only.
+        public async Task<StreamResponse<DeleteRetentionPolicyResponse>> DeleteRetentionPolicyAsync(DeleteRetentionPolicyRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<DeleteRetentionPolicyRequest, DeleteRetentionPolicyResponse>(
+                "POST",
+                "/api/v2/chat/retention_policy/delete", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Returns paginated retention cleanup run history for the app. Server-side only.
+        public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetRetentionPolicyRunsResponse>(
+                "GET",
+                "/api/v2/chat/retention_policy/runs", queryParams, null, null,
+                cancellationToken);
+            return result;
+        }
+
         // Search messages across channels
         public async Task<StreamResponse<SearchResponse>> SearchAsync(object request = null,
             CancellationToken cancellationToken = default)
