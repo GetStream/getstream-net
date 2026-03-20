@@ -1,6 +1,11 @@
 name: Release
 
 on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - master
   workflow_dispatch:
     inputs:
       version_bump:
@@ -28,7 +33,13 @@ env:
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true &&
+        startsWith(github.event.pull_request.head.ref, 'release/v')
+      )
     runs-on: ubuntu-latest
 
     steps:
@@ -36,6 +47,7 @@ jobs:
       with:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
+        ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -67,6 +79,13 @@ jobs:
       run: |
         CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
 
+        # When a release PR is merged, publish the version already merged to main/master.
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Release version (merged PR): $CURRENT_VERSION"
+          exit 0
+        fi
+
         # Publish whatever version is already set in .csproj, no bump
         if [ "${{ github.event.inputs.use_current_version }}" = "true" ]; then
           echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
@@ -94,7 +113,7 @@ jobs:
         echo "Release version: $NEW_VERSION"
 
     - name: Update version in files
-      if: github.event.inputs.use_current_version != 'true'
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.use_current_version != 'true'
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
         sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" src/stream-feed-net.csproj
@@ -135,7 +154,7 @@ jobs:
         fi
 
     - name: Commit version bump
-      if: github.event.inputs.use_current_version != 'true'
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.use_current_version != 'true'
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
         git config --local user.email "action@github.com"
