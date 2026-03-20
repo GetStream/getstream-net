@@ -1056,6 +1056,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task QueryCollectionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new QueryCollectionsRequest();
+
+            var expectedResponse = new StreamResponse<QueryCollectionsResponse>
+            {
+                Data = new QueryCollectionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<QueryCollectionsRequest, QueryCollectionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryCollectionsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<QueryCollectionsRequest, QueryCollectionsResponse>(
+                "POST",
+                "/api/v2/feeds/collections/query",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryCollectionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task GetCommentsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange

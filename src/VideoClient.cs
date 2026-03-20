@@ -1024,6 +1024,18 @@ namespace GetStream
             return result;
         }
 
+        // Determine authentication requirements for an inbound SIP call before sending a digest challenge
+        public async Task<StreamResponse<ResolveSipAuthResponse>> ResolveSipAuthAsync(ResolveSipAuthRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<ResolveSipAuthRequest, ResolveSipAuthResponse>(
+                "POST",
+                "/api/v2/video/sip/auth", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
         // List all SIP Inbound Routing Rules for the application
         public async Task<StreamResponse<ListSIPInboundRoutingRuleResponse>> ListSIPInboundRoutingRuleAsync(object request = null,
             CancellationToken cancellationToken = default)

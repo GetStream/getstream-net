@@ -440,6 +440,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<QueryCollectionsResponse>> QueryCollectionsAsync(QueryCollectionsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryCollectionsRequest, QueryCollectionsResponse>(
+                "POST",
+                "/api/v2/feeds/collections/query", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetCommentsResponse>> GetCommentsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
