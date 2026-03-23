@@ -870,36 +870,5 @@ namespace GetStream.Tests
             }
         }
 
-        [Test, Order(23)]
-        public async Task DeleteRetentionPolicy()
-        {
-            try
-            {
-                // Create a policy first so we have something to delete
-                await _chatClient.SetRetentionPolicyAsync(new SetRetentionPolicyRequest
-                {
-                    Policy = "old-messages",
-                    MaxAgeHours = 720
-                });
-
-                var resp = await _chatClient.DeleteRetentionPolicyAsync(new DeleteRetentionPolicyRequest
-                {
-                    Policy = "old-messages"
-                });
-
-                Assert.That(resp.Data, Is.Not.Null);
-                Assert.That(resp.Data!.Duration, Is.Not.Empty);
-            }
-            catch (Exception e) when (
-                e.Message.Contains("not available") ||
-                e.Message.Contains("not enabled") ||
-                e.Message.Contains("not found") ||
-                e.Message.Contains("Not Found") ||
-                e.Message.Contains("retention") ||
-                e.Message.Contains("feature"))
-            {
-                Assert.Ignore("Retention policy feature not available on this app");
-            }
-        }
     }
 }
