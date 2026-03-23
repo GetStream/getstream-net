@@ -823,5 +823,105 @@ namespace GetStream.Tests
                 Assert.Ignore("QueryTeamUsageStats not available on this app");
             }
         }
+
+        [Test, Order(20)]
+        public async Task SetRetentionPolicy()
+        {
+            try
+            {
+                var resp = await _chatClient.SetRetentionPolicyAsync(new SetRetentionPolicyRequest
+                {
+                    Policy = "old-messages",
+                    MaxAgeHours = 720
+                });
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.Duration, Is.Not.Empty);
+                Assert.That(resp.Data!.Policy, Is.Not.Null);
+                Assert.That(resp.Data!.Policy.Config, Is.Not.Null);
+                Assert.That(resp.Data!.Policy.Config.MaxAgeHours, Is.EqualTo(720));
+            }
+            catch (Exception e) when (
+                e.Message.Contains("not available") ||
+                e.Message.Contains("not enabled") ||
+                e.Message.Contains("not found") ||
+                e.Message.Contains("Not Found") ||
+                e.Message.Contains("retention") ||
+                e.Message.Contains("feature"))
+            {
+                Assert.Ignore("Retention policy feature not available on this app");
+            }
+        }
+
+        [Test, Order(21)]
+        public async Task GetRetentionPolicy()
+        {
+            try
+            {
+                var resp = await _chatClient.GetRetentionPolicyAsync();
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.Duration, Is.Not.Empty);
+                Assert.That(resp.Data!.Policies, Is.Not.Null);
+            }
+            catch (Exception e) when (
+                e.Message.Contains("not available") ||
+                e.Message.Contains("not enabled") ||
+                e.Message.Contains("not found") ||
+                e.Message.Contains("Not Found") ||
+                e.Message.Contains("retention") ||
+                e.Message.Contains("feature"))
+            {
+                Assert.Ignore("Retention policy feature not available on this app");
+            }
+        }
+
+        [Test, Order(22)]
+        public async Task GetRetentionPolicyRuns()
+        {
+            try
+            {
+                var resp = await _chatClient.GetRetentionPolicyRunsAsync();
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.Duration, Is.Not.Empty);
+                Assert.That(resp.Data!.Runs, Is.Not.Null);
+            }
+            catch (Exception e) when (
+                e.Message.Contains("not available") ||
+                e.Message.Contains("not enabled") ||
+                e.Message.Contains("not found") ||
+                e.Message.Contains("Not Found") ||
+                e.Message.Contains("retention") ||
+                e.Message.Contains("feature"))
+            {
+                Assert.Ignore("Retention policy feature not available on this app");
+            }
+        }
+
+        [Test, Order(23)]
+        public async Task DeleteRetentionPolicy()
+        {
+            try
+            {
+                var resp = await _chatClient.DeleteRetentionPolicyAsync(new DeleteRetentionPolicyRequest
+                {
+                    Policy = "old-messages"
+                });
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.Duration, Is.Not.Empty);
+            }
+            catch (Exception e) when (
+                e.Message.Contains("not available") ||
+                e.Message.Contains("not enabled") ||
+                e.Message.Contains("not found") ||
+                e.Message.Contains("Not Found") ||
+                e.Message.Contains("retention") ||
+                e.Message.Contains("feature"))
+            {
+                Assert.Ignore("Retention policy feature not available on this app");
+            }
+        }
     }
 }
