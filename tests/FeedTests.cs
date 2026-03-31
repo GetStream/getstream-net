@@ -1339,6 +1339,42 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task UpdateCommentPartialAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new UpdateCommentPartialRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<UpdateCommentPartialResponse>
+            {
+                Data = new UpdateCommentPartialResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<UpdateCommentPartialRequest, UpdateCommentPartialResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateCommentPartialRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.UpdateCommentPartialAsync(id, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<UpdateCommentPartialRequest, UpdateCommentPartialResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/partial",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateCommentPartialRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task AddCommentReactionAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -1480,6 +1516,42 @@ namespace GetStream.Tests
                 "/api/v2/feeds/comments/{id}/replies",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task RestoreCommentAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new RestoreCommentRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<RestoreCommentResponse>
+            {
+                Data = new RestoreCommentResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<RestoreCommentRequest, RestoreCommentResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<RestoreCommentRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.RestoreCommentAsync(id, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<RestoreCommentRequest, RestoreCommentResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/restore",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<RestoreCommentRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

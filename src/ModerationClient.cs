@@ -42,6 +42,17 @@ namespace GetStream
 
             return queryParams;
         }
+        public async Task<StreamResponse<InsertActionLogResponse>> InsertActionLogAsync(InsertActionLogRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<InsertActionLogRequest, InsertActionLogResponse>(
+                "POST",
+                "/api/v2/moderation/action_logs", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<AppealResponse>> AppealAsync(AppealRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -228,6 +239,17 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<FlagRequest, FlagResponse>(
                 "POST",
                 "/api/v2/moderation/flag", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetFlagCountResponse>> GetFlagCountAsync(GetFlagCountRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GetFlagCountRequest, GetFlagCountResponse>(
+                "POST",
+                "/api/v2/moderation/flag_count", null, request, null,
                 cancellationToken);
 
             return result;
