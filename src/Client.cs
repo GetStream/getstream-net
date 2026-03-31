@@ -233,6 +233,8 @@ namespace GetStream
             return CreateJwtToken(new SecurityTokenDescriptor
             {
                 Claims = new Dictionary<string, object> { { "user_id", userId } },
+                IssuedAt = DateTime.UtcNow.AddSeconds(-5),
+                NotBefore = DateTime.UtcNow.AddSeconds(-5),
                 Expires = DateTime.UtcNow.Add(expiration ?? TimeSpan.FromHours(1)),
             });
         }
@@ -242,6 +244,8 @@ namespace GetStream
             return CreateJwtToken(new SecurityTokenDescriptor
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(),
+                IssuedAt = DateTime.UtcNow.AddSeconds(-5),
+                NotBefore = DateTime.UtcNow.AddSeconds(-5),
                 Expires = DateTime.UtcNow.AddHours(1),
             });
         }
