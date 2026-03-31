@@ -42,6 +42,17 @@ namespace GetStream
 
             return queryParams;
         }
+        public async Task<StreamResponse<InsertActionLogResponse>> InsertActionLogAsync(InsertActionLogRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<InsertActionLogRequest, InsertActionLogResponse>(
+                "POST",
+                "/api/v2/moderation/action_logs", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<AppealResponse>> AppealAsync(AppealRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -53,7 +64,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id, object request = null,
+        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -134,7 +145,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key, object request = null,
+        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -150,7 +161,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key, object request = null,
+        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -228,6 +239,17 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<FlagRequest, FlagResponse>(
                 "POST",
                 "/api/v2/moderation/flag", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetFlagCountResponse>> GetFlagCountAsync(GetFlagCountRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GetFlagCountRequest, GetFlagCountResponse>(
+                "POST",
+                "/api/v2/moderation/flag_count", null, request, null,
                 cancellationToken);
 
             return result;
@@ -320,7 +342,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id, object request = null,
+        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -369,5 +391,5 @@ namespace GetStream
 
             return result;
         }
-    }
-}
+            }
+        }

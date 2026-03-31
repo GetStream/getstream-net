@@ -116,6 +116,7 @@ namespace GetStream
         public const string FeedsCommentReactionAdded = "feeds.comment.reaction.added";
         public const string FeedsCommentReactionDeleted = "feeds.comment.reaction.deleted";
         public const string FeedsCommentReactionUpdated = "feeds.comment.reaction.updated";
+        public const string FeedsCommentRestored = "feeds.comment.restored";
         public const string FeedsCommentUpdated = "feeds.comment.updated";
         public const string FeedsFeedCreated = "feeds.feed.created";
         public const string FeedsFeedDeleted = "feeds.feed.deleted";
@@ -366,6 +367,7 @@ namespace GetStream
                 "feeds.comment.reaction.added" => typeof(CommentReactionAddedEvent),
                 "feeds.comment.reaction.deleted" => typeof(CommentReactionDeletedEvent),
                 "feeds.comment.reaction.updated" => typeof(CommentReactionUpdatedEvent),
+                "feeds.comment.restored" => typeof(CommentRestoredEvent),
                 "feeds.comment.updated" => typeof(CommentUpdatedEvent),
                 "feeds.feed.created" => typeof(FeedCreatedEvent),
                 "feeds.feed.deleted" => typeof(FeedDeletedEvent),
