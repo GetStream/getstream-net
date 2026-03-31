@@ -542,6 +542,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<UpdateCommentPartialResponse>> UpdateCommentPartialAsync(string id, UpdateCommentPartialRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateCommentPartialRequest, UpdateCommentPartialResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/partial", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string id, AddCommentReactionRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -601,6 +616,21 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetCommentRepliesResponse>(
                 "GET",
                 "/api/v2/feeds/comments/{id}/replies", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<RestoreCommentResponse>> RestoreCommentAsync(string id, RestoreCommentRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<RestoreCommentRequest, RestoreCommentResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/restore", null, request, pathParams,
                 cancellationToken);
 
             return result;

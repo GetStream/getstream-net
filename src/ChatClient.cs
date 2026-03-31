@@ -1243,15 +1243,14 @@ namespace GetStream
             return result;
         }
 
-        // Returns paginated retention cleanup run history for the app. Server-side only.
-        public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(object request = null,
+        // Returns filtered and sorted retention cleanup run history for the app. Supports filter_conditions on 'policy' (possible values: 'old-messages', 'inactive-channels') and 'date' fields. Server-side only.
+        public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(GetRetentionPolicyRunsRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
 
-            var result = await _client.MakeRequestAsync<object, GetRetentionPolicyRunsResponse>(
-                "GET",
-                "/api/v2/chat/retention_policy/runs", queryParams, null, null,
+            var result = await _client.MakeRequestAsync<GetRetentionPolicyRunsRequest, GetRetentionPolicyRunsResponse>(
+                "POST",
+                "/api/v2/chat/retention_policy/runs", null, request, null,
                 cancellationToken);
             return result;
         }

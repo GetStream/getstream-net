@@ -356,6 +356,50 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<DeleteExternalStorageResponse>> DeleteImporterExternalStorageAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<object, DeleteExternalStorageResponse>(
+                "DELETE",
+                "/api/v2/imports/v2/external-storage", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetExternalStorageResponse>> GetImporterExternalStorageAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<object, GetExternalStorageResponse>(
+                "GET",
+                "/api/v2/imports/v2/external-storage", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpsertExternalStorageResponse>> UpsertImporterExternalStorageAsync(UpsertExternalStorageRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<UpsertExternalStorageRequest, UpsertExternalStorageResponse>(
+                "PUT",
+                "/api/v2/imports/v2/external-storage", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ValidateExternalStorageResponse>> ValidateImporterExternalStorageAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<object, ValidateExternalStorageResponse>(
+                "POST",
+                "/api/v2/imports/v2/external-storage/validate", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteImportV2TaskResponse>> DeleteImportV2TaskAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {

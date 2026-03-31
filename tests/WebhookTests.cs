@@ -903,6 +903,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_FeedsCommentRestored_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"feeds.comment.restored\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CommentRestoredEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_FeedsCommentUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.updated\"}";
