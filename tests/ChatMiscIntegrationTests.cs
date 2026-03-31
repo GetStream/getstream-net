@@ -823,5 +823,32 @@ namespace GetStream.Tests
                 Assert.Ignore("QueryTeamUsageStats not available on this app");
             }
         }
+
+        [Test, Order(21)]
+        public async Task GetRetentionPolicyRuns()
+        {
+            try
+            {
+                var resp = await _chatClient.GetRetentionPolicyRunsAsync(new GetRetentionPolicyRunsRequest
+                {
+                    Limit = 10
+                });
+
+                Assert.That(resp.Data, Is.Not.Null);
+                Assert.That(resp.Data!.Duration, Is.Not.Empty);
+                Assert.That(resp.Data!.Runs, Is.Not.Null);
+            }
+            catch (Exception e) when (
+                e.Message.Contains("not available") ||
+                e.Message.Contains("not enabled") ||
+                e.Message.Contains("not found") ||
+                e.Message.Contains("Not Found") ||
+                e.Message.Contains("retention") ||
+                e.Message.Contains("feature"))
+            {
+                Assert.Ignore("Retention policy feature not available on this app");
+            }
+        }
+
     }
 }

@@ -34,7 +34,7 @@ namespace GetStream
 
             return queryParams;
         }
-
+        
         // Get the current status of all active calls including metrics and summary information
         public async Task<StreamResponse<GetActiveCallsStatusResponse>> GetActiveCallsStatusAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -46,8 +46,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
+        
+        
         public async Task<StreamResponse<QueryUserFeedbackResponse>> QueryUserFeedbackAsync(QueryUserFeedbackRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -59,7 +59,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Query call members with filter query
         public async Task<StreamResponse<QueryCallMembersResponse>> QueryCallMembersAsync(QueryCallMembersRequest request,
             CancellationToken cancellationToken = default)
@@ -71,8 +71,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
+        
+        
         public async Task<StreamResponse<QueryCallStatsResponse>> QueryCallStatsAsync(QueryCallStatsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -83,9 +83,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<GetCallResponse>> GetCallAsync(string type, string id, object request = null,
+        
+        
+        public async Task<StreamResponse<GetCallResponse>> GetCallAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -101,12 +101,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.updated
-        public async Task<StreamResponse<UpdateCallResponse>> UpdateCallAsync(string type, string id, UpdateCallRequest request,
+        public async Task<StreamResponse<UpdateCallResponse>> UpdateCallAsync(string type, string id,UpdateCallRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -121,14 +121,14 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Gets or creates a new call
-
+        
         // Sends events:
         // - call.created
         // - call.notification
         // - call.ring
-        public async Task<StreamResponse<GetOrCreateCallResponse>> GetOrCreateCallAsync(string type, string id, GetOrCreateCallRequest request,
+        public async Task<StreamResponse<GetOrCreateCallResponse>> GetOrCreateCallAsync(string type, string id,GetOrCreateCallRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -143,12 +143,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Block a user, preventing them from joining the call until they are unblocked.
-
+        
         // Sends events:
         // - call.blocked_user
-        public async Task<StreamResponse<BlockUserResponse>> BlockUserAsync(string type, string id, BlockUserRequest request,
+        public async Task<StreamResponse<BlockUserResponse>> BlockUserAsync(string type, string id,BlockUserRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -163,12 +163,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Sends a closed caption event to the call
-
+        
         // Sends events:
         // - call.closed_caption
-        public async Task<StreamResponse<SendClosedCaptionResponse>> SendClosedCaptionAsync(string type, string id, SendClosedCaptionRequest request,
+        public async Task<StreamResponse<SendClosedCaptionResponse>> SendClosedCaptionAsync(string type, string id,SendClosedCaptionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -183,12 +183,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.deleted
-        public async Task<StreamResponse<DeleteCallResponse>> DeleteCallAsync(string type, string id, DeleteCallRequest request,
+        public async Task<StreamResponse<DeleteCallResponse>> DeleteCallAsync(string type, string id,DeleteCallRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -203,12 +203,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Sends custom event to the call
-
+        
         // Sends events:
         // - custom
-        public async Task<StreamResponse<SendCallEventResponse>> SendCallEventAsync(string type, string id, SendCallEventRequest request,
+        public async Task<StreamResponse<SendCallEventResponse>> SendCallEventAsync(string type, string id,SendCallEventRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -223,12 +223,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.user_feedback_submitted
-        public async Task<StreamResponse<CollectUserFeedbackResponse>> CollectUserFeedbackAsync(string type, string id, CollectUserFeedbackRequest request,
+        public async Task<StreamResponse<CollectUserFeedbackResponse>> CollectUserFeedbackAsync(string type, string id,CollectUserFeedbackRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -243,12 +243,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.live_started
-        public async Task<StreamResponse<GoLiveResponse>> GoLiveAsync(string type, string id, GoLiveRequest request,
+        public async Task<StreamResponse<GoLiveResponse>> GoLiveAsync(string type, string id,GoLiveRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -263,13 +263,13 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Kicks a user from the call. Optionally block the user from rejoining by setting block=true.
-
+        
         // Sends events:
         // - call.blocked_user
         // - call.kicked_user
-        public async Task<StreamResponse<KickUserResponse>> KickUserAsync(string type, string id, KickUserRequest request,
+        public async Task<StreamResponse<KickUserResponse>> KickUserAsync(string type, string id,KickUserRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -284,12 +284,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.ended
-        public async Task<StreamResponse<EndCallResponse>> EndCallAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<EndCallResponse>> EndCallAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -304,14 +304,14 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.member_added
         // - call.member_removed
         // - call.member_updated
-        public async Task<StreamResponse<UpdateCallMembersResponse>> UpdateCallMembersAsync(string type, string id, UpdateCallMembersRequest request,
+        public async Task<StreamResponse<UpdateCallMembersResponse>> UpdateCallMembersAsync(string type, string id,UpdateCallMembersRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -326,9 +326,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Mutes users in a call
-        public async Task<StreamResponse<MuteUsersResponse>> MuteUsersAsync(string type, string id, MuteUsersRequest request,
+        public async Task<StreamResponse<MuteUsersResponse>> MuteUsersAsync(string type, string id,MuteUsersRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -343,9 +343,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Returns a list of participants connected to the call
-        public async Task<StreamResponse<QueryCallParticipantsResponse>> QueryCallParticipantsAsync(string id, string type, QueryCallParticipantsRequest request,
+        public async Task<StreamResponse<QueryCallParticipantsResponse>> QueryCallParticipantsAsync(string id, string type,QueryCallParticipantsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -361,9 +361,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Pins a track for all users in the call.
-        public async Task<StreamResponse<PinResponse>> VideoPinAsync(string type, string id, PinRequest request,
+        public async Task<StreamResponse<PinResponse>> VideoPinAsync(string type, string id,PinRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -378,9 +378,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Lists recordings
-        public async Task<StreamResponse<ListRecordingsResponse>> ListRecordingsAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<ListRecordingsResponse>> ListRecordingsAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -395,12 +395,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Starts recording
-
+        
         // Sends events:
         // - call.recording_started
-        public async Task<StreamResponse<StartRecordingResponse>> StartRecordingAsync(string type, string id, string recordingType, StartRecordingRequest request,
+        public async Task<StreamResponse<StartRecordingResponse>> StartRecordingAsync(string type, string id, string recordingType,StartRecordingRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -416,12 +416,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stops recording
-
+        
         // Sends events:
         // - call.recording_stopped
-        public async Task<StreamResponse<StopRecordingResponse>> StopRecordingAsync(string type, string id, string recordingType, StopRecordingRequest request,
+        public async Task<StreamResponse<StopRecordingResponse>> StopRecordingAsync(string type, string id, string recordingType,StopRecordingRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -437,9 +437,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<GetCallReportResponse>> GetCallReportAsync(string type, string id, object request = null,
+        
+        
+        public async Task<StreamResponse<GetCallReportResponse>> GetCallReportAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -455,12 +455,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Sends a ring notification to the provided users who are not already in the call. All users should be members of the call
-
+        
         // Sends events:
         // - call.ring
-        public async Task<StreamResponse<RingCallResponse>> RingCallAsync(string type, string id, RingCallRequest request,
+        public async Task<StreamResponse<RingCallResponse>> RingCallAsync(string type, string id,RingCallRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -475,9 +475,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Starts RTMP broadcasts for the provided RTMP destinations
-        public async Task<StreamResponse<StartRTMPBroadcastsResponse>> StartRTMPBroadcastsAsync(string type, string id, StartRTMPBroadcastsRequest request,
+        public async Task<StreamResponse<StartRTMPBroadcastsResponse>> StartRTMPBroadcastsAsync(string type, string id,StartRTMPBroadcastsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -492,9 +492,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stop all RTMP broadcasts for the provided call
-        public async Task<StreamResponse<StopAllRTMPBroadcastsResponse>> StopAllRTMPBroadcastsAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<StopAllRTMPBroadcastsResponse>> StopAllRTMPBroadcastsAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -509,9 +509,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stop RTMP broadcasts for the provided RTMP destinations
-        public async Task<StreamResponse<StopRTMPBroadcastsResponse>> StopRTMPBroadcastAsync(string type, string id, string name, StopRTMPBroadcastsRequest request,
+        public async Task<StreamResponse<StopRTMPBroadcastsResponse>> StopRTMPBroadcastAsync(string type, string id, string name,StopRTMPBroadcastsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -527,9 +527,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<GetCallParticipantSessionMetricsResponse>> GetCallParticipantSessionMetricsAsync(string type, string id, string session, string user, string userSession, object request = null,
+        
+        
+        public async Task<StreamResponse<GetCallParticipantSessionMetricsResponse>> GetCallParticipantSessionMetricsAsync(string type, string id, string session, string user, string userSession,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -548,9 +548,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<QueryCallParticipantSessionsResponse>> QueryCallParticipantSessionsAsync(string type, string id, string session, object request = null,
+        
+        
+        public async Task<StreamResponse<QueryCallParticipantSessionsResponse>> QueryCallParticipantSessionsAsync(string type, string id, string session,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -567,9 +567,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Starts HLS broadcasting
-        public async Task<StreamResponse<StartHLSBroadcastingResponse>> StartHLSBroadcastingAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<StartHLSBroadcastingResponse>> StartHLSBroadcastingAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -584,9 +584,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Starts closed captions
-        public async Task<StreamResponse<StartClosedCaptionsResponse>> StartClosedCaptionsAsync(string type, string id, StartClosedCaptionsRequest request,
+        public async Task<StreamResponse<StartClosedCaptionsResponse>> StartClosedCaptionsAsync(string type, string id,StartClosedCaptionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -601,12 +601,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Starts frame by frame recording
-
+        
         // Sends events:
         // - call.frame_recording_started
-        public async Task<StreamResponse<StartFrameRecordingResponse>> StartFrameRecordingAsync(string type, string id, StartFrameRecordingRequest request,
+        public async Task<StreamResponse<StartFrameRecordingResponse>> StartFrameRecordingAsync(string type, string id,StartFrameRecordingRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -621,9 +621,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Starts transcription
-        public async Task<StreamResponse<StartTranscriptionResponse>> StartTranscriptionAsync(string type, string id, StartTranscriptionRequest request,
+        public async Task<StreamResponse<StartTranscriptionResponse>> StartTranscriptionAsync(string type, string id,StartTranscriptionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -638,9 +638,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stops HLS broadcasting
-        public async Task<StreamResponse<StopHLSBroadcastingResponse>> StopHLSBroadcastingAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<StopHLSBroadcastingResponse>> StopHLSBroadcastingAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -655,12 +655,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stops closed captions
-
+        
         // Sends events:
         // - call.transcription_stopped
-        public async Task<StreamResponse<StopClosedCaptionsResponse>> StopClosedCaptionsAsync(string type, string id, StopClosedCaptionsRequest request,
+        public async Task<StreamResponse<StopClosedCaptionsResponse>> StopClosedCaptionsAsync(string type, string id,StopClosedCaptionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -675,12 +675,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stops frame recording
-
+        
         // Sends events:
         // - call.frame_recording_stopped
-        public async Task<StreamResponse<StopFrameRecordingResponse>> StopFrameRecordingAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<StopFrameRecordingResponse>> StopFrameRecordingAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -695,12 +695,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-
+        
+        
+        
         // Sends events:
         // - call.updated
-        public async Task<StreamResponse<StopLiveResponse>> StopLiveAsync(string type, string id, StopLiveRequest request,
+        public async Task<StreamResponse<StopLiveResponse>> StopLiveAsync(string type, string id,StopLiveRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -715,12 +715,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Stops transcription
-
+        
         // Sends events:
         // - call.transcription_stopped
-        public async Task<StreamResponse<StopTranscriptionResponse>> StopTranscriptionAsync(string type, string id, StopTranscriptionRequest request,
+        public async Task<StreamResponse<StopTranscriptionResponse>> StopTranscriptionAsync(string type, string id,StopTranscriptionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -735,9 +735,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Lists transcriptions
-        public async Task<StreamResponse<ListTranscriptionsResponse>> ListTranscriptionsAsync(string type, string id, object request = null,
+        public async Task<StreamResponse<ListTranscriptionsResponse>> ListTranscriptionsAsync(string type, string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -752,12 +752,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Removes the block for a user on a call. The user will be able to join the call again.
-
+        
         // Sends events:
         // - call.unblocked_user
-        public async Task<StreamResponse<UnblockUserResponse>> UnblockUserAsync(string type, string id, UnblockUserRequest request,
+        public async Task<StreamResponse<UnblockUserResponse>> UnblockUserAsync(string type, string id,UnblockUserRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -772,9 +772,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Unpins a track for all users in the call.
-        public async Task<StreamResponse<UnpinResponse>> VideoUnpinAsync(string type, string id, UnpinRequest request,
+        public async Task<StreamResponse<UnpinResponse>> VideoUnpinAsync(string type, string id,UnpinRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -789,12 +789,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Updates user permissions
-
+        
         // Sends events:
         // - call.permissions_updated
-        public async Task<StreamResponse<UpdateUserPermissionsResponse>> UpdateUserPermissionsAsync(string type, string id, UpdateUserPermissionsRequest request,
+        public async Task<StreamResponse<UpdateUserPermissionsResponse>> UpdateUserPermissionsAsync(string type, string id,UpdateUserPermissionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -809,9 +809,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Deletes recording
-        public async Task<StreamResponse<DeleteRecordingResponse>> DeleteRecordingAsync(string type, string id, string session, string filename, object request = null,
+        public async Task<StreamResponse<DeleteRecordingResponse>> DeleteRecordingAsync(string type, string id, string session, string filename,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -828,9 +828,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Deletes transcription
-        public async Task<StreamResponse<DeleteTranscriptionResponse>> DeleteTranscriptionAsync(string type, string id, string session, string filename, object request = null,
+        public async Task<StreamResponse<DeleteTranscriptionResponse>> DeleteTranscriptionAsync(string type, string id, string session, string filename,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -847,9 +847,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<QueryCallStatsMapResponse>> GetCallStatsMapAsync(string callType, string callID, string session, object request = null,
+        
+        
+        public async Task<StreamResponse<QueryCallStatsMapResponse>> GetCallStatsMapAsync(string callType, string callID, string session,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -866,9 +866,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<GetCallSessionParticipantStatsDetailsResponse>> GetCallSessionParticipantStatsDetailsAsync(string callType, string callID, string session, string user, string userSession, object request = null,
+        
+        
+        public async Task<StreamResponse<GetCallSessionParticipantStatsDetailsResponse>> GetCallSessionParticipantStatsDetailsAsync(string callType, string callID, string session, string user, string userSession,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -887,9 +887,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<QueryCallSessionParticipantStatsResponse>> QueryCallSessionParticipantStatsAsync(string callType, string callID, string session, object request = null,
+        
+        
+        public async Task<StreamResponse<QueryCallSessionParticipantStatsResponse>> QueryCallSessionParticipantStatsAsync(string callType, string callID, string session,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -906,9 +906,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<QueryCallSessionParticipantStatsTimelineResponse>> GetCallSessionParticipantStatsTimelineAsync(string callType, string callID, string session, string user, string userSession, object request = null,
+        
+        
+        public async Task<StreamResponse<QueryCallSessionParticipantStatsTimelineResponse>> GetCallSessionParticipantStatsTimelineAsync(string callType, string callID, string session, string user, string userSession,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -927,7 +927,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Query calls with filter query
         public async Task<StreamResponse<QueryCallsResponse>> QueryCallsAsync(QueryCallsRequest request,
             CancellationToken cancellationToken = default)
@@ -939,8 +939,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
+        
+        
         public async Task<StreamResponse<ListCallTypeResponse>> ListCallTypesAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -951,8 +951,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
+        
+        
         public async Task<StreamResponse<CreateCallTypeResponse>> CreateCallTypeAsync(CreateCallTypeRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -963,9 +963,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<Response>> DeleteCallTypeAsync(string name, object request = null,
+        
+        
+        public async Task<StreamResponse<Response>> DeleteCallTypeAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -979,9 +979,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<GetCallTypeResponse>> GetCallTypeAsync(string name, object request = null,
+        
+        
+        public async Task<StreamResponse<GetCallTypeResponse>> GetCallTypeAsync(string name,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -995,9 +995,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
-        public async Task<StreamResponse<UpdateCallTypeResponse>> UpdateCallTypeAsync(string name, UpdateCallTypeRequest request,
+        
+        
+        public async Task<StreamResponse<UpdateCallTypeResponse>> UpdateCallTypeAsync(string name,UpdateCallTypeRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1011,7 +1011,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Returns the list of all edges available for video calls.
         public async Task<StreamResponse<GetEdgesResponse>> GetEdgesAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1023,7 +1023,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Determine authentication requirements for an inbound SIP call before sending a digest challenge
         public async Task<StreamResponse<ResolveSipAuthResponse>> ResolveSipAuthAsync(ResolveSipAuthRequest request,
             CancellationToken cancellationToken = default)
@@ -1035,7 +1035,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // List all SIP Inbound Routing Rules for the application
         public async Task<StreamResponse<ListSIPInboundRoutingRuleResponse>> ListSIPInboundRoutingRuleAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1047,7 +1047,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Create a new SIP Inbound Routing Rule with either direct routing or PIN routing configuration
         public async Task<StreamResponse<SIPInboundRoutingRuleResponse>> CreateSIPInboundRoutingRuleAsync(SIPInboundRoutingRuleRequest request,
             CancellationToken cancellationToken = default)
@@ -1059,9 +1059,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Delete a SIP Inbound Routing Rule for the application
-        public async Task<StreamResponse<DeleteSIPInboundRoutingRuleResponse>> DeleteSIPInboundRoutingRuleAsync(string id, object request = null,
+        public async Task<StreamResponse<DeleteSIPInboundRoutingRuleResponse>> DeleteSIPInboundRoutingRuleAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1075,9 +1075,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Update an existing SIP Inbound Routing Rule with new configuration
-        public async Task<StreamResponse<UpdateSIPInboundRoutingRuleResponse>> UpdateSIPInboundRoutingRuleAsync(string id, UpdateSIPInboundRoutingRuleRequest request,
+        public async Task<StreamResponse<UpdateSIPInboundRoutingRuleResponse>> UpdateSIPInboundRoutingRuleAsync(string id,UpdateSIPInboundRoutingRuleRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1091,7 +1091,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // List all SIP trunks for the application
         public async Task<StreamResponse<ListSIPTrunksResponse>> ListSIPTrunksAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1103,7 +1103,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Create a new SIP trunk for the application
         public async Task<StreamResponse<CreateSIPTrunkResponse>> CreateSIPTrunkAsync(CreateSIPTrunkRequest request,
             CancellationToken cancellationToken = default)
@@ -1115,9 +1115,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Delete a SIP trunk for the application
-        public async Task<StreamResponse<DeleteSIPTrunkResponse>> DeleteSIPTrunkAsync(string id, object request = null,
+        public async Task<StreamResponse<DeleteSIPTrunkResponse>> DeleteSIPTrunkAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1131,9 +1131,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Update a SIP trunk for the application
-        public async Task<StreamResponse<UpdateSIPTrunkResponse>> UpdateSIPTrunkAsync(string id, UpdateSIPTrunkRequest request,
+        public async Task<StreamResponse<UpdateSIPTrunkResponse>> UpdateSIPTrunkAsync(string id,UpdateSIPTrunkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1147,7 +1147,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
+        
         // Resolve SIP inbound routing based on trunk number, caller number, and challenge authentication
         public async Task<StreamResponse<ResolveSipInboundResponse>> ResolveSipInboundAsync(ResolveSipInboundRequest request,
             CancellationToken cancellationToken = default)
@@ -1159,8 +1159,8 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-
-
+        
+        
         public async Task<StreamResponse<QueryAggregateCallStatsResponse>> QueryAggregateCallStatsAsync(QueryAggregateCallStatsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1171,5 +1171,5 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-    }
-}
+            }
+        }
