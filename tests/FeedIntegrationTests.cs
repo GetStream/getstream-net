@@ -1220,8 +1220,8 @@ namespace GetStream.Tests
                         ActivityID = activityId1,
                         Set = new Dictionary<string, object>
                         {
-                            ["likes"] = 25,  // Update likes count
-                            ["status"] = "featured"  // Change status
+                            ["custom.likes"] = 25,  // Update likes count
+                            ["custom.status"] = "featured"  // Change status
                         }
                     },
                     new UpdateActivityPartialChangeRequest
@@ -1229,10 +1229,10 @@ namespace GetStream.Tests
                         ActivityID = activityId2,
                         Set = new Dictionary<string, object>
                         {
-                            ["likes"] = 15,  // Update likes count
-                            ["status"] = "published"  // Publish the draft
+                            ["custom.likes"] = 15,  // Update likes count
+                            ["custom.status"] = "published"  // Publish the draft
                         },
-                        Unset = new List<string> { "views" }  // Remove views field
+                        Unset = new List<string> { "custom.views" }  // Remove views field
                     }
                 }
             };
