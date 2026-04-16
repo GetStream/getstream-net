@@ -1231,6 +1231,114 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task DeleteCommentBookmarkAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var commentID = "test-commentID";
+
+            var expectedResponse = new StreamResponse<DeleteCommentBookmarkResponse>
+            {
+                Data = new DeleteCommentBookmarkResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, DeleteCommentBookmarkResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.DeleteCommentBookmarkAsync(commentID, null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteCommentBookmarkResponse>(
+                "DELETE",
+                "/api/v2/feeds/comments/{comment_id}/bookmarks",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task UpdateCommentBookmarkAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new UpdateCommentBookmarkRequest();
+            var commentID = "test-commentID";
+
+            var expectedResponse = new StreamResponse<UpdateCommentBookmarkResponse>
+            {
+                Data = new UpdateCommentBookmarkResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<UpdateCommentBookmarkRequest, UpdateCommentBookmarkResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateCommentBookmarkRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.UpdateCommentBookmarkAsync(commentID, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<UpdateCommentBookmarkRequest, UpdateCommentBookmarkResponse>(
+                "PATCH",
+                "/api/v2/feeds/comments/{comment_id}/bookmarks",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<UpdateCommentBookmarkRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task AddCommentBookmarkAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new AddCommentBookmarkRequest();
+            var commentID = "test-commentID";
+
+            var expectedResponse = new StreamResponse<AddCommentBookmarkResponse>
+            {
+                Data = new AddCommentBookmarkResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<AddCommentBookmarkRequest, AddCommentBookmarkResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<AddCommentBookmarkRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.AddCommentBookmarkAsync(commentID, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<AddCommentBookmarkRequest, AddCommentBookmarkResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{comment_id}/bookmarks",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<AddCommentBookmarkRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task DeleteCommentAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
