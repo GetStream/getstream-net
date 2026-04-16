@@ -277,10 +277,11 @@ namespace GetStream
             {
                 ["id"] = id,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, GetActivityResponse>(
                 "GET",
-                "/api/v2/feeds/activities/{id}", null, null, pathParams,
+                "/api/v2/feeds/activities/{id}", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;
@@ -496,6 +497,52 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<DeleteCommentBookmarkResponse>> DeleteCommentBookmarkAsync(string commentID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["comment_id"] = commentID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, DeleteCommentBookmarkResponse>(
+                "DELETE",
+                "/api/v2/feeds/comments/{comment_id}/bookmarks", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateCommentBookmarkResponse>> UpdateCommentBookmarkAsync(string commentID, UpdateCommentBookmarkRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["comment_id"] = commentID,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateCommentBookmarkRequest, UpdateCommentBookmarkResponse>(
+                "PATCH",
+                "/api/v2/feeds/comments/{comment_id}/bookmarks", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<AddCommentBookmarkResponse>> AddCommentBookmarkAsync(string commentID, AddCommentBookmarkRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["comment_id"] = commentID,
+            };
+
+            var result = await _client.MakeRequestAsync<AddCommentBookmarkRequest, AddCommentBookmarkResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{comment_id}/bookmarks", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -519,10 +566,11 @@ namespace GetStream
             {
                 ["id"] = id,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, GetCommentResponse>(
                 "GET",
-                "/api/v2/feeds/comments/{id}", null, null, pathParams,
+                "/api/v2/feeds/comments/{id}", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;

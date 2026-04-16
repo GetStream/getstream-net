@@ -849,6 +849,18 @@ namespace GetStream
         }
 
 
+        public async Task<StreamResponse<QueryCallSessionStatsResponse>> QueryCallSessionStatsAsync(QueryCallSessionStatsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryCallSessionStatsRequest, QueryCallSessionStatsResponse>(
+                "POST",
+                "/api/v2/video/call_stats", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+
         public async Task<StreamResponse<QueryCallStatsMapResponse>> GetCallStatsMapAsync(string callType, string callID, string session, object request = null,
             CancellationToken cancellationToken = default)
         {

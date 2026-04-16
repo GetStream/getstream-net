@@ -112,6 +112,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<BypassResponse>> BypassAsync(BypassRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BypassRequest, BypassResponse>(
+                "POST",
+                "/api/v2/moderation/bypass", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<CheckResponse>> CheckAsync(CheckRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -290,10 +301,11 @@ namespace GetStream
         public async Task<StreamResponse<DeleteModerationRuleResponse>> DeleteModerationRuleAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteModerationRuleResponse>(
                 "DELETE",
-                "/api/v2/moderation/moderation_rule/{id}", null, null, null,
+                "/api/v2/moderation/moderation_rule/{id}", queryParams, null, null,
                 cancellationToken);
 
             return result;

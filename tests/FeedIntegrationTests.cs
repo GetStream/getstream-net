@@ -842,6 +842,161 @@ namespace GetStream.Tests
             Console.WriteLine("✅ GetCommentReplies with user_id correctly populated OwnReactions");
         }
 
+        [Test, Order(11)]
+        public async Task Test10c_GetActivityWithUserIdEnrichment()
+        {
+            Console.WriteLine("\n📄👤 Testing GetActivityAsync with user_id for enrichment (own_reactions, own_bookmarks, comment own_reactions)...");
+
+            // Create an activity
+            var activity = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "Activity for GetActivity enrichment test",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" }
+            };
+
+            var createResponse = await _feedsV3Client.AddActivityAsync(activity);
+            Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
+
+            var activityId = createResponse.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+
+            // User 2 adds a reaction to the activity
+            var reactionResponse = await _feedsV3Client.AddActivityReactionAsync(
+                activityId,
+                new AddReactionRequest
+                {
+                    Type = "like",
+                    UserID = _testUserId2
+                }
+            );
+            Assert.That(reactionResponse, Is.Not.Null);
+
+            // User 2 bookmarks the activity
+            var bookmarkResponse = await _feedsV3Client.AddBookmarkAsync(
+                activityId,
+                new AddBookmarkRequest
+                {
+                    UserID = _testUserId2,
+                    NewFolder = new AddFolderRequest { Name = "enrichment-test-bookmarks" }
+                }
+            );
+            Assert.That(bookmarkResponse, Is.Not.Null);
+
+            // User 2 adds a comment
+            var commentResponse = await _feedsV3Client.AddCommentAsync(
+                new AddCommentRequest
+                {
+                    Comment = "Comment for enrichment test",
+                    ObjectID = activityId,
+                    ObjectType = "activity",
+                    UserID = _testUserId2
+                }
+            );
+            Assert.That(commentResponse.Data?.Comment?.ID, Is.Not.Null);
+            var commentId = commentResponse.Data!.Comment!.ID!;
+            _createdCommentIds.Add(commentId);
+
+            // User 2 reacts to their own comment
+            var commentReactionResponse = await _feedsV3Client.AddCommentReactionAsync(
+                commentId,
+                new AddCommentReactionRequest
+                {
+                    Type = "heart",
+                    UserID = _testUserId2
+                }
+            );
+            Assert.That(commentReactionResponse, Is.Not.Null);
+
+            // snippet-start: GetActivityWithUserId
+            var response = await _feedsV3Client.GetActivityAsync(activityId, new { user_id = _testUserId2 });
+            // snippet-end: GetActivityWithUserId
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            var enrichedActivity = response.Data!.Activity;
+            Assert.That(enrichedActivity, Is.Not.Null);
+
+            Assert.That(enrichedActivity!.OwnReactions, Is.Not.Null, "OwnReactions should not be null when user_id is provided");
+            Assert.That(enrichedActivity.OwnReactions, Is.Not.Empty, "OwnReactions should contain user2's like reaction");
+            Assert.That(enrichedActivity.OwnReactions![0].Type, Is.EqualTo("like"));
+            Assert.That(enrichedActivity.OwnReactions[0].User?.ID, Is.EqualTo(_testUserId2));
+
+            Assert.That(enrichedActivity.OwnBookmarks, Is.Not.Null, "OwnBookmarks should not be null when user_id is provided");
+            Assert.That(enrichedActivity.OwnBookmarks, Is.Not.Empty, "OwnBookmarks should contain user2's bookmark");
+
+            Assert.That(enrichedActivity.Comments, Is.Not.Null.And.Not.Empty, "Activity should have comments");
+            var enrichedComment = enrichedActivity.Comments![0];
+            Assert.That(enrichedComment.OwnReactions, Is.Not.Null, "Comment OwnReactions should not be null when user_id is provided");
+            Assert.That(enrichedComment.OwnReactions, Is.Not.Empty, "Comment OwnReactions should contain user2's heart reaction");
+            Assert.That(enrichedComment.OwnReactions![0].Type, Is.EqualTo("heart"));
+
+            Console.WriteLine("✅ GetActivityAsync with user_id correctly populated own_reactions, own_bookmarks, and comment own_reactions");
+        }
+
+        [Test, Order(11)]
+        public async Task Test10d_GetCommentWithUserIdEnrichment()
+        {
+            Console.WriteLine("\n💬👤 Testing GetCommentAsync with user_id for enrichment (own_reactions)...");
+
+            // Create an activity to comment on
+            var activity = new AddActivityRequest
+            {
+                Type = "post",
+                Text = "Activity for GetComment enrichment test",
+                UserID = _testUserId,
+                Feeds = new List<string> { $"user:{_testFeedId}" }
+            };
+
+            var createResponse = await _feedsV3Client.AddActivityAsync(activity);
+            Assert.That(createResponse.Data?.Activity?.ID, Is.Not.Null);
+
+            var activityId = createResponse.Data!.Activity!.ID!;
+            _createdActivityIds.Add(activityId);
+
+            // User 1 adds a comment
+            var commentResponse = await _feedsV3Client.AddCommentAsync(
+                new AddCommentRequest
+                {
+                    Comment = "Comment for GetComment enrichment test",
+                    ObjectID = activityId,
+                    ObjectType = "activity",
+                    UserID = _testUserId
+                }
+            );
+            Assert.That(commentResponse.Data?.Comment?.ID, Is.Not.Null);
+            var commentId = commentResponse.Data!.Comment!.ID!;
+            _createdCommentIds.Add(commentId);
+
+            // User 2 reacts to the comment
+            var reactionResponse = await _feedsV3Client.AddCommentReactionAsync(
+                commentId,
+                new AddCommentReactionRequest
+                {
+                    Type = "like",
+                    UserID = _testUserId2
+                }
+            );
+            Assert.That(reactionResponse, Is.Not.Null);
+
+            // snippet-start: GetCommentWithUserId
+            var response = await _feedsV3Client.GetCommentAsync(commentId, new { user_id = _testUserId2 });
+            // snippet-end: GetCommentWithUserId
+
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Data, Is.Not.Null);
+            var enrichedComment = response.Data!.Comment;
+            Assert.That(enrichedComment, Is.Not.Null);
+
+            Assert.That(enrichedComment!.OwnReactions, Is.Not.Null, "OwnReactions should not be null when user_id is provided");
+            Assert.That(enrichedComment.OwnReactions, Is.Not.Empty, "OwnReactions should contain user2's like reaction");
+            Assert.That(enrichedComment.OwnReactions![0].Type, Is.EqualTo("like"));
+            Assert.That(enrichedComment.OwnReactions[0].User?.ID, Is.EqualTo(_testUserId2));
+
+            Console.WriteLine("✅ GetCommentAsync with user_id correctly populated own_reactions");
+        }
+
         // =================================================================
         // 5. BOOKMARK OPERATIONS
         // =================================================================
@@ -1220,8 +1375,8 @@ namespace GetStream.Tests
                         ActivityID = activityId1,
                         Set = new Dictionary<string, object>
                         {
-                            ["custom.likes"] = 25,  // Update likes count
-                            ["custom.status"] = "featured"  // Change status
+                            ["likes"] = 25,  // Update likes count
+                            ["status"] = "featured"  // Change status
                         }
                     },
                     new UpdateActivityPartialChangeRequest
@@ -1229,10 +1384,10 @@ namespace GetStream.Tests
                         ActivityID = activityId2,
                         Set = new Dictionary<string, object>
                         {
-                            ["custom.likes"] = 15,  // Update likes count
-                            ["custom.status"] = "published"  // Publish the draft
+                            ["likes"] = 15,  // Update likes count
+                            ["status"] = "published"  // Publish the draft
                         },
-                        Unset = new List<string> { "custom.views" }  // Remove views field
+                        Unset = new List<string> { "views" }  // Remove views field
                     }
                 }
             };
@@ -1929,9 +2084,9 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📄 Testing file upload...");
 
-            // Create a temporary test file with .txt extension (API rejects .tmp)
+            // Create a temporary test file
             var testContent = "This is a test file for multipart upload integration test\nContains multiple lines\nWith various content";
-            var tempFile = Path.Combine(Path.GetTempPath(), $"stream-test-{Guid.NewGuid():N}.txt");
+            var tempFile = Path.GetTempFileName();
             await File.WriteAllTextAsync(tempFile, testContent);
 
             try
