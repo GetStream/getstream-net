@@ -849,6 +849,18 @@ namespace GetStream
         }
 
 
+        public async Task<StreamResponse<QueryCallSessionStatsResponse>> QueryCallSessionStatsAsync(QueryCallSessionStatsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryCallSessionStatsRequest, QueryCallSessionStatsResponse>(
+                "POST",
+                "/api/v2/video/call_stats", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+
         public async Task<StreamResponse<QueryCallStatsMapResponse>> GetCallStatsMapAsync(string callType, string callID, string session, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -1020,6 +1032,18 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetEdgesResponse>(
                 "GET",
                 "/api/v2/video/edges", null, null, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Determine authentication requirements for an inbound SIP call before sending a digest challenge
+        public async Task<StreamResponse<ResolveSipAuthResponse>> ResolveSipAuthAsync(ResolveSipAuthRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<ResolveSipAuthRequest, ResolveSipAuthResponse>(
+                "POST",
+                "/api/v2/video/sip/auth", null, request, null,
                 cancellationToken);
             return result;
         }

@@ -42,6 +42,17 @@ namespace GetStream
 
             return queryParams;
         }
+        public async Task<StreamResponse<InsertActionLogResponse>> InsertActionLogAsync(InsertActionLogRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<InsertActionLogRequest, InsertActionLogResponse>(
+                "POST",
+                "/api/v2/moderation/action_logs", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<AppealResponse>> AppealAsync(AppealRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -97,6 +108,17 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<BulkImageModerationRequest, BulkImageModerationResponse>(
                 "POST",
                 "/api/v2/moderation/bulk_image_moderation", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<BypassResponse>> BypassAsync(BypassRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BypassRequest, BypassResponse>(
+                "POST",
+                "/api/v2/moderation/bypass", null, request, null,
                 cancellationToken);
 
             return result;
@@ -232,6 +254,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<GetFlagCountResponse>> GetFlagCountAsync(GetFlagCountRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GetFlagCountRequest, GetFlagCountResponse>(
+                "POST",
+                "/api/v2/moderation/flag_count", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryModerationFlagsResponse>> QueryModerationFlagsAsync(QueryModerationFlagsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -268,10 +301,11 @@ namespace GetStream
         public async Task<StreamResponse<DeleteModerationRuleResponse>> DeleteModerationRuleAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteModerationRuleResponse>(
                 "DELETE",
-                "/api/v2/moderation/moderation_rule/{id}", null, null, null,
+                "/api/v2/moderation/moderation_rule/{id}", queryParams, null, null,
                 cancellationToken);
 
             return result;

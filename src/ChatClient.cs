@@ -1207,6 +1207,54 @@ namespace GetStream
             return result;
         }
 
+        // Returns all retention policies configured for the app. Server-side only.
+        public async Task<StreamResponse<GetRetentionPolicyResponse>> GetRetentionPolicyAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, GetRetentionPolicyResponse>(
+                "GET",
+                "/api/v2/chat/retention_policy", null, null, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Creates or updates a retention policy for the app. Server-side only.
+        public async Task<StreamResponse<SetRetentionPolicyResponse>> SetRetentionPolicyAsync(SetRetentionPolicyRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SetRetentionPolicyRequest, SetRetentionPolicyResponse>(
+                "POST",
+                "/api/v2/chat/retention_policy", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Removes a retention policy for the app. Server-side only.
+        public async Task<StreamResponse<DeleteRetentionPolicyResponse>> DeleteRetentionPolicyAsync(DeleteRetentionPolicyRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<DeleteRetentionPolicyRequest, DeleteRetentionPolicyResponse>(
+                "POST",
+                "/api/v2/chat/retention_policy/delete", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Returns filtered and sorted retention cleanup run history for the app. Supports filter_conditions on 'policy' (possible values: 'old-messages', 'inactive-channels') and 'date' fields. Server-side only.
+        public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(GetRetentionPolicyRunsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GetRetentionPolicyRunsRequest, GetRetentionPolicyRunsResponse>(
+                "POST",
+                "/api/v2/chat/retention_policy/runs", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
         // Search messages across channels
         public async Task<StreamResponse<SearchResponse>> SearchAsync(object request = null,
             CancellationToken cancellationToken = default)
