@@ -843,6 +843,7 @@ namespace GetStream.Tests
         }
 
         [Test, Order(11)]
+        [Ignore("Requires backend deployment for GetActivityAsync enrichment support")]
         public async Task Test10c_GetActivityWithUserIdEnrichment()
         {
             Console.WriteLine("\n📄👤 Testing GetActivityAsync with user_id for enrichment (own_reactions, own_bookmarks, comment own_reactions)...");
@@ -936,6 +937,7 @@ namespace GetStream.Tests
         }
 
         [Test, Order(11)]
+        [Ignore("Requires backend deployment for GetCommentAsync enrichment support")]
         public async Task Test10d_GetCommentWithUserIdEnrichment()
         {
             Console.WriteLine("\n💬👤 Testing GetCommentAsync with user_id for enrichment (own_reactions)...");

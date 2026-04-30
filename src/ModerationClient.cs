@@ -42,6 +42,67 @@ namespace GetStream
 
             return queryParams;
         }
+        public async Task<StreamResponse<GetActionConfigResponse>> GetActionConfigAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetActionConfigResponse>(
+                "GET",
+                "/api/v2/moderation/action_config", queryParams, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpsertActionConfigResponse>> UpsertActionConfigAsync(UpsertActionConfigRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<UpsertActionConfigRequest, UpsertActionConfigResponse>(
+                "POST",
+                "/api/v2/moderation/action_config", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<BulkUpsertActionConfigResponse>> BulkUpsertActionConfigAsync(BulkUpsertActionConfigRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BulkUpsertActionConfigRequest, BulkUpsertActionConfigResponse>(
+                "POST",
+                "/api/v2/moderation/action_config/bulk", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<BulkDeleteActionConfigResponse>> BulkDeleteActionConfigAsync(BulkDeleteActionConfigRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BulkDeleteActionConfigRequest, BulkDeleteActionConfigResponse>(
+                "POST",
+                "/api/v2/moderation/action_config/bulk_delete", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<DeleteActionConfigResponse>> DeleteActionConfigAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, DeleteActionConfigResponse>(
+                "DELETE",
+                "/api/v2/moderation/action_config/{id}", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<InsertActionLogResponse>> InsertActionLogAsync(InsertActionLogRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -272,6 +333,28 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<QueryModerationFlagsRequest, QueryModerationFlagsResponse>(
                 "POST",
                 "/api/v2/moderation/flags", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<LabelsResponse>> LabelsAsync(LabelsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<LabelsRequest, LabelsResponse>(
+                "POST",
+                "/api/v2/moderation/labels", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryLabelResultsResponse>> QueryLabelResultsAsync(QueryLabelResultsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryLabelResultsRequest, QueryLabelResultsResponse>(
+                "POST",
+                "/api/v2/moderation/labels/results", null, request, null,
                 cancellationToken);
 
             return result;

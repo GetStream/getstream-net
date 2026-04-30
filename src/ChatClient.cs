@@ -35,6 +35,18 @@ namespace GetStream
             return queryParams;
         }
 
+        // Creates a campaign
+        public async Task<StreamResponse<CreateCampaignResponse>> CreateCampaignAsync(CreateCampaignRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CreateCampaignRequest, CreateCampaignResponse>(
+                "POST",
+                "/api/v2/chat/campaigns", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
         // Query campaigns with filter query
         public async Task<StreamResponse<QueryCampaignsResponse>> QueryCampaignsAsync(QueryCampaignsRequest request,
             CancellationToken cancellationToken = default)
@@ -43,6 +55,22 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<QueryCampaignsRequest, QueryCampaignsResponse>(
                 "POST",
                 "/api/v2/chat/campaigns/query", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Delete campaign
+        public async Task<StreamResponse<DeleteCampaignResponse>> DeleteCampaignAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, DeleteCampaignResponse>(
+                "DELETE",
+                "/api/v2/chat/campaigns/{id}", null, null, pathParams,
                 cancellationToken);
             return result;
         }
@@ -60,6 +88,22 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetCampaignResponse>(
                 "GET",
                 "/api/v2/chat/campaigns/{id}", queryParams, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Updates a campaign
+        public async Task<StreamResponse<CampaignResponse>> UpdateCampaignAsync(string id, UpdateCampaignRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateCampaignRequest, CampaignResponse>(
+                "PUT",
+                "/api/v2/chat/campaigns/{id}", null, request, pathParams,
                 cancellationToken);
             return result;
         }
@@ -154,6 +198,18 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<MarkDeliveredRequest, MarkDeliveredResponse>(
                 "POST",
                 "/api/v2/chat/channels/delivered", queryParams, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Query channels grouped into predefined buckets. Only available for enterprise apps.
+        public async Task<StreamResponse<GroupedQueryChannelsResponse>> GroupedQueryChannelsAsync(GroupedQueryChannelsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GroupedQueryChannelsRequest, GroupedQueryChannelsResponse>(
+                "POST",
+                "/api/v2/chat/channels/grouped", null, request, null,
                 cancellationToken);
             return result;
         }

@@ -806,6 +806,22 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<ChangeFeedVisibilityResponse>> ChangeFeedVisibilityAsync(string feedGroupID, string feedID, ChangeFeedVisibilityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = feedGroupID,
+                ["feed_id"] = feedID,
+            };
+
+            var result = await _client.MakeRequestAsync<ChangeFeedVisibilityRequest, ChangeFeedVisibilityResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/change_visibility", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string feedGroupID, string feedID, UpdateFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1300,6 +1316,17 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<UpdateMembershipLevelRequest, UpdateMembershipLevelResponse>(
                 "PATCH",
                 "/api/v2/feeds/membership_levels/{id}", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryRevisionHistoryResponse>> QueryRevisionHistoryAsync(QueryRevisionHistoryRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryRevisionHistoryRequest, QueryRevisionHistoryResponse>(
+                "POST",
+                "/api/v2/feeds/revisions/query", null, request, null,
                 cancellationToken);
 
             return result;
