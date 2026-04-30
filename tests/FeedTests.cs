@@ -1958,6 +1958,43 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task ChangeFeedVisibilityAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new ChangeFeedVisibilityRequest();
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
+
+            var expectedResponse = new StreamResponse<ChangeFeedVisibilityResponse>
+            {
+                Data = new ChangeFeedVisibilityResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<ChangeFeedVisibilityRequest, ChangeFeedVisibilityResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<ChangeFeedVisibilityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.ChangeFeedVisibilityAsync(feedGroupID, feedID, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<ChangeFeedVisibilityRequest, ChangeFeedVisibilityResponse>(
+                "POST",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/change_visibility",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<ChangeFeedVisibilityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task UpdateFeedMembersAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -3275,6 +3312,41 @@ namespace GetStream.Tests
                 "/api/v2/feeds/membership_levels/{id}",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<UpdateMembershipLevelRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task QueryRevisionHistoryAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new QueryRevisionHistoryRequest();
+
+            var expectedResponse = new StreamResponse<QueryRevisionHistoryResponse>
+            {
+                Data = new QueryRevisionHistoryResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<QueryRevisionHistoryRequest, QueryRevisionHistoryResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryRevisionHistoryRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryRevisionHistoryAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<QueryRevisionHistoryRequest, QueryRevisionHistoryResponse>(
+                "POST",
+                "/api/v2/feeds/revisions/query",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryRevisionHistoryRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

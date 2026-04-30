@@ -64,6 +64,15 @@ namespace GetStream
             activityID, request, cancellationToken);
         }
 
+        // Changes the visibility of an existing feed. Follow reconciliation (rewriting pending follows on loosening, or removing disallowed follows/members on tightening) runs asynchronously in the background; the response returns optimistically with the intended visibility.
+        public async Task<StreamResponse<ChangeFeedVisibilityResponse>> ChangeFeedVisibilityAsync(
+            ChangeFeedVisibilityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            return await _client.ChangeFeedVisibilityAsync(_feedGroup, _feedId,
+            request, cancellationToken);
+        }
+
         // Add, remove, or set members for a feed
         public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(
             UpdateFeedMembersRequest request,
