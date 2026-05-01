@@ -1,0 +1,91 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (example: 11.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  manual-release:
+    name: 🚀 Manual Release
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: "9.0.x"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Update version files
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          sed -i "s|<Version>[^<]*</Version>|<Version>${VERSION}</Version>|" src/stream-feed-net.csproj
+          sed -i "s|private const string VersionName = \".*\";|private const string VersionName = \"${VERSION}\";|" src/Client.cs
+
+      - name: Commit version update
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/stream-feed-net.csproj src/Client.cs
+          if git diff --cached --quiet; then
+            echo "No version changes to commit."
+          else
+            git commit -m "chore(release): v${VERSION} (manual)"
+            git push origin HEAD:master
+          fi
+
+      - name: Build and test
+        env:
+          STREAM_API_KEY: ${{ vars.STREAM_API_KEY }}
+          STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+          CONFIGURATION: Release
+        run: |
+          dotnet build --no-restore --configuration Release
+          make test
+
+      - name: Create NuGet package
+        run: dotnet pack src/stream-feed-net.csproj --configuration Release --no-build --output ./packages
+
+      - name: Publish to NuGet
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push ./packages/*.nupkg \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate \
+            --no-symbols
+
+      - name: Create and push tag
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          git tag "v${VERSION}"
+          git push origin "v${VERSION}"
+
+      - name: Create GitHub release
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          gh release create "v${VERSION}" \
+            --title "Release v${VERSION}" \
+            --notes "Manual release v${VERSION}" \
+            ./packages/*.nupkg
