@@ -15,11 +15,19 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  prepare_release:
+    name: Prepare release
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
       DOTNET_VERSION: "9.0.x"
+    outputs:
+      should_release: ${{ steps.release_meta.outputs.should_release }}
+      bump: ${{ steps.release_meta.outputs.bump }}
+      previous_version: ${{ steps.release_meta.outputs.previous_version }}
+      version: ${{ steps.release_meta.outputs.version }}
+      tag: ${{ steps.release_meta.outputs.tag }}
+      already_released: ${{ steps.already_released.outputs.value }}
 
     steps:
     - uses: actions/checkout@v4
@@ -87,35 +95,6 @@ jobs:
         dotnet pack src/stream-feed-net.csproj --configuration Release --no-build --output ./packages
         ls -la ./packages/
 
-    - name: Publish to NuGet
-      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: |
-        if [ -z "$NUGET_API_KEY" ]; then
-          echo "NUGET_API_KEY secret not set. Skipping NuGet publish."
-          echo "To enable NuGet publishing, add your NuGet API key as a repository secret named 'NUGET_API_KEY'"
-        else
-          echo "Publishing to NuGet.org..."
-
-          # Clear all existing sources to prevent fallback
-          dotnet nuget remove source nuget.org || true
-          dotnet nuget list source
-
-          # Add nuget.org v3 source explicitly
-          dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
-          dotnet nuget list source
-
-          # Push with explicit v3 source URL
-          dotnet nuget push ./packages/*.nupkg \
-            --api-key "$NUGET_API_KEY" \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate \
-            --no-symbols \
-            --timeout 300
-          echo "Published to NuGet as getstream-net package"
-        fi
-
     - name: Commit version files
       if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       run: |
@@ -135,21 +114,69 @@ jobs:
         git tag "${{ steps.release_meta.outputs.tag }}"
         git push origin "${{ steps.release_meta.outputs.tag }}"
 
-    - name: Create GitHub Release
+    - name: Upload NuGet artifacts
       if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: getstream-net-packages-${{ steps.release_meta.outputs.version }}
+        path: ./packages/*.nupkg
+        if-no-files-found: error
+
+  publish_release:
+    name: Publish release
+    needs: prepare_release
+    if: needs.prepare_release.outputs.already_released != 'true' && needs.prepare_release.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: "9.0.x"
+    steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Download NuGet artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: getstream-net-packages-${{ needs.prepare_release.outputs.version }}
+        path: ./packages
+
+    - name: Publish to NuGet
       env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        if [ -z "$NUGET_API_KEY" ]; then
+          echo "NUGET_API_KEY secret not set. Skipping NuGet publish."
+          exit 0
+        fi
+        dotnet nuget push ./packages/*.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate \
+          --no-symbols \
+          --timeout 300
+
+    - name: Create GitHub Release
+      env:
+        TAG: ${{ needs.prepare_release.outputs.tag }}
+        VERSION: ${{ needs.prepare_release.outputs.version }}
+        BUMP: ${{ needs.prepare_release.outputs.bump }}
+        PREVIOUS: ${{ needs.prepare_release.outputs.previous_version }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        if gh release view "${TAG}" >/dev/null 2>&1; then
+          echo "GitHub release ${TAG} already exists; skipping."
+          exit 0
+        fi
         RELEASE_NOTES="$(cat <<EOF
-        Release v${{ steps.release_meta.outputs.version }}
+        Release v${VERSION}
 
-        - Bump type: ${{ steps.release_meta.outputs.bump }}
-        - Previous: ${{ steps.release_meta.outputs.previous_version }}
-        - Next: ${{ steps.release_meta.outputs.version }}
+        - Bump type: ${BUMP}
+        - Previous: ${PREVIOUS}
+        - Next: ${VERSION}
         EOF
         )"
-
-        gh release create "${{ steps.release_meta.outputs.tag }}" \
-          --title "Release v${{ steps.release_meta.outputs.version }}" \
+        gh release create "${TAG}" \
+          --title "Release v${VERSION}" \
           --notes "${RELEASE_NOTES}" \
           ./packages/*.nupkg
