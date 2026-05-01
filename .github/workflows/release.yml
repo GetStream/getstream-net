@@ -1,112 +1,94 @@
 name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version_bump:
-        description: 'Version bump type'
-        required: true
-        default: 'patch'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-      prerelease:
-        description: 'Is this a prerelease?'
-        required: false
-        default: false
-        type: boolean
-      use_current_version:
-        description: 'Skip version bump and publish the version already in .csproj (version_bump is ignored)'
-        required: false
-        default: false
-        type: boolean
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - master
 
-env:
-  DOTNET_VERSION: '9.0.x'
+concurrency:
+  group: release-${{ github.event.pull_request.base.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: "9.0.x"
 
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
+        ref: ${{ github.event.pull_request.base.ref }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Skip when PR is already released
+      id: already_released
+      run: |
+        if git log --oneline --grep="(pr #${{ github.event.pull_request.number }})" -n 1 | grep -q "chore(release):"; then
+          echo "value=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "value=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Determine and apply version bump
+      id: release_meta
+      if: steps.already_released.outputs.value != 'true'
+      env:
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_BODY: ${{ github.event.pull_request.body }}
+      run: |
+        PR_BODY_FILE=$(mktemp)
+        printf '%s' "$PR_BODY" > "$PR_BODY_FILE"
+        bash scripts/bump_version.sh \
+          --title "$PR_TITLE" \
+          --body-file "$PR_BODY_FILE" \
+          --output "$GITHUB_OUTPUT"
+
+    - name: Stop when PR does not require release
+      if: steps.already_released.outputs.value == 'true' || steps.release_meta.outputs.should_release != 'true'
+      run: |
+        if [ "${{ steps.already_released.outputs.value }}" = "true" ]; then
+          echo "PR #${{ github.event.pull_request.number }} is already released; skipping."
+          exit 0
+        fi
+        echo "No release type found in PR title; skipping."
+        exit 0
+
     - name: Restore dependencies
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       run: dotnet restore
 
     - name: Build
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       run: dotnet build --no-restore --configuration Release
 
     - name: Test
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       env:
         STREAM_API_KEY: ${{ vars.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         CONFIGURATION: Release
       run: make test
 
-    - name: Get current version
-      id: current_version
-      run: |
-        CURRENT_VERSION=$(grep -oP '<Version>\K[^<]+' src/stream-feed-net.csproj)
-        echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-        echo "Current version: $CURRENT_VERSION"
-
-    - name: Get release version
-      id: new_version
-      run: |
-        CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
-
-        # Publish whatever version is already set in .csproj, no bump
-        if [ "${{ github.event.inputs.use_current_version }}" = "true" ]; then
-          echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "Release version (current): $CURRENT_VERSION"
-          exit 0
-        fi
-
-        # Parse and bump version
-        IFS='.' read -ra PARTS <<< "$CURRENT_VERSION"
-        MAJOR=${PARTS[0]}
-        MINOR=${PARTS[1]}
-        PATCH=${PARTS[2]%%-*}
-
-        case "${{ github.event.inputs.version_bump }}" in
-          major) NEW_VERSION="$((MAJOR + 1)).0.0" ;;
-          minor) NEW_VERSION="$MAJOR.$((MINOR + 1)).0" ;;
-          patch) NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))" ;;
-        esac
-
-        if [ "${{ github.event.inputs.prerelease }}" = "true" ]; then
-          NEW_VERSION="$NEW_VERSION-alpha.$(date +%Y%m%d%H%M%S)"
-        fi
-
-        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "Release version: $NEW_VERSION"
-
-    - name: Update version in files
-      if: github.event.inputs.use_current_version != 'true'
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
-        sed -i "s/<Version>.*<\/Version>/<Version>$NEW_VERSION<\/Version>/" src/stream-feed-net.csproj
-        sed -i "s/private const string VersionName = \".*\";/private const string VersionName = \"$NEW_VERSION\";/" src/Client.cs
-        echo "Updated version to $NEW_VERSION"
-
     - name: Create NuGet package
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       run: |
         dotnet pack src/stream-feed-net.csproj --configuration Release --no-build --output ./packages
         ls -la ./packages/
 
     - name: Publish to NuGet
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
@@ -134,41 +116,40 @@ jobs:
           echo "Published to NuGet as getstream-net package"
         fi
 
-    - name: Commit version bump
-      if: github.event.inputs.use_current_version != 'true'
+    - name: Commit version files
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add src/stream-feed-net.csproj src/Client.cs
-        git commit -m "chore: bump version to $NEW_VERSION [skip ci]" || exit 0
-        git push
+        if git diff --cached --quiet; then
+          echo "No version changes to commit."
+          exit 0
+        fi
+        git commit -m "chore(release): v${{ steps.release_meta.outputs.version }} (pr #${{ github.event.pull_request.number }})"
+        git push origin "HEAD:${{ github.event.pull_request.base.ref }}"
+
+    - name: Create release tag
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
+      run: |
+        git tag "${{ steps.release_meta.outputs.tag }}"
+        git push origin "${{ steps.release_meta.outputs.tag }}"
 
     - name: Create GitHub Release
+      if: steps.already_released.outputs.value != 'true' && steps.release_meta.outputs.should_release == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
-        IS_PRERELEASE="${{ github.event.inputs.prerelease }}"
+        RELEASE_NOTES="$(cat <<EOF
+        Release v${{ steps.release_meta.outputs.version }}
 
-        # Generate release notes
-        PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        if [ -n "$PREVIOUS_TAG" ]; then
-          RELEASE_NOTES=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s" --no-merges)
-        else
-          RELEASE_NOTES=$(git log --pretty=format:"- %s" --no-merges -10)
-        fi
+        - Bump type: ${{ steps.release_meta.outputs.bump }}
+        - Previous: ${{ steps.release_meta.outputs.previous_version }}
+        - Next: ${{ steps.release_meta.outputs.version }}
+        EOF
+        )"
 
-        # Create release
-        PRERELEASE_FLAG=""
-        if [ "$IS_PRERELEASE" = "true" ]; then
-          PRERELEASE_FLAG="--prerelease"
-        fi
-
-        gh release create "v$NEW_VERSION" \
-          --title "Release v$NEW_VERSION" \
-          --notes "$RELEASE_NOTES" \
-          $PRERELEASE_FLAG \
+        gh release create "${{ steps.release_meta.outputs.tag }}" \
+          --title "Release v${{ steps.release_meta.outputs.version }}" \
+          --notes "${RELEASE_NOTES}" \
           ./packages/*.nupkg
-
-        echo "Created GitHub release v$NEW_VERSION"
