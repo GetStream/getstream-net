@@ -12,8 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Webhook handling spec helpers (CHA-2961): `UnknownEvent` class for forward-compat;
   `GunzipPayload`, `DecodeSqsPayload`, `DecodeSnsPayload` primitives;
   `ParseEvent` (returns typed event or `UnknownEvent`);
-  `VerifyAndParseWebhook` HTTP composite; `ParseSqsPayload` / `ParseSnsPayload`
-  queue composites (no signature — backend emits no HMAC for queue messages today).
+  `VerifyAndParseWebhook` HTTP composite; `ParseSqs` / `ParseSns`
+  queue composites (no signature — backend emits no HMAC for queue messages today;
+  queue transports are secured via AWS IAM access controls).
   Transparent gzip via magic-byte detection.
 - New exception class: `Webhook.StreamInvalidWebhookException` — unified failure type
   for signature mismatch, invalid JSON, missing/non-string `type` field, gzip

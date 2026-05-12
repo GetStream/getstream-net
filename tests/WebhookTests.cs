@@ -1487,9 +1487,9 @@ namespace GetStream.Tests
             Assert.That(Webhook.ParseEvent(body), Is.Not.Null);
             Assert.That(Webhook.VerifyAndParseWebhook(body, sig, CanonicalTestSecret), Is.Not.Null);
             Assert.That(Webhook.VerifyAndParseWebhook(bodyGz, sig, CanonicalTestSecret), Is.Not.Null);
-            Assert.That(Webhook.ParseSqsPayload(sqsCompressed), Is.Not.Null);
-            Assert.That(Webhook.ParseSqsPayload(sqsRaw), Is.Not.Null);
-            Assert.That(Webhook.ParseSnsPayload(sns), Is.Not.Null);
+            Assert.That(Webhook.ParseSqs(sqsCompressed), Is.Not.Null);
+            Assert.That(Webhook.ParseSqs(sqsRaw), Is.Not.Null);
+            Assert.That(Webhook.ParseSns(sns), Is.Not.Null);
         }
 
         private static string NegDir(string name) => Path.Combine(FixtureRoot, "_invalid", name);
@@ -1586,7 +1586,7 @@ namespace GetStream.Tests
                 Assert.Ignore("fixtures not present");
             }
             var msg = File.ReadAllText(Path.Combine(dir, "sqs_body.txt")).Trim();
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSqsPayload(msg));
+            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSqs(msg));
             Assert.That(ex.Message, Does.Contain("base64"));
         }
 
@@ -1599,7 +1599,7 @@ namespace GetStream.Tests
                 Assert.Ignore("fixtures not present");
             }
             var notif = File.ReadAllText(Path.Combine(dir, "sns_notification.txt")).Trim();
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSnsPayload(notif));
+            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSns(notif));
             Assert.That(ex.Message, Does.Contain("SNS envelope"));
         }
     }

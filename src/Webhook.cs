@@ -721,16 +721,16 @@ namespace GetStream
         /// therefore performs no signature verification. If a signed variant is added later,
         /// it'll be a separate function rather than retrofitting this signature.
         /// </summary>
-        public static object ParseSqsPayload(string messageBody)
+        public static object ParseSqs(string messageBody)
         {
             return ParseEvent(DecodeSqsPayload(messageBody));
         }
 
         /// <summary>
         /// SNS composite: parse SNS envelope then base64-decode then gunzip then parse.
-        /// Same no-signature posture as <see cref="ParseSqsPayload(string)"/>.
+        /// Same no-signature posture as <see cref="ParseSqs(string)"/>.
         /// </summary>
-        public static object ParseSnsPayload(string notificationBody)
+        public static object ParseSns(string notificationBody)
         {
             return ParseEvent(DecodeSnsPayload(notificationBody));
         }
