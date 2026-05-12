@@ -252,7 +252,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkAsync(activityID, null!);
+            var result = await _client.DeleteBookmarkAsync(activityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -288,7 +288,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateBookmarkAsync(activityID, request);
+            var result = await _client.UpdateBookmarkAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -324,7 +324,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddBookmarkAsync(activityID, request);
+            var result = await _client.AddBookmarkAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -360,7 +360,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ActivityFeedbackAsync(activityID, request);
+            var result = await _client.ActivityFeedbackAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -397,7 +397,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.CastPollVoteAsync(activityID, pollID, request);
+            var result = await _client.CastPollVoteAsync(activityID, pollID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -435,7 +435,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeletePollVoteAsync(activityID, pollID, voteID, null!);
+            var result = await _client.DeletePollVoteAsync(activityID, pollID, voteID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -471,7 +471,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddActivityReactionAsync(activityID, request);
+            var result = await _client.AddActivityReactionAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -507,7 +507,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryActivityReactionsAsync(activityID, request);
+            var result = await _client.QueryActivityReactionsAsync(activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -544,7 +544,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityReactionAsync(activityID, type, null!);
+            var result = await _client.DeleteActivityReactionAsync(activityID, type,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -580,7 +580,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteActivityAsync(id, null!);
+            var result = await _client.DeleteActivityAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -616,7 +616,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetActivityAsync(id, null!);
+            var result = await _client.GetActivityAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -652,7 +652,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateActivityPartialAsync(id, request);
+            var result = await _client.UpdateActivityPartialAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -688,7 +688,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateActivityAsync(id, request);
+            var result = await _client.UpdateActivityAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -724,7 +724,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RestoreActivityAsync(id, request);
+            var result = await _client.RestoreActivityAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -795,7 +795,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteBookmarkFolderAsync(folderID, null!);
+            var result = await _client.DeleteBookmarkFolderAsync(folderID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -831,7 +831,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateBookmarkFolderAsync(folderID, request);
+            var result = await _client.UpdateBookmarkFolderAsync(folderID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1252,7 +1252,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentBookmarkAsync(commentID, null!);
+            var result = await _client.DeleteCommentBookmarkAsync(commentID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1288,7 +1288,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateCommentBookmarkAsync(commentID, request);
+            var result = await _client.UpdateCommentBookmarkAsync(commentID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1324,7 +1324,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddCommentBookmarkAsync(commentID, request);
+            var result = await _client.AddCommentBookmarkAsync(commentID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1360,7 +1360,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentAsync(id, null!);
+            var result = await _client.DeleteCommentAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1396,7 +1396,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentAsync(id, null!);
+            var result = await _client.GetCommentAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1432,7 +1432,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateCommentAsync(id, request);
+            var result = await _client.UpdateCommentAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1468,7 +1468,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateCommentPartialAsync(id, request);
+            var result = await _client.UpdateCommentPartialAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1504,7 +1504,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AddCommentReactionAsync(id, request);
+            var result = await _client.AddCommentReactionAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1540,7 +1540,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryCommentReactionsAsync(id, request);
+            var result = await _client.QueryCommentReactionsAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1577,7 +1577,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteCommentReactionAsync(id, type, null!);
+            var result = await _client.DeleteCommentReactionAsync(id, type,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1613,7 +1613,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetCommentRepliesAsync(id, null!);
+            var result = await _client.GetCommentRepliesAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1649,7 +1649,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RestoreCommentAsync(id, request);
+            var result = await _client.RestoreCommentAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1756,7 +1756,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedAsync(feedGroupID, feedID, null!);
+            var result = await _client.DeleteFeedAsync(feedGroupID, feedID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1793,7 +1793,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedAsync(feedGroupID, feedID, request);
+            var result = await _client.GetOrCreateFeedAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1830,7 +1830,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedAsync(feedGroupID, feedID, request);
+            var result = await _client.UpdateFeedAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1867,7 +1867,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.MarkActivityAsync(feedGroupID, feedID, request);
+            var result = await _client.MarkActivityAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1905,7 +1905,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnpinActivityAsync(feedGroupID, feedID, activityID, null!);
+            var result = await _client.UnpinActivityAsync(feedGroupID, feedID, activityID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1943,7 +1943,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.PinActivityAsync(feedGroupID, feedID, activityID, request);
+            var result = await _client.PinActivityAsync(feedGroupID, feedID, activityID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -1980,7 +1980,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ChangeFeedVisibilityAsync(feedGroupID, feedID, request);
+            var result = await _client.ChangeFeedVisibilityAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2017,7 +2017,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedMembersAsync(feedGroupID, feedID, request);
+            var result = await _client.UpdateFeedMembersAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2054,7 +2054,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.AcceptFeedMemberInviteAsync(feedID, feedGroupID, request);
+            var result = await _client.AcceptFeedMemberInviteAsync(feedID, feedGroupID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2091,7 +2091,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryFeedMembersAsync(feedGroupID, feedID, request);
+            var result = await _client.QueryFeedMembersAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2128,7 +2128,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RejectFeedMemberInviteAsync(feedGroupID, feedID, request);
+            var result = await _client.RejectFeedMemberInviteAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2165,7 +2165,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.QueryPinnedActivitiesAsync(feedGroupID, feedID, request);
+            var result = await _client.QueryPinnedActivitiesAsync(feedGroupID, feedID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2201,7 +2201,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFollowSuggestionsAsync(feedGroupID, null!);
+            var result = await _client.GetFollowSuggestionsAsync(feedGroupID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2237,7 +2237,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.RestoreFeedGroupAsync(feedGroupID, null!);
+            var result = await _client.RestoreFeedGroupAsync(feedGroupID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2273,7 +2273,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedGroupAsync(id, null!);
+            var result = await _client.DeleteFeedGroupAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2309,7 +2309,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedGroupAsync(id, null!);
+            var result = await _client.GetFeedGroupAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2345,7 +2345,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedGroupAsync(id, request);
+            var result = await _client.GetOrCreateFeedGroupAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2381,7 +2381,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedGroupAsync(id, request);
+            var result = await _client.UpdateFeedGroupAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2487,7 +2487,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedViewAsync(id, null!);
+            var result = await _client.DeleteFeedViewAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2523,7 +2523,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedViewAsync(id, null!);
+            var result = await _client.GetFeedViewAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2559,7 +2559,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetOrCreateFeedViewAsync(id, request);
+            var result = await _client.GetOrCreateFeedViewAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2595,7 +2595,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedViewAsync(id, request);
+            var result = await _client.UpdateFeedViewAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2666,7 +2666,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.GetFeedVisibilityAsync(name, null!);
+            var result = await _client.GetFeedVisibilityAsync(name,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -2702,7 +2702,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateFeedVisibilityAsync(name, request);
+            var result = await _client.UpdateFeedVisibilityAsync(name,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -3159,7 +3159,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UnfollowAsync(source, target, null!);
+            var result = await _client.UnfollowAsync(source, target,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -3265,7 +3265,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteMembershipLevelAsync(id, null!);
+            var result = await _client.DeleteMembershipLevelAsync(id,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -3301,7 +3301,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.UpdateMembershipLevelAsync(id, request);
+            var result = await _client.UpdateMembershipLevelAsync(id,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -3477,7 +3477,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.DeleteFeedUserDataAsync(userID, request);
+            var result = await _client.DeleteFeedUserDataAsync(userID,request);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -3513,7 +3513,7 @@ namespace GetStream.Tests
                 .ReturnsAsync(expectedResponse);
 
             // Act
-            var result = await _client.ExportFeedUserDataAsync(userID, null!);
+            var result = await _client.ExportFeedUserDataAsync(userID,null!);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -3527,5 +3527,5 @@ namespace GetStream.Tests
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
-    }
-}
+            }
+        }
