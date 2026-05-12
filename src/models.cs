@@ -8978,6 +8978,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("hard_delete")]
         public bool? HardDelete { get; set; }
+        /// <summary>
+        /// When hard-deleting, also fully delete activities authored by each feed's owner from every other feed those activities were fanned out to. Default false preserves existing fan-out. Requires 'hard_delete' to be true; the request is rejected otherwise. Feeds with no recorded owner (created_by_id is empty) are silently skipped for the purge step — owner-matching against an empty string is a safety guard, not a wildcard.
+        /// </summary>
+        [JsonPropertyName("purge_user_activities")]
+        public bool? PurgeUserActivities { get; set; }
     }
 
     public class DeleteFeedsBatchResponse

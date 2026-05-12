@@ -301,6 +301,31 @@ namespace GetStream
             return Webhook.VerifyAndParseWebhook(body, signature, this.ApiSecret);
         }
 
+        /// <summary>
+        /// Decode and parse a Stream-delivered SQS message body.
+        /// </summary>
+        /// <remarks>
+        /// Convenience wrapper around <see cref="Webhook.ParseSqs"/>. No signature is
+        /// required; SQS deliveries are authenticated via AWS IAM.
+        /// </remarks>
+        public object ParseSqs(string messageBody)
+        {
+            return Webhook.ParseSqs(messageBody);
+        }
+
+        /// <summary>
+        /// Decode and parse a Stream-delivered SNS notification body.
+        /// </summary>
+        /// <remarks>
+        /// Accepts either the raw SNS HTTP envelope JSON or the pre-extracted Message
+        /// string. Convenience wrapper around <see cref="Webhook.ParseSns"/>. No
+        /// signature is required; SNS deliveries are authenticated via AWS IAM.
+        /// </remarks>
+        public object ParseSns(string notificationBody)
+        {
+            return Webhook.ParseSns(notificationBody);
+        }
+
         private MultipartFormDataContent CreateMultipartContent(FileUploadRequest request)
         {
             if (string.IsNullOrEmpty(request.File))

@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `VerifySignature(body, signature)` and `VerifyAndParseWebhook(body, signature)` —
   drop the `secret` parameter in favor of the client's stored API secret. Dual API:
   static `Webhook.*` methods that take an explicit secret remain available.
+- New instance methods on `StreamClient` (via `BaseClient`): `ParseSqs(string)`,
+  `ParseSns(string)` (no signature; AWS IAM).
 - Conformance fixture suite under `tests/fixtures/webhooks/`.
 
 ### Changed

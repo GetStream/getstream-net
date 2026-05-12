@@ -792,7 +792,7 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<FileUploadResponse>> FileUploadAsync(FileUploadRequest request,
+        public async Task<StreamResponse<FileUploadResponse>> UploadFileAsync(FileUploadRequest request,
             CancellationToken cancellationToken = default)
         {
 
@@ -815,7 +815,7 @@ namespace GetStream
                 
             return result;
         }
-        public async Task<StreamResponse<ImageUploadResponse>> ImageUploadAsync(ImageUploadRequest request,
+        public async Task<StreamResponse<ImageUploadResponse>> UploadImageAsync(ImageUploadRequest request,
             CancellationToken cancellationToken = default)
         {
 
