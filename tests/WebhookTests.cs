@@ -1420,7 +1420,7 @@ namespace GetStream.Tests
         [Test]
         public void ParseWebhookEvent_UnknownType_ThrowsException()
         {
-            Assert.Throws<Webhook.StreamInvalidWebhookException>(() =>
+            Assert.Throws<Webhook.StreamMalformedWebhookException>(() =>
             {
                 Webhook.ParseWebhookEvent("{\"type\":\"unknown.event\"}");
             });
@@ -1429,7 +1429,7 @@ namespace GetStream.Tests
         [Test]
         public void ParseWebhookEvent_MissingType_ThrowsException()
         {
-            Assert.Throws<Webhook.StreamInvalidWebhookException>(() =>
+            Assert.Throws<Webhook.StreamMalformedWebhookException>(() =>
             {
                 Webhook.ParseWebhookEvent("{\"foo\":\"bar\"}");
             });
@@ -1438,7 +1438,7 @@ namespace GetStream.Tests
         [Test]
         public void ParseWebhookEvent_InvalidJson_ThrowsException()
         {
-            Assert.Throws<Webhook.StreamInvalidWebhookException>(() =>
+            Assert.Throws<Webhook.StreamMalformedWebhookException>(() =>
             {
                 Webhook.ParseWebhookEvent("not json");
             });
@@ -1504,9 +1504,12 @@ namespace GetStream.Tests
             }
             var body = File.ReadAllBytes(Path.Combine(dir, "body.json"));
             var sig = File.ReadAllText(Path.Combine(dir, "signature.txt")).Trim();
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(
+            // Signature-mismatch must raise StreamInvalidSignatureException.
+            // Base class StreamWebhookException must also match.
+            var ex = Assert.Throws<Webhook.StreamInvalidSignatureException>(
                 () => Webhook.VerifyAndParseWebhook(body, sig, CanonicalTestSecret));
             Assert.That(ex.Message, Does.Contain("signature mismatch"));
+            Assert.That(ex, Is.InstanceOf<Webhook.StreamWebhookException>());
         }
 
         [Test]
@@ -1532,7 +1535,7 @@ namespace GetStream.Tests
                 Assert.Ignore("fixtures not present");
             }
             var body = File.ReadAllBytes(Path.Combine(dir, "body.json"));
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseEvent(body));
+            var ex = Assert.Throws<Webhook.StreamMalformedWebhookException>(() => Webhook.ParseEvent(body));
             Assert.That(ex.Message, Does.Contain("missing 'type'"));
         }
 
@@ -1545,7 +1548,7 @@ namespace GetStream.Tests
                 Assert.Ignore("fixtures not present");
             }
             var body = File.ReadAllBytes(Path.Combine(dir, "body.json"));
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseEvent(body));
+            var ex = Assert.Throws<Webhook.StreamMalformedWebhookException>(() => Webhook.ParseEvent(body));
             Assert.That(ex.Message, Does.Contain("failed to parse webhook payload"));
         }
 
@@ -1558,7 +1561,7 @@ namespace GetStream.Tests
                 Assert.Ignore("fixtures not present");
             }
             var body = File.ReadAllBytes(Path.Combine(dir, "body.json"));
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseEvent(body));
+            var ex = Assert.Throws<Webhook.StreamMalformedWebhookException>(() => Webhook.ParseEvent(body));
             Assert.That(ex.Message, Does.Contain("must not be empty"));
         }
 
@@ -1572,7 +1575,7 @@ namespace GetStream.Tests
             }
             var body = File.ReadAllBytes(Path.Combine(dir, "body.gz"));
             var sig = File.ReadAllText(Path.Combine(dir, "signature.txt")).Trim();
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(
+            var ex = Assert.Throws<Webhook.StreamMalformedWebhookException>(
                 () => Webhook.VerifyAndParseWebhook(body, sig, CanonicalTestSecret));
             Assert.That(ex.Message, Does.Contain("gzip decompression failed"));
         }
@@ -1583,27 +1586,30 @@ namespace GetStream.Tests
             // Per CHA-3071 wire format: DecodeSqsPayload falls back to raw bytes when
             // base64 decoding fails (uncompressed wire format). For input that is
             // neither valid base64 nor valid JSON nor gzip-prefixed, ParseSqs still
-            // throws StreamInvalidWebhookException — just down the chain at JSON parsing.
+            // throws StreamMalformedWebhookException — just down the chain at JSON parsing.
             var dir = NegDir("bad_base64");
             if (!Directory.Exists(dir))
             {
                 Assert.Ignore("fixtures not present");
             }
             var msg = File.ReadAllText(Path.Combine(dir, "sqs_body.txt")).Trim();
-            Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSqs(msg));
+            Assert.Throws<Webhook.StreamMalformedWebhookException>(() => Webhook.ParseSqs(msg));
         }
 
         [Test]
         public void Conformance_BadSnsEnvelope()
         {
+            // Fix #4: bad_sns_envelope (non-envelope JSON) is now treated as a
+            // pre-extracted Message string and flows through the SQS path,
+            // surfacing as a downstream parse failure rather than SNS-specific.
+            // Still StreamMalformedWebhookException.
             var dir = NegDir("bad_sns_envelope");
             if (!Directory.Exists(dir))
             {
                 Assert.Ignore("fixtures not present");
             }
             var notif = File.ReadAllText(Path.Combine(dir, "sns_notification.txt")).Trim();
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSns(notif));
-            Assert.That(ex.Message, Does.Contain("SNS envelope"));
+            Assert.Throws<Webhook.StreamMalformedWebhookException>(() => Webhook.ParseSns(notif));
         }
     }
 }
