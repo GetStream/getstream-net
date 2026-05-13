@@ -112,7 +112,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string activityID,object request = null,
+        public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string activityID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -128,7 +128,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateBookmarkResponse>> UpdateBookmarkAsync(string activityID,UpdateBookmarkRequest request,
+        public async Task<StreamResponse<UpdateBookmarkResponse>> UpdateBookmarkAsync(string activityID, UpdateBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -143,7 +143,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<AddBookmarkResponse>> AddBookmarkAsync(string activityID,AddBookmarkRequest request,
+        public async Task<StreamResponse<AddBookmarkResponse>> AddBookmarkAsync(string activityID, AddBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -158,7 +158,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ActivityFeedbackResponse>> ActivityFeedbackAsync(string activityID,ActivityFeedbackRequest request,
+        public async Task<StreamResponse<ActivityFeedbackResponse>> ActivityFeedbackAsync(string activityID, ActivityFeedbackRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -173,7 +173,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string activityID, string pollID,CastPollVoteRequest request,
+        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string activityID, string pollID, CastPollVoteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -189,7 +189,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string activityID, string pollID, string voteID,object request = null,
+        public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string activityID, string pollID, string voteID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -207,7 +207,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<AddReactionResponse>> AddActivityReactionAsync(string activityID,AddReactionRequest request,
+        public async Task<StreamResponse<AddReactionResponse>> AddActivityReactionAsync(string activityID, AddReactionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -222,7 +222,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryActivityReactionsResponse>> QueryActivityReactionsAsync(string activityID,QueryActivityReactionsRequest request,
+        public async Task<StreamResponse<QueryActivityReactionsResponse>> QueryActivityReactionsAsync(string activityID, QueryActivityReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -237,7 +237,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteActivityReactionResponse>> DeleteActivityReactionAsync(string activityID, string type,object request = null,
+        public async Task<StreamResponse<DeleteActivityReactionResponse>> DeleteActivityReactionAsync(string activityID, string type, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -254,7 +254,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string id,object request = null,
+        public async Task<StreamResponse<DeleteActivityResponse>> DeleteActivityAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -270,7 +270,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string id,object request = null,
+        public async Task<StreamResponse<GetActivityResponse>> GetActivityAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -286,7 +286,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string id,UpdateActivityPartialRequest request,
+        public async Task<StreamResponse<UpdateActivityPartialResponse>> UpdateActivityPartialAsync(string id, UpdateActivityPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -301,7 +301,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string id,UpdateActivityRequest request,
+        public async Task<StreamResponse<UpdateActivityResponse>> UpdateActivityAsync(string id, UpdateActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -316,7 +316,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<RestoreActivityResponse>> RestoreActivityAsync(string id,RestoreActivityRequest request,
+        public async Task<StreamResponse<RestoreActivityResponse>> RestoreActivityAsync(string id, RestoreActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -343,7 +343,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteBookmarkFolderResponse>> DeleteBookmarkFolderAsync(string folderID,object request = null,
+        public async Task<StreamResponse<DeleteBookmarkFolderResponse>> DeleteBookmarkFolderAsync(string folderID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -358,7 +358,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateBookmarkFolderResponse>> UpdateBookmarkFolderAsync(string folderID,UpdateBookmarkFolderRequest request,
+        public async Task<StreamResponse<UpdateBookmarkFolderResponse>> UpdateBookmarkFolderAsync(string folderID, UpdateBookmarkFolderRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -497,7 +497,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteCommentBookmarkResponse>> DeleteCommentBookmarkAsync(string commentID,object request = null,
+        public async Task<StreamResponse<DeleteCommentBookmarkResponse>> DeleteCommentBookmarkAsync(string commentID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -513,7 +513,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateCommentBookmarkResponse>> UpdateCommentBookmarkAsync(string commentID,UpdateCommentBookmarkRequest request,
+        public async Task<StreamResponse<UpdateCommentBookmarkResponse>> UpdateCommentBookmarkAsync(string commentID, UpdateCommentBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -528,7 +528,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<AddCommentBookmarkResponse>> AddCommentBookmarkAsync(string commentID,AddCommentBookmarkRequest request,
+        public async Task<StreamResponse<AddCommentBookmarkResponse>> AddCommentBookmarkAsync(string commentID, AddCommentBookmarkRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -543,7 +543,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string id,object request = null,
+        public async Task<StreamResponse<DeleteCommentResponse>> DeleteCommentAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -559,7 +559,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string id,object request = null,
+        public async Task<StreamResponse<GetCommentResponse>> GetCommentAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -575,7 +575,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string id,UpdateCommentRequest request,
+        public async Task<StreamResponse<UpdateCommentResponse>> UpdateCommentAsync(string id, UpdateCommentRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -590,7 +590,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateCommentPartialResponse>> UpdateCommentPartialAsync(string id,UpdateCommentPartialRequest request,
+        public async Task<StreamResponse<UpdateCommentPartialResponse>> UpdateCommentPartialAsync(string id, UpdateCommentPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -605,7 +605,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string id,AddCommentReactionRequest request,
+        public async Task<StreamResponse<AddCommentReactionResponse>> AddCommentReactionAsync(string id, AddCommentReactionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -620,7 +620,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string id,QueryCommentReactionsRequest request,
+        public async Task<StreamResponse<QueryCommentReactionsResponse>> QueryCommentReactionsAsync(string id, QueryCommentReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -635,7 +635,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string id, string type,object request = null,
+        public async Task<StreamResponse<DeleteCommentReactionResponse>> DeleteCommentReactionAsync(string id, string type, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -652,7 +652,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string id,object request = null,
+        public async Task<StreamResponse<GetCommentRepliesResponse>> GetCommentRepliesAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -668,7 +668,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<RestoreCommentResponse>> RestoreCommentAsync(string id,RestoreCommentRequest request,
+        public async Task<StreamResponse<RestoreCommentResponse>> RestoreCommentAsync(string id, RestoreCommentRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -706,7 +706,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string feedGroupID, string feedID,object request = null,
+        public async Task<StreamResponse<DeleteFeedResponse>> DeleteFeedAsync(string feedGroupID, string feedID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -723,7 +723,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(string feedGroupID, string feedID,GetOrCreateFeedRequest request,
+        public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(string feedGroupID, string feedID, GetOrCreateFeedRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -739,7 +739,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(string feedGroupID, string feedID,UpdateFeedRequest request,
+        public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(string feedGroupID, string feedID, UpdateFeedRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -755,7 +755,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<Response>> MarkActivityAsync(string feedGroupID, string feedID,MarkActivityRequest request,
+        public async Task<StreamResponse<Response>> MarkActivityAsync(string feedGroupID, string feedID, MarkActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -771,7 +771,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string feedGroupID, string feedID, string activityID,object request = null,
+        public async Task<StreamResponse<UnpinActivityResponse>> UnpinActivityAsync(string feedGroupID, string feedID, string activityID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -789,7 +789,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string feedGroupID, string feedID, string activityID,PinActivityRequest request,
+        public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string feedGroupID, string feedID, string activityID, PinActivityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -806,7 +806,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ChangeFeedVisibilityResponse>> ChangeFeedVisibilityAsync(string feedGroupID, string feedID,ChangeFeedVisibilityRequest request,
+        public async Task<StreamResponse<ChangeFeedVisibilityResponse>> ChangeFeedVisibilityAsync(string feedGroupID, string feedID, ChangeFeedVisibilityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -822,7 +822,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string feedGroupID, string feedID,UpdateFeedMembersRequest request,
+        public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string feedGroupID, string feedID, UpdateFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -838,7 +838,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(string feedID, string feedGroupID,AcceptFeedMemberInviteRequest request,
+        public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(string feedID, string feedGroupID, AcceptFeedMemberInviteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -854,7 +854,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(string feedGroupID, string feedID,QueryFeedMembersRequest request,
+        public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(string feedGroupID, string feedID, QueryFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -870,7 +870,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(string feedGroupID, string feedID,RejectFeedMemberInviteRequest request,
+        public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(string feedGroupID, string feedID, RejectFeedMemberInviteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -886,7 +886,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(string feedGroupID, string feedID,QueryPinnedActivitiesRequest request,
+        public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(string feedGroupID, string feedID, QueryPinnedActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -902,7 +902,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string feedGroupID,object request = null,
+        public async Task<StreamResponse<GetFollowSuggestionsResponse>> GetFollowSuggestionsAsync(string feedGroupID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -918,7 +918,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<RestoreFeedGroupResponse>> RestoreFeedGroupAsync(string feedGroupID,object request = null,
+        public async Task<StreamResponse<RestoreFeedGroupResponse>> RestoreFeedGroupAsync(string feedGroupID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -933,7 +933,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string id,object request = null,
+        public async Task<StreamResponse<DeleteFeedGroupResponse>> DeleteFeedGroupAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -949,7 +949,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string id,object request = null,
+        public async Task<StreamResponse<GetFeedGroupResponse>> GetFeedGroupAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -965,7 +965,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetOrCreateFeedGroupResponse>> GetOrCreateFeedGroupAsync(string id,GetOrCreateFeedGroupRequest request,
+        public async Task<StreamResponse<GetOrCreateFeedGroupResponse>> GetOrCreateFeedGroupAsync(string id, GetOrCreateFeedGroupRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -980,7 +980,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string id,UpdateFeedGroupRequest request,
+        public async Task<StreamResponse<UpdateFeedGroupResponse>> UpdateFeedGroupAsync(string id, UpdateFeedGroupRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1017,7 +1017,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string id,object request = null,
+        public async Task<StreamResponse<DeleteFeedViewResponse>> DeleteFeedViewAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1032,7 +1032,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string id,object request = null,
+        public async Task<StreamResponse<GetFeedViewResponse>> GetFeedViewAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1047,7 +1047,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetOrCreateFeedViewResponse>> GetOrCreateFeedViewAsync(string id,GetOrCreateFeedViewRequest request,
+        public async Task<StreamResponse<GetOrCreateFeedViewResponse>> GetOrCreateFeedViewAsync(string id, GetOrCreateFeedViewRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1062,7 +1062,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string id,UpdateFeedViewRequest request,
+        public async Task<StreamResponse<UpdateFeedViewResponse>> UpdateFeedViewAsync(string id, UpdateFeedViewRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1088,7 +1088,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetFeedVisibilityResponse>> GetFeedVisibilityAsync(string name,object request = null,
+        public async Task<StreamResponse<GetFeedVisibilityResponse>> GetFeedVisibilityAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1103,7 +1103,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateFeedVisibilityResponse>> UpdateFeedVisibilityAsync(string name,UpdateFeedVisibilityRequest request,
+        public async Task<StreamResponse<UpdateFeedVisibilityResponse>> UpdateFeedVisibilityAsync(string name, UpdateFeedVisibilityRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1251,7 +1251,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string source, string target,object request = null,
+        public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string source, string target, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1290,7 +1290,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<Response>> DeleteMembershipLevelAsync(string id,object request = null,
+        public async Task<StreamResponse<Response>> DeleteMembershipLevelAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1305,7 +1305,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<UpdateMembershipLevelResponse>> UpdateMembershipLevelAsync(string id,UpdateMembershipLevelRequest request,
+        public async Task<StreamResponse<UpdateMembershipLevelResponse>> UpdateMembershipLevelAsync(string id, UpdateMembershipLevelRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1364,7 +1364,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteFeedUserDataResponse>> DeleteFeedUserDataAsync(string userID,DeleteFeedUserDataRequest request,
+        public async Task<StreamResponse<DeleteFeedUserDataResponse>> DeleteFeedUserDataAsync(string userID, DeleteFeedUserDataRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1379,7 +1379,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string userID,object request = null,
+        public async Task<StreamResponse<ExportFeedUserDataResponse>> ExportFeedUserDataAsync(string userID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1394,5 +1394,5 @@ namespace GetStream
 
             return result;
         }
-            }
-        }
+    }
+}

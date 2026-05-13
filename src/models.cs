@@ -13748,6 +13748,11 @@ namespace GetStream.Models
         [JsonPropertyName("content_type")]
         public string? ContentType { get; set; }
         /// <summary>
+        /// When true, run moderation and return labels without persisting the result. Useful for one-off checks (e.g. UI testers) that should not be recorded in the stored history.
+        /// </summary>
+        [JsonPropertyName("dry_run")]
+        public bool? DryRun { get; set; }
+        /// <summary>
         /// Optional moderation policy key (max 128 chars)
         /// </summary>
         [JsonPropertyName("policy")]
@@ -27456,4 +27461,4 @@ namespace GetStream.Models
         public string? Secret { get; set; }
     }
 
-} 
+}

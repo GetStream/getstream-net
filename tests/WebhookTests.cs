@@ -1580,14 +1580,17 @@ namespace GetStream.Tests
         [Test]
         public void Conformance_BadBase64()
         {
+            // Per CHA-3071 wire format: DecodeSqsPayload falls back to raw bytes when
+            // base64 decoding fails (uncompressed wire format). For input that is
+            // neither valid base64 nor valid JSON nor gzip-prefixed, ParseSqs still
+            // throws StreamInvalidWebhookException — just down the chain at JSON parsing.
             var dir = NegDir("bad_base64");
             if (!Directory.Exists(dir))
             {
                 Assert.Ignore("fixtures not present");
             }
             var msg = File.ReadAllText(Path.Combine(dir, "sqs_body.txt")).Trim();
-            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSqs(msg));
-            Assert.That(ex.Message, Does.Contain("base64"));
+            Assert.Throws<Webhook.StreamInvalidWebhookException>(() => Webhook.ParseSqs(msg));
         }
 
         [Test]

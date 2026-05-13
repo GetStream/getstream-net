@@ -568,18 +568,21 @@ namespace GetStream
         }
 
         /// <summary>
-        /// base64-decode an SQS Message Body, then gunzip if gzip-prefixed.
+        /// Decode an SQS Message Body: try base64 first, fall back to raw bytes
+        /// if base64 fails, then gunzip if gzip-prefixed.
         ///
-        /// Forward-compat: today the backend emits plain JSON to SQS; once compression
-        /// is extended to queue transports, bodies will be base64(gzip(json)). This helper
-        /// handles both cases via magic-byte detection in <see cref="GunzipPayload(byte[])"/>.
+        /// Wire format (per CHA-3071): SQS bodies are raw JSON when
+        /// <c>enable_hook_payload_compression</c> is off (today's default for all
+        /// existing apps), and base64(gzip(json)) when it's on. This helper handles
+        /// both: raw JSON starts with '{' which is not valid base64, so the base64
+        /// decode fails and we fall through to raw bytes, then
+        /// <see cref="GunzipPayload(byte[])"/>'s magic-byte detection decides whether
+        /// to decompress.
         ///
-        /// Note: if the input is plain JSON (not base64), strict base64 decoding will
-        /// fail and throw <see cref="StreamInvalidWebhookException"/>. Callers receiving today's
-        /// plain-JSON SQS messages should call <see cref="ParseEvent(byte[])"/> directly with
-        /// the body bytes.
+        /// <see cref="ParseSqs(string)"/> sits on top of this and works transparently
+        /// for both wire formats — no caller code change, no flag, no header.
         /// </summary>
-        /// <exception cref="StreamInvalidWebhookException">If base64 decoding fails or gzip decompression fails</exception>
+        /// <exception cref="StreamInvalidWebhookException">If gzip decompression fails (only when input has gzip magic prefix)</exception>
         public static byte[] DecodeSqsPayload(string messageBody)
         {
             if (messageBody == null)
@@ -591,9 +594,10 @@ namespace GetStream
             {
                 decoded = Convert.FromBase64String(messageBody);
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
-                throw new StreamInvalidWebhookException($"invalid base64: {e.Message}", e);
+                // Not base64 — treat input as raw bytes (uncompressed wire format).
+                decoded = Encoding.UTF8.GetBytes(messageBody);
             }
             return GunzipPayload(decoded);
         }
