@@ -232,19 +232,19 @@ namespace GetStream
         /// </summary>
         /// <param name="rawEvent">The raw webhook payload as a byte array</param>
         /// <returns>A typed event object corresponding to the event type</returns>
-        /// <exception cref="StreamMalformedWebhookException">Thrown if the event type is unknown or deserialization fails</exception>
+        /// <exception cref="StreamInvalidWebhookException">Thrown if the event type is unknown or deserialization fails</exception>
         public static object ParseWebhookEvent(byte[] rawEvent)
         {
             var eventType = GetEventType(rawEvent);
             if (string.IsNullOrEmpty(eventType))
             {
-                throw new StreamMalformedWebhookException("Webhook payload missing 'type' field");
+                throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": Webhook payload missing 'type' field");
             }
 
             var eventClass = GetEventTypeClass(eventType);
             if (eventClass == null)
             {
-                throw new StreamMalformedWebhookException($"Unknown webhook event type: {eventType}");
+                throw new StreamInvalidWebhookException($"{StreamInvalidWebhookException.InvalidJson}: Unknown webhook event type: {eventType}");
             }
 
             try
@@ -253,7 +253,7 @@ namespace GetStream
             }
             catch (Exception ex)
             {
-                throw new StreamMalformedWebhookException($"Failed to deserialize webhook event: {ex.Message}", ex);
+                throw new StreamInvalidWebhookException($"{StreamInvalidWebhookException.InvalidJson}: Failed to deserialize webhook event: {ex.Message}", ex);
             }
         }
 
@@ -262,7 +262,7 @@ namespace GetStream
         /// </summary>
         /// <param name="rawEvent">The raw webhook payload as a string</param>
         /// <returns>A typed event object corresponding to the event type</returns>
-        /// <exception cref="StreamMalformedWebhookException">Thrown if the event type is unknown or deserialization fails</exception>
+        /// <exception cref="StreamInvalidWebhookException">Thrown if the event type is unknown or deserialization fails</exception>
         public static object ParseWebhookEvent(string rawEvent)
         {
             return ParseWebhookEvent(Encoding.UTF8.GetBytes(rawEvent));
@@ -447,53 +447,26 @@ namespace GetStream
         }
 
         /// <summary>
-        /// Base exception for every webhook handling failure. Catch
-        /// <see cref="StreamWebhookException"/> for a single arm that covers all
-        /// failure modes, or one of its subclasses
-        /// (<see cref="StreamInvalidSignatureException"/>,
-        /// <see cref="StreamMalformedWebhookException"/>) to distinguish security
-        /// failures from parse failures.
+        /// Thrown for every webhook handling failure: signature mismatch, invalid
+        /// JSON, missing/non-string <c>type</c> field, gzip-prefixed body that fails
+        /// to decompress, invalid base64 in a queue body, or a malformed SNS envelope.
+        ///
+        /// Catch this single class for any webhook problem; filter on the
+        /// <see cref="Exception.Message"/> text or against the failure-mode
+        /// constants below to differentiate.
         /// </summary>
-        public class StreamWebhookException : Exception
+        public class StreamInvalidWebhookException : Exception
         {
-            public StreamWebhookException(string message) : base(message)
+            public const string SignatureMismatch = "signature mismatch";
+            public const string InvalidBase64 = "invalid base64 encoding";
+            public const string GzipFailed = "gzip decompression failed";
+            public const string InvalidJson = "invalid JSON payload";
+
+            public StreamInvalidWebhookException(string message) : base(message)
             {
             }
 
-            public StreamWebhookException(string message, Exception innerException) : base(message, innerException)
-            {
-            }
-        }
-
-        /// <summary>
-        /// Thrown when the X-Signature header does not match the HMAC-SHA256 of
-        /// the body under the configured webhook secret. Treat as a security
-        /// failure: log the source and reject the request.
-        /// </summary>
-        public class StreamInvalidSignatureException : StreamWebhookException
-        {
-            public StreamInvalidSignatureException(string message) : base(message)
-            {
-            }
-
-            public StreamInvalidSignatureException(string message, Exception innerException) : base(message, innerException)
-            {
-            }
-        }
-
-        /// <summary>
-        /// Thrown when the webhook body could not be parsed: invalid JSON,
-        /// missing/non-string <c>type</c> field, gzip decompression failure,
-        /// base64 failure, or malformed SNS envelope. Treat as a client/format
-        /// problem.
-        /// </summary>
-        public class StreamMalformedWebhookException : StreamWebhookException
-        {
-            public StreamMalformedWebhookException(string message) : base(message)
-            {
-            }
-
-            public StreamMalformedWebhookException(string message, Exception innerException) : base(message, innerException)
+            public StreamInvalidWebhookException(string message, Exception innerException) : base(message, innerException)
             {
             }
         }
@@ -577,7 +550,7 @@ namespace GetStream
         /// </summary>
         /// <param name="body">The raw request body, possibly gzip-compressed</param>
         /// <returns>The uncompressed bytes (or <paramref name="body"/> unchanged if no gzip prefix)</returns>
-        /// <exception cref="StreamMalformedWebhookException">If the body has the gzip magic prefix but isn't a valid gzip stream</exception>
+        /// <exception cref="StreamInvalidWebhookException">If the body has the gzip magic prefix but isn't a valid gzip stream</exception>
         public static byte[] GunzipPayload(byte[] body)
         {
             if (body == null || body.Length < 2 || body[0] != GzipMagic[0] || body[1] != GzipMagic[1])
@@ -594,7 +567,7 @@ namespace GetStream
             }
             catch (Exception e) when (e is InvalidDataException || e is IOException)
             {
-                throw new StreamMalformedWebhookException($"gzip decompression failed: {e.Message}", e);
+                throw new StreamInvalidWebhookException($"{StreamInvalidWebhookException.GzipFailed}: {e.Message}", e);
             }
         }
 
@@ -613,12 +586,12 @@ namespace GetStream
         /// <see cref="ParseSqs(string)"/> sits on top of this and works transparently
         /// for both wire formats — no caller code change, no flag, no header.
         /// </summary>
-        /// <exception cref="StreamMalformedWebhookException">If gzip decompression fails (only when input has gzip magic prefix)</exception>
+        /// <exception cref="StreamInvalidWebhookException">If gzip decompression fails (only when input has gzip magic prefix)</exception>
         public static byte[] DecodeSqsPayload(string messageBody)
         {
             if (messageBody == null)
             {
-                throw new StreamMalformedWebhookException("messageBody must not be null");
+                throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": messageBody must not be null");
             }
             byte[] decoded;
             try
@@ -676,7 +649,7 @@ namespace GetStream
         {
             if (notificationBody == null)
             {
-                throw new StreamMalformedWebhookException("notificationBody must not be null");
+                throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": notificationBody must not be null");
             }
             return DecodeSqsPayload(UnwrapSnsNotificationBody(notificationBody));
         }
@@ -690,12 +663,12 @@ namespace GetStream
         /// <c>ParseWebhookEvent</c> throws.
         /// </summary>
         /// <returns>The typed event (a generated event class) or an <see cref="UnknownEvent"/> instance</returns>
-        /// <exception cref="StreamMalformedWebhookException">For invalid JSON, missing/non-string type field, or any deserialization failure on a known type</exception>
+        /// <exception cref="StreamInvalidWebhookException">For invalid JSON, missing/non-string type field, or any deserialization failure on a known type</exception>
         public static object ParseEvent(byte[] payload)
         {
             if (payload == null || payload.Length == 0)
             {
-                throw new StreamMalformedWebhookException("payload must not be empty");
+                throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": payload must not be empty");
             }
 
             JsonDocument doc;
@@ -705,23 +678,23 @@ namespace GetStream
             }
             catch (JsonException e)
             {
-                throw new StreamMalformedWebhookException($"failed to parse webhook payload: {e.Message}", e);
+                throw new StreamInvalidWebhookException($"{StreamInvalidWebhookException.InvalidJson}: failed to parse webhook payload: {e.Message}", e);
             }
 
             using (doc)
             {
                 if (doc.RootElement.ValueKind != JsonValueKind.Object)
                 {
-                    throw new StreamMalformedWebhookException("webhook payload must be a JSON object");
+                    throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": webhook payload must be a JSON object");
                 }
                 if (!doc.RootElement.TryGetProperty("type", out var typeNode) || typeNode.ValueKind != JsonValueKind.String)
                 {
-                    throw new StreamMalformedWebhookException("webhook payload missing 'type' string field");
+                    throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": webhook payload missing 'type' string field");
                 }
                 var eventType = typeNode.GetString();
                 if (string.IsNullOrEmpty(eventType))
                 {
-                    throw new StreamMalformedWebhookException("webhook payload missing 'type' string field");
+                    throw new StreamInvalidWebhookException(StreamInvalidWebhookException.InvalidJson + ": webhook payload missing 'type' string field");
                 }
 
                 var eventClass = GetEventTypeClass(eventType);
@@ -743,7 +716,7 @@ namespace GetStream
                 }
                 catch (JsonException e)
                 {
-                    throw new StreamMalformedWebhookException($"failed to deserialize event: {e.Message}", e);
+                    throw new StreamInvalidWebhookException($"{StreamInvalidWebhookException.InvalidJson}: failed to deserialize event: {e.Message}", e);
                 }
             }
         }
@@ -755,14 +728,13 @@ namespace GetStream
         /// <em>uncompressed</em> JSON body, hex-encoded. Magic-byte detection means callers
         /// can pass either the raw HTTP body or already-decompressed bytes; both work.
         /// </summary>
-        /// <exception cref="StreamInvalidSignatureException">If the X-Signature header does not match the HMAC-SHA256 of the body under the configured secret.</exception>
-        /// <exception cref="StreamMalformedWebhookException">If gunzip, JSON parse, type dispatch, or event deserialization fails.</exception>
+        /// <exception cref="StreamInvalidWebhookException">For every failure mode: signature mismatch, gunzip failure, JSON parse, type dispatch, or event deserialization failure. Filter on <see cref="Exception.Message"/> (or the failure-mode constants on <see cref="StreamInvalidWebhookException"/>) to differentiate modes.</exception>
         public static object VerifyAndParseWebhook(byte[] body, string signature, string secret)
         {
             var payload = GunzipPayload(body);
             if (!VerifySignature(payload, signature, secret))
             {
-                throw new StreamInvalidSignatureException("webhook signature mismatch");
+                throw new StreamInvalidWebhookException(StreamInvalidWebhookException.SignatureMismatch);
             }
             return ParseEvent(payload);
         }
