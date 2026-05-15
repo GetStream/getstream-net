@@ -1455,8 +1455,30 @@ namespace GetStream.Tests
     {
         private const string CanonicalTestSecret = "test_secret_do_not_use_in_production";
 
-        private static string FixtureRoot => Path.Combine(
-            TestContext.CurrentContext.TestDirectory, "fixtures", "webhooks");
+        private static string FixtureRoot
+        {
+            get
+            {
+                // Walk up from the test bin directory to find tests/fixtures/webhooks.
+                // Standard NUnit layout: <repo>/tests/bin/Debug/net8.0/ — fixtures live
+                // a few levels up in the source tree, not the bin output.
+                var dir = TestContext.CurrentContext.TestDirectory;
+                while (!string.IsNullOrEmpty(dir))
+                {
+                    var candidate = Path.Combine(dir, "fixtures", "webhooks");
+                    if (Directory.Exists(candidate)) return candidate;
+                    dir = Path.GetDirectoryName(dir);
+                }
+                return Path.Combine(TestContext.CurrentContext.TestDirectory, "fixtures", "webhooks");
+            }
+        }
+
+        [Test]
+        public void Conformance_FixturesPresent()
+        {
+            Assert.That(System.IO.Directory.Exists(FixtureRoot),
+                $"Webhook conformance fixtures missing at {FixtureRoot} — run generate.sh");
+        }
 
         private static IEnumerable<string> HappyDirs()
         {

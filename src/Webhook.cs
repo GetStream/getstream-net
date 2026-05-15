@@ -471,6 +471,14 @@ namespace GetStream
             }
         }
 
+        /// <summary>Renamed to <see cref="StreamInvalidWebhookException"/>. Kept as a subclass so existing catch clauses still compile.</summary>
+        [System.Obsolete("Use StreamInvalidWebhookException")]
+        public class WebhookException : StreamInvalidWebhookException
+        {
+            public WebhookException(string message) : base(message) { }
+            public WebhookException(string message, System.Exception inner) : base(message, inner) { }
+        }
+
         /// <summary>
         /// Returned by <see cref="ParseEvent(byte[])"/> when the type discriminator is
         /// well-formed but unknown to this SDK version. Forward-compat surface for new
