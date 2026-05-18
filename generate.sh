@@ -12,10 +12,10 @@ fi
 set -ex
 
 # cd in API repo, generate new spec and then generate code from it
-( cd $SOURCE_PATH ; make openapi; go run ./cmd/chat-manager openapi generate-client --language dotnet --spec ./releases/v2/serverside-api.yaml --output $DST_PATH )
+( cd $SOURCE_PATH ; make openapi; ./build/chat-manager openapi generate-client --language dotnet --spec ./releases/v2/serverside-api.yaml --output $DST_PATH )
 
 # Generate webhook conformance fixtures
-( cd $SOURCE_PATH ; go run ./cmd/chat-manager openapi generate-webhook-fixtures --output ../getstream-net/tests/fixtures/webhooks )
+( cd $SOURCE_PATH ; ./build/chat-manager openapi generate-webhook-fixtures --output ../getstream-net/tests/fixtures/webhooks )
 
 # Comment out problematic lines from openapi generation
 sed -i '' 's/\[JsonPropertyName("delete_activity")\]/\/\/ [JsonPropertyName("delete_activity")]/' $DST_PATH/src/requests.cs

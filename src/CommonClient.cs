@@ -750,6 +750,18 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<SearchRolesResponse>> SearchRolesAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await MakeRequestAsync<object, SearchRolesResponse>(
+                "GET",
+                "/api/v2/roles/search", queryParams, null, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<Response>> DeleteRoleAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {

@@ -22030,6 +22030,17 @@ namespace GetStream.Models
         public SharedLocationResponseData? SharedLocation { get; set; }
     }
 
+    public class SearchRolesResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// Matching roles, sorted ascending by name
+        /// </summary>
+        [JsonPropertyName("roles")]
+        public List<Role> Roles { get; set; }
+    }
+
     public class SearchUserGroupsResponse
     {
         [JsonPropertyName("duration")]
