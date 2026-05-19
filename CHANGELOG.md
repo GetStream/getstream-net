@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Webhook handling spec helpers (CHA-2961): `UnknownEvent` class for forward-compat;
+  `GunzipPayload`, `DecodeSqsPayload`, `DecodeSnsPayload` primitives;
+  `ParseEvent` (returns typed event or `UnknownEvent`);
+  `VerifyAndParseWebhook` HTTP composite; `ParseSqs` / `ParseSns`
+  queue composites (no signature — backend emits no HMAC for queue messages today;
+  queue transports are secured via AWS IAM access controls).
+  Transparent gzip via magic-byte detection.
+- New exception class: `Webhook.StreamInvalidWebhookException` — unified failure type
+  for signature mismatch, invalid JSON, missing/non-string `type` field, gzip
+  decompression failure, base64 decode failure, or malformed SNS envelope.
+- New instance methods on `StreamClient` (via `BaseClient`):
+  `VerifySignature(body, signature)` and `VerifyAndParseWebhook(body, signature)` —
+  drop the `secret` parameter in favor of the client's stored API secret. Dual API:
+  static `Webhook.*` methods that take an explicit secret remain available.
+- New instance methods on `StreamClient` (via `BaseClient`): `ParseSqs(string)`,
+  `ParseSns(string)` (no signature; AWS IAM).
+- Conformance fixture suite under `tests/fixtures/webhooks/`.
+
+### Changed
+
+- No breaking changes.
+
+[Spec](https://www.notion.so/stream-wiki/Server-Side-SDK-Webhook-Handling-Spec-34b6a5d7f9f681e78003c443f227493c)
+
 ## [6.0.0] - 2026-03-05
 
 ### Breaking Changes

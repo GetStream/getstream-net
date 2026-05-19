@@ -258,6 +258,74 @@ namespace GetStream
             return tokenHandler.WriteToken(tokenHandler.CreateToken(descriptor));
         }
 
+        /// <summary>
+        /// Verify the HMAC-SHA256 signature of a webhook payload using this client's API secret.
+        ///
+        /// Dual API: the static <see cref="Webhook.VerifySignature(byte[], string, string)"/>
+        /// overload takes an explicit secret. Prefer this instance method when you already
+        /// have a <see cref="StreamClient"/> on hand.
+        /// </summary>
+        /// <param name="body">The raw request body as a byte array</param>
+        /// <param name="signature">The signature from the X-Signature header</param>
+        /// <returns>true if the signature is valid, false otherwise</returns>
+        public bool VerifySignature(byte[] body, string signature)
+        {
+            return Webhook.VerifySignature(body, signature, this.ApiSecret);
+        }
+
+        /// <summary>
+        /// Verify the HMAC-SHA256 signature of a webhook payload using this client's API secret.
+        /// </summary>
+        /// <param name="body">The raw request body as a string</param>
+        /// <param name="signature">The signature from the X-Signature header</param>
+        /// <returns>true if the signature is valid, false otherwise</returns>
+        public bool VerifySignature(string body, string signature)
+        {
+            return Webhook.VerifySignature(body, signature, this.ApiSecret);
+        }
+
+        /// <summary>
+        /// Verify the signature and parse the webhook payload in a single call, using this
+        /// client's API secret. Transparent gzip decompression via magic-byte detection.
+        ///
+        /// Dual API: the static <see cref="Webhook.VerifyAndParseWebhook(byte[], string, string)"/>
+        /// overload takes an explicit secret. Prefer this instance method when you already
+        /// have a <see cref="StreamClient"/> on hand.
+        /// </summary>
+        /// <param name="body">The raw request body as a byte array</param>
+        /// <param name="signature">The signature from the X-Signature header</param>
+        /// <returns>A typed event object (or <see cref="Webhook.UnknownEvent"/> for unknown discriminators)</returns>
+        /// <exception cref="Webhook.StreamInvalidWebhookException">If the signature mismatches or the body cannot be parsed</exception>
+        public object VerifyAndParseWebhook(byte[] body, string signature)
+        {
+            return Webhook.VerifyAndParseWebhook(body, signature, this.ApiSecret);
+        }
+
+        /// <summary>
+        /// Decode and parse a Stream-delivered SQS message body.
+        /// </summary>
+        /// <remarks>
+        /// Convenience wrapper around <see cref="Webhook.ParseSqs"/>. No signature is
+        /// required; SQS deliveries are authenticated via AWS IAM.
+        /// </remarks>
+        public object ParseSqs(string messageBody)
+        {
+            return Webhook.ParseSqs(messageBody);
+        }
+
+        /// <summary>
+        /// Decode and parse a Stream-delivered SNS notification body.
+        /// </summary>
+        /// <remarks>
+        /// Accepts either the raw SNS HTTP envelope JSON or the pre-extracted Message
+        /// string. Convenience wrapper around <see cref="Webhook.ParseSns"/>. No
+        /// signature is required; SNS deliveries are authenticated via AWS IAM.
+        /// </remarks>
+        public object ParseSns(string notificationBody)
+        {
+            return Webhook.ParseSns(notificationBody);
+        }
+
         private MultipartFormDataContent CreateMultipartContent(FileUploadRequest request)
         {
             if (string.IsNullOrEmpty(request.File))

@@ -463,6 +463,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<SubmitModerationFeedbackResponse>> SubmitModerationFeedbackAsync(SubmitModerationFeedbackRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SubmitModerationFeedbackRequest, SubmitModerationFeedbackResponse>(
+                "POST",
+                "/api/v2/moderation/submit_moderation_feedback", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UnbanResponse>> UnbanAsync(UnbanRequest request,
             CancellationToken cancellationToken = default)
         {
