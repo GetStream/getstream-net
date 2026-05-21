@@ -82,15 +82,17 @@ The SDK follows .NET best practices and conventions while providing a clean, mai
 
 ## Release Process
 
-Releases use two paths:
+Releases use two paths, both handled by `.github/workflows/release.yml`:
 
-- Default: automatic release when a PR is merged to `main`/`master`.
-- Fallback: manual release using `.github/workflows/manual-release.yml` (admin use only).
+- **Default**: automatic release when a PR is merged to `main`/`master`. The PR title (and body) drives the semver bump.
+- **Fallback**: manual release via the `Release` workflow's `workflow_dispatch` (admin use). Select a `version_bump` (`patch`/`minor`/`major`). `use_current_version=true` skips the bump and publishes whatever is already in `src/stream-feed-net.csproj`.
 
-Automatic semver bump rules are based on merged PR title/body:
+Automatic semver bump rules:
 
 - `feat:` -> minor
 - `fix:` (or `bug:`) -> patch
-- `feat!:` or `BREAKING CHANGE` in PR body -> major
+- `feat!:`, `<type>(scope)!:`, or `BREAKING CHANGE` in the PR body/title -> major
 
-PRs with other prefixes do not trigger a release.
+PRs with any other prefix do not trigger a release.
+
+The release pipeline runs `dotnet build`, `make test`, and a warnings-as-errors check on the merged commit before publishing to NuGet. Each step is idempotent; a failed run can be re-dispatched from the Actions UI.
