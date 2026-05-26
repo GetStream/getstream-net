@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Connection Pooling (CHA-2956)
+
+New `StreamOptions` class for explicit HTTP connection-pool tuning. Five knobs:
+
+- `MaxConnsPerHost` (int, default `5`) → `SocketsHttpHandler.MaxConnectionsPerServer`
+- `IdleTimeout` (TimeSpan, default `55s`) → `SocketsHttpHandler.PooledConnectionIdleTimeout`
+- `ConnectTimeout` (TimeSpan, default `10s`) → `SocketsHttpHandler.ConnectTimeout`
+- `RequestTimeout` (TimeSpan, default `30s`) → `HttpClient.Timeout`
+- `KeepAlive` — always on (invariant; no toggle)
+
+Two usage paths:
+
+```csharp
+// 1) Direct StreamOptions
+var client = new StreamClient(new StreamOptions
+{
+    ApiKey = apiKey,
+    ApiSecret = secret,
+    MaxConnsPerHost = 10,
+    IdleTimeout = TimeSpan.FromSeconds(45),
+    ConnectTimeout = TimeSpan.FromSeconds(5),
+    RequestTimeout = TimeSpan.FromSeconds(20),
+});
+
+// 2) ClientBuilder
+var client = new ClientBuilder()
+    .ApiKey(apiKey).ApiSecret(secret)
+    .MaxConnsPerHost(10)
+    .IdleTimeout(TimeSpan.FromSeconds(45))
+    .ConnectTimeout(TimeSpan.FromSeconds(5))
+    .RequestTimeout(TimeSpan.FromSeconds(20))
+    .Build();
+```
+
+§7 escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or
+`ClientBuilder.HttpClient(...)` to bypass all 5 knobs — the SDK uses the
+supplied instance as-is.
+
+§8 transparency: pass an `ILogger` via `StreamOptions.Logger` or
+`ClientBuilder.Logger(...)` to receive one INFO line on construction.
+
+Per-call `RequestTimeout` override: pass a `CancellationToken` derived from
+`CancellationTokenSource.CancelAfter(...)` to any `*Async` method.
+
+Backward compatibility: the existing positional constructors
+(`BaseClient`, `StreamClient`, `FeedsV3Client`, `ModerationClient`) continue
+to work unchanged and now produce clients wired with the new defaults.
+
+[Spec](https://www.notion.so/stream-wiki/Server-Side-SDK-Connection-Pooling-Spec-3496a5d7f9f680749b8be9ee238ae108)
+
 ### Added
 
 - Webhook handling spec helpers (CHA-2961): `UnknownEvent` class for forward-compat;
