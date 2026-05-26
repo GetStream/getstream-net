@@ -162,6 +162,74 @@ namespace GetStream.Tests
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(99)), "handler untouched");
         }
 
+        private sealed class CapturingLogger : Microsoft.Extensions.Logging.ILogger
+        {
+            public System.Collections.Generic.List<string> Infos { get; } = new();
+            public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
+            public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) => true;
+            public void Log<TState>(
+                Microsoft.Extensions.Logging.LogLevel logLevel,
+                Microsoft.Extensions.Logging.EventId eventId,
+                TState state,
+                Exception? exception,
+                Func<TState, Exception?, string> formatter)
+            {
+                if (logLevel == Microsoft.Extensions.Logging.LogLevel.Information)
+                    Infos.Add(formatter(state, exception));
+            }
+            private sealed class NullScope : IDisposable
+            {
+                public static readonly NullScope Instance = new();
+                public void Dispose() { }
+            }
+        }
+
+        [Test]
+        public void BaseClient_InfoLog_OnConstruction_WithDefaults()
+        {
+            var capture = new CapturingLogger();
+            _ = new BaseClient(new StreamOptions
+            {
+                ApiKey = DummyApiKey,
+                ApiSecret = DummySecret,
+                Logger = capture,
+            });
+            Assert.That(capture.Infos.Count, Is.EqualTo(1), "exactly one INFO line on construction");
+            var msg = capture.Infos[0];
+            Assert.That(msg, Does.Contain("max_conns_per_host=5"));
+            Assert.That(msg, Does.Contain("idle_timeout=00:00:55"));
+            Assert.That(msg, Does.Contain("connect_timeout=00:00:10"));
+            Assert.That(msg, Does.Contain("request_timeout=00:00:30"));
+            Assert.That(msg, Does.Contain("user_http_client=false"));
+        }
+
+        [Test]
+        public void BaseClient_InfoLog_OnConstruction_WithUserHttpClient()
+        {
+            var capture = new CapturingLogger();
+            _ = new BaseClient(new StreamOptions
+            {
+                ApiKey = DummyApiKey,
+                ApiSecret = DummySecret,
+                HttpClient = new HttpClient(),
+                Logger = capture,
+            });
+            Assert.That(capture.Infos.Count, Is.EqualTo(1));
+            Assert.That(capture.Infos[0], Does.Contain("user_http_client=true"));
+            Assert.That(capture.Infos[0], Does.Contain("5 knobs not applied"));
+        }
+
+        [Test]
+        public void BaseClient_InfoLog_Silent_WhenNoLoggerProvided()
+        {
+            // No logger → no log. The SDK must NOT spam Console for users who didn't opt in.
+            Assert.DoesNotThrow(() => new BaseClient(new StreamOptions
+            {
+                ApiKey = DummyApiKey,
+                ApiSecret = DummySecret,
+            }));
+        }
+
         // ----- helpers (used across all tests in this fixture) -----
 
         internal static (HttpClient httpClient, SocketsHttpHandler handler) UnwrapHandler(BaseClient client)
