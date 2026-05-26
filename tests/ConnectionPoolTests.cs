@@ -69,6 +69,35 @@ namespace GetStream.Tests
             Assert.That(handler.AutomaticDecompression.HasFlag(DecompressionMethods.GZip), Is.True);
         }
 
+        [Test]
+        public void BaseClient_EscapeHatch_UserSuppliedHttpClient_IgnoresKnobs()
+        {
+            var customHandler = new SocketsHttpHandler
+            {
+                MaxConnectionsPerServer = 99,
+                ConnectTimeout = TimeSpan.FromSeconds(99),
+            };
+            var custom = new HttpClient(customHandler) { Timeout = TimeSpan.FromSeconds(99) };
+
+            var client = new BaseClient(new StreamOptions
+            {
+                ApiKey = DummyApiKey,
+                ApiSecret = DummySecret,
+                HttpClient = custom,
+                // These four MUST be ignored:
+                MaxConnsPerHost = 3,
+                IdleTimeout = TimeSpan.FromSeconds(3),
+                ConnectTimeout = TimeSpan.FromSeconds(3),
+                RequestTimeout = TimeSpan.FromSeconds(3),
+            });
+            var (httpClient, handler) = UnwrapHandler(client);
+            Assert.That(httpClient, Is.SameAs(custom), "SDK must use the user-supplied HttpClient as-is");
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(99)), "Timeout preserved");
+            Assert.That(handler, Is.SameAs(customHandler), "handler preserved");
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(99), "handler untouched");
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(99)), "handler untouched");
+        }
+
         // ----- helpers (used across all tests in this fixture) -----
 
         internal static (HttpClient httpClient, SocketsHttpHandler handler) UnwrapHandler(BaseClient client)
