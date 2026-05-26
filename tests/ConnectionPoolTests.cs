@@ -37,6 +37,38 @@ namespace GetStream.Tests
                 "gzip wiring from CHA-2961 must be preserved on the default-built handler");
         }
 
+        [Test]
+        public void BaseClient_WithStreamOptions_AllKnobsOverridable()
+        {
+            var client = new BaseClient(new StreamOptions
+            {
+                ApiKey = DummyApiKey,
+                ApiSecret = DummySecret,
+                MaxConnsPerHost = 17,
+                IdleTimeout = TimeSpan.FromSeconds(123),
+                ConnectTimeout = TimeSpan.FromSeconds(7),
+                RequestTimeout = TimeSpan.FromSeconds(42),
+            });
+            var (httpClient, handler) = UnwrapHandler(client);
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(17));
+            Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(123)));
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(7)));
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(42)));
+        }
+
+        [Test]
+        public void BaseClient_PositionalConstructor_StillWorks_WithSpecDefaults()
+        {
+            // The existing 3-arg constructor must still produce a client wired with the new defaults.
+            var client = new BaseClient(DummyApiKey, DummySecret);
+            var (httpClient, handler) = UnwrapHandler(client);
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
+            Assert.That(handler.AutomaticDecompression.HasFlag(DecompressionMethods.GZip), Is.True);
+        }
+
         // ----- helpers (used across all tests in this fixture) -----
 
         internal static (HttpClient httpClient, SocketsHttpHandler handler) UnwrapHandler(BaseClient client)
