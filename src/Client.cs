@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using GetStream.Models;
 
@@ -31,7 +32,12 @@ namespace GetStream
             ApiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
             ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
             BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
-            _httpClient = new HttpClient();
+
+            var handler = new SocketsHttpHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip,
+            };
+            _httpClient = new HttpClient(handler);
 
             // Configure JSON options once
             _jsonOptions = new JsonSerializerOptions
