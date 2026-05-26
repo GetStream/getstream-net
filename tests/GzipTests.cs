@@ -15,18 +15,9 @@ using NUnit.Framework;
 namespace GetStream.Tests
 {
     /// <summary>
-    /// Tests for CHA-2964: gzip request/response support.
-    ///
-    /// The SDK configures its default HttpClient with a SocketsHttpHandler whose
-    /// AutomaticDecompression includes GZip. The .NET runtime contract is that this
-    /// flag both:
-    ///   1. Adds Accept-Encoding: gzip to outgoing requests.
-    ///   2. Transparently decodes Content-Encoding: gzip responses.
-    ///
-    /// Both behaviors live inside SocketsHttpHandler's request execution path, so
-    /// they are not visible from an outer DelegatingHandler. We verify the config
-    /// directly and run a real in-process HttpListener round trip for end-to-end
-    /// coverage.
+    /// Verifies the SDK's HttpClient advertises gzip and transparently decodes
+    /// gzip-encoded responses via SocketsHttpHandler.AutomaticDecompression.
+    /// </summary>
     /// </summary>
     [TestFixture]
     public class GzipTests

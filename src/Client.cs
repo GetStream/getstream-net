@@ -33,10 +33,7 @@ namespace GetStream
             ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
             BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
 
-            // Configure handler with automatic gzip decompression. When AutomaticDecompression
-            // is set, HttpClient also auto-advertises Accept-Encoding: gzip on outgoing requests.
-            // HttpClient owns the handler and will dispose it (disposeHandler defaults to true
-            // on the (HttpMessageHandler) overload).
+            // AutomaticDecompression both advertises Accept-Encoding: gzip and decodes responses.
             var handler = new SocketsHttpHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip,
