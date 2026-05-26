@@ -33,7 +33,6 @@ namespace GetStream
             ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
             BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
 
-            // AutomaticDecompression both advertises Accept-Encoding: gzip and decodes responses.
             var handler = new SocketsHttpHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip,
