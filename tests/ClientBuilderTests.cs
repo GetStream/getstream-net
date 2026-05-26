@@ -125,5 +125,40 @@ namespace GetStream.Tests
                 Environment.SetEnvironmentVariable("STREAM_BASE_URL", originalBaseUrl);
             }
         }
+
+        [Test]
+        public void ClientBuilder_PoolKnobs_AppliedToBuiltClient()
+        {
+            var client = new ClientBuilder()
+                .ApiKey(TestApiKey)
+                .ApiSecret(TestApiSecret)
+                .MaxConnsPerHost(13)
+                .IdleTimeout(TimeSpan.FromSeconds(77))
+                .ConnectTimeout(TimeSpan.FromSeconds(8))
+                .RequestTimeout(TimeSpan.FromSeconds(22))
+                .SkipEnvLoad()
+                .Build();
+
+            var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(13));
+            Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(77)));
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(8)));
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(22)));
+        }
+
+        [Test]
+        public void ClientBuilder_DefaultsWhenNoPoolKnobsSet()
+        {
+            var client = new ClientBuilder()
+                .ApiKey(TestApiKey)
+                .ApiSecret(TestApiSecret)
+                .SkipEnvLoad()
+                .Build();
+            var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
+        }
     }
 }

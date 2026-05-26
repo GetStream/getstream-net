@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using DotNetEnv;
+using Microsoft.Extensions.Logging;
 
 namespace GetStream
 {
@@ -30,6 +31,12 @@ namespace GetStream
         private bool _loadEnv = true;
         private string? _envPath;
         private string? _envFilePath;
+        private int _maxConnsPerHost = 5;
+        private TimeSpan _idleTimeout = TimeSpan.FromSeconds(55);
+        private TimeSpan _connectTimeout = TimeSpan.FromSeconds(10);
+        private TimeSpan _requestTimeout = TimeSpan.FromSeconds(30);
+        private System.Net.Http.HttpClient? _httpClient;
+        private ILogger? _logger;
 
         /// <summary>
         /// Set the API key
@@ -76,6 +83,24 @@ namespace GetStream
             return this;
         }
 
+        /// <summary>CHA-2956 — max concurrent TCP connections per host (default 5).</summary>
+        public ClientBuilder MaxConnsPerHost(int n) { _maxConnsPerHost = n; return this; }
+
+        /// <summary>CHA-2956 — how long an idle pooled connection lingers (default 55s).</summary>
+        public ClientBuilder IdleTimeout(TimeSpan d) { _idleTimeout = d; return this; }
+
+        /// <summary>CHA-2956 — TCP+TLS handshake cap (default 10s).</summary>
+        public ClientBuilder ConnectTimeout(TimeSpan d) { _connectTimeout = d; return this; }
+
+        /// <summary>CHA-2956 — per-request timeout (default 30s).</summary>
+        public ClientBuilder RequestTimeout(TimeSpan d) { _requestTimeout = d; return this; }
+
+        /// <summary>§7 escape hatch. When set, NONE of the 4 pool knobs apply.</summary>
+        public ClientBuilder HttpClient(System.Net.Http.HttpClient httpClient) { _httpClient = httpClient; return this; }
+
+        /// <summary>§8 transparency — opt-in INFO log on construction.</summary>
+        public ClientBuilder Logger(ILogger logger) { _logger = logger; return this; }
+
         /// <summary>
         /// Create a client builder that loads configuration from environment variables
         /// </summary>
@@ -110,7 +135,7 @@ namespace GetStream
         public StreamClient Build()
         {
             LoadCredentials();
-            return new StreamClient(_apiKey!, _apiSecret!);
+            return new StreamClient(BuildStreamOptions());
         }
 
         /// <summary>
@@ -120,7 +145,7 @@ namespace GetStream
         public FeedsV3Client BuildFeedsClient()
         {
             LoadCredentials();
-            return new FeedsV3Client(_apiKey!, _apiSecret!);
+            return new FeedsV3Client(BuildStreamOptions());
         }
 
         /// <summary>
@@ -130,7 +155,7 @@ namespace GetStream
         public ChatClient BuildChatClient()
         {
             LoadCredentials();
-            return new ChatClient(new StreamClient(_apiKey!, _apiSecret!));
+            return new ChatClient(new StreamClient(BuildStreamOptions()));
         }
 
         /// <summary>
@@ -140,7 +165,7 @@ namespace GetStream
         public VideoClient BuildVideoClient()
         {
             LoadCredentials();
-            return new VideoClient(new StreamClient(_apiKey!, _apiSecret!));
+            return new VideoClient(new StreamClient(BuildStreamOptions()));
         }
 
         /// <summary>
@@ -150,7 +175,23 @@ namespace GetStream
         public ModerationClient BuildModerationClient()
         {
             LoadCredentials();
-            return new ModerationClient(_apiKey!, _apiSecret!);
+            return new ModerationClient(BuildStreamOptions());
+        }
+
+        private StreamOptions BuildStreamOptions()
+        {
+            return new StreamOptions
+            {
+                ApiKey = _apiKey!,
+                ApiSecret = _apiSecret!,
+                BaseUrl = _baseUrl,
+                MaxConnsPerHost = _maxConnsPerHost,
+                IdleTimeout = _idleTimeout,
+                ConnectTimeout = _connectTimeout,
+                RequestTimeout = _requestTimeout,
+                HttpClient = _httpClient,
+                Logger = _logger,
+            };
         }
 
         public void LoadCredentials()
