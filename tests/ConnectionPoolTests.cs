@@ -70,6 +70,70 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public async Task BaseClient_PerCallCancellationToken_PreEmptsClientTimeout()
+        {
+            var port = GetFreePort();
+            var prefix = $"http://127.0.0.1:{port}/";
+
+            using var listener = new System.Net.HttpListener();
+            listener.Prefixes.Add(prefix);
+            listener.Start();
+
+            // Server holds the connection open well past the per-call deadline.
+            var serverTask = Task.Run(async () =>
+            {
+                try
+                {
+                    var ctx = await listener.GetContextAsync();
+                    await Task.Delay(TimeSpan.FromSeconds(3));
+                    ctx.Response.StatusCode = 200;
+                    ctx.Response.OutputStream.Close();
+                }
+                catch { /* listener stopped */ }
+            });
+
+            try
+            {
+                var client = new BaseClient(new StreamOptions
+                {
+                    ApiKey = DummyApiKey,
+                    ApiSecret = DummySecret,
+                    BaseUrl = prefix.TrimEnd('/'),
+                    RequestTimeout = TimeSpan.FromSeconds(30),
+                });
+
+                using var cts = new CancellationTokenSource();
+                cts.CancelAfter(TimeSpan.FromMilliseconds(150));
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                Exception? caught = null;
+                try
+                {
+                    await client.MakeRequestAsync<object, object>(
+                        method: "GET", path: "/slow",
+                        queryParams: null, requestBody: null, pathParams: null,
+                        cancellationToken: cts.Token);
+                }
+                catch (Exception ex) { caught = ex; }
+                sw.Stop();
+
+                Assert.That(caught, Is.Not.Null, "expected cancellation to surface as an exception");
+                Assert.That(sw.Elapsed, Is.LessThan(TimeSpan.FromSeconds(1)),
+                    "per-call CancellationToken must pre-empt the 30s client timeout");
+            }
+            finally { listener.Stop(); }
+        }
+
+        private static int GetFreePort()
+        {
+            var l = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
+            l.Start();
+            var port = ((System.Net.IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+            return port;
+        }
+
+        [Test]
         public void BaseClient_EscapeHatch_UserSuppliedHttpClient_IgnoresKnobs()
         {
             var customHandler = new SocketsHttpHandler
