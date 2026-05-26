@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -15,31 +16,59 @@ namespace GetStream
         private static readonly string VersionHeader = $"getstream-net-{VersionName}";
 
         private readonly HttpClient _httpClient;
+        private readonly Microsoft.Extensions.Logging.ILogger? _logger;
+        private readonly bool _userHttpClient;
         protected string ApiKey;
         protected string ApiSecret;
         protected string BaseUrl;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        //getters 
+        //getters
         // public string ApiKey => _apiKey;
         // public string ApiSecret => _apiSecret;
         // public string BaseUrl => _baseUrl;
 
 
 
-        public BaseClient(string apiKey, string apiSecret, string baseUrl = "https://chat-edge-ohio-ce1.stream-io-api.com")
-        {
-            ApiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
-            ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
-            BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
-
-            var handler = new SocketsHttpHandler
+        public BaseClient(string apiKey, string apiSecret, string baseUrl = "https://chat.stream-io-api.com")
+            : this(new StreamOptions
             {
-                AutomaticDecompression = DecompressionMethods.GZip,
-            };
-            _httpClient = new HttpClient(handler);
+                ApiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey)),
+                ApiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret)),
+                BaseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)),
+            })
+        {
+        }
 
-            // Configure JSON options once
+        /// <summary>
+        /// CHA-2956 — canonical constructor. The positional <c>(apiKey, apiSecret, baseUrl)</c>
+        /// constructor builds a default-valued <see cref="StreamOptions"/> and delegates here.
+        /// When <see cref="StreamOptions.HttpClient"/> is set (§7 escape hatch), the 5 pool
+        /// knobs are NOT applied.
+        /// </summary>
+        public BaseClient(StreamOptions opts)
+        {
+            if (opts == null) throw new ArgumentNullException(nameof(opts));
+            if (string.IsNullOrEmpty(opts.ApiKey)) throw new ArgumentNullException(nameof(opts.ApiKey));
+            if (string.IsNullOrEmpty(opts.ApiSecret)) throw new ArgumentNullException(nameof(opts.ApiSecret));
+            if (string.IsNullOrEmpty(opts.BaseUrl)) throw new ArgumentNullException(nameof(opts.BaseUrl));
+
+            ApiKey = opts.ApiKey;
+            ApiSecret = opts.ApiSecret;
+            BaseUrl = opts.BaseUrl;
+            _logger = opts.Logger;
+
+            if (opts.HttpClient != null)
+            {
+                _httpClient = opts.HttpClient;
+                _userHttpClient = true;
+            }
+            else
+            {
+                _httpClient = BuildDefaultHttpClient(opts);
+                _userHttpClient = false;
+            }
+
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -47,6 +76,39 @@ namespace GetStream
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
                 Converters = { new NanosecondTimestampConverter(), new FeedOwnCapabilityConverter(), new ChannelOwnCapabilityConverter(), new OwnCapabilityConverter() }
             };
+
+            LogConstruction(opts);
+        }
+
+        private static HttpClient BuildDefaultHttpClient(StreamOptions opts)
+        {
+            // KeepAlive is always-on; never set Connection: close (spec §5 invariant 4).
+            // PooledConnectionLifetime is left at the framework default (InfiniteTimeSpan);
+            // PooledConnectionIdleTimeout governs idle eviction.
+            var handler = new SocketsHttpHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip,
+                MaxConnectionsPerServer = opts.MaxConnsPerHost,
+                PooledConnectionIdleTimeout = opts.IdleTimeout,
+                ConnectTimeout = opts.ConnectTimeout,
+            };
+            return new HttpClient(handler) { Timeout = opts.RequestTimeout };
+        }
+
+        private void LogConstruction(StreamOptions opts)
+        {
+            if (_logger == null) return;
+            if (_userHttpClient)
+            {
+                _logger.LogInformation(
+                    "connection pool: user_http_client=true (5 knobs not applied)");
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "connection pool: max_conns_per_host={MaxConnsPerHost} idle_timeout={IdleTimeout} connect_timeout={ConnectTimeout} request_timeout={RequestTimeout} user_http_client=false",
+                    opts.MaxConnsPerHost, opts.IdleTimeout, opts.ConnectTimeout, opts.RequestTimeout);
+            }
         }
 
         public async Task<StreamResponse<TResponse>> MakeRequestAsync<TRequest, TResponse>(
