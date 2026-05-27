@@ -592,7 +592,7 @@ namespace GetStream
         /// to decompress.
         ///
         /// <see cref="ParseSqs(string)"/> sits on top of this and works transparently
-        /// for both wire formats — no caller code change, no flag, no header.
+        /// for both wire formats: no caller code change, no flag, no header.
         /// </summary>
         /// <exception cref="StreamInvalidWebhookException">If gzip decompression fails (only when input has gzip magic prefix)</exception>
         public static byte[] DecodeSqsPayload(string messageBody)
@@ -608,7 +608,7 @@ namespace GetStream
             }
             catch (FormatException)
             {
-                // Not base64 — treat input as raw bytes (uncompressed wire format).
+                // Not base64, so treat input as raw bytes (uncompressed wire format).
                 decoded = Encoding.UTF8.GetBytes(messageBody);
             }
             return GunzipPayload(decoded);
@@ -621,7 +621,7 @@ namespace GetStream
         /// flows through.
         ///
         /// Heuristic: try to JSON-parse the input. If it yields an object with a
-        /// string <c>Message</c> field, that's the envelope shape — return the
+        /// string <c>Message</c> field, that's the envelope shape; return the
         /// Message. Otherwise the input is presumed to BE the pre-extracted
         /// Message (base64-encoded bytes are not valid JSON, so this falls
         /// through cleanly).
@@ -640,7 +640,7 @@ namespace GetStream
             }
             catch (JsonException)
             {
-                // not JSON — fall through to treating body as a bare Message string
+                // not JSON, so fall through to treating body as a bare Message string
             }
             return body;
         }

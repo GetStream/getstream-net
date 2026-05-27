@@ -30,7 +30,7 @@ namespace GetStream.Tests
         public void BaseClient_DefaultHttpClient_HasGzipAutomaticDecompression()
         {
             // The HMAC-SHA256 path is not exercised here, so any secret would do for
-            // construction — keep it consistent with the e2e test for clarity.
+            // construction; keep it consistent with the e2e test for clarity.
             var client = new BaseClient(
                 "dummy-api-key",
                 "dummy-secret-that-is-long-enough-for-hmac-sha256");

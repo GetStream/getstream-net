@@ -55,14 +55,14 @@ Backward compatibility: the existing positional constructors (`BaseClient`, `Str
   `GunzipPayload`, `DecodeSqsPayload`, `DecodeSnsPayload` primitives;
   `ParseEvent` (returns typed event or `UnknownEvent`);
   `VerifyAndParseWebhook` HTTP composite; `ParseSqs` / `ParseSns`
-  queue composites (no signature — backend emits no HMAC for queue messages today;
+  queue composites (no signature: backend emits no HMAC for queue messages today;
   queue transports are secured via AWS IAM access controls).
   Transparent gzip via magic-byte detection.
-- New exception class: `Webhook.StreamInvalidWebhookException` — unified failure type
+- New exception class: `Webhook.StreamInvalidWebhookException`, a unified failure type
   for signature mismatch, invalid JSON, missing/non-string `type` field, gzip
   decompression failure, base64 decode failure, or malformed SNS envelope.
 - New instance methods on `StreamClient` (via `BaseClient`):
-  `VerifySignature(body, signature)` and `VerifyAndParseWebhook(body, signature)` —
+  `VerifySignature(body, signature)` and `VerifyAndParseWebhook(body, signature)` that
   drop the `secret` parameter in favor of the client's stored API secret. Dual API:
   static `Webhook.*` methods that take an explicit secret remain available.
 - New instance methods on `StreamClient` (via `BaseClient`): `ParseSqs(string)`,
