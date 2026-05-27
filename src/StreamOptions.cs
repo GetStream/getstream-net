@@ -6,10 +6,9 @@ namespace GetStream
 {
     /// <summary>
     /// Configuration object for <see cref="BaseClient"/> covering credentials, base URL,
-    /// HTTP connection-pool tuning (CHA-2956 spec §6.6), and optional dependencies.
+    /// HTTP connection-pool tuning (CHA-2956), and optional dependencies.
     ///
-    /// Defaults match the cross-SDK Server-Side Connection Pooling Spec §4:
-    ///   MaxConnsPerHost=5; IdleTimeout=55s; ConnectTimeout=10s; RequestTimeout=30s.
+    /// Defaults: MaxConnsPerHost=5, IdleTimeout=55s, ConnectTimeout=10s, RequestTimeout=30s.
     /// KeepAlive is always-on; the SDK never emits <c>Connection: close</c>.
     /// </summary>
     public class StreamOptions
@@ -37,11 +36,11 @@ namespace GetStream
         /// Per-call override via <see cref="System.Threading.CancellationTokenSource.CancelAfter(TimeSpan)"/>.</summary>
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
-        /// <summary>§7 escape hatch. When set, the SDK uses this instance as-is and applies
+        /// <summary>Escape hatch. When set, the SDK uses this instance as-is and applies
         /// NONE of the 5 knobs. The caller owns all handler configuration (including gzip).</summary>
         public HttpClient? HttpClient { get; set; }
 
-        /// <summary>§8 transparency — when set, the SDK emits one INFO line on construction.</summary>
+        /// <summary>When set, the SDK emits one INFO line on construction.</summary>
         public ILogger? Logger { get; set; }
     }
 }

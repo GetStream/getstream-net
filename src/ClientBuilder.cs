@@ -95,10 +95,10 @@ namespace GetStream
         /// <summary>CHA-2956 — per-request timeout (default 30s).</summary>
         public ClientBuilder RequestTimeout(TimeSpan d) { _requestTimeout = d; return this; }
 
-        /// <summary>§7 escape hatch. When set, NONE of the 4 pool knobs apply.</summary>
+        /// <summary>Escape hatch. When set, NONE of the 4 pool knobs apply.</summary>
         public ClientBuilder HttpClient(System.Net.Http.HttpClient httpClient) { _httpClient = httpClient; return this; }
 
-        /// <summary>§8 transparency — opt-in INFO log on construction.</summary>
+        /// <summary>Opt-in INFO log on construction.</summary>
         public ClientBuilder Logger(ILogger logger) { _logger = logger; return this; }
 
         /// <summary>

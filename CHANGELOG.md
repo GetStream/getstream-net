@@ -41,11 +41,11 @@ var client = new ClientBuilder()
     .Build();
 ```
 
-§7 escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or
-`ClientBuilder.HttpClient(...)` to bypass all 5 knobs — the SDK uses the
+Escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or
+`ClientBuilder.HttpClient(...)` to bypass all 5 knobs. The SDK uses the
 supplied instance as-is.
 
-§8 transparency: pass an `ILogger` via `StreamOptions.Logger` or
+Pass an `ILogger` via `StreamOptions.Logger` or
 `ClientBuilder.Logger(...)` to receive one INFO line on construction.
 
 Per-call `RequestTimeout` override: pass a `CancellationToken` derived from
@@ -54,8 +54,6 @@ Per-call `RequestTimeout` override: pass a `CancellationToken` derived from
 Backward compatibility: the existing positional constructors
 (`BaseClient`, `StreamClient`, `FeedsV3Client`, `ModerationClient`) continue
 to work unchanged and now produce clients wired with the new defaults.
-
-[Spec](https://www.notion.so/stream-wiki/Server-Side-SDK-Connection-Pooling-Spec-3496a5d7f9f680749b8be9ee238ae108)
 
 ### Added
 
@@ -80,8 +78,6 @@ to work unchanged and now produce clients wired with the new defaults.
 ### Changed
 
 - No breaking changes.
-
-[Spec](https://www.notion.so/stream-wiki/Server-Side-SDK-Webhook-Handling-Spec-34b6a5d7f9f681e78003c443f227493c)
 
 ## [6.0.0] - 2026-03-05
 

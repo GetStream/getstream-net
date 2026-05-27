@@ -190,7 +190,7 @@ namespace GetStream
     /// </summary>
     public static class Webhook
     {
-        // GzipMagic is the two-byte gzip magic prefix (RFC 1952 §2.3.1).
+        // GzipMagic is the two-byte gzip magic prefix defined by RFC 1952.
         // JSON cannot start with these bytes, so this gives unambiguous detection
         // for Stream's always-JSON payloads.
         private static readonly byte[] GzipMagic = new byte[] { 0x1F, 0x8B };

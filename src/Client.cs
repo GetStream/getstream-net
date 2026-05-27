@@ -43,7 +43,7 @@ namespace GetStream
         /// <summary>
         /// CHA-2956 — canonical constructor. The positional <c>(apiKey, apiSecret, baseUrl)</c>
         /// constructor builds a default-valued <see cref="StreamOptions"/> and delegates here.
-        /// When <see cref="StreamOptions.HttpClient"/> is set (§7 escape hatch), the 5 pool
+        /// When <see cref="StreamOptions.HttpClient"/> is set (escape hatch), the 5 pool
         /// knobs are NOT applied.
         /// </summary>
         public BaseClient(StreamOptions opts)
@@ -82,7 +82,7 @@ namespace GetStream
 
         private static HttpClient BuildDefaultHttpClient(StreamOptions opts)
         {
-            // KeepAlive is always-on; never set Connection: close (spec §5 invariant 4).
+            // KeepAlive is always-on; never set Connection: close.
             // PooledConnectionLifetime is left at the framework default (InfiniteTimeSpan);
             // PooledConnectionIdleTimeout governs idle eviction.
             var handler = new SocketsHttpHandler
