@@ -83,16 +83,16 @@ namespace GetStream
             return this;
         }
 
-        /// <summary>CHA-2956 — max concurrent TCP connections per host (default 5).</summary>
+        /// <summary>CHA-2956: max concurrent TCP connections per host (default 5).</summary>
         public ClientBuilder MaxConnsPerHost(int n) { _maxConnsPerHost = n; return this; }
 
-        /// <summary>CHA-2956 — how long an idle pooled connection lingers (default 55s).</summary>
+        /// <summary>CHA-2956: how long an idle pooled connection lingers (default 55s).</summary>
         public ClientBuilder IdleTimeout(TimeSpan d) { _idleTimeout = d; return this; }
 
-        /// <summary>CHA-2956 — TCP+TLS handshake cap (default 10s).</summary>
+        /// <summary>CHA-2956: TCP+TLS handshake cap (default 10s).</summary>
         public ClientBuilder ConnectTimeout(TimeSpan d) { _connectTimeout = d; return this; }
 
-        /// <summary>CHA-2956 — per-request timeout (default 30s).</summary>
+        /// <summary>CHA-2956: per-request timeout (default 30s).</summary>
         public ClientBuilder RequestTimeout(TimeSpan d) { _requestTimeout = d; return this; }
 
         /// <summary>Escape hatch. When set, NONE of the 4 pool knobs apply.</summary>

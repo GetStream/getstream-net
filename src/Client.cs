@@ -41,10 +41,8 @@ namespace GetStream
         }
 
         /// <summary>
-        /// CHA-2956 — canonical constructor. The positional <c>(apiKey, apiSecret, baseUrl)</c>
-        /// constructor builds a default-valued <see cref="StreamOptions"/> and delegates here.
-        /// When <see cref="StreamOptions.HttpClient"/> is set (escape hatch), the 5 pool
-        /// knobs are NOT applied.
+        /// CHA-2956 canonical constructor. The positional <c>(apiKey, apiSecret, baseUrl)</c> constructor builds a default-valued <see cref="StreamOptions"/> and delegates here.
+        /// When <see cref="StreamOptions.HttpClient"/> is set (escape hatch), the 5 pool knobs are NOT applied.
         /// </summary>
         public BaseClient(StreamOptions opts)
         {

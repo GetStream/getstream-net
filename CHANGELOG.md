@@ -15,7 +15,7 @@ New `StreamOptions` class for explicit HTTP connection-pool tuning. Five knobs:
 - `IdleTimeout` (TimeSpan, default `55s`) → `SocketsHttpHandler.PooledConnectionIdleTimeout`
 - `ConnectTimeout` (TimeSpan, default `10s`) → `SocketsHttpHandler.ConnectTimeout`
 - `RequestTimeout` (TimeSpan, default `30s`) → `HttpClient.Timeout`
-- `KeepAlive` — always on (invariant; no toggle)
+- `KeepAlive`: always on (invariant; no toggle)
 
 Two usage paths:
 
@@ -41,19 +41,13 @@ var client = new ClientBuilder()
     .Build();
 ```
 
-Escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or
-`ClientBuilder.HttpClient(...)` to bypass all 5 knobs. The SDK uses the
-supplied instance as-is.
+Escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or `ClientBuilder.HttpClient(...)` to bypass all 5 knobs. The SDK uses the supplied instance as-is.
 
-Pass an `ILogger` via `StreamOptions.Logger` or
-`ClientBuilder.Logger(...)` to receive one INFO line on construction.
+Pass an `ILogger` via `StreamOptions.Logger` or `ClientBuilder.Logger(...)` to receive one INFO line on construction.
 
-Per-call `RequestTimeout` override: pass a `CancellationToken` derived from
-`CancellationTokenSource.CancelAfter(...)` to any `*Async` method.
+Per-call `RequestTimeout` override: pass a `CancellationToken` derived from `CancellationTokenSource.CancelAfter(...)` to any `*Async` method.
 
-Backward compatibility: the existing positional constructors
-(`BaseClient`, `StreamClient`, `FeedsV3Client`, `ModerationClient`) continue
-to work unchanged and now produce clients wired with the new defaults.
+Backward compatibility: the existing positional constructors (`BaseClient`, `StreamClient`, `FeedsV3Client`, `ModerationClient`) continue to work unchanged and now produce clients wired with the new defaults.
 
 ### Added
 
