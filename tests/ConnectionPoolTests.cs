@@ -242,5 +242,18 @@ namespace GetStream.Tests
             var handler = (SocketsHttpHandler)hField.GetValue(httpClient)!;
             return (httpClient, handler);
         }
+
+        /// <summary>
+        /// Unwrap the <see cref="SocketsHttpHandler"/> from a generated wrapper client (ChatClient, VideoClient,
+        /// FeedsV3Client, ModerationClient) by reaching its private <c>_client</c> field. CHA-2956 routes these
+        /// builders through the hand-written <see cref="BaseClient"/> seam, so the inner IClient is a BaseClient.
+        /// </summary>
+        internal static (HttpClient httpClient, SocketsHttpHandler handler) UnwrapWrapperHandler(object wrapperClient)
+        {
+            var clientField = wrapperClient.GetType().GetField("_client",
+                BindingFlags.Instance | BindingFlags.NonPublic)!;
+            var inner = (BaseClient)clientField.GetValue(wrapperClient)!;
+            return UnwrapHandler(inner);
+        }
     }
 }

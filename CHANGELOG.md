@@ -20,8 +20,8 @@ New `StreamOptions` class for explicit HTTP connection-pool tuning. Five knobs:
 Two usage paths:
 
 ```csharp
-// 1) Direct StreamOptions
-var client = new StreamClient(new StreamOptions
+// 1) Direct StreamOptions via the hand-written BaseClient
+var client = new BaseClient(new StreamOptions
 {
     ApiKey = apiKey,
     ApiSecret = secret,
@@ -31,21 +31,29 @@ var client = new StreamClient(new StreamOptions
     RequestTimeout = TimeSpan.FromSeconds(20),
 });
 
-// 2) ClientBuilder
-var client = new ClientBuilder()
+// 2) ClientBuilder (knobs apply to the product clients)
+var chat = new ClientBuilder()
     .ApiKey(apiKey).ApiSecret(secret)
     .MaxConnsPerHost(10)
     .IdleTimeout(TimeSpan.FromSeconds(45))
     .ConnectTimeout(TimeSpan.FromSeconds(5))
     .RequestTimeout(TimeSpan.FromSeconds(20))
-    .Build();
+    .BuildChatClient();   // also BuildVideoClient / BuildFeedsClient / BuildModerationClient
 ```
 
-Escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or `ClientBuilder.HttpClient(...)` to bypass all 5 knobs. The SDK uses the supplied instance as-is.
+`ClientBuilder` applies the pool knobs by building the configured transport through the hand-written `BaseClient` and backing each product client (`BuildChatClient`, `BuildVideoClient`, `BuildFeedsClient`, `BuildModerationClient`) with it via their existing `IClient` constructors — no generated code is hand-edited.
+
+Known limitation: `ClientBuilder.Build()` returns the concrete generated `StreamClient`, which has no `StreamOptions`-aware constructor. It routes through the positional ctor and therefore always uses the spec-default pool config; custom knobs set on the builder are NOT applied via `Build()`. Wiring them in requires the chat/ dotnet `common.tpl` template to emit a `StreamClient(StreamOptions)` constructor (tracked separately). Use a product-specific `Build*Client()` to apply custom knobs, or pass `StreamOptions` directly to `new StreamClient(opts)` once the template change lands.
+
+Escape hatch: pass an `HttpClient` via `StreamOptions.HttpClient` or `ClientBuilder.HttpClient(...)` to bypass all 5 knobs. The SDK uses the supplied instance as-is and applies none of its own handler configuration. That includes gzip: the default-built handler enables `AutomaticDecompression = GZip`, but on the escape-hatch path the SDK adds nothing, so the caller owns gzip/decompression (configure it on the handler you pass in if you need it).
+
+Connection age: `PooledConnectionLifetime` is intentionally left unset (framework default `InfiniteTimeSpan`). Pooling relies solely on `PooledConnectionIdleTimeout` for eviction; there is deliberately no hard max-connection-age cap.
 
 Pass an `ILogger` via `StreamOptions.Logger` or `ClientBuilder.Logger(...)` to receive one INFO line on construction.
 
 Per-call `RequestTimeout` override: pass a `CancellationToken` derived from `CancellationTokenSource.CancelAfter(...)` to any `*Async` method.
+
+The `StreamOptions` constructor lives on the hand-written `BaseClient`. The generated clients (`StreamClient`, `FeedsV3Client`, `ModerationClient`) are not hand-edited; they are configured through `BaseClient` / their existing `IClient` constructors, so a future regeneration cannot wipe the pooling wiring.
 
 Backward compatibility: the existing positional constructors (`BaseClient`, `StreamClient`, `FeedsV3Client`, `ModerationClient`) continue to work unchanged and now produce clients wired with the new defaults.
 

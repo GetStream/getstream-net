@@ -129,7 +129,11 @@ namespace GetStream.Tests
         [Test]
         public void ClientBuilder_PoolKnobs_AppliedToBuiltClient()
         {
-            var client = new ClientBuilder()
+            // CHA-2956: knobs flow through the IClient-wrapping builders (Chat/Video/Feeds/Moderation),
+            // which are constructed over the hand-written BaseClient seam. The StreamClient-typed Build()
+            // overload cannot carry custom knobs until the chat/ common.tpl template emits a
+            // StreamClient(StreamOptions) ctor (see ClientBuilder.Build remarks), so we assert on BuildChatClient.
+            var chatClient = new ClientBuilder()
                 .ApiKey(TestApiKey)
                 .ApiSecret(TestApiSecret)
                 .MaxConnsPerHost(13)
@@ -137,9 +141,9 @@ namespace GetStream.Tests
                 .ConnectTimeout(TimeSpan.FromSeconds(8))
                 .RequestTimeout(TimeSpan.FromSeconds(22))
                 .SkipEnvLoad()
-                .Build();
+                .BuildChatClient();
 
-            var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
+            var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapWrapperHandler(chatClient);
             Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(13));
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(77)));
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(8)));
@@ -149,13 +153,32 @@ namespace GetStream.Tests
         [Test]
         public void ClientBuilder_DefaultsWhenNoPoolKnobsSet()
         {
-            var client = new ClientBuilder()
+            var chatClient = new ClientBuilder()
                 .ApiKey(TestApiKey)
                 .ApiSecret(TestApiSecret)
                 .SkipEnvLoad()
+                .BuildChatClient();
+            var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapWrapperHandler(chatClient);
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
+        }
+
+        [Test]
+        public void Build_StreamClient_UsesSpecDefaultPoolConfig()
+        {
+            // CHA-2956 (documented limitation): the StreamClient-typed Build() routes through the generated
+            // positional ctor (-> BaseClient default knobs). It always yields the spec defaults; custom knobs
+            // set on the builder are NOT applied here until the dotnet template emits StreamClient(StreamOptions).
+            var client = new ClientBuilder()
+                .ApiKey(TestApiKey)
+                .ApiSecret(TestApiSecret)
+                .MaxConnsPerHost(13)
+                .SkipEnvLoad()
                 .Build();
             var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
-            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5), "Build() uses spec defaults, not the custom 13");
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
             Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));

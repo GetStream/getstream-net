@@ -25,10 +25,6 @@ namespace GetStream
             var client = new StreamClient(apiKey, apiSecret);
             _client = client;
         }
-        public ModerationClient(StreamOptions opts)
-        {
-            _client = new StreamClient(opts);
-        }
         private Dictionary<string, string> ExtractQueryParams(object request)
         {
             if (request == null)
