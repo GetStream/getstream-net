@@ -132,21 +132,19 @@ namespace GetStream
         /// Build the StreamClient.
         /// </summary>
         /// <remarks>
-        /// CHA-2956: this overload returns the concrete generated <see cref="StreamClient"/>, which has no
-        /// <c>StreamOptions</c>-aware constructor of its own (its only base seam is the positional
-        /// <c>(apiKey, apiSecret, baseUrl)</c> ctor that chains <c>BaseClient(StreamOptions)</c> with default knobs).
-        /// As a result, custom pool knobs set on this builder do NOT flow through <see cref="Build"/> yet; the
-        /// returned client uses the spec-default pool config. Custom knobs DO flow through every IClient-wrapping
-        /// entry point (<see cref="BuildChatClient"/>, <see cref="BuildVideoClient"/>, <see cref="BuildFeedsClient"/>,
-        /// <see cref="BuildModerationClient"/>), which are constructed over the hand-written
-        /// <see cref="BaseClient"/> seam. Wiring custom knobs into <see cref="Build"/> requires the chat/ dotnet
-        /// <c>common.tpl</c> template to emit a <c>StreamClient(StreamOptions)</c> ctor; tracked separately.
+        /// CHA-2956: the generated <see cref="StreamClient"/> now exposes a <c>StreamClient(StreamOptions)</c>
+        /// constructor (emitted by the chat/ dotnet <c>common.tpl</c> template), which chains
+        /// <c>BaseClient(StreamOptions)</c>. As a result, custom pool knobs set on this builder flow through
+        /// <see cref="Build"/> the same way they flow through the IClient-wrapping entry points
+        /// (<see cref="BuildChatClient"/>, <see cref="BuildVideoClient"/>, <see cref="BuildFeedsClient"/>,
+        /// <see cref="BuildModerationClient"/>). When <see cref="StreamOptions.HttpClient"/> is set
+        /// (escape hatch), none of the knobs apply.
         /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
         public StreamClient Build()
         {
             LoadCredentials();
-            return new StreamClient(_apiKey!, _apiSecret!, _baseUrl);
+            return new StreamClient(BuildStreamOptions());
         }
 
         /// <summary>

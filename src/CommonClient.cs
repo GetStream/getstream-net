@@ -32,6 +32,13 @@ namespace GetStream
             this.BaseUrl = baseUrl;
         }
 
+        public StreamClient(StreamOptions opts) : base(opts)
+        {
+            this.ApiKey = opts.ApiKey;
+            this.ApiSecret = opts.ApiSecret;
+            this.BaseUrl = opts.BaseUrl;
+        }
+
         private Dictionary<string, string> ExtractQueryParams(object request)
         {
             if (request == null)

@@ -130,9 +130,8 @@ namespace GetStream.Tests
         public void ClientBuilder_PoolKnobs_AppliedToBuiltClient()
         {
             // CHA-2956: knobs flow through the IClient-wrapping builders (Chat/Video/Feeds/Moderation),
-            // which are constructed over the hand-written BaseClient seam. The StreamClient-typed Build()
-            // overload cannot carry custom knobs until the chat/ common.tpl template emits a
-            // StreamClient(StreamOptions) ctor (see ClientBuilder.Build remarks), so we assert on BuildChatClient.
+            // which are constructed over the hand-written BaseClient seam. This test asserts on BuildChatClient;
+            // the StreamClient-typed Build() is covered separately by Build_StreamClient_AppliesCustomPoolKnobs.
             var chatClient = new ClientBuilder()
                 .ApiKey(TestApiKey)
                 .ApiSecret(TestApiSecret)
@@ -166,19 +165,38 @@ namespace GetStream.Tests
         }
 
         [Test]
-        public void Build_StreamClient_UsesSpecDefaultPoolConfig()
+        public void Build_StreamClient_AppliesCustomPoolKnobs()
         {
-            // CHA-2956 (documented limitation): the StreamClient-typed Build() routes through the generated
-            // positional ctor (-> BaseClient default knobs). It always yields the spec defaults; custom knobs
-            // set on the builder are NOT applied here until the dotnet template emits StreamClient(StreamOptions).
+            // CHA-2956: the StreamClient-typed Build() now routes through the generated
+            // StreamClient(StreamOptions) ctor (-> BaseClient(StreamOptions)), so custom knobs
+            // set on the builder flow through, the same as the IClient-wrapping builders.
             var client = new ClientBuilder()
                 .ApiKey(TestApiKey)
                 .ApiSecret(TestApiSecret)
                 .MaxConnsPerHost(13)
+                .IdleTimeout(TimeSpan.FromSeconds(77))
+                .ConnectTimeout(TimeSpan.FromSeconds(8))
+                .RequestTimeout(TimeSpan.FromSeconds(22))
                 .SkipEnvLoad()
                 .Build();
             var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
-            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5), "Build() uses spec defaults, not the custom 13");
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(13), "Build() now carries the custom MaxConnsPerHost");
+            Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(77)));
+            Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(8)));
+            Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(22)));
+        }
+
+        [Test]
+        public void Build_StreamClient_DefaultsWhenNoPoolKnobsSet()
+        {
+            // Sanity check that Build() still yields spec defaults when no knobs are customized.
+            var client = new ClientBuilder()
+                .ApiKey(TestApiKey)
+                .ApiSecret(TestApiSecret)
+                .SkipEnvLoad()
+                .Build();
+            var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
             Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
