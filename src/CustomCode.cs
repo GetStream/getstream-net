@@ -4,84 +4,11 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    /// <summary>
-    /// Base exception for GetStream SDK errors
-    /// </summary>
-    public class GetStreamException : Exception
-    {
-        public GetStreamException(string message) : base(message) { }
-        public GetStreamException(string message, Exception innerException) : base(message, innerException) { }
-    }
-
-    /// <summary>
-    /// Exception thrown when API credentials are missing or invalid
-    /// </summary>
-    public class GetStreamAuthenticationException : GetStreamException
-    {
-        public GetStreamAuthenticationException(string message) : base(message) { }
-        public GetStreamAuthenticationException(string message, Exception innerException) : base(message, innerException) { }
-    }
-
-    /// <summary>
-    /// Exception thrown when API requests fail
-    /// </summary>
-    public class GetStreamApiException : GetStreamException
-    {
-        public int StatusCode { get; }
-        public string ResponseBody { get; }
-
-        public GetStreamApiException(string message, int statusCode, string responseBody)
-            : base(message)
-        {
-            StatusCode = statusCode;
-            ResponseBody = responseBody;
-        }
-
-        public GetStreamApiException(string message, int statusCode, string responseBody, Exception innerException)
-            : base(message, innerException)
-        {
-            StatusCode = statusCode;
-            ResponseBody = responseBody;
-        }
-    }
-
-    /// <summary>
-    /// Exception thrown when feed operations fail
-    /// </summary>
-    public class GetStreamFeedException : GetStreamException
-    {
-        public string FeedId { get; }
-
-        public GetStreamFeedException(string message, string feedId) : base(message)
-        {
-            FeedId = feedId;
-        }
-
-        public GetStreamFeedException(string message, string feedId, Exception innerException)
-            : base(message, innerException)
-        {
-            FeedId = feedId;
-        }
-    }
-
-    /// <summary>
-    /// Exception thrown when validation fails
-    /// </summary>
-    public class GetStreamValidationException : GetStreamException
-    {
-        public string FieldName { get; }
-
-        public GetStreamValidationException(string message, string fieldName) : base(message)
-        {
-            FieldName = fieldName;
-        }
-
-        public GetStreamValidationException(string message, string fieldName, Exception innerException)
-            : base(message, innerException)
-        {
-            FieldName = fieldName;
-        }
-    }
+    // Exception types moved to Exceptions.cs (CHA-2958). The three dead
+    // per-status subclasses (GetStreamAuthenticationException,
+    // GetStreamValidationException, GetStreamFeedException) were deleted:
+    // they were never thrown and never documented. Per-status handling now
+    // uses: catch (GetStreamApiException e) when (e.StatusCode is 401 or 403).
 
     /// <summary>
     /// Custom JSON converter for handling nanosecond timestamps

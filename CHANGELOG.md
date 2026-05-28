@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Error Handling (CHA-2958)
+
+Structured exception hierarchy replaces the raw-body-only `GetStreamApiException`. Backend `APIError` envelopes are now parsed into typed fields, transport failures are wrapped, 429s expose a parsed `Retry-After`, and `BaseClient.WaitForTaskAsync` lets callers surface async task failures.
+
+**New exception types (`GetStream` namespace):**
+
+- `GetStreamException`: abstract base.
+- `GetStreamApiException`: 4xx/5xx with parsed envelope. Fields: `StatusCode`, `Code`, `Message`, `ExceptionFields` (`IReadOnlyDictionary<string,string>`), `Unrecoverable`, `RawResponseBody`, `MoreInfo`, `Details`.
+- `GetStreamRateLimitException : GetStreamApiException`: thrown on HTTP 429. Adds `RetryAfter` (`TimeSpan?`) parsed from the `Retry-After` header (integer seconds and HTTP-date, RFC 7231 §7.1.3).
+- `GetStreamTransportException`: wraps network-layer failures (connection reset, timeout, DNS, TLS). Adds `ErrorType` (`connection_reset` | `timeout` | `dns_failure` | `tls_handshake_failed` | `unknown`). The underlying exception is preserved as `InnerException`.
+- `GetStreamTaskException`: thrown by `WaitForTaskAsync` when an async task completes with `status = "failed"`. Fields: `TaskId`, `ErrorType`, `Description`, `StackTrace`, `Version`.
+
+**Removed (dead code):**
+
+- `GetStreamAuthenticationException`
+- `GetStreamValidationException`
+- `GetStreamFeedException`
+
+None of these were ever thrown by the SDK and none were referenced in customer documentation. The audit (2026-05-28) found zero throw sites in `src/` and zero matches in `/docs/data/docs/`. Migration for users who wrote defensive catches against any of them:
+
+```csharp
+// before
+catch (GetStreamAuthenticationException ex) { ... }
+
+// after
+catch (GetStreamApiException ex) when (ex.StatusCode is 401 or 403) { ... }
+```
+
+**Behavior changes (no breaking API changes outside the deletions above):**
+
+- HTTP responses with 4xx/5xx are deserialized into the existing `APIError` model and the typed fields flow through to `GetStreamApiException`. If the body cannot be parsed as `APIError`, the SDK still throws `GetStreamApiException` with `Code = 0`, `Message = "failed to parse error response"`, and `RawResponseBody` set to the original payload (spec §6.3).
+- Transport-layer failures (`HttpRequestException`, `TaskCanceledException` from the framework `HttpClient.Timeout`, `SocketException`, `TimeoutException`, `IOException`) at the request boundary are caught and re-thrown as `GetStreamTransportException`. The original exception is preserved as `InnerException`. Caller-supplied `CancellationToken` cancellation propagates natively (it is not a transport error).
+- `BaseClient.WaitForTaskAsync(taskId, pollInterval?, timeout?, cancellationToken?)` polls `/api/v2/tasks/{id}` until terminal state. Defaults: `pollInterval = 1s`, `timeout = 60s`. Returns the `GetTaskResponse` on completion, throws `GetStreamTaskException` on failure, throws `GetStreamTransportException` with `ErrorType = "timeout"` on timeout.
+
+The unit suite for the above is in `tests/ErrorHandlingTests.cs` and runs without credentials.
+
 ### Connection Pooling (CHA-2956)
 
 New `StreamOptions` class for explicit HTTP connection-pool tuning. Five knobs:
