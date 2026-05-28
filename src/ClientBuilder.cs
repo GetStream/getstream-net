@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using DotNetEnv;
+using Microsoft.Extensions.Logging;
 
 namespace GetStream
 {
@@ -30,6 +31,12 @@ namespace GetStream
         private bool _loadEnv = true;
         private string? _envPath;
         private string? _envFilePath;
+        private int _maxConnsPerHost = 5;
+        private TimeSpan _idleTimeout = TimeSpan.FromSeconds(55);
+        private TimeSpan _connectTimeout = TimeSpan.FromSeconds(10);
+        private TimeSpan _requestTimeout = TimeSpan.FromSeconds(30);
+        private System.Net.Http.HttpClient? _httpClient;
+        private ILogger? _logger;
 
         /// <summary>
         /// Set the API key
@@ -76,6 +83,24 @@ namespace GetStream
             return this;
         }
 
+        /// <summary>CHA-2956: max concurrent TCP connections per host (default 5).</summary>
+        public ClientBuilder MaxConnsPerHost(int n) { _maxConnsPerHost = n; return this; }
+
+        /// <summary>CHA-2956: how long an idle pooled connection lingers (default 55s).</summary>
+        public ClientBuilder IdleTimeout(TimeSpan d) { _idleTimeout = d; return this; }
+
+        /// <summary>CHA-2956: TCP+TLS handshake cap (default 10s).</summary>
+        public ClientBuilder ConnectTimeout(TimeSpan d) { _connectTimeout = d; return this; }
+
+        /// <summary>CHA-2956: per-request timeout (default 30s).</summary>
+        public ClientBuilder RequestTimeout(TimeSpan d) { _requestTimeout = d; return this; }
+
+        /// <summary>Escape hatch. When set, NONE of the 4 pool knobs apply.</summary>
+        public ClientBuilder HttpClient(System.Net.Http.HttpClient httpClient) { _httpClient = httpClient; return this; }
+
+        /// <summary>Opt-in INFO log on construction.</summary>
+        public ClientBuilder Logger(ILogger logger) { _logger = logger; return this; }
+
         /// <summary>
         /// Create a client builder that loads configuration from environment variables
         /// </summary>
@@ -104,53 +129,89 @@ namespace GetStream
         }
 
         /// <summary>
-        /// Build the StreamClient
+        /// Build the StreamClient.
         /// </summary>
+        /// <remarks>
+        /// CHA-2956: the generated <see cref="StreamClient"/> now exposes a <c>StreamClient(StreamOptions)</c>
+        /// constructor (emitted by the chat/ dotnet <c>common.tpl</c> template), which chains
+        /// <c>BaseClient(StreamOptions)</c>. As a result, custom pool knobs set on this builder flow through
+        /// <see cref="Build"/> the same way they flow through the IClient-wrapping entry points
+        /// (<see cref="BuildChatClient"/>, <see cref="BuildVideoClient"/>, <see cref="BuildFeedsClient"/>,
+        /// <see cref="BuildModerationClient"/>). When <see cref="StreamOptions.HttpClient"/> is set
+        /// (escape hatch), none of the knobs apply.
+        /// </remarks>
         /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
         public StreamClient Build()
         {
             LoadCredentials();
-            return new StreamClient(_apiKey!, _apiSecret!);
+            return new StreamClient(BuildStreamOptions());
         }
 
         /// <summary>
-        /// Build the FeedsV3Client
+        /// Build the FeedsV3Client. Pool knobs configured on this builder are applied.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
         public FeedsV3Client BuildFeedsClient()
         {
             LoadCredentials();
-            return new FeedsV3Client(_apiKey!, _apiSecret!);
+            return new FeedsV3Client(BuildConfiguredClient());
         }
 
         /// <summary>
-        /// Build the ChatClient
+        /// Build the ChatClient. Pool knobs configured on this builder are applied.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
         public ChatClient BuildChatClient()
         {
             LoadCredentials();
-            return new ChatClient(new StreamClient(_apiKey!, _apiSecret!));
+            return new ChatClient(BuildConfiguredClient());
         }
 
         /// <summary>
-        /// Build the VideoClient
+        /// Build the VideoClient. Pool knobs configured on this builder are applied.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
         public VideoClient BuildVideoClient()
         {
             LoadCredentials();
-            return new VideoClient(new StreamClient(_apiKey!, _apiSecret!));
+            return new VideoClient(BuildConfiguredClient());
         }
 
         /// <summary>
-        /// Build the ModerationClient
+        /// Build the ModerationClient. Pool knobs configured on this builder are applied.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when required credentials are missing</exception>
         public ModerationClient BuildModerationClient()
         {
             LoadCredentials();
-            return new ModerationClient(_apiKey!, _apiSecret!);
+            return new ModerationClient(BuildConfiguredClient());
+        }
+
+        /// <summary>
+        /// CHA-2956: build the pool-configured transport via the hand-written <see cref="BaseClient"/> seam.
+        /// Returns an <see cref="IClient"/> so it can back every generated wrapper client through their existing
+        /// generated <c>(IClient)</c> constructors, without touching generated code. When
+        /// <see cref="StreamOptions.HttpClient"/> is set (escape hatch), none of the knobs apply.
+        /// </summary>
+        private IClient BuildConfiguredClient()
+        {
+            return new BaseClient(BuildStreamOptions());
+        }
+
+        private StreamOptions BuildStreamOptions()
+        {
+            return new StreamOptions
+            {
+                ApiKey = _apiKey!,
+                ApiSecret = _apiSecret!,
+                BaseUrl = _baseUrl,
+                MaxConnsPerHost = _maxConnsPerHost,
+                IdleTimeout = _idleTimeout,
+                ConnectTimeout = _connectTimeout,
+                RequestTimeout = _requestTimeout,
+                HttpClient = _httpClient,
+                Logger = _logger,
+            };
         }
 
         public void LoadCredentials()
