@@ -135,7 +135,8 @@ namespace GetStream.Tests
         public void ParseRetryAfter_NegativeInteger_ClampsToZero()
         {
             var resp = new HttpResponseMessage(HttpStatusCode.TooManyRequests);
-            resp.Headers.Add("Retry-After", "-5");
+            // HttpHeaders.Add validates Retry-After; bypass to test the SDK's own parser.
+            resp.Headers.TryAddWithoutValidation("Retry-After", "-5");
             var result = InvokeParseRetryAfter(resp, DateTimeOffset.UtcNow);
             Assert.That(result, Is.EqualTo(TimeSpan.Zero));
         }
@@ -172,7 +173,7 @@ namespace GetStream.Tests
         public void ParseRetryAfter_Garbage_ReturnsNull()
         {
             var resp = new HttpResponseMessage(HttpStatusCode.TooManyRequests);
-            resp.Headers.Add("Retry-After", "not-a-date");
+            resp.Headers.TryAddWithoutValidation("Retry-After", "not-a-date");
             var result = InvokeParseRetryAfter(resp, DateTimeOffset.UtcNow);
             Assert.That(result, Is.Null);
         }
@@ -300,8 +301,8 @@ namespace GetStream.Tests
         {
             var handler = new ScriptedTaskHandler(new[]
             {
-                JsonSerializer.Serialize(new GetTaskResponse { TaskID = "t-1", Status = "pending" }),
-                JsonSerializer.Serialize(new GetTaskResponse { TaskID = "t-1", Status = "completed" }),
+                BuildTaskResponseJson("t-1", "pending"),
+                BuildTaskResponseJson("t-1", "completed"),
             });
             var client = BuildClientWith(handler);
             var result = await client.WaitForTaskAsync(
@@ -315,19 +316,8 @@ namespace GetStream.Tests
         [Test]
         public void WaitForTaskAsync_TaskFailed_ThrowsTaskException()
         {
-            var failed = new GetTaskResponse
-            {
-                TaskID = "t-2",
-                Status = "failed",
-                Error = new ErrorResult
-                {
-                    Type = "ImportError",
-                    Description = "row 7 invalid",
-                    Stacktrace = "frame-1",
-                    Version = "v1",
-                },
-            };
-            var handler = new ScriptedTaskHandler(new[] { JsonSerializer.Serialize(failed) });
+            var errJson = "{\"type\":\"ImportError\",\"description\":\"row 7 invalid\",\"stacktrace\":\"frame-1\",\"version\":\"v1\"}";
+            var handler = new ScriptedTaskHandler(new[] { BuildTaskResponseJson("t-2", "failed", errJson) });
             var client = BuildClientWith(handler);
             var ex = Assert.ThrowsAsync<GetStreamTaskException>(async () =>
                 await client.WaitForTaskAsync(
@@ -344,7 +334,7 @@ namespace GetStream.Tests
         [Test]
         public void WaitForTaskAsync_Timeout_ThrowsTransportExceptionWithTimeoutType()
         {
-            var pending = JsonSerializer.Serialize(new GetTaskResponse { TaskID = "t-3", Status = "running" });
+            var pending = BuildTaskResponseJson("t-3", "running");
             var handler = new ScriptedTaskHandler(Enumerable.Repeat(pending, 100).ToArray());
             var client = BuildClientWith(handler);
             var ex = Assert.ThrowsAsync<GetStreamTransportException>(async () =>
@@ -366,6 +356,24 @@ namespace GetStream.Tests
                 ApiSecret = DummySecret,
                 HttpClient = http,
             });
+        }
+
+        // Hand-build the task-response JSON so unit tests don't trip the
+        // NanosecondTimestampConverter on default DateTime values.
+        private static string BuildTaskResponseJson(string taskId, string status, string? errorJson = null)
+        {
+            var sb = new StringBuilder("{");
+            sb.Append("\"task_id\":\"").Append(taskId).Append("\",");
+            sb.Append("\"status\":\"").Append(status).Append("\",");
+            sb.Append("\"duration\":\"0ms\",");
+            sb.Append("\"created_at\":\"2026-05-28T12:00:00Z\",");
+            sb.Append("\"updated_at\":\"2026-05-28T12:00:00Z\"");
+            if (errorJson != null)
+            {
+                sb.Append(",\"error\":").Append(errorJson);
+            }
+            sb.Append("}");
+            return sb.ToString();
         }
 
         private static TimeSpan? InvokeParseRetryAfter(HttpResponseMessage resp, DateTimeOffset now)
