@@ -4,11 +4,8 @@ using GetStream.Models;
 
 namespace GetStream
 {
-    // Exception types moved to Exceptions.cs (CHA-2958). The three dead
-    // per-status subclasses (GetStreamAuthenticationException,
-    // GetStreamValidationException, GetStreamFeedException) were deleted:
-    // they were never thrown and never documented. Per-status handling now
-    // uses: catch (GetStreamApiException e) when (e.StatusCode is 401 or 403).
+    // Exception types live in Exceptions.cs. For per-status handling use:
+    // catch (GetStreamApiException e) when (e.StatusCode is 401 or 403).
 
     /// <summary>
     /// Custom JSON converter for handling nanosecond timestamps

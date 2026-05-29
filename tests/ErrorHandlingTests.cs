@@ -217,7 +217,7 @@ namespace GetStream.Tests
         [Test]
         public void MakeRequestAsync_CallerCancellationPropagatesNatively()
         {
-            // Caller-supplied cancellation is NOT a transport error per the spec.
+            // Caller-supplied cancellation propagates natively (not a transport error).
             var handler = new BlockingHandler();
             var client = BuildClientWith(handler);
             using var cts = new CancellationTokenSource();

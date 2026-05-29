@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GetStream
 {
     /// <summary>
-    /// Abstract base for all SDK exceptions. CHA-2958 §4.
+    /// Abstract base for all SDK exceptions.
     /// </summary>
     public class GetStreamException : Exception
     {
@@ -14,8 +14,7 @@ namespace GetStream
 
     /// <summary>
     /// Thrown when the backend returns 4xx/5xx with a parsable APIError envelope,
-    /// or when an HTTP response is received but the body is unparseable (§6.3).
-    /// CHA-2958 §5.1.
+    /// or when an HTTP response is received but the body is unparseable.
     /// </summary>
     public class GetStreamApiException : GetStreamException
     {
@@ -27,7 +26,7 @@ namespace GetStream
         public string? MoreInfo { get; }
         public object? Details { get; }
 
-        // Back-compat alias: FEEDS_V2_TO_V3_MIGRATION.md documents `ResponseBody`.
+        // Back-compat alias for RawResponseBody.
         [Obsolete("Use RawResponseBody")]
         public string ResponseBody => RawResponseBody;
 
@@ -55,12 +54,12 @@ namespace GetStream
 
     /// <summary>
     /// Thrown on HTTP 429. Subclass of <see cref="GetStreamApiException"/> so a
-    /// single <c>catch (GetStreamApiException)</c> still handles it. CHA-2958 §5.2.
+    /// single <c>catch (GetStreamApiException)</c> still handles it.
     /// </summary>
     public class GetStreamRateLimitException : GetStreamApiException
     {
         /// <summary>
-        /// Parsed from the <c>Retry-After</c> response header (RFC 7231 §7.1.3).
+        /// Parsed from the <c>Retry-After</c> response header.
         /// Null when the header is absent or unparseable.
         /// </summary>
         public TimeSpan? RetryAfter { get; }
@@ -84,14 +83,14 @@ namespace GetStream
 
     /// <summary>
     /// Thrown when a transport-layer failure prevents an HTTP response from
-    /// being received (connection reset, timeout, DNS, TLS). CHA-2958 §5.3.
+    /// being received (connection reset, timeout, DNS, TLS).
     /// </summary>
     public class GetStreamTransportException : GetStreamException
     {
         /// <summary>
         /// One of: <c>connection_reset</c>, <c>timeout</c>, <c>dns_failure</c>,
-        /// <c>tls_handshake_failed</c>, <c>unknown</c>. Matches the logging
-        /// spec §6.4 <c>error.type</c> enum.
+        /// <c>tls_handshake_failed</c>, <c>unknown</c>. Matches the logged
+        /// <c>error.type</c> enum.
         /// </summary>
         public string ErrorType { get; }
 
@@ -105,7 +104,7 @@ namespace GetStream
     /// <summary>
     /// Thrown by <c>WaitForTaskAsync</c> when an async task completes with
     /// status <c>failed</c>. Fields are extracted from the task's
-    /// <c>ErrorResult</c>. CHA-2958 §5.4.
+    /// <c>ErrorResult</c>.
     /// </summary>
     public class GetStreamTaskException : GetStreamException
     {

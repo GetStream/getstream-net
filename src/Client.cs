@@ -478,8 +478,6 @@ namespace GetStream
             return content;
         }
 
-        // --- CHA-2958: error handling ---------------------------------------------------
-
         private static bool IsTransportException(Exception ex, CancellationToken cancellationToken)
         {
             // Caller-supplied cancellation is not a transport error: let it bubble.
@@ -503,7 +501,6 @@ namespace GetStream
 
         private static string ClassifyTransportError(Exception ex)
         {
-            // Walk the inner-exception chain so wrapped transport failures still classify.
             for (var e = ex; e != null; e = e.InnerException)
             {
                 switch (e)
@@ -584,7 +581,7 @@ namespace GetStream
             }
             else
             {
-                // §6.3 internal/unparseable path: HTTP response received but body unusable.
+                // Body cannot be parsed as APIError.
                 message = "failed to parse error response";
                 code = 0;
                 exceptionFields = new Dictionary<string, string>();
@@ -628,7 +625,7 @@ namespace GetStream
             var raw = values.FirstOrDefault();
             if (string.IsNullOrWhiteSpace(raw)) return null;
 
-            // RFC 7231 §7.1.3: integer seconds first, then HTTP-date.
+            // Integer seconds first, then HTTP-date.
             if (int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds))
             {
                 return TimeSpan.FromSeconds(Math.Max(seconds, 0));
@@ -643,7 +640,6 @@ namespace GetStream
 
         /// <summary>
         /// Poll an async task until it completes, fails, or the timeout elapses.
-        /// CHA-2958 §8.
         /// </summary>
         /// <param name="taskId">Task ID returned by the operation that enqueued it.</param>
         /// <param name="pollInterval">Poll cadence. Defaults to 1 second.</param>
