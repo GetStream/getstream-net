@@ -116,13 +116,12 @@ var response = await userClient.QueryAsync(new QueryUserOptions
 **After (getstream-net):**
 
 ```csharp
-using System.Text.Json;
 using GetStream;
 using GetStream.Models;
 
 var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secret");
 
-var payload = JsonSerializer.Serialize(new QueryUsersPayload
+var response = await client.QueryUsersAsync(new QueryUsersPayload
 {
     FilterConditions = new Dictionary<string, object>
     {
@@ -135,13 +134,11 @@ var payload = JsonSerializer.Serialize(new QueryUsersPayload
     Offset = 0,
     Limit = 10
 });
-
-var response = await client.QueryUsersAsync(new { payload });
 ```
 
 **Key changes:**
 - `QueryAsync()` on `IUserClient` becomes `QueryUsersAsync()` on `StreamClient`
-- The request object is serialized as a JSON `payload` query parameter using the typed `QueryUsersPayload` class
+- Pass a typed `QueryUsersPayload`; the SDK serializes it to the `payload` query parameter for you
 - Sort uses `SortParamRequest` with `Direction = -1` (descending) or `1` (ascending)
 
 ## Partial Update User
