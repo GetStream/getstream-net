@@ -21,7 +21,7 @@ var activity = response.Data.Activity;  // Access via .Data property
 
 ### 2. Exception Types
 **V2:** `StreamException`
-**V3:** `GetStreamApiException` (with `StatusCode` and `ResponseBody` properties)
+**V3:** `GetStreamApiException` with `StatusCode`, `Code`, `Message`, `ExceptionFields`, `Unrecoverable`, `RawResponseBody`, `MoreInfo`, `Details`. `GetStreamRateLimitException` is a `GetStreamApiException` subclass thrown on HTTP 429 and adds `RetryAfter`. Transport failures (connection reset, timeout, DNS, TLS) become `GetStreamTransportException`; failed async tasks surface as `GetStreamTaskException` from `BaseClient.WaitForTaskAsync`. The pre-CHA-2958 `ResponseBody` property is still available as an obsolete alias for `RawResponseBody`.
 
 ### 3. Activity Model Structure
 **V2:** Uses `Actor`, `Verb`, `Object` pattern
