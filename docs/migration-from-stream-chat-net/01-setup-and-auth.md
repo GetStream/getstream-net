@@ -121,9 +121,10 @@ var client = new StreamClient(apiKey: "your-api-key", apiSecret: "your-api-secre
 var token = client.CreateUserToken("user-id");
 
 // With expiration
-var token = client.CreateUserToken("user-id", expiration: DateTimeOffset.UtcNow.AddHours(1));
+var token = client.CreateUserToken("user-id", expiration: TimeSpan.FromHours(1));
 ```
 
 **Key changes:**
 - `CreateToken()` moves from `IUserClient` to the main `StreamClient` as `CreateUserToken()`
 - No need to get a separate user client just for token generation
+- `expiration` is a `TimeSpan` (token lifetime, defaults to 1 hour), not a `DateTimeOffset` timestamp
