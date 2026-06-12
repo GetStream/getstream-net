@@ -50,7 +50,7 @@ var response = await client.UpdateUsersAsync(new UpdateUsersRequest
 **Key changes:**
 - `UpsertAsync()` on `IUserClient` becomes `UpdateUsersAsync()` on `StreamClient` with a dictionary-based request
 - Custom data uses the `Custom` dictionary instead of `SetData()`
-- Roles are plain strings instead of `Role.*` constants
+- Roles are plain strings instead of `Role.*` constants. The built-in user roles are `admin`, `user`, `moderator`, `guest`, and `anonymous` (all lowercase). Custom roles defined in your app are also valid.
 
 ## Batch Upsert Users
 

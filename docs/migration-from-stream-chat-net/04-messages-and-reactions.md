@@ -302,8 +302,8 @@ var chatClient = new ChatClient(client);
 // Soft delete
 await chatClient.DeleteMessageAsync(messageId);
 
-// Hard delete (pass hard_delete as query parameter)
-await chatClient.DeleteMessageAsync(messageId, new { hard_delete = true });
+// Hard delete (pass hard as query parameter)
+await chatClient.DeleteMessageAsync(messageId, new { hard = "true" });
 ```
 
 **Key changes:**
