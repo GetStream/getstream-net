@@ -15,7 +15,7 @@ var channelClient = clientFactory.GetChannelClient();
 
 // With channel ID and members
 var channel = await channelClient.GetOrCreateAsync("messaging", "general",
-    createdBy: "admin-user", "user-1", "user-2");
+    "admin-user", "user-1", "user-2");
 
 // With detailed request
 var channel = await channelClient.GetOrCreateAsync("messaging", "general",
@@ -294,7 +294,7 @@ await chatClient.UpdateChannelPartialAsync("messaging", "general",
 **Key changes:**
 - `PartialUpdateAsync()` becomes `UpdateChannelPartialAsync()`
 - `PartialUpdateChannelRequest` becomes `UpdateChannelPartialRequest`
-- New SDK requires `UserID` on the partial update request
+- `UserID` is optional on the partial update request (set it server-side to attribute the change to a user)
 
 ## Delete a Channel
 
