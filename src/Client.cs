@@ -3,16 +3,19 @@ using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
+using System.Threading;
 using GetStream.Models;
 
 namespace GetStream
 {
     public class BaseClient : IClient
     {
-        private const string VersionName = "12.1.0";
+        private const string VersionName = "12.3.0";
         private static readonly string VersionHeader = $"getstream-net-{VersionName}";
 
         private readonly HttpClient _httpClient;
@@ -146,12 +149,21 @@ namespace GetStream
                 }
             }
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            HttpResponseMessage response;
+            string responseContent;
+            try
+            {
+                response = await _httpClient.SendAsync(request, cancellationToken);
+                responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            }
+            catch (Exception ex) when (IsTransportException(ex, cancellationToken))
+            {
+                throw WrapTransportException(ex, cancellationToken);
+            }
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new GetStreamApiException($"HTTP {response.StatusCode}: {responseContent}", (int)response.StatusCode, responseContent);
+                throw BuildApiException(response, responseContent);
             }
 
             // Try to deserialize as the actual response type first
@@ -202,12 +214,21 @@ namespace GetStream
                 }
             }
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            HttpResponseMessage response;
+            string responseContent;
+            try
+            {
+                response = await _httpClient.SendAsync(request, cancellationToken);
+                responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            }
+            catch (Exception ex) when (IsTransportException(ex, cancellationToken))
+            {
+                throw WrapTransportException(ex, cancellationToken);
+            }
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new GetStreamApiException($"HTTP {response.StatusCode}: {responseContent}", (int)response.StatusCode, responseContent);
+                throw BuildApiException(response, responseContent);
             }
 
             // Try to deserialize as the actual response type first
@@ -455,6 +476,226 @@ namespace GetStream
             }
 
             return content;
+        }
+
+        private static bool IsTransportException(Exception ex, CancellationToken cancellationToken)
+        {
+            // Caller-supplied cancellation is not a transport error: let it bubble.
+            if (cancellationToken.IsCancellationRequested && ex is OperationCanceledException)
+            {
+                return false;
+            }
+            return ex is HttpRequestException
+                || ex is TaskCanceledException
+                || ex is TimeoutException
+                || ex is SocketException
+                || ex is IOException;
+        }
+
+        private static GetStreamTransportException WrapTransportException(Exception ex, CancellationToken cancellationToken)
+        {
+            var errorType = ClassifyTransportError(ex);
+            var message = $"transport error ({errorType}): {ex.Message}";
+            return new GetStreamTransportException(message, errorType, ex);
+        }
+
+        private static string ClassifyTransportError(Exception ex)
+        {
+            for (var e = ex; e != null; e = e.InnerException)
+            {
+                switch (e)
+                {
+                    case TaskCanceledException _:
+                    case TimeoutException _:
+                        return "timeout";
+                    case SocketException sock:
+                        return ClassifySocketError(sock.SocketErrorCode);
+                }
+
+                var typeName = e.GetType().FullName ?? string.Empty;
+                if (typeName.Contains("Authentication", StringComparison.OrdinalIgnoreCase)
+                    || typeName.EndsWith("AuthenticationException", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "tls_handshake_failed";
+                }
+            }
+            return "unknown";
+        }
+
+        private static string ClassifySocketError(SocketError code)
+        {
+            switch (code)
+            {
+                case SocketError.HostNotFound:
+                case SocketError.NoData:
+                case SocketError.TryAgain:
+                    return "dns_failure";
+                case SocketError.TimedOut:
+                    return "timeout";
+                case SocketError.ConnectionReset:
+                case SocketError.ConnectionRefused:
+                case SocketError.ConnectionAborted:
+                case SocketError.NetworkReset:
+                case SocketError.Shutdown:
+                    return "connection_reset";
+                default:
+                    return "unknown";
+            }
+        }
+
+        private GetStreamApiException BuildApiException(HttpResponseMessage response, string responseContent)
+        {
+            var statusCode = (int)response.StatusCode;
+            APIError? parsed = null;
+            Exception? parseError = null;
+
+            if (!string.IsNullOrEmpty(responseContent))
+            {
+                try
+                {
+                    parsed = JsonSerializer.Deserialize<APIError>(responseContent, _jsonOptions);
+                }
+                catch (JsonException jx)
+                {
+                    parseError = jx;
+                }
+            }
+
+            string message;
+            int code;
+            IReadOnlyDictionary<string, string> exceptionFields;
+            bool unrecoverable;
+            string? moreInfo;
+            object? details;
+
+            if (parsed != null && (parsed.Code != 0 || !string.IsNullOrEmpty(parsed.Message)))
+            {
+                message = !string.IsNullOrEmpty(parsed.Message)
+                    ? parsed.Message
+                    : $"HTTP {statusCode}";
+                code = parsed.Code;
+                exceptionFields = parsed.ExceptionFields ?? new Dictionary<string, string>();
+                unrecoverable = parsed.Unrecoverable ?? false;
+                moreInfo = string.IsNullOrEmpty(parsed.MoreInfo) ? null : parsed.MoreInfo;
+                details = parsed.Details;
+            }
+            else
+            {
+                // Body cannot be parsed as APIError.
+                message = "failed to parse error response";
+                code = 0;
+                exceptionFields = new Dictionary<string, string>();
+                unrecoverable = false;
+                moreInfo = null;
+                details = null;
+            }
+
+            if (statusCode == 429)
+            {
+                var retryAfter = ParseRetryAfter(response, DateTimeOffset.UtcNow);
+                return new GetStreamRateLimitException(
+                    message: message,
+                    statusCode: statusCode,
+                    code: code,
+                    exceptionFields: exceptionFields,
+                    unrecoverable: unrecoverable,
+                    rawResponseBody: responseContent ?? string.Empty,
+                    retryAfter: retryAfter,
+                    moreInfo: moreInfo,
+                    details: details,
+                    innerException: parseError);
+            }
+
+            return new GetStreamApiException(
+                message: message,
+                statusCode: statusCode,
+                code: code,
+                exceptionFields: exceptionFields,
+                unrecoverable: unrecoverable,
+                rawResponseBody: responseContent ?? string.Empty,
+                moreInfo: moreInfo,
+                details: details,
+                innerException: parseError);
+        }
+
+        internal static TimeSpan? ParseRetryAfter(HttpResponseMessage response, DateTimeOffset now)
+        {
+            if (response.Headers == null) return null;
+            if (!response.Headers.TryGetValues("Retry-After", out var values)) return null;
+            var raw = values.FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            // Integer seconds first, then HTTP-date.
+            if (int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds))
+            {
+                return TimeSpan.FromSeconds(Math.Max(seconds, 0));
+            }
+            if (DateTimeOffset.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var when))
+            {
+                var delta = when - now;
+                return delta < TimeSpan.Zero ? TimeSpan.Zero : delta;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Poll an async task until it completes, fails, or the timeout elapses.
+        /// </summary>
+        /// <param name="taskId">Task ID returned by the operation that enqueued it.</param>
+        /// <param name="pollInterval">Poll cadence. Defaults to 1 second.</param>
+        /// <param name="timeout">Maximum total wait. Defaults to 60 seconds.</param>
+        /// <param name="cancellationToken">Cancels the polling loop.</param>
+        /// <returns>The completed <see cref="GetTaskResponse"/>.</returns>
+        /// <exception cref="GetStreamTaskException">Task observed with <c>status == "failed"</c>.</exception>
+        /// <exception cref="GetStreamTransportException">Timeout elapsed before terminal state.</exception>
+        public async Task<GetTaskResponse> WaitForTaskAsync(
+            string taskId,
+            TimeSpan? pollInterval = null,
+            TimeSpan? timeout = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(taskId)) throw new ArgumentException("taskId is required", nameof(taskId));
+
+            var interval = pollInterval ?? TimeSpan.FromSeconds(1);
+            var max = timeout ?? TimeSpan.FromSeconds(60);
+            if (interval <= TimeSpan.Zero) interval = TimeSpan.FromSeconds(1);
+
+            var deadline = DateTime.UtcNow + max;
+            var pathParams = new Dictionary<string, string> { ["id"] = taskId };
+
+            while (true)
+            {
+                var resp = await MakeRequestAsync<object, GetTaskResponse>(
+                    "GET", "/api/v2/tasks/{id}", null, null, pathParams, cancellationToken);
+
+                var data = resp.Data;
+                if (data != null)
+                {
+                    if (string.Equals(data.Status, "completed", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return data;
+                    }
+                    if (string.Equals(data.Status, "failed", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var err = data.Error;
+                        throw new GetStreamTaskException(
+                            taskId: taskId,
+                            errorType: err?.Type ?? string.Empty,
+                            description: err?.Description ?? string.Empty,
+                            stackTrace: err?.Stacktrace,
+                            version: err?.Version);
+                    }
+                }
+
+                if (DateTime.UtcNow + interval > deadline)
+                {
+                    throw new GetStreamTransportException(
+                        $"timed out waiting for task {taskId} after {max}",
+                        "timeout",
+                        new TimeoutException($"WaitForTaskAsync deadline of {max} exceeded"));
+                }
+                await Task.Delay(interval, cancellationToken);
+            }
         }
     }
 }

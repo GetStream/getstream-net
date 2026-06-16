@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using GetStream.Requests;
 using GetStream.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GetStream
 {
@@ -34,6 +36,8 @@ namespace GetStream
 
             return queryParams;
         }
+        private static readonly JsonSerializerOptions QueryPayloadJsonOptions =
+            new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
         // Creates a campaign
         public async Task<StreamResponse<CreateCampaignResponse>> CreateCampaignAsync(CreateCampaignRequest request,
@@ -793,7 +797,12 @@ namespace GetStream
         public async Task<StreamResponse<MembersResponse>> QueryMembersAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Object-typed query parameter is sent as a single JSON-encoded value.
+            var queryParams = new Dictionary<string, string>();
+            if (request != null)
+            {
+                queryParams["payload"] = JsonSerializer.Serialize(request, QueryPayloadJsonOptions);
+            }
 
             var result = await _client.MakeRequestAsync<object, MembersResponse>(
                 "GET",
@@ -1186,7 +1195,12 @@ namespace GetStream
         public async Task<StreamResponse<QueryMessageFlagsResponse>> QueryMessageFlagsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Object-typed query parameter is sent as a single JSON-encoded value.
+            var queryParams = new Dictionary<string, string>();
+            if (request != null)
+            {
+                queryParams["payload"] = JsonSerializer.Serialize(request, QueryPayloadJsonOptions);
+            }
 
             var result = await _client.MakeRequestAsync<object, QueryMessageFlagsResponse>(
                 "GET",
@@ -1229,7 +1243,12 @@ namespace GetStream
         public async Task<StreamResponse<QueryBannedUsersResponse>> QueryBannedUsersAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Object-typed query parameter is sent as a single JSON-encoded value.
+            var queryParams = new Dictionary<string, string>();
+            if (request != null)
+            {
+                queryParams["payload"] = JsonSerializer.Serialize(request, QueryPayloadJsonOptions);
+            }
 
             var result = await _client.MakeRequestAsync<object, QueryBannedUsersResponse>(
                 "GET",
@@ -1242,7 +1261,12 @@ namespace GetStream
         public async Task<StreamResponse<QueryFutureChannelBansResponse>> QueryFutureChannelBansAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Object-typed query parameter is sent as a single JSON-encoded value.
+            var queryParams = new Dictionary<string, string>();
+            if (request != null)
+            {
+                queryParams["payload"] = JsonSerializer.Serialize(request, QueryPayloadJsonOptions);
+            }
 
             var result = await _client.MakeRequestAsync<object, QueryFutureChannelBansResponse>(
                 "GET",
@@ -1315,7 +1339,12 @@ namespace GetStream
         public async Task<StreamResponse<SearchResponse>> SearchAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Object-typed query parameter is sent as a single JSON-encoded value.
+            var queryParams = new Dictionary<string, string>();
+            if (request != null)
+            {
+                queryParams["payload"] = JsonSerializer.Serialize(request, QueryPayloadJsonOptions);
+            }
 
             var result = await _client.MakeRequestAsync<object, SearchResponse>(
                 "GET",
