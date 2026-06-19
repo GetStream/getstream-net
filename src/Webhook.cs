@@ -152,7 +152,9 @@ namespace GetStream
         public const string MessageUpdated = "message.updated";
         public const string ModerationCustomAction = "moderation.custom_action";
         public const string ModerationFlagged = "moderation.flagged";
+        public const string ModerationImageAnalysisComplete = "moderation.image_analysis.complete";
         public const string ModerationMarkReviewed = "moderation.mark_reviewed";
+        public const string ModerationTextAnalysisComplete = "moderation.text_analysis.complete";
         public const string ModerationCheckCompleted = "moderation_check.completed";
         public const string ModerationRuleTriggered = "moderation_rule.triggered";
         public const string NotificationMarkUnread = "notification.mark_unread";
@@ -411,7 +413,9 @@ namespace GetStream
                 "message.updated" => typeof(MessageUpdatedEvent),
                 "moderation.custom_action" => typeof(ModerationCustomActionEvent),
                 "moderation.flagged" => typeof(ModerationFlaggedEvent),
+                "moderation.image_analysis.complete" => typeof(ModerationImageAnalysisCompleteEvent),
                 "moderation.mark_reviewed" => typeof(ModerationMarkReviewedEvent),
+                "moderation.text_analysis.complete" => typeof(ModerationTextAnalysisCompleteEvent),
                 "moderation_check.completed" => typeof(ModerationCheckCompletedEvent),
                 "moderation_rule.triggered" => typeof(ModerationRulesTriggeredEvent),
                 "notification.mark_unread" => typeof(NotificationMarkUnreadEvent),

@@ -848,6 +848,18 @@ namespace GetStream
             return result;
         }
 
+        // Reports a batch of client-side telemetry events. Events are processed independently; one invalid event does not block the rest of the batch, but the request fails if any event is invalid.
+        public async Task<StreamResponse<ReportClientEventResponse>> ReportClientCallEventAsync(ReportClientEventRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<ReportClientEventRequest, ReportClientEventResponse>(
+                "POST",
+                "/api/v2/video/call_client_event", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
 
         public async Task<StreamResponse<QueryCallSessionStatsResponse>> QueryCallSessionStatsAsync(QueryCallSessionStatsRequest request,
             CancellationToken cancellationToken = default)

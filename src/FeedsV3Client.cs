@@ -1251,6 +1251,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<GetOrCreateFollowResponse>> GetOrCreateFollowAsync(FollowRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<FollowRequest, GetOrCreateFollowResponse>(
+                "POST",
+                "/api/v2/feeds/follows/upsert", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UnfollowResponse>> UnfollowAsync(string source, string target, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -1364,6 +1375,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<GetOrCreateUnfollowResponse>> GetOrCreateUnfollowAsync(GetOrCreateUnfollowRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GetOrCreateUnfollowRequest, GetOrCreateUnfollowResponse>(
+                "POST",
+                "/api/v2/feeds/unfollow/upsert", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteFeedUserDataResponse>> DeleteFeedUserDataAsync(string userID, DeleteFeedUserDataRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1390,6 +1412,22 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, ExportFeedUserDataResponse>(
                 "POST",
                 "/api/v2/feeds/users/{user_id}/export", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetUserInterestsResponse>> GetUserInterestsAsync(string userID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["user_id"] = userID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetUserInterestsResponse>(
+                "GET",
+                "/api/v2/feeds/users/{user_id}/interests", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;

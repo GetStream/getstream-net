@@ -3137,6 +3137,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task GetOrCreateFollowAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new FollowRequest();
+
+            var expectedResponse = new StreamResponse<GetOrCreateFollowResponse>
+            {
+                Data = new GetOrCreateFollowResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<FollowRequest, GetOrCreateFollowResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<FollowRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetOrCreateFollowAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<FollowRequest, GetOrCreateFollowResponse>(
+                "POST",
+                "/api/v2/feeds/follows/upsert",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<FollowRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task UnfollowAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -3456,6 +3491,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task GetOrCreateUnfollowAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new GetOrCreateUnfollowRequest();
+
+            var expectedResponse = new StreamResponse<GetOrCreateUnfollowResponse>
+            {
+                Data = new GetOrCreateUnfollowResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<GetOrCreateUnfollowRequest, GetOrCreateUnfollowResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<GetOrCreateUnfollowRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetOrCreateUnfollowAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<GetOrCreateUnfollowRequest, GetOrCreateUnfollowResponse>(
+                "POST",
+                "/api/v2/feeds/unfollow/upsert",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<GetOrCreateUnfollowRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task DeleteFeedUserDataAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -3522,6 +3592,42 @@ namespace GetStream.Tests
             _mockClient.Verify(x => x.MakeRequestAsync<object, ExportFeedUserDataResponse>(
                 "POST",
                 "/api/v2/feeds/users/{user_id}/export",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task GetUserInterestsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var userID = "test-userID";
+
+            var expectedResponse = new StreamResponse<GetUserInterestsResponse>
+            {
+                Data = new GetUserInterestsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, GetUserInterestsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetUserInterestsAsync(userID, null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, GetUserInterestsResponse>(
+                "GET",
+                "/api/v2/feeds/users/{user_id}/interests",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),

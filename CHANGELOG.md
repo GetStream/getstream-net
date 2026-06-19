@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking Changes: OpenAPI regen (schema name-collision fixes, CHA-3559)
+
+Regenerated from chat/ after upstream schema name-collision fixes. The JSON wire contract is unchanged for all of these; the breaks are in the generated C# type surface, so consumer code fails to compile until updated.
+
+- `ModerationClient.FlagAsync` return type changed from `FlagResponse` to `FlagItemResponse`. The `ItemId` field is preserved on the new type.
+- `ModerationClient.BanAsync` return type changed from `BanResponse` to `ModerationBanResponse`. The endpoint only ever returned `duration`; the other `BanResponse` fields (`Channel`, `User`, `Expires`, `Reason`, `Shadow`, `BannedBy`, `CreatedAt`) were never populated by the server, so reads already returned defaults.
+- `ChannelInput.ConfigOverrides` and `ChannelDataUpdate.ConfigOverrides` retyped from `ChannelConfig?` to `ChannelConfigOverrides?` (config overrides now have their own schema, distinct from the full `ChannelConfig`).
+- Value-type nullability changes (require `.Value` / `?? default` or `?`-aware access):
+  - `DeliveryReceiptsResponse.Enabled`, `ReadReceiptsResponse.Enabled`, `TypingIndicatorsResponse.Enabled`: `bool?` to `bool`.
+  - `TranslationSettings.Enabled`: `bool` to `bool?`.
+  - `TargetResolution.Bitrate`: `int` to `int?`.
+
+### Added: OpenAPI regen
+
+- New endpoints: `ChatClient.CreateSegmentAsync`, `UpdateSegmentAsync`, `AddSegmentTargetsAsync`; `CommonClient.CancelImportV2TaskAsync`; `FeedsV3Client.GetOrCreateFollowAsync`, `GetOrCreateUnfollowAsync`, `GetUserInterestsAsync`; `ModerationClient.AnalyzeAsync`, `BulkActionAppealsAsync`, `GetSetupSessionAsync`, `UpsertSetupSessionAsync`; `VideoClient.ReportClientCallEventAsync`.
+- New webhook events: `moderation.image_analysis.complete`, `moderation.text_analysis.complete`.
+- New models and fields backing the above (segments, moderation analyze, flood config, setup sessions, etc.).
+
 ### Error Handling (CHA-2958)
 
 Structured exception hierarchy replaces the raw-body-only `GetStreamApiException`. Backend `APIError` envelopes are now parsed into typed fields, transport failures are wrapped, 429s expose a parsed `Retry-After`, and `BaseClient.WaitForTaskAsync` lets callers surface async task failures.

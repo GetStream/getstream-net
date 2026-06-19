@@ -1353,6 +1353,18 @@ namespace GetStream
             return result;
         }
 
+        // Create a segment
+        public async Task<StreamResponse<CreateSegmentResponse>> CreateSegmentAsync(CreateSegmentRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CreateSegmentRequest, CreateSegmentResponse>(
+                "POST",
+                "/api/v2/chat/segments", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
         // Query segments
         public async Task<StreamResponse<QuerySegmentsResponse>> QuerySegmentsAsync(QuerySegmentsRequest request,
             CancellationToken cancellationToken = default)
@@ -1393,6 +1405,38 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetSegmentResponse>(
                 "GET",
                 "/api/v2/chat/segments/{id}", null, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Update an existing segment
+        public async Task<StreamResponse<UpdateSegmentResponse>> UpdateSegmentAsync(string id, UpdateSegmentRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateSegmentRequest, UpdateSegmentResponse>(
+                "PUT",
+                "/api/v2/chat/segments/{id}", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Add targets to a segment
+        public async Task<StreamResponse<Response>> AddSegmentTargetsAsync(string id, AddSegmentTargetsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<AddSegmentTargetsRequest, Response>(
+                "POST",
+                "/api/v2/chat/segments/{id}/addtargets", null, request, pathParams,
                 cancellationToken);
             return result;
         }
