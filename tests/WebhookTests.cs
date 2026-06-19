@@ -1170,11 +1170,27 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ModerationImageAnalysisComplete_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"moderation.image_analysis.complete\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ModerationImageAnalysisCompleteEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ModerationMarkReviewed_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.mark_reviewed\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<ModerationMarkReviewedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ModerationTextAnalysisComplete_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"moderation.text_analysis.complete\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ModerationTextAnalysisCompleteEvent>());
         }
 
         [Test]
@@ -1460,7 +1476,7 @@ namespace GetStream.Tests
             get
             {
                 // Walk up from the test bin directory to find tests/fixtures/webhooks.
-                // Standard NUnit layout: <repo>/tests/bin/Debug/net8.0/ — fixtures live
+                // Standard NUnit layout: <repo>/tests/bin/Debug/net8.0/; fixtures live
                 // a few levels up in the source tree, not the bin output.
                 var dir = TestContext.CurrentContext.TestDirectory;
                 while (!string.IsNullOrEmpty(dir))
@@ -1477,7 +1493,7 @@ namespace GetStream.Tests
         public void Conformance_FixturesPresent()
         {
             Assert.That(System.IO.Directory.Exists(FixtureRoot),
-                $"Webhook conformance fixtures missing at {FixtureRoot} — run generate.sh");
+                $"Webhook conformance fixtures missing at {FixtureRoot}, run generate.sh");
         }
 
         private static IEnumerable<string> HappyDirs()
@@ -1606,7 +1622,7 @@ namespace GetStream.Tests
             // Per CHA-3071 wire format: DecodeSqsPayload falls back to raw bytes when
             // base64 decoding fails (uncompressed wire format). For input that is
             // neither valid base64 nor valid JSON nor gzip-prefixed, ParseSqs still
-            // throws StreamInvalidWebhookException — just down the chain at JSON parsing.
+            // throws StreamInvalidWebhookException, just down the chain at JSON parsing.
             var dir = NegDir("bad_base64");
             if (!Directory.Exists(dir))
             {

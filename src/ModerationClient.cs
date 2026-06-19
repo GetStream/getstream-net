@@ -114,6 +114,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<AnalyzeResponse>> AnalyzeAsync(AnalyzeRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<AnalyzeRequest, AnalyzeResponse>(
+                "POST",
+                "/api/v2/moderation/analyze", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<AppealResponse>> AppealAsync(AppealRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -151,11 +162,22 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<BanResponse>> BanAsync(BanRequest request,
+        public async Task<StreamResponse<BulkActionAppealsResponse>> BulkActionAppealsAsync(BulkActionAppealsRequest request,
             CancellationToken cancellationToken = default)
         {
 
-            var result = await _client.MakeRequestAsync<BanRequest, BanResponse>(
+            var result = await _client.MakeRequestAsync<BulkActionAppealsRequest, BulkActionAppealsResponse>(
+                "POST",
+                "/api/v2/moderation/appeals/bulk_action", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ModerationBanResponse>> BanAsync(BanRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BanRequest, ModerationBanResponse>(
                 "POST",
                 "/api/v2/moderation/ban", null, request, null,
                 cancellationToken);
@@ -304,11 +326,11 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<FlagResponse>> FlagAsync(FlagRequest request,
+        public async Task<StreamResponse<FlagItemResponse>> FlagAsync(FlagRequest request,
             CancellationToken cancellationToken = default)
         {
 
-            var result = await _client.MakeRequestAsync<FlagRequest, FlagResponse>(
+            var result = await _client.MakeRequestAsync<FlagRequest, FlagItemResponse>(
                 "POST",
                 "/api/v2/moderation/flag", null, request, null,
                 cancellationToken);
@@ -448,6 +470,28 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetReviewQueueItemResponse>(
                 "GET",
                 "/api/v2/moderation/review_queue/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetSetupSessionResponse>> GetSetupSessionAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, GetSetupSessionResponse>(
+                "GET",
+                "/api/v2/moderation/setup", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpsertSetupSessionResponse>> UpsertSetupSessionAsync(UpsertSetupSessionRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<UpsertSetupSessionRequest, UpsertSetupSessionResponse>(
+                "POST",
+                "/api/v2/moderation/setup", null, request, null,
                 cancellationToken);
 
             return result;

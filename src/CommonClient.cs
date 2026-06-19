@@ -438,6 +438,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CancelImportV2TaskResponse>> CancelImportV2TaskAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<object, CancelImportV2TaskResponse>(
+                "POST",
+                "/api/v2/imports/v2/{id}/cancel", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetImportResponse>> GetImportAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
