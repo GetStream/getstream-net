@@ -3,8 +3,6 @@
 set -euo pipefail
 
 title=""
-body=""
-body_file=""
 output=""
 manual_bump=""
 use_current_version="false"
@@ -13,14 +11,6 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --title)
       title="${2:-}"
-      shift 2
-      ;;
-    --body)
-      body="${2:-}"
-      shift 2
-      ;;
-    --body-file)
-      body_file="${2:-}"
       shift 2
       ;;
     --output)
@@ -42,19 +32,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -n "${body_file}" ]]; then
-  body="$(<"${body_file}")"
-fi
-
 determine_bump() {
   local pr_title="$1"
-  local pr_body="$2"
 
-  if [[ "${pr_body}" =~ BREAKING[[:space:]-]CHANGE ]] || [[ "${pr_title}" =~ BREAKING[[:space:]-]CHANGE ]]; then
-    echo "major"
-    return
-  fi
-
+  # Breaking changes are signalled only by the `!` marker in the title
+  # (e.g. `feat!:`). Free-text body/title prose is not trusted: a PR that
+  # merely mentions the major-bump phrase must not force a major bump.
   if ! echo "${pr_title}" | grep -Eq '^([a-zA-Z]+)(\([^)]+\))?(!)?:'; then
     echo "none"
     return
@@ -158,7 +141,7 @@ if [[ -n "${manual_bump_normalized}" ]]; then
   exit 0
 fi
 
-bump="$(determine_bump "${title}" "${body}")"
+bump="$(determine_bump "${title}")"
 
 if [[ "${bump}" == "none" ]]; then
   write_output "should_release" "false"
