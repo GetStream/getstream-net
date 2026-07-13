@@ -231,6 +231,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task BatchQueryActivityReactionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new BatchQueryActivityReactionsRequest();
+
+            var expectedResponse = new StreamResponse<BatchQueryActivityReactionsResponse>
+            {
+                Data = new BatchQueryActivityReactionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<BatchQueryActivityReactionsRequest, BatchQueryActivityReactionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<BatchQueryActivityReactionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.BatchQueryActivityReactionsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<BatchQueryActivityReactionsRequest, BatchQueryActivityReactionsResponse>(
+                "POST",
+                "/api/v2/feeds/activities/reactions/query",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<BatchQueryActivityReactionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task DeleteBookmarkAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -553,6 +588,42 @@ namespace GetStream.Tests
             _mockClient.Verify(x => x.MakeRequestAsync<object, DeleteActivityReactionResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/reactions/{type}",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task QueryActivitySharesAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var activityID = "test-activityID";
+
+            var expectedResponse = new StreamResponse<QueryActivitySharesResponse>
+            {
+                Data = new QueryActivitySharesResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, QueryActivitySharesResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryActivitySharesAsync(activityID, null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, QueryActivitySharesResponse>(
+                "GET",
+                "/api/v2/feeds/activities/{activity_id}/shares",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<object>(),
                 It.IsAny<Dictionary<string, string>>(),
@@ -1227,6 +1298,41 @@ namespace GetStream.Tests
                 "/api/v2/feeds/comments/query",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<QueryCommentsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task BatchQueryCommentReactionsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new BatchQueryCommentReactionsRequest();
+
+            var expectedResponse = new StreamResponse<BatchQueryCommentReactionsResponse>
+            {
+                Data = new BatchQueryCommentReactionsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<BatchQueryCommentReactionsRequest, BatchQueryCommentReactionsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<BatchQueryCommentReactionsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.BatchQueryCommentReactionsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<BatchQueryCommentReactionsRequest, BatchQueryCommentReactionsResponse>(
+                "POST",
+                "/api/v2/feeds/comments/reactions/query",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<BatchQueryCommentReactionsRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

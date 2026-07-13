@@ -714,6 +714,22 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ExportReviewQueueError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.review_queue.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportReviewQueueSuccess_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.review_queue.success\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportReviewQueueEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ExportUsersError_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.users.error\"}";

@@ -112,6 +112,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<BatchQueryActivityReactionsResponse>> BatchQueryActivityReactionsAsync(BatchQueryActivityReactionsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BatchQueryActivityReactionsRequest, BatchQueryActivityReactionsResponse>(
+                "POST",
+                "/api/v2/feeds/activities/reactions/query", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteBookmarkResponse>> DeleteBookmarkAsync(string activityID, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -250,6 +261,22 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, DeleteActivityReactionResponse>(
                 "DELETE",
                 "/api/v2/feeds/activities/{activity_id}/reactions/{type}", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryActivitySharesResponse>> QueryActivitySharesAsync(string activityID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["activity_id"] = activityID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, QueryActivitySharesResponse>(
+                "GET",
+                "/api/v2/feeds/activities/{activity_id}/shares", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;
@@ -493,6 +520,17 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>(
                 "POST",
                 "/api/v2/feeds/comments/query", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<BatchQueryCommentReactionsResponse>> BatchQueryCommentReactionsAsync(BatchQueryCommentReactionsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<BatchQueryCommentReactionsRequest, BatchQueryCommentReactionsResponse>(
+                "POST",
+                "/api/v2/feeds/comments/reactions/query", null, request, null,
                 cancellationToken);
 
             return result;

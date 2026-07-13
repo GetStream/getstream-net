@@ -277,6 +277,24 @@ namespace GetStream
             return result;
         }
 
+        // Returns a channel by its CID without creating it. Responds with 404 when the channel does not exist, so it doubles as an existence check. Pass state=true to also load messages, read state and watchers.
+        public async Task<StreamResponse<ChannelStateResponse>> GetChannelAsync(string type, string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, ChannelStateResponse>(
+                "GET",
+                "/api/v2/chat/channels/{type}/{id}", queryParams, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Updates certain fields of the channel
 
         // Sends events:
