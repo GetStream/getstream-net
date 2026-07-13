@@ -87,7 +87,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteActionConfigResponse>> DeleteActionConfigAsync(string id, object request = null,
+        public async Task<StreamResponse<DeleteActionConfigResponse>> DeleteActionConfigAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -136,7 +136,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id, object request = null,
+        public async Task<StreamResponse<GetAppealResponse>> GetAppealAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -239,7 +239,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key, object request = null,
+        public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -255,7 +255,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key, object request = null,
+        public async Task<StreamResponse<GetConfigResponse>> GetConfigAsync(string key,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -448,6 +448,74 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<ListQueuesResponse>> ListQueuesAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, ListQueuesResponse>(
+                "GET",
+                "/api/v2/moderation/queues", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueueResponse>> CreateQueueAsync(CreateQueueRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CreateQueueRequest, QueueResponse>(
+                "POST",
+                "/api/v2/moderation/queues", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueueResponse>> GetQueueAsync(string id,object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, QueueResponse>(
+                "GET",
+                "/api/v2/moderation/queues/{id}", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueueResponse>> UpdateQueueAsync(string id,UpdateQueueRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateQueueRequest, QueueResponse>(
+                "PATCH",
+                "/api/v2/moderation/queues/{id}", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueueResponse>> DeleteQueueAsync(string id,DeleteQueueRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<DeleteQueueRequest, QueueResponse>(
+                "POST",
+                "/api/v2/moderation/queues/{id}/delete", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryReviewQueueResponse>> QueryReviewQueueAsync(QueryReviewQueueRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -459,7 +527,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id, object request = null,
+        public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id,object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -541,5 +609,5 @@ namespace GetStream
 
             return result;
         }
-    }
-}
+            }
+        }

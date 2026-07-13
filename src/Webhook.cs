@@ -95,6 +95,8 @@ namespace GetStream
         public const string ExportChannelsSuccess = "export.channels.success";
         public const string ExportModerationLogsError = "export.moderation_logs.error";
         public const string ExportModerationLogsSuccess = "export.moderation_logs.success";
+        public const string ExportReviewQueueError = "export.review_queue.error";
+        public const string ExportReviewQueueSuccess = "export.review_queue.success";
         public const string ExportUsersError = "export.users.error";
         public const string ExportUsersSuccess = "export.users.success";
         public const string FeedsActivityAdded = "feeds.activity.added";
@@ -356,6 +358,8 @@ namespace GetStream
                 "export.channels.success" => typeof(AsyncExportChannelsEvent),
                 "export.moderation_logs.error" => typeof(AsyncExportErrorEvent),
                 "export.moderation_logs.success" => typeof(AsyncExportModerationLogsEvent),
+                "export.review_queue.error" => typeof(AsyncExportErrorEvent),
+                "export.review_queue.success" => typeof(AsyncExportReviewQueueEvent),
                 "export.users.error" => typeof(AsyncExportErrorEvent),
                 "export.users.success" => typeof(AsyncExportUsersEvent),
                 "feeds.activity.added" => typeof(ActivityAddedEvent),
@@ -479,8 +483,8 @@ namespace GetStream
         [System.Obsolete("Use StreamInvalidWebhookException")]
         public class WebhookException : StreamInvalidWebhookException
         {
-            public WebhookException(string message) : base(message) { }
-            public WebhookException(string message, System.Exception inner) : base(message, inner) { }
+            public WebhookException(string message) : base(message) {}
+            public WebhookException(string message, System.Exception inner) : base(message, inner) {}
         }
 
         /// <summary>
