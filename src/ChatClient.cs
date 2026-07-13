@@ -38,7 +38,7 @@ namespace GetStream
         }
         private static readonly JsonSerializerOptions QueryPayloadJsonOptions =
             new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
-        
+
         // Creates a campaign
         public async Task<StreamResponse<CreateCampaignResponse>> CreateCampaignAsync(CreateCampaignRequest request,
             CancellationToken cancellationToken = default)
@@ -50,7 +50,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Query campaigns with filter query
         public async Task<StreamResponse<QueryCampaignsResponse>> QueryCampaignsAsync(QueryCampaignsRequest request,
             CancellationToken cancellationToken = default)
@@ -62,9 +62,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Delete campaign
-        public async Task<StreamResponse<DeleteCampaignResponse>> DeleteCampaignAsync(string id,object request = null,
+        public async Task<StreamResponse<DeleteCampaignResponse>> DeleteCampaignAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -78,9 +78,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Get campaign by ID.
-        public async Task<StreamResponse<GetCampaignResponse>> GetCampaignAsync(string id,object request = null,
+        public async Task<StreamResponse<GetCampaignResponse>> GetCampaignAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -95,9 +95,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates a campaign
-        public async Task<StreamResponse<CampaignResponse>> UpdateCampaignAsync(string id,UpdateCampaignRequest request,
+        public async Task<StreamResponse<CampaignResponse>> UpdateCampaignAsync(string id, UpdateCampaignRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -111,9 +111,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Starts or schedules a campaign
-        public async Task<StreamResponse<StartCampaignResponse>> StartCampaignAsync(string id,StartCampaignRequest request,
+        public async Task<StreamResponse<StartCampaignResponse>> StartCampaignAsync(string id, StartCampaignRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -127,9 +127,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Stops a campaign
-        public async Task<StreamResponse<CampaignResponse>> StopCampaignAsync(string id,StopCampaignRequest request,
+        public async Task<StreamResponse<CampaignResponse>> StopCampaignAsync(string id, StopCampaignRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -143,7 +143,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Query channels with filter query
         public async Task<StreamResponse<QueryChannelsResponse>> QueryChannelsAsync(QueryChannelsRequest request,
             CancellationToken cancellationToken = default)
@@ -155,9 +155,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Update channels in batch
-        
+
         // Sends events:
         // - channel.frozen
         // - channel.hidden
@@ -177,9 +177,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Allows to delete several channels at once asynchronously
-        
+
         // Sends events:
         // - channel.deleted
         public async Task<StreamResponse<DeleteChannelsResponse>> DeleteChannelsAsync(DeleteChannelsRequest request,
@@ -192,7 +192,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Mark the status of a channel message delivered.
         public async Task<StreamResponse<MarkDeliveredResponse>> MarkDeliveredAsync(MarkDeliveredRequest request,
             CancellationToken cancellationToken = default)
@@ -205,7 +205,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Query channels grouped into predefined buckets. Only available for enterprise apps.
         public async Task<StreamResponse<GroupedQueryChannelsResponse>> GroupedQueryChannelsAsync(GroupedQueryChannelsRequest request,
             CancellationToken cancellationToken = default)
@@ -217,9 +217,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Marks channels as read up to the specific message. If no channels is given, mark all channel as read
-        
+
         // Sends events:
         // - message.read
         public async Task<StreamResponse<MarkReadResponse>> MarkChannelsReadAsync(MarkChannelsReadRequest request,
@@ -232,16 +232,16 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // This Method creates a channel or returns an existing one with matching attributes
-        
+
         // Sends events:
         // - channel.created
         // - member.added
         // - member.removed
         // - member.updated
         // - user.watching.start
-        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateDistinctChannelAsync(string type,ChannelGetOrCreateRequest request,
+        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateDistinctChannelAsync(string type, ChannelGetOrCreateRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -255,12 +255,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes channel
-        
+
         // Sends events:
         // - channel.deleted
-        public async Task<StreamResponse<DeleteChannelResponse>> DeleteChannelAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<DeleteChannelResponse>> DeleteChannelAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -276,9 +276,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns a channel by its CID without creating it. Responds with 404 when the channel does not exist, so it doubles as an existence check. Pass state=true to also load messages, read state and watchers.
-        public async Task<StreamResponse<ChannelStateResponse>> GetChannelAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<ChannelStateResponse>> GetChannelAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -294,12 +294,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates certain fields of the channel
-        
+
         // Sends events:
         // - channel.updated
-        public async Task<StreamResponse<UpdateChannelPartialResponse>> UpdateChannelPartialAsync(string type, string id,UpdateChannelPartialRequest request,
+        public async Task<StreamResponse<UpdateChannelPartialResponse>> UpdateChannelPartialAsync(string type, string id, UpdateChannelPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -314,16 +314,16 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Change channel data
-        
+
         // Sends events:
         // - channel.updated
         // - member.added
         // - member.removed
         // - member.updated
         // - message.new
-        public async Task<StreamResponse<UpdateChannelResponse>> UpdateChannelAsync(string type, string id,UpdateChannelRequest request,
+        public async Task<StreamResponse<UpdateChannelResponse>> UpdateChannelAsync(string type, string id, UpdateChannelRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -338,12 +338,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes a draft
-        
+
         // Sends events:
         // - draft.deleted
-        public async Task<StreamResponse<Response>> DeleteDraftAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<Response>> DeleteDraftAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -359,9 +359,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Get a draft
-        public async Task<StreamResponse<GetDraftResponse>> GetDraftAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<GetDraftResponse>> GetDraftAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -377,9 +377,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Sends event to the channel
-        public async Task<StreamResponse<EventResponse>> SendEventAsync(string type, string id,SendEventRequest request,
+        public async Task<StreamResponse<EventResponse>> SendEventAsync(string type, string id, SendEventRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -394,9 +394,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes previously uploaded file
-        public async Task<StreamResponse<Response>> DeleteChannelFileAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<Response>> DeleteChannelFileAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -412,9 +412,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Uploads file
-        public async Task<StreamResponse<UploadChannelFileResponse>> UploadChannelFileAsync(string type, string id,UploadChannelFileRequest request,
+        public async Task<StreamResponse<UploadChannelFileResponse>> UploadChannelFileAsync(string type, string id, UploadChannelFileRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -429,12 +429,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Marks channel as hidden for current user
-        
+
         // Sends events:
         // - channel.hidden
-        public async Task<StreamResponse<HideChannelResponse>> HideChannelAsync(string type, string id,HideChannelRequest request,
+        public async Task<StreamResponse<HideChannelResponse>> HideChannelAsync(string type, string id, HideChannelRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -449,9 +449,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes previously uploaded image
-        public async Task<StreamResponse<Response>> DeleteChannelImageAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<Response>> DeleteChannelImageAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -467,9 +467,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Uploads image
-        public async Task<StreamResponse<UploadChannelResponse>> UploadChannelImageAsync(string type, string id,UploadChannelRequest request,
+        public async Task<StreamResponse<UploadChannelResponse>> UploadChannelImageAsync(string type, string id, UploadChannelRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -484,9 +484,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
-        
-        public async Task<StreamResponse<UpdateMemberPartialResponse>> UpdateMemberPartialAsync(string type, string id,UpdateMemberPartialRequest request,
+
+
+        public async Task<StreamResponse<UpdateMemberPartialResponse>> UpdateMemberPartialAsync(string type, string id, UpdateMemberPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -502,13 +502,13 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Sends new message to the specified channel
-        
+
         // Sends events:
         // - message.new
         // - message.updated
-        public async Task<StreamResponse<SendMessageResponse>> SendMessageAsync(string type, string id,SendMessageRequest request,
+        public async Task<StreamResponse<SendMessageResponse>> SendMessageAsync(string type, string id, SendMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -523,9 +523,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns list messages found by IDs
-        public async Task<StreamResponse<GetManyMessagesResponse>> GetManyMessagesAsync(string type, string id,object request = null,
+        public async Task<StreamResponse<GetManyMessagesResponse>> GetManyMessagesAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -541,16 +541,16 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // This Method creates a channel or returns an existing one with matching attributes
-        
+
         // Sends events:
         // - channel.created
         // - member.added
         // - member.removed
         // - member.updated
         // - user.watching.start
-        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateChannelAsync(string type, string id,ChannelGetOrCreateRequest request,
+        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateChannelAsync(string type, string id, ChannelGetOrCreateRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -565,12 +565,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Marks channel as read up to the specific message
-        
+
         // Sends events:
         // - message.read
-        public async Task<StreamResponse<MarkReadResponse>> MarkReadAsync(string type, string id,MarkReadRequest request,
+        public async Task<StreamResponse<MarkReadResponse>> MarkReadAsync(string type, string id, MarkReadRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -585,12 +585,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Shows previously hidden channel
-        
+
         // Sends events:
         // - channel.visible
-        public async Task<StreamResponse<ShowChannelResponse>> ShowChannelAsync(string type, string id,ShowChannelRequest request,
+        public async Task<StreamResponse<ShowChannelResponse>> ShowChannelAsync(string type, string id, ShowChannelRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -605,12 +605,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Truncates messages from a channel. Can be applied to the entire channel or scoped to specific members.
-        
+
         // Sends events:
         // - channel.truncated
-        public async Task<StreamResponse<TruncateChannelResponse>> TruncateChannelAsync(string type, string id,TruncateChannelRequest request,
+        public async Task<StreamResponse<TruncateChannelResponse>> TruncateChannelAsync(string type, string id, TruncateChannelRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -625,9 +625,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Marks channel as unread from a specific message
-        public async Task<StreamResponse<Response>> MarkUnreadAsync(string type, string id,MarkUnreadRequest request,
+        public async Task<StreamResponse<Response>> MarkUnreadAsync(string type, string id, MarkUnreadRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -642,7 +642,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Lists all available channel types
         public async Task<StreamResponse<ListChannelTypesResponse>> ListChannelTypesAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -654,7 +654,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Creates new channel type
         public async Task<StreamResponse<CreateChannelTypeResponse>> CreateChannelTypeAsync(CreateChannelTypeRequest request,
             CancellationToken cancellationToken = default)
@@ -666,9 +666,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes channel type
-        public async Task<StreamResponse<Response>> DeleteChannelTypeAsync(string name,object request = null,
+        public async Task<StreamResponse<Response>> DeleteChannelTypeAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -682,9 +682,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Gets channel type
-        public async Task<StreamResponse<GetChannelTypeResponse>> GetChannelTypeAsync(string name,object request = null,
+        public async Task<StreamResponse<GetChannelTypeResponse>> GetChannelTypeAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -698,9 +698,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates channel type
-        public async Task<StreamResponse<UpdateChannelTypeResponse>> UpdateChannelTypeAsync(string name,UpdateChannelTypeRequest request,
+        public async Task<StreamResponse<UpdateChannelTypeResponse>> UpdateChannelTypeAsync(string name, UpdateChannelTypeRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -714,7 +714,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns all custom commands
         public async Task<StreamResponse<ListCommandsResponse>> ListCommandsAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -726,7 +726,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Creates custom chat command
         public async Task<StreamResponse<CreateCommandResponse>> CreateCommandAsync(CreateCommandRequest request,
             CancellationToken cancellationToken = default)
@@ -738,9 +738,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes custom chat command
-        public async Task<StreamResponse<DeleteCommandResponse>> DeleteCommandAsync(string name,object request = null,
+        public async Task<StreamResponse<DeleteCommandResponse>> DeleteCommandAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -754,9 +754,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns custom command by its name
-        public async Task<StreamResponse<GetCommandResponse>> GetCommandAsync(string name,object request = null,
+        public async Task<StreamResponse<GetCommandResponse>> GetCommandAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -770,9 +770,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates custom chat command
-        public async Task<StreamResponse<UpdateCommandResponse>> UpdateCommandAsync(string name,UpdateCommandRequest request,
+        public async Task<StreamResponse<UpdateCommandResponse>> UpdateCommandAsync(string name, UpdateCommandRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -786,7 +786,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Queries draft messages for a user
         public async Task<StreamResponse<QueryDraftsResponse>> QueryDraftsAsync(QueryDraftsRequest request,
             CancellationToken cancellationToken = default)
@@ -798,7 +798,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Exports channel data to JSON file
         public async Task<StreamResponse<ExportChannelsResponse>> ExportChannelsAsync(ExportChannelsRequest request,
             CancellationToken cancellationToken = default)
@@ -810,7 +810,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Find and filter channel members
         public async Task<StreamResponse<MembersResponse>> QueryMembersAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -828,7 +828,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Queries history for one message
         public async Task<StreamResponse<QueryMessageHistoryResponse>> QueryMessageHistoryAsync(QueryMessageHistoryRequest request,
             CancellationToken cancellationToken = default)
@@ -840,12 +840,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes message
-        
+
         // Sends events:
         // - message.deleted
-        public async Task<StreamResponse<DeleteMessageResponse>> DeleteMessageAsync(string id,object request = null,
+        public async Task<StreamResponse<DeleteMessageResponse>> DeleteMessageAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -860,9 +860,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns message by ID
-        public async Task<StreamResponse<GetMessageResponse>> GetMessageAsync(string id,object request = null,
+        public async Task<StreamResponse<GetMessageResponse>> GetMessageAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -877,12 +877,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates message with new data
-        
+
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<UpdateMessageResponse>> UpdateMessageAsync(string id,UpdateMessageRequest request,
+        public async Task<StreamResponse<UpdateMessageResponse>> UpdateMessageAsync(string id, UpdateMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -896,12 +896,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates certain fields of the message
-        
+
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<UpdateMessagePartialResponse>> UpdateMessagePartialAsync(string id,UpdateMessagePartialRequest request,
+        public async Task<StreamResponse<UpdateMessagePartialResponse>> UpdateMessagePartialAsync(string id, UpdateMessagePartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -915,12 +915,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Executes message command action with given parameters
-        
+
         // Sends events:
         // - message.new
-        public async Task<StreamResponse<MessageActionResponse>> RunMessageActionAsync(string id,MessageActionRequest request,
+        public async Task<StreamResponse<MessageActionResponse>> RunMessageActionAsync(string id, MessageActionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -934,13 +934,13 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Commits a pending message, which will make it visible in the channel
-        
+
         // Sends events:
         // - message.new
         // - message.updated
-        public async Task<StreamResponse<MessageActionResponse>> CommitMessageAsync(string id,CommitMessageRequest request,
+        public async Task<StreamResponse<MessageActionResponse>> CommitMessageAsync(string id, CommitMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -954,12 +954,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates message fields without storing in database, only sends update event
-        
+
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<UpdateMessagePartialResponse>> EphemeralMessageUpdateAsync(string id,UpdateMessagePartialRequest request,
+        public async Task<StreamResponse<UpdateMessagePartialResponse>> EphemeralMessageUpdateAsync(string id, UpdateMessagePartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -973,13 +973,13 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Sends reaction to specified message
-        
+
         // Sends events:
         // - reaction.new
         // - reaction.updated
-        public async Task<StreamResponse<SendReactionResponse>> SendReactionAsync(string id,SendReactionRequest request,
+        public async Task<StreamResponse<SendReactionResponse>> SendReactionAsync(string id, SendReactionRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -993,12 +993,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Removes user reaction from the message
-        
+
         // Sends events:
         // - reaction.deleted
-        public async Task<StreamResponse<DeleteReactionResponse>> DeleteReactionAsync(string id, string type,object request = null,
+        public async Task<StreamResponse<DeleteReactionResponse>> DeleteReactionAsync(string id, string type, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1014,9 +1014,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns list of reactions of specific message
-        public async Task<StreamResponse<GetReactionsResponse>> GetReactionsAsync(string id,object request = null,
+        public async Task<StreamResponse<GetReactionsResponse>> GetReactionsAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1031,9 +1031,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Get reactions on a message
-        public async Task<StreamResponse<QueryReactionsResponse>> QueryReactionsAsync(string id,QueryReactionsRequest request,
+        public async Task<StreamResponse<QueryReactionsResponse>> QueryReactionsAsync(string id, QueryReactionsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1047,12 +1047,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Translates message to a given language using automated translation software
-        
+
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<MessageActionResponse>> TranslateMessageAsync(string id,TranslateMessageRequest request,
+        public async Task<StreamResponse<MessageActionResponse>> TranslateMessageAsync(string id, TranslateMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1066,12 +1066,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Undelete a message that was previously soft-deleted
-        
+
         // Sends events:
         // - message.undeleted
-        public async Task<StreamResponse<UndeleteMessageResponse>> UndeleteMessageAsync(string id,UndeleteMessageRequest request,
+        public async Task<StreamResponse<UndeleteMessageResponse>> UndeleteMessageAsync(string id, UndeleteMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1085,9 +1085,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Cast a vote on a poll
-        
+
         // Sends events:
         // - feeds.poll.vote_casted
         // - feeds.poll.vote_changed
@@ -1095,7 +1095,7 @@ namespace GetStream
         // - poll.vote_casted
         // - poll.vote_changed
         // - poll.vote_removed
-        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string messageID, string pollID,CastPollVoteRequest request,
+        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string messageID, string pollID, CastPollVoteRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1110,13 +1110,13 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Delete a vote from a poll
-        
+
         // Sends events:
         // - feeds.poll.vote_removed
         // - poll.vote_removed
-        public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string messageID, string pollID, string voteID,object request = null,
+        public async Task<StreamResponse<PollVoteResponse>> DeletePollVoteAsync(string messageID, string pollID, string voteID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1133,12 +1133,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Deletes a user's created reminder
-        
+
         // Sends events:
         // - reminder.deleted
-        public async Task<StreamResponse<DeleteReminderResponse>> DeleteReminderAsync(string messageID,object request = null,
+        public async Task<StreamResponse<DeleteReminderResponse>> DeleteReminderAsync(string messageID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1153,12 +1153,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates an existing reminder
-        
+
         // Sends events:
         // - reminder.updated
-        public async Task<StreamResponse<UpdateReminderResponse>> UpdateReminderAsync(string messageID,UpdateReminderRequest request,
+        public async Task<StreamResponse<UpdateReminderResponse>> UpdateReminderAsync(string messageID, UpdateReminderRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1172,12 +1172,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Creates a new reminder
-        
+
         // Sends events:
         // - reminder.created
-        public async Task<StreamResponse<ReminderResponseData>> CreateReminderAsync(string messageID,CreateReminderRequest request,
+        public async Task<StreamResponse<ReminderResponseData>> CreateReminderAsync(string messageID, CreateReminderRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1191,9 +1191,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns replies (thread) of the message
-        public async Task<StreamResponse<GetRepliesResponse>> GetRepliesAsync(string parentID,object request = null,
+        public async Task<StreamResponse<GetRepliesResponse>> GetRepliesAsync(string parentID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1208,7 +1208,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Find and filter message flags
         public async Task<StreamResponse<QueryMessageFlagsResponse>> QueryMessageFlagsAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1226,9 +1226,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Mutes channel for user
-        
+
         // Sends events:
         // - channel.muted
         public async Task<StreamResponse<MuteChannelResponse>> MuteChannelAsync(MuteChannelRequest request,
@@ -1241,9 +1241,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Unmutes channel for user
-        
+
         // Sends events:
         // - channel.unmuted
         public async Task<StreamResponse<UnmuteResponse>> UnmuteChannelAsync(UnmuteChannelRequest request,
@@ -1256,7 +1256,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Find and filter channel scoped or global user bans
         public async Task<StreamResponse<QueryBannedUsersResponse>> QueryBannedUsersAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1274,7 +1274,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Find and filter future channel bans created by the authenticated user
         public async Task<StreamResponse<QueryFutureChannelBansResponse>> QueryFutureChannelBansAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1292,7 +1292,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Queries reminders
         public async Task<StreamResponse<QueryRemindersResponse>> QueryRemindersAsync(QueryRemindersRequest request,
             CancellationToken cancellationToken = default)
@@ -1304,7 +1304,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns all retention policies configured for the app. Server-side only.
         public async Task<StreamResponse<GetRetentionPolicyResponse>> GetRetentionPolicyAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1316,7 +1316,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Creates or updates a retention policy for the app. Server-side only.
         public async Task<StreamResponse<SetRetentionPolicyResponse>> SetRetentionPolicyAsync(SetRetentionPolicyRequest request,
             CancellationToken cancellationToken = default)
@@ -1328,7 +1328,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Removes a retention policy for the app. Server-side only.
         public async Task<StreamResponse<DeleteRetentionPolicyResponse>> DeleteRetentionPolicyAsync(DeleteRetentionPolicyRequest request,
             CancellationToken cancellationToken = default)
@@ -1340,7 +1340,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns filtered and sorted retention cleanup run history for the app. Supports filter_conditions on 'policy' (possible values: 'old-messages', 'inactive-channels') and 'date' fields. Server-side only.
         public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(GetRetentionPolicyRunsRequest request,
             CancellationToken cancellationToken = default)
@@ -1352,7 +1352,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Search messages across channels
         public async Task<StreamResponse<SearchResponse>> SearchAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1370,7 +1370,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Create a segment
         public async Task<StreamResponse<CreateSegmentResponse>> CreateSegmentAsync(CreateSegmentRequest request,
             CancellationToken cancellationToken = default)
@@ -1382,7 +1382,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Query segments
         public async Task<StreamResponse<QuerySegmentsResponse>> QuerySegmentsAsync(QuerySegmentsRequest request,
             CancellationToken cancellationToken = default)
@@ -1394,9 +1394,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Delete a segment
-        public async Task<StreamResponse<Response>> DeleteSegmentAsync(string id,object request = null,
+        public async Task<StreamResponse<Response>> DeleteSegmentAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1410,9 +1410,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Get segment
-        public async Task<StreamResponse<GetSegmentResponse>> GetSegmentAsync(string id,object request = null,
+        public async Task<StreamResponse<GetSegmentResponse>> GetSegmentAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1426,9 +1426,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Update an existing segment
-        public async Task<StreamResponse<UpdateSegmentResponse>> UpdateSegmentAsync(string id,UpdateSegmentRequest request,
+        public async Task<StreamResponse<UpdateSegmentResponse>> UpdateSegmentAsync(string id, UpdateSegmentRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1442,9 +1442,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Add targets to a segment
-        public async Task<StreamResponse<Response>> AddSegmentTargetsAsync(string id,AddSegmentTargetsRequest request,
+        public async Task<StreamResponse<Response>> AddSegmentTargetsAsync(string id, AddSegmentTargetsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1458,9 +1458,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Delete targets from a segment
-        public async Task<StreamResponse<Response>> DeleteSegmentTargetsAsync(string id,DeleteSegmentTargetsRequest request,
+        public async Task<StreamResponse<Response>> DeleteSegmentTargetsAsync(string id, DeleteSegmentTargetsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1474,9 +1474,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Check whether a target exists in a segment. Returns 200 if the target exists, 404 otherwise
-        public async Task<StreamResponse<Response>> SegmentTargetExistsAsync(string id, string targetID,object request = null,
+        public async Task<StreamResponse<Response>> SegmentTargetExistsAsync(string id, string targetID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1491,9 +1491,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Query segment targets
-        public async Task<StreamResponse<QuerySegmentTargetsResponse>> QuerySegmentTargetsAsync(string id,QuerySegmentTargetsRequest request,
+        public async Task<StreamResponse<QuerySegmentTargetsResponse>> QuerySegmentTargetsAsync(string id, QuerySegmentTargetsRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1507,15 +1507,15 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Retrieve team-level usage statistics from the warehouse database.
         // Returns all 16 metrics grouped by team with cursor-based pagination.
-        
+
         // **Date Range Options (mutually exclusive):**
         // - Use 'month' parameter (YYYY-MM format) for monthly aggregated values
         // - Use 'start_date'/'end_date' parameters (YYYY-MM-DD format) for daily breakdown
         // - If neither provided, defaults to current month (monthly mode)
-        
+
         // This endpoint is server-side only.
         public async Task<StreamResponse<QueryTeamUsageStatsResponse>> QueryTeamUsageStatsAsync(QueryTeamUsageStatsRequest request,
             CancellationToken cancellationToken = default)
@@ -1527,7 +1527,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Returns the list of threads for specific user
         public async Task<StreamResponse<QueryThreadsResponse>> QueryThreadsAsync(QueryThreadsRequest request,
             CancellationToken cancellationToken = default)
@@ -1539,9 +1539,9 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Return a specific thread
-        public async Task<StreamResponse<GetThreadResponse>> GetThreadAsync(string messageID,object request = null,
+        public async Task<StreamResponse<GetThreadResponse>> GetThreadAsync(string messageID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1556,12 +1556,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Updates certain fields of the thread
-        
+
         // Sends events:
         // - thread.updated
-        public async Task<StreamResponse<UpdateThreadPartialResponse>> UpdateThreadPartialAsync(string messageID,UpdateThreadPartialRequest request,
+        public async Task<StreamResponse<UpdateThreadPartialResponse>> UpdateThreadPartialAsync(string messageID, UpdateThreadPartialRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1575,7 +1575,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Fetch unread counts for a single user
         public async Task<StreamResponse<WrappedUnreadCountsResponse>> UnreadCountsAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1588,7 +1588,7 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Fetch unread counts in batch for multiple users in one call
         public async Task<StreamResponse<UnreadCountsBatchResponse>> UnreadCountsBatchAsync(UnreadCountsBatchRequest request,
             CancellationToken cancellationToken = default)
@@ -1600,12 +1600,12 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-        
+
         // Sends a custom event to a user
-        
+
         // Sends events:
         // - *
-        public async Task<StreamResponse<Response>> SendUserCustomEventAsync(string userID,SendUserCustomEventRequest request,
+        public async Task<StreamResponse<Response>> SendUserCustomEventAsync(string userID, SendUserCustomEventRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1619,5 +1619,5 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
-            }
-        }
+    }
+}

@@ -28991,4 +28991,4 @@ namespace GetStream.Models
         public string? Secret { get; set; }
     }
 
-} 
+}

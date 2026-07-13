@@ -483,8 +483,8 @@ namespace GetStream
         [System.Obsolete("Use StreamInvalidWebhookException")]
         public class WebhookException : StreamInvalidWebhookException
         {
-            public WebhookException(string message) : base(message) {}
-            public WebhookException(string message, System.Exception inner) : base(message, inner) {}
+            public WebhookException(string message) : base(message) { }
+            public WebhookException(string message, System.Exception inner) : base(message, inner) { }
         }
 
         /// <summary>
