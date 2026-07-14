@@ -810,6 +810,42 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task TranslateActivityAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new TranslateActivityRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<TranslateActivityResponse>
+            {
+                Data = new TranslateActivityResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<TranslateActivityRequest, TranslateActivityResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TranslateActivityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.TranslateActivityAsync(id, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<TranslateActivityRequest, TranslateActivityResponse>(
+                "POST",
+                "/api/v2/feeds/activities/{id}/translate",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TranslateActivityRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task QueryBookmarkFoldersAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -1766,6 +1802,42 @@ namespace GetStream.Tests
                 "/api/v2/feeds/comments/{id}/restore",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<RestoreCommentRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task TranslateCommentAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new TranslateCommentRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<TranslateCommentResponse>
+            {
+                Data = new TranslateCommentResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<TranslateCommentRequest, TranslateCommentResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TranslateCommentRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.TranslateCommentAsync(id, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<TranslateCommentRequest, TranslateCommentResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/translate",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<TranslateCommentRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
