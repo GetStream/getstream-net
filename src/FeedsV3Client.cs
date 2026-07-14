@@ -104,10 +104,11 @@ namespace GetStream
         public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(QueryActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>(
                 "POST",
-                "/api/v2/feeds/activities/query", null, request, null,
+                "/api/v2/feeds/activities/query", queryParams, request, null,
                 cancellationToken);
 
             return result;
@@ -359,6 +360,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<TranslateActivityResponse>> TranslateActivityAsync(string id, TranslateActivityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<TranslateActivityRequest, TranslateActivityResponse>(
+                "POST",
+                "/api/v2/feeds/activities/{id}/translate", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryBookmarkFoldersResponse>> QueryBookmarkFoldersAsync(QueryBookmarkFoldersRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -403,10 +419,11 @@ namespace GetStream
         public async Task<StreamResponse<QueryBookmarksResponse>> QueryBookmarksAsync(QueryBookmarksRequest request,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<QueryBookmarksRequest, QueryBookmarksResponse>(
                 "POST",
-                "/api/v2/feeds/bookmarks/query", null, request, null,
+                "/api/v2/feeds/bookmarks/query", queryParams, request, null,
                 cancellationToken);
 
             return result;
@@ -516,10 +533,11 @@ namespace GetStream
         public async Task<StreamResponse<QueryCommentsResponse>> QueryCommentsAsync(QueryCommentsRequest request,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>(
                 "POST",
-                "/api/v2/feeds/comments/query", null, request, null,
+                "/api/v2/feeds/comments/query", queryParams, request, null,
                 cancellationToken);
 
             return result;
@@ -721,6 +739,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<TranslateCommentResponse>> TranslateCommentAsync(string id, TranslateCommentRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<TranslateCommentRequest, TranslateCommentResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/translate", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<ListFeedGroupsResponse>> ListFeedGroupsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -769,10 +802,11 @@ namespace GetStream
                 ["feed_group_id"] = feedGroupID,
                 ["feed_id"] = feedID,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<GetOrCreateFeedRequest, GetOrCreateFeedResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}", null, request, pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}", queryParams, request, pathParams,
                 cancellationToken);
 
             return result;
@@ -932,10 +966,11 @@ namespace GetStream
                 ["feed_group_id"] = feedGroupID,
                 ["feed_id"] = feedID,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<QueryPinnedActivitiesRequest, QueryPinnedActivitiesResponse>(
                 "POST",
-                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/pinned_activities/query", null, request, pathParams,
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/pinned_activities/query", queryParams, request, pathParams,
                 cancellationToken);
 
             return result;

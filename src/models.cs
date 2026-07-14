@@ -1078,6 +1078,8 @@ namespace GetStream.Models
         public List<ShareResponse> LatestShares { get; set; }
         [JsonPropertyName("current_feed")]
         public FeedResponse? CurrentFeed { get; set; }
+        [JsonPropertyName("i18n")]
+        public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("location")]
         public Location? Location { get; set; }
         [JsonPropertyName("metrics")]
@@ -2002,8 +2004,6 @@ namespace GetStream.Models
         public int MaxAggregatedActivitiesLength { get; set; }
         [JsonPropertyName("moderation_audio_call_moderation_enabled")]
         public bool ModerationAudioCallModerationEnabled { get; set; }
-        [JsonPropertyName("moderation_audio_file_enabled")]
-        public bool ModerationAudioFileEnabled { get; set; }
         [JsonPropertyName("moderation_enabled")]
         public bool ModerationEnabled { get; set; }
         [JsonPropertyName("moderation_llm_configurability_enabled")]
@@ -7868,6 +7868,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("i18n")]
+        public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         /// <summary>
@@ -11977,6 +11979,8 @@ namespace GetStream.Models
         public List<FeedsShareResponse> LatestShares { get; set; }
         [JsonPropertyName("current_feed")]
         public FeedsFeedResponse? CurrentFeed { get; set; }
+        [JsonPropertyName("i18n")]
+        public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("location")]
         public FeedsActivityLocation? Location { get; set; }
         [JsonPropertyName("metrics")]
@@ -12043,6 +12047,8 @@ namespace GetStream.Models
         public List<FeedsReactionResponse> LatestReactions { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("i18n")]
+        public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         [JsonPropertyName("reaction_groups")]
@@ -24795,6 +24801,8 @@ namespace GetStream.Models
         public List<ThreadedCommentResponse> Replies { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("i18n")]
+        public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("meta")]
         public RepliesMeta? Meta { get; set; }
         [JsonPropertyName("moderation")]
@@ -24962,6 +24970,46 @@ namespace GetStream.Models
         public SpeechSegmentConfig? SpeechSegmentConfig { get; set; }
         [JsonPropertyName("translation")]
         public TranslationSettings? Translation { get; set; }
+    }
+
+    public class TranslateActivityRequest
+    {
+        /// <summary>
+        /// ISO 639-1 language code to translate to
+        /// </summary>
+        [JsonPropertyName("language")]
+        public string Language { get; set; }
+    }
+
+    public class TranslateActivityResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("activity")]
+        public ActivityResponse Activity { get; set; }
+    }
+
+    public class TranslateCommentRequest
+    {
+        /// <summary>
+        /// ISO 639-1 language code to translate to
+        /// </summary>
+        [JsonPropertyName("language")]
+        public string Language { get; set; }
+    }
+
+    public class TranslateCommentResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("comment")]
+        public CommentResponse Comment { get; set; }
     }
 
     public class TranslateMessageRequest
@@ -25668,6 +25716,8 @@ namespace GetStream.Models
         public int? RemindersInterval { get; set; }
         [JsonPropertyName("reminders_max_members")]
         public int? RemindersMaxMembers { get; set; }
+        [JsonPropertyName("reminders_max_per_user")]
+        public int? RemindersMaxPerUser { get; set; }
         [JsonPropertyName("revoke_tokens_issued_before")]
         public DateTime? RevokeTokensIssuedBefore { get; set; }
         [JsonPropertyName("sns_key")]
