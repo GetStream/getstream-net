@@ -16956,6 +16956,50 @@ namespace GetStream.Models
         public string Duration { get; set; }
     }
 
+    public class ModerationCallResponse
+    {
+        [JsonPropertyName("backstage")]
+        public bool Backstage { get; set; }
+        [JsonPropertyName("captioning")]
+        public bool Captioning { get; set; }
+        [JsonPropertyName("cid")]
+        public string Cid { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("current_session_id")]
+        public string CurrentSessionID { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("recording")]
+        public bool Recording { get; set; }
+        [JsonPropertyName("transcribing")]
+        public bool Transcribing { get; set; }
+        [JsonPropertyName("translating")]
+        public bool Translating { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("blocked_user_ids")]
+        public List<string> BlockedUserIds { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("channel_cid")]
+        public string? ChannelCid { get; set; }
+        [JsonPropertyName("ended_at")]
+        public DateTime? EndedAt { get; set; }
+        [JsonPropertyName("join_ahead_time_seconds")]
+        public int? JoinAheadTimeSeconds { get; set; }
+        [JsonPropertyName("routing_number")]
+        public string? RoutingNumber { get; set; }
+        [JsonPropertyName("starts_at")]
+        public DateTime? StartsAt { get; set; }
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        [JsonPropertyName("created_by")]
+        public UserResponse? CreatedBy { get; set; }
+    }
+
     public class ModerationCheckCompletedEvent
     {
         [JsonPropertyName("created_at")]
@@ -22479,7 +22523,7 @@ namespace GetStream.Models
         [JsonPropertyName("assigned_to")]
         public UserResponse? AssignedTo { get; set; }
         [JsonPropertyName("call")]
-        public CallResponse? Call { get; set; }
+        public ModerationCallResponse? Call { get; set; }
         [JsonPropertyName("entity_creator")]
         public EntityCreatorResponse? EntityCreator { get; set; }
         [JsonPropertyName("escalation_metadata")]
