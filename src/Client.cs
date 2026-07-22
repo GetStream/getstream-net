@@ -125,7 +125,7 @@ namespace GetStream
             if (opts.LogBodies)
             {
                 _logger.LogWarning(
-                    "log_bodies enabled: request and response bodies will be logged (known secret keys are shallow-redacted only; do not enable where bodies may carry sensitive data outside that set)");
+                    "HTTP request/response bodies will be logged. Auth headers and known-secret fields are still redacted, but other sensitive data (messages, PII) may appear in logs. Disable for production.");
             }
         }
 
