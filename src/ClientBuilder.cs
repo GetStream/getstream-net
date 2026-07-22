@@ -37,6 +37,7 @@ namespace GetStream
         private TimeSpan _requestTimeout = TimeSpan.FromSeconds(30);
         private System.Net.Http.HttpClient? _httpClient;
         private ILogger? _logger;
+        private bool _logBodies;
 
         /// <summary>
         /// Set the API key
@@ -100,6 +101,9 @@ namespace GetStream
 
         /// <summary>Opt-in INFO log on construction.</summary>
         public ClientBuilder Logger(ILogger logger) { _logger = logger; return this; }
+
+        /// <summary>Opt-in body logging (DEBUG events); shallow secret-key redaction still applies. Default false.</summary>
+        public ClientBuilder LogBodies(bool enabled) { _logBodies = enabled; return this; }
 
         /// <summary>
         /// Create a client builder that loads configuration from environment variables
@@ -211,6 +215,7 @@ namespace GetStream
                 RequestTimeout = _requestTimeout,
                 HttpClient = _httpClient,
                 Logger = _logger,
+                LogBodies = _logBodies,
             };
         }
 

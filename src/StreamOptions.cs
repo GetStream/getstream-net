@@ -38,5 +38,8 @@ namespace GetStream
 
         /// <summary>When set, the SDK emits one INFO line on construction.</summary>
         public ILogger? Logger { get; set; }
+
+        /// <summary>Opt-in body logging on the DEBUG events; known-secret keys stay redacted. Default false.</summary>
+        public bool LogBodies { get; set; }
     }
 }

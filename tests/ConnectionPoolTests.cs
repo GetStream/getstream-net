@@ -196,11 +196,14 @@ namespace GetStream.Tests
             });
             Assert.That(capture.Infos.Count, Is.EqualTo(1), "exactly one INFO line on construction");
             var msg = capture.Infos[0];
-            Assert.That(msg, Does.Contain("max_conns_per_host=5"));
-            Assert.That(msg, Does.Contain("idle_timeout=00:00:55"));
-            Assert.That(msg, Does.Contain("connect_timeout=00:00:10"));
-            Assert.That(msg, Does.Contain("request_timeout=00:00:30"));
-            Assert.That(msg, Does.Contain("user_http_client=false"));
+            Assert.That(msg, Does.StartWith("client.initialized"));
+            Assert.That(msg, Does.Contain("stream.client.max_conns_per_host=5"));
+            Assert.That(msg, Does.Contain("stream.client.idle_timeout_seconds=55"));
+            Assert.That(msg, Does.Contain("stream.client.connect_timeout_seconds=10"));
+            Assert.That(msg, Does.Contain("stream.client.request_timeout_seconds=30"));
+            Assert.That(msg, Does.Contain("stream.client.user_http_client=false"));
+            Assert.That(msg, Does.Contain("stream.client.gzip_enabled=true"));
+            Assert.That(msg, Does.Contain("stream.client.log_bodies=false"));
         }
 
         [Test]
@@ -215,8 +218,9 @@ namespace GetStream.Tests
                 Logger = capture,
             });
             Assert.That(capture.Infos.Count, Is.EqualTo(1));
-            Assert.That(capture.Infos[0], Does.Contain("user_http_client=true"));
-            Assert.That(capture.Infos[0], Does.Contain("5 knobs not applied"));
+            Assert.That(capture.Infos[0], Does.Contain("stream.client.user_http_client=true"));
+            Assert.That(capture.Infos[0], Does.Contain("stream.client.gzip_enabled=false"),
+                "escape hatch: SDK doesn't wire gzip itself, so it can't claim gzip_enabled=true");
         }
 
         [Test]

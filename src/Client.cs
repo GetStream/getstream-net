@@ -21,6 +21,7 @@ namespace GetStream
         private readonly HttpClient _httpClient;
         private readonly Microsoft.Extensions.Logging.ILogger? _logger;
         private readonly bool _userHttpClient;
+        private readonly bool _logBodies;
         protected string ApiKey;
         protected string ApiSecret;
         protected string BaseUrl;
@@ -58,6 +59,7 @@ namespace GetStream
             ApiSecret = opts.ApiSecret;
             BaseUrl = opts.BaseUrl;
             _logger = opts.Logger;
+            _logBodies = opts.LogBodies;
 
             if (opts.HttpClient != null)
             {
@@ -78,7 +80,7 @@ namespace GetStream
                 Converters = { new NanosecondTimestampConverter(), new FeedOwnCapabilityConverter(), new ChannelOwnCapabilityConverter(), new OwnCapabilityConverter() }
             };
 
-            LogConstruction(opts);
+            LogInitialized(opts);
         }
 
         private static HttpClient BuildDefaultHttpClient(StreamOptions opts)
@@ -96,19 +98,34 @@ namespace GetStream
             return new HttpClient(handler) { Timeout = opts.RequestTimeout };
         }
 
-        private void LogConstruction(StreamOptions opts)
+        /// <summary>
+        /// Emits the <c>client.initialized</c> INFO event exactly once (logging spec §6.1), then a one-shot
+        /// WARN when <see cref="StreamOptions.LogBodies"/> is enabled. See README "Structured Logging" for
+        /// the PascalCase-placeholder-to-canonical-field mapping.
+        /// </summary>
+        private void LogInitialized(StreamOptions opts)
         {
             if (_logger == null) return;
-            if (_userHttpClient)
+
+            // The SDK only wires gzip itself on the default-built handler (CHA-2961); when the caller
+            // supplies their own HttpClient (escape hatch), gzip is entirely the caller's concern.
+            // Bools are rendered lowercase explicitly: bool.ToString() defaults to "True"/"False",
+            // which would be the only capitalized values among an otherwise all-lowercase field set
+            // shared verbatim across the 6-SDK logging spec.
+            var gzipEnabled = (!_userHttpClient).ToString().ToLowerInvariant();
+            var userHttpClient = _userHttpClient.ToString().ToLowerInvariant();
+            var logBodies = opts.LogBodies.ToString().ToLowerInvariant();
+
+            _logger.LogInformation(
+                "client.initialized stream.sdk.name={SdkName} stream.sdk.version={SdkVersion} stream.client.max_conns_per_host={MaxConnsPerHost} stream.client.idle_timeout_seconds={IdleTimeoutSeconds} stream.client.connect_timeout_seconds={ConnectTimeoutSeconds} stream.client.request_timeout_seconds={RequestTimeoutSeconds} stream.client.gzip_enabled={GzipEnabled} stream.client.user_http_client={UserHttpClient} stream.client.log_bodies={LogBodies}",
+                "getstream-net", VersionName,
+                opts.MaxConnsPerHost, opts.IdleTimeout.TotalSeconds, opts.ConnectTimeout.TotalSeconds, opts.RequestTimeout.TotalSeconds,
+                gzipEnabled, userHttpClient, logBodies);
+
+            if (opts.LogBodies)
             {
-                _logger.LogInformation(
-                    "connection pool: user_http_client=true (5 knobs not applied)");
-            }
-            else
-            {
-                _logger.LogInformation(
-                    "connection pool: max_conns_per_host={MaxConnsPerHost} idle_timeout={IdleTimeout} connect_timeout={ConnectTimeout} request_timeout={RequestTimeout} user_http_client=false",
-                    opts.MaxConnsPerHost, opts.IdleTimeout, opts.ConnectTimeout, opts.RequestTimeout);
+                _logger.LogWarning(
+                    "HTTP request/response bodies will be logged. Auth headers and known-secret fields are still redacted, but other sensitive data (messages, PII) may appear in logs. Disable for production.");
             }
         }
 
@@ -130,6 +147,7 @@ namespace GetStream
             request.Headers.Add("X-Stream-Client", VersionHeader);
 
             // Add request body if provided
+            string? requestBodyForLog = null;
             if (requestBody != null)
             {
                 // Handle multipart form data for file/image uploads
@@ -146,9 +164,30 @@ namespace GetStream
                     // Default to JSON for other request types
                     var json = JsonSerializer.Serialize(requestBody, _jsonOptions);
                     request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                    requestBodyForLog = json;
                 }
             }
 
+            // Uri parses the same absolute URL BuildUrl just produced, so path/query for
+            // logging never drift from what is actually sent on the wire.
+            var uri = new Uri(url);
+            var logPath = uri.AbsolutePath;
+            var logQuery = LogRedaction.RedactQuery(uri.Query.TrimStart('?'));
+
+            if (_logger != null)
+            {
+                if (_logBodies && requestBodyForLog != null)
+                {
+                    _logger.LogDebug("http.request.sent {Method} {Path} {Query} {Body}",
+                        method, logPath, logQuery, LogRedaction.RedactJsonBody(requestBodyForLog));
+                }
+                else
+                {
+                    _logger.LogDebug("http.request.sent {Method} {Path} {Query}", method, logPath, logQuery);
+                }
+            }
+
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             HttpResponseMessage response;
             string responseContent;
             try
@@ -158,7 +197,29 @@ namespace GetStream
             }
             catch (Exception ex) when (IsTransportException(ex, cancellationToken))
             {
-                throw WrapTransportException(ex, cancellationToken);
+                stopwatch.Stop();
+                var transportException = WrapTransportException(ex, cancellationToken);
+                _logger?.LogError("http.request.failed {Method} {Path} {ErrorType} {DurationMs} {Message}",
+                    method, logPath, transportException.ErrorType, stopwatch.ElapsedMilliseconds,
+                    LogRedaction.RedactMessage(transportException.Message));
+                throw transportException;
+            }
+            stopwatch.Stop();
+
+            if (_logger != null)
+            {
+                var bodySize = Encoding.UTF8.GetByteCount(responseContent);
+                if (_logBodies)
+                {
+                    _logger.LogDebug("http.response.received {Method} {Path} {StatusCode} {BodySize} {DurationMs} {Body}",
+                        method, logPath, (int)response.StatusCode, bodySize, stopwatch.ElapsedMilliseconds,
+                        LogRedaction.RedactJsonBody(responseContent));
+                }
+                else
+                {
+                    _logger.LogDebug("http.response.received {Method} {Path} {StatusCode} {BodySize} {DurationMs}",
+                        method, logPath, (int)response.StatusCode, bodySize, stopwatch.ElapsedMilliseconds);
+                }
             }
 
             if (!response.IsSuccessStatusCode)
@@ -177,6 +238,7 @@ namespace GetStream
             return new StreamResponse<TResponse>();
         }
 
+        // CHA-2957: near-duplicate send path, not exposed on IClient; intentionally not instrumented with structured logging.
         public async Task<StreamResponse<TResponse>> MakeRequestAsyncDebug<TRequest, TResponse>(
             string method,
             string path,
