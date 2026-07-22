@@ -80,6 +80,52 @@ The SDK development workflow:
 
 The SDK follows .NET best practices and conventions while providing a clean, maintainable codebase for GetStream's Feeds API integration.
 
+## Structured Logging
+
+Pass `Logger` on `StreamOptions` (or `ClientBuilder.Logger(...)`) to receive structured events via `Microsoft.Extensions.Logging.ILogger`. No logger set means no output; the SDK never changes the logger's configured level. Four canonical events, matching the cross-SDK logging spec:
+
+| Event (dotted name, message prefix) | Level | Emitted |
+|---|---|---|
+| `client.initialized` | INFO | Once, at `BaseClient` construction |
+| `http.request.sent` | DEBUG | Before every request is sent |
+| `http.response.received` | DEBUG | After any HTTP response, including 4xx/5xx |
+| `http.request.failed` | ERROR | Only on a transport failure (no HTTP response received) |
+
+.NET's `ILogger` uses PascalCase message-template placeholders (`{Method}`, `{StatusCode}`, ...). Each maps to a canonical snake_case field name used identically across all GetStream SDKs:
+
+| Event | Placeholder | Canonical field |
+|---|---|---|
+| `client.initialized` | `{SdkName}` | `stream.sdk.name` |
+| | `{SdkVersion}` | `stream.sdk.version` |
+| | `{MaxConnsPerHost}` | `stream.client.max_conns_per_host` |
+| | `{IdleTimeoutSeconds}` | `stream.client.idle_timeout_seconds` |
+| | `{ConnectTimeoutSeconds}` | `stream.client.connect_timeout_seconds` |
+| | `{RequestTimeoutSeconds}` | `stream.client.request_timeout_seconds` |
+| | `{GzipEnabled}` | `stream.client.gzip_enabled` |
+| | `{UserHttpClient}` | `stream.client.user_http_client` |
+| | `{LogBodies}` | `stream.client.log_bodies` |
+| `http.request.sent` | `{Method}` | `method` |
+| | `{Path}` | `path` |
+| | `{Query}` | `query` (redacted) |
+| | `{Body}` | `body` (redacted; only present when `LogBodies=true`) |
+| `http.response.received` | `{Method}` | `method` |
+| | `{Path}` | `path` |
+| | `{StatusCode}` | `status_code` |
+| | `{BodySize}` | `body_size` (bytes) |
+| | `{DurationMs}` | `duration_ms` |
+| | `{Body}` | `body` (redacted; only present when `LogBodies=true`) |
+| `http.request.failed` | `{Method}` | `method` |
+| | `{Path}` | `path` |
+| | `{ErrorType}` | `error.type` |
+| | `{DurationMs}` | `duration_ms` |
+| | `{Message}` | `error.message` (redacted) |
+
+`error.type` is one of `connection_reset`, `timeout`, `dns_failure`, `tls_handshake_failed`, `unknown` (see `GetStreamTransportException.ErrorType`).
+
+**Redaction (always on, no opt-out):** query values for `api_key`/`api_secret`/`token` (case-insensitive) become `<redacted>`; top-level JSON body keys `api_secret`/`token`/`password` become `<redacted>` (shallow, key names are preserved). No header values are ever logged. `error.message` is additionally scrubbed for any `api_key=`/`api_secret=`/`token=` value appearing anywhere in the free-form transport-exception text.
+
+**Bodies are not logged by default.** Set `StreamOptions.LogBodies = true` (or `ClientBuilder.LogBodies(true)`) to opt in; body content is still key-redacted as above. Enabling it emits exactly one WARN line at construction.
+
 ## Release Process
 
 Releases use two paths, both handled by `.github/workflows/release.yml`:
