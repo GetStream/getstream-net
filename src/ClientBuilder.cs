@@ -38,6 +38,7 @@ namespace GetStream
         private System.Net.Http.HttpClient? _httpClient;
         private ILogger? _logger;
         private bool _logBodies;
+        private RetryConfig? _retry;
 
         /// <summary>
         /// Set the API key
@@ -104,6 +105,9 @@ namespace GetStream
 
         /// <summary>Opt-in body logging (DEBUG events); shallow secret-key redaction still applies. Default false.</summary>
         public ClientBuilder LogBodies(bool enabled) { _logBodies = enabled; return this; }
+
+        /// <summary>Opt-in auto-retry policy (default: disabled, no retries).</summary>
+        public ClientBuilder Retry(RetryConfig retry) { _retry = retry; return this; }
 
         /// <summary>
         /// Create a client builder that loads configuration from environment variables
@@ -216,6 +220,7 @@ namespace GetStream
                 HttpClient = _httpClient,
                 Logger = _logger,
                 LogBodies = _logBodies,
+                Retry = _retry,
             };
         }
 

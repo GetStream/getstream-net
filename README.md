@@ -89,7 +89,7 @@ Pass `Logger` on `StreamOptions` (or `ClientBuilder.Logger(...)`) to receive str
 | `client.initialized` | INFO | Once, at `BaseClient` construction |
 | `http.request.sent` | DEBUG | Before every request is sent |
 | `http.response.received` | DEBUG | After any HTTP response, including 4xx/5xx |
-| `http.request.failed` | ERROR | Only on a transport failure (no HTTP response received) |
+| `http.request.failed` | ERROR or DEBUG | ERROR on a final transport failure (no HTTP response received); DEBUG instead, with a `{RetryAttempt}` field, on any attempt that [Retry](#retry-policy) will retry. Never emitted for a final/non-retried 429 (already covered by `http.response.received`). |
 
 .NET's `ILogger` uses PascalCase message-template placeholders (`{Method}`, `{StatusCode}`, ...). Each maps to a canonical snake_case field name used identically across all GetStream SDKs:
 
@@ -116,15 +116,36 @@ Pass `Logger` on `StreamOptions` (or `ClientBuilder.Logger(...)`) to receive str
 | | `{Body}` | `body` (redacted; only present when `LogBodies=true`) |
 | `http.request.failed` | `{Method}` | `method` |
 | | `{Path}` | `path` |
-| | `{ErrorType}` | `error.type` |
-| | `{DurationMs}` | `duration_ms` |
-| | `{Message}` | `error.message` (redacted) |
+| | `{ErrorType}` | `error.type` (transport failures only; never present on a retried 429 — see below) |
+| | `{DurationMs}` | `duration_ms` (transport failures only) |
+| | `{Message}` | `error.message` (redacted; transport failures only) |
+| | `{RetryAttempt}` | `retry.attempt` (1-indexed; present only when this attempt will be retried) |
 
-`error.type` is one of `connection_reset`, `timeout`, `dns_failure`, `tls_handshake_failed`, `unknown` (see `GetStreamTransportException.ErrorType`).
+`error.type` is one of `connection_reset`, `timeout`, `dns_failure`, `tls_handshake_failed`, `unknown` (see `GetStreamTransportException.ErrorType`) — a closed transport-only enum. A retried HTTP 429 has no transport error at all, so its `http.request.failed` DEBUG line carries only `{Method}`, `{Path}`, `{RetryAttempt}`: never `{ErrorType}`.
 
 **Redaction (always on, no opt-out):** query values for `api_key`/`api_secret`/`token` (case-insensitive) become `<redacted>`; top-level JSON body keys `api_secret`/`token`/`password` become `<redacted>` (shallow, key names are preserved). No header values are ever logged. `error.message` is additionally scrubbed for any `api_key=`/`api_secret=`/`token=` value appearing anywhere in the free-form transport-exception text.
 
 **Bodies are not logged by default.** Set `StreamOptions.LogBodies = true` (or `ClientBuilder.LogBodies(true)`) to opt in; body content is still key-redacted as above. Enabling it emits exactly one WARN line at construction.
+
+## Retry Policy
+
+Auto-retry is opt-in and off by default: with no `Retry` configured, the client performs exactly one attempt and errors surface unchanged.
+
+```csharp
+var client = new StreamClient(new StreamOptions
+{
+    ApiKey = "...",
+    ApiSecret = "...",
+    Retry = new RetryConfig { Enabled = true, MaxAttempts = 3, MaxBackoff = TimeSpan.FromSeconds(30) },
+});
+```
+
+When enabled:
+- Only `GET`/`HEAD` requests are retried. Writes (`POST`/`PUT`/`PATCH`/`DELETE`) never are.
+- Only HTTP 429 (rate limit) and transport-layer failures (connection reset, timeout, DNS, TLS) are retried; any other 4xx/5xx is never retried.
+- A 429 marked `unrecoverable` by the backend is never retried.
+- `MaxAttempts` is the total attempt budget including the initial request (default `3`: 1 initial + 2 retries).
+- The delay before each retry honors a `Retry-After` response header when present, clamped to `MaxBackoff`; otherwise it's full jitter over `[0, min(MaxBackoff, 2^attempt seconds)]`.
 
 ## Release Process
 

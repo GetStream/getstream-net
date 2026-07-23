@@ -22,6 +22,7 @@ namespace GetStream
         private readonly Microsoft.Extensions.Logging.ILogger? _logger;
         private readonly bool _userHttpClient;
         private readonly bool _logBodies;
+        private readonly RetryConfig? _retry;
         protected string ApiKey;
         protected string ApiSecret;
         protected string BaseUrl;
@@ -60,6 +61,7 @@ namespace GetStream
             BaseUrl = opts.BaseUrl;
             _logger = opts.Logger;
             _logBodies = opts.LogBodies;
+            _retry = opts.Retry;
 
             if (opts.HttpClient != null)
             {
@@ -129,6 +131,11 @@ namespace GetStream
             }
         }
 
+        /// <summary>
+        /// CHA-2959 retry loop wrapping <see cref="SendOnceAsync{TRequest,TResponse}"/>. Retries are opt-in
+        /// via <see cref="StreamOptions.Retry"/> (disabled by default: exactly one attempt, errors surface
+        /// unchanged). See <see cref="ShouldRetry"/> / <see cref="RetryDelay"/> for the policy.
+        /// </summary>
         public async Task<StreamResponse<TResponse>> MakeRequestAsync<TRequest, TResponse>(
             string method,
             string path,
@@ -138,6 +145,98 @@ namespace GetStream
             CancellationToken cancellationToken = default)
         {
             var url = BuildUrl(path, queryParams, pathParams);
+            // Uri parses the same absolute URL BuildUrl just produced, so the path used for
+            // logging never drifts from what is actually sent on the wire.
+            var logPath = new Uri(url).AbsolutePath;
+
+            for (var attempt = 0; ; attempt++)
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                try
+                {
+                    return await SendOnceAsync<TRequest, TResponse>(method, url, requestBody, cancellationToken);
+                }
+                catch (GetStreamException ex)
+                {
+                    stopwatch.Stop();
+                    var willRetry = ShouldRetry(ex, method, attempt);
+
+                    // CHA-2957/CHA-2959: failure logging lives here (not in SendOnceAsync) because only the
+                    // loop knows whether this attempt will retry (DEBUG) or is final (ERROR). CROSS-SDK RULE:
+                    // ErrorType is a closed transport-only enum, so a retried 429 logs through a separate
+                    // template that omits the {ErrorType} placeholder entirely; a final/non-retried 429 logs
+                    // nothing here (unchanged: it was already logged via http.response.received).
+                    if (ex is GetStreamTransportException transportEx)
+                    {
+                        if (willRetry)
+                        {
+                            _logger?.LogDebug("http.request.failed {Method} {Path} {ErrorType} {DurationMs} {Message} {RetryAttempt}",
+                                method, logPath, transportEx.ErrorType, stopwatch.ElapsedMilliseconds,
+                                LogRedaction.RedactMessage(transportEx.Message), attempt + 1);
+                        }
+                        else
+                        {
+                            _logger?.LogError("http.request.failed {Method} {Path} {ErrorType} {DurationMs} {Message}",
+                                method, logPath, transportEx.ErrorType, stopwatch.ElapsedMilliseconds,
+                                LogRedaction.RedactMessage(transportEx.Message));
+                        }
+                    }
+                    else if (willRetry && ex is GetStreamRateLimitException)
+                    {
+                        _logger?.LogDebug("http.request.failed {Method} {Path} {RetryAttempt}", method, logPath, attempt + 1);
+                    }
+
+                    if (!willRetry) throw;
+
+                    await Task.Delay(RetryDelay(ex, attempt), cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>CHA-2959: true when the retry policy is enabled and this failed attempt should be retried.</summary>
+        internal bool ShouldRetry(GetStreamException ex, string method, int attempt)
+        {
+            if (_retry is not { Enabled: true }) return false;
+            if (method != "GET" && method != "HEAD") return false;
+            if (attempt + 1 >= _retry.MaxAttempts) return false;
+
+            return ex switch
+            {
+                GetStreamRateLimitException rl => !rl.Unrecoverable,
+                GetStreamTransportException => true,
+                _ => false,
+            };
+        }
+
+        /// <summary>
+        /// CHA-2959: delay before the next attempt. Honors <c>Retry-After</c> (clamped to <see cref="RetryConfig.MaxBackoff"/>)
+        /// when present and positive; otherwise full jitter over <c>[0, min(MaxBackoff, 2^attempt seconds)]</c>.
+        /// Only called after <see cref="ShouldRetry"/> returned true, so <c>_retry</c> is non-null here.
+        /// </summary>
+        internal TimeSpan RetryDelay(GetStreamException ex, int attempt)
+        {
+            if (ex is GetStreamRateLimitException { RetryAfter: { } retryAfter } && retryAfter > TimeSpan.Zero)
+            {
+                return retryAfter < _retry!.MaxBackoff ? retryAfter : _retry.MaxBackoff;
+            }
+
+            // Exponent clamped to 30 so the shift never wraps (long shift counts are masked mod 64 in C#).
+            var ceilTicks = Math.Min(_retry!.MaxBackoff.Ticks, TimeSpan.TicksPerSecond << Math.Min(attempt, 30));
+            return ceilTicks <= 0 ? TimeSpan.Zero : TimeSpan.FromTicks((long)(Random.Shared.NextDouble() * ceilTicks));
+        }
+
+        /// <summary>
+        /// Builds and sends a single HTTP attempt: fresh <see cref="HttpRequestMessage"/> (a sent request
+        /// cannot be reused across retries), logs <c>http.request.sent</c>/<c>http.response.received</c>,
+        /// and throws on transport failure or non-2xx without logging <c>http.request.failed</c> itself
+        /// -- that is the retry loop's job (see <see cref="MakeRequestAsync{TRequest,TResponse}"/>).
+        /// </summary>
+        private async Task<StreamResponse<TResponse>> SendOnceAsync<TRequest, TResponse>(
+            string method,
+            string url,
+            TRequest? requestBody,
+            CancellationToken cancellationToken)
+        {
             var request = new HttpRequestMessage(new HttpMethod(method), url);
 
             // Add authentication headers
@@ -168,8 +267,6 @@ namespace GetStream
                 }
             }
 
-            // Uri parses the same absolute URL BuildUrl just produced, so path/query for
-            // logging never drift from what is actually sent on the wire.
             var uri = new Uri(url);
             var logPath = uri.AbsolutePath;
             var logQuery = LogRedaction.RedactQuery(uri.Query.TrimStart('?'));
@@ -197,12 +294,7 @@ namespace GetStream
             }
             catch (Exception ex) when (IsTransportException(ex, cancellationToken))
             {
-                stopwatch.Stop();
-                var transportException = WrapTransportException(ex, cancellationToken);
-                _logger?.LogError("http.request.failed {Method} {Path} {ErrorType} {DurationMs} {Message}",
-                    method, logPath, transportException.ErrorType, stopwatch.ElapsedMilliseconds,
-                    LogRedaction.RedactMessage(transportException.Message));
-                throw transportException;
+                throw WrapTransportException(ex, cancellationToken);
             }
             stopwatch.Stop();
 
@@ -239,6 +331,7 @@ namespace GetStream
         }
 
         // CHA-2957: near-duplicate send path, not exposed on IClient; intentionally not instrumented with structured logging.
+        // CHA-2959: for the same reason (not on IClient, no generated code calls it), intentionally excluded from the retry policy.
         public async Task<StreamResponse<TResponse>> MakeRequestAsyncDebug<TRequest, TResponse>(
             string method,
             string path,
