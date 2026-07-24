@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [15.0.0] - 2026-07-24
+
 ### Breaking Changes: OpenAPI regen (schema name-collision fixes, CHA-3559)
 
 Regenerated from chat/ after upstream schema name-collision fixes. The JSON wire contract is unchanged for all of these; the breaks are in the generated C# type surface, so consumer code fails to compile until updated.
