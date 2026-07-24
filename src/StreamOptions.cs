@@ -41,5 +41,8 @@ namespace GetStream
 
         /// <summary>Opt-in body logging on the DEBUG events; known-secret keys stay redacted. Default false.</summary>
         public bool LogBodies { get; set; }
+
+        /// <summary>Opt-in auto-retry policy. Null (or Enabled=false) means no retries.</summary>
+        public RetryConfig? Retry { get; set; }
     }
 }
