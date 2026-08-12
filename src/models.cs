@@ -13743,6 +13743,8 @@ namespace GetStream.Models
         public string? View { get; set; }
         [JsonPropertyName("watch")]
         public bool? Watch { get; set; }
+        [JsonPropertyName("discard_actors")]
+        public List<string> DiscardActors { get; set; }
         [JsonPropertyName("data")]
         public FeedInput? Data { get; set; }
         [JsonPropertyName("enrichment_options")]
