@@ -850,6 +850,11 @@ namespace GetStream.Models
         [JsonPropertyName("collection_refs")]
         public List<string> CollectionRefs { get; set; }
         /// <summary>
+        /// Collections to create or update as part of this request, so an activity and the collections it references can be written in one call. Their refs (name:id) are added to collection_refs automatically; you do not need to restate them, and they count toward the same per-activity collection-reference limit, which is the effective cap here. A collection that already exists has its custom data updated. Use collection_refs instead when the collection already exists and you are only referencing it, which requires no collection permissions.
+        /// </summary>
+        [JsonPropertyName("collections")]
+        public List<CollectionRequest> Collections { get; set; }
+        /// <summary>
         /// Tags for filtering activities
         /// </summary>
         [JsonPropertyName("filter_tags")]
@@ -1350,6 +1355,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("collection_refs")]
         public List<string> CollectionRefs { get; set; }
+        /// <summary>
+        /// Collections to create or update as part of this request, so an activity and the collections it references can be written in one call. Their refs (name:id) are added to collection_refs automatically; you do not need to restate them, and they count toward the same per-activity collection-reference limit, which is the effective cap here. A collection that already exists has its custom data updated. Use collection_refs instead when the collection already exists and you are only referencing it, which requires no collection permissions.
+        /// </summary>
+        [JsonPropertyName("collections")]
+        public List<CollectionRequest> Collections { get; set; }
         /// <summary>
         /// Tags for filtering activities
         /// </summary>
@@ -2002,6 +2012,8 @@ namespace GetStream.Models
         public bool ImageModerationEnabled { get; set; }
         [JsonPropertyName("max_aggregated_activities_length")]
         public int MaxAggregatedActivitiesLength { get; set; }
+        [JsonPropertyName("member_custom_on_messages_enabled")]
+        public bool MemberCustomOnMessagesEnabled { get; set; }
         [JsonPropertyName("moderation_audio_call_moderation_enabled")]
         public bool ModerationAudioCallModerationEnabled { get; set; }
         [JsonPropertyName("moderation_enabled")]
@@ -2072,6 +2084,8 @@ namespace GetStream.Models
         public int? BeforeMessageSendHookAttemptTimeoutMs { get; set; }
         [JsonPropertyName("before_message_send_hook_url")]
         public string? BeforeMessageSendHookUrl { get; set; }
+        [JsonPropertyName("chat_primary_use_case")]
+        public string? ChatPrimaryUseCase { get; set; }
         [JsonPropertyName("moderation_onboarding_complete")]
         public bool? ModerationOnboardingComplete { get; set; }
         [JsonPropertyName("moderation_s3_image_access_role_arn")]
@@ -2697,6 +2711,11 @@ namespace GetStream.Models
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
         /// <summary>
+        /// The channel this ban applies to. Empty if this is an app-wide (global) ban rather than a per-channel ban.
+        /// </summary>
+        [JsonPropertyName("channel_cid")]
+        public string? ChannelCid { get; set; }
+        /// <summary>
         /// When the ban expires
         /// </summary>
         [JsonPropertyName("expires")]
@@ -2711,6 +2730,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("shadow")]
         public bool? Shadow { get; set; }
+        [JsonPropertyName("channel")]
+        public ChannelMetadata? Channel { get; set; }
         [JsonPropertyName("created_by")]
         public UserResponse? CreatedBy { get; set; }
         [JsonPropertyName("user")]
@@ -2947,6 +2968,8 @@ namespace GetStream.Models
         public DateTime? CreatedAt { get; set; }
         [JsonPropertyName("id")]
         public string? ID { get; set; }
+        [JsonPropertyName("owner_user_id")]
+        public string? OwnerUserID { get; set; }
         [JsonPropertyName("team")]
         public string? Team { get; set; }
         /// <summary>
@@ -4627,6 +4650,8 @@ namespace GetStream.Models
         public BackstageSettingsRequest? Backstage { get; set; }
         [JsonPropertyName("broadcasting")]
         public BroadcastSettingsRequest? Broadcasting { get; set; }
+        [JsonPropertyName("encryption")]
+        public EncryptionSettingsRequest? Encryption { get; set; }
         [JsonPropertyName("frame_recording")]
         public FrameRecordingSettingsRequest? FrameRecording { get; set; }
         [JsonPropertyName("geofencing")]
@@ -4663,6 +4688,8 @@ namespace GetStream.Models
         public BackstageSettingsResponse Backstage { get; set; }
         [JsonPropertyName("broadcasting")]
         public BroadcastSettingsResponse Broadcasting { get; set; }
+        [JsonPropertyName("encryption")]
+        public EncryptionSettingsResponse Encryption { get; set; }
         [JsonPropertyName("frame_recording")]
         public FrameRecordingSettingsResponse FrameRecording { get; set; }
         [JsonPropertyName("geofencing")]
@@ -5433,6 +5460,9 @@ namespace GetStream.Models
     {
         [JsonPropertyName("operation")]
         public string Operation { get; set; }
+        /// <summary>
+        /// Filter to apply to the query
+        /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
         [JsonPropertyName("members")]
@@ -5681,6 +5711,27 @@ namespace GetStream.Models
         public Dictionary<string, List<string>> Grants { get; set; }
     }
 
+    public class ChannelContextResponse
+    {
+        /// <summary>
+        /// Channel CID (<type>:<id>)
+        /// </summary>
+        [JsonPropertyName("cid")]
+        public string Cid { get; set; }
+        /// <summary>
+        /// Channel ID
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        /// <summary>
+        /// Channel type
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("created_by")]
+        public UserResponse? CreatedBy { get; set; }
+    }
+
     public class ChannelCreatedEvent
     {
         /// <summary>
@@ -5874,6 +5925,11 @@ namespace GetStream.Models
         public bool? State { get; set; }
         [JsonPropertyName("thread_unread_counts")]
         public bool? ThreadUnreadCounts { get; set; }
+        /// <summary>
+        /// Top-level keys of the message sender's channel-member custom data to include under member.custom (max 8 keys, 64 chars each)
+        /// </summary>
+        [JsonPropertyName("member_custom_include")]
+        public List<string> MemberCustomInclude { get; set; }
         [JsonPropertyName("data")]
         public ChannelInput? Data { get; set; }
         [JsonPropertyName("members")]
@@ -5948,7 +6004,7 @@ namespace GetStream.Models
         [JsonPropertyName("auto_translation_enabled")]
         public bool? AutoTranslationEnabled { get; set; }
         /// <summary>
-        /// Switch auto translation language
+        /// Language (or comma-separated list of languages) to translate to when auto translation is active
         /// </summary>
         [JsonPropertyName("auto_translation_language")]
         public string? AutoTranslationLanguage { get; set; }
@@ -6006,6 +6062,25 @@ namespace GetStream.Models
         public object Custom { get; set; }
     }
 
+    public class ChannelMemberPartialResponse
+    {
+        /// <summary>
+        /// Role of the member in the channel
+        /// </summary>
+        [JsonPropertyName("channel_role")]
+        public string ChannelRole { get; set; }
+        /// <summary>
+        /// Whether the user muted notifications for this channel
+        /// </summary>
+        [JsonPropertyName("notifications_muted")]
+        public bool NotificationsMuted { get; set; }
+        /// <summary>
+        /// Channel-member custom fields projected via `member_custom_include`
+        /// </summary>
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+    }
+
     public class ChannelMemberRequest
     {
         [JsonPropertyName("user_id")]
@@ -6059,8 +6134,18 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("ban_expires")]
         public DateTime? BanExpires { get; set; }
+        /// <summary>
+        /// Whether the member's ban also applies to channels the channel's creator will create in the future (an active future channel ban by the creator targets this member)
+        /// </summary>
+        [JsonPropertyName("ban_from_future_channels")]
+        public bool? BanFromFutureChannels { get; set; }
         [JsonPropertyName("deleted_at")]
         public DateTime? DeletedAt { get; set; }
+        /// <summary>
+        /// Expiration date of the future channel ban; absent when the future channel ban is permanent
+        /// </summary>
+        [JsonPropertyName("future_channel_ban_expires")]
+        public DateTime? FutureChannelBanExpires { get; set; }
         /// <summary>
         /// Date when invite was accepted
         /// </summary>
@@ -6115,6 +6200,28 @@ namespace GetStream.Models
         public List<MessageResponse> Messages { get; set; }
         [JsonPropertyName("channel")]
         public ChannelResponse Channel { get; set; }
+    }
+
+    public class ChannelMetadata
+    {
+        [JsonPropertyName("cid")]
+        public string Cid { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("last_message_at")]
+        public DateTime? LastMessageAt { get; set; }
+        [JsonPropertyName("member_count")]
+        public int? MemberCount { get; set; }
+        [JsonPropertyName("message_count")]
+        public int? MessageCount { get; set; }
+        [JsonPropertyName("push_level")]
+        public string? PushLevel { get; set; }
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
     }
 
     public class ChannelMute
@@ -6226,7 +6333,7 @@ namespace GetStream.Models
         [JsonPropertyName("auto_translation_enabled")]
         public bool? AutoTranslationEnabled { get; set; }
         /// <summary>
-        /// Language to translate to when auto translation is active
+        /// Language (or comma-separated list of languages) to translate to when auto translation is active
         /// </summary>
         [JsonPropertyName("auto_translation_language")]
         public string? AutoTranslationLanguage { get; set; }
@@ -6851,7 +6958,7 @@ namespace GetStream.Models
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
-        public ChannelMemberResponse? Member { get; set; }
+        public ChannelMemberPartialResponse? Member { get; set; }
         [JsonPropertyName("moderation")]
         public ChatModerationV2Response? Moderation { get; set; }
         [JsonPropertyName("pinned_by")]
@@ -7364,6 +7471,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("join_attempt_id")]
         public string? JoinAttemptID { get; set; }
+        /// <summary>
+        /// Reason the client initiated the join. Optional on CoordinatorJoin events; empty when not provided.
+        /// </summary>
+        [JsonPropertyName("join_reason")]
+        public string? JoinReason { get; set; }
         /// <summary>
         /// Microphone permission status: INITIATED, FAILED, GRANTED, or NOT_INITIATED. Required on every MediaDevicePermission event.
         /// </summary>
@@ -8166,6 +8278,10 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("type")]
         public string? Type { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
 
     public class CreateBlockListResponse
@@ -8921,6 +9037,37 @@ namespace GetStream.Models
         public MembershipLevelResponse MembershipLevel { get; set; }
     }
 
+    public class CreatePolicyTestSetRequest
+    {
+        /// <summary>
+        /// Display name; unique within an app
+        /// </summary>
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        /// <summary>
+        /// Moderation config key (default: app default)
+        /// </summary>
+        [JsonPropertyName("config_key")]
+        public string? ConfigKey { get; set; }
+        /// <summary>
+        /// Execution target: 'check' or 'labels'. Optional — defaults to 'labels' when the org has the labels API enabled, 'check' otherwise
+        /// </summary>
+        [JsonPropertyName("mode")]
+        public string? Mode { get; set; }
+        /// <summary>
+        /// Team scope for the config (optional)
+        /// </summary>
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        /// <summary>
+        /// Messages to test; capped at 1000. Mutually exclusive with seed
+        /// </summary>
+        [JsonPropertyName("rows")]
+        public List<PolicyTestRow> Rows { get; set; }
+        [JsonPropertyName("seed")]
+        public PolicyTestSeedSpec? Seed { get; set; }
+    }
+
     public class CreatePollOptionRequest
     {
         /// <summary>
@@ -8930,7 +9077,10 @@ namespace GetStream.Models
         public string Text { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
-        [JsonPropertyName("Custom")]
+        /// <summary>
+        /// Custom data for this object
+        /// </summary>
+        [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
@@ -8978,7 +9128,10 @@ namespace GetStream.Models
         public string? VotingVisibility { get; set; }
         [JsonPropertyName("options")]
         public List<PollOptionInput> Options { get; set; }
-        [JsonPropertyName("Custom")]
+        /// <summary>
+        /// Custom data for this object
+        /// </summary>
+        [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
@@ -9969,6 +10122,40 @@ namespace GetStream.Models
         public string Duration { get; set; }
     }
 
+    public class DeleteUserMessagesRequestPayload
+    {
+        /// <summary>
+        /// Message deletion mode: soft, pruning, or hard
+        /// </summary>
+        [JsonPropertyName("delete_messages")]
+        public string DeleteMessages { get; set; }
+        /// <summary>
+        /// Optional: scope deletion to a single channel (alternative to app-wide deletion)
+        /// </summary>
+        [JsonPropertyName("channel_cid")]
+        public string? ChannelCid { get; set; }
+        /// <summary>
+        /// Whether to also delete the user's reactions on other users' messages
+        /// </summary>
+        [JsonPropertyName("delete_reactions")]
+        public bool? DeleteReactions { get; set; }
+        /// <summary>
+        /// ID of the user whose messages should be deleted (alternative to item_id)
+        /// </summary>
+        [JsonPropertyName("entity_id")]
+        public string? EntityID { get; set; }
+        /// <summary>
+        /// Type of the entity
+        /// </summary>
+        [JsonPropertyName("entity_type")]
+        public string? EntityType { get; set; }
+        /// <summary>
+        /// Reason for the deletion
+        /// </summary>
+        [JsonPropertyName("reason")]
+        public string? Reason { get; set; }
+    }
+
     public class DeleteUserRequestPayload
     {
         /// <summary>
@@ -10318,6 +10505,24 @@ namespace GetStream.Models
         public IndividualRecordingResponse? IndividualRecording { get; set; }
         [JsonPropertyName("raw_recording")]
         public RawRecordingResponse? RawRecording { get; set; }
+    }
+
+    public class EncryptionSettingsRequest
+    {
+        /// <summary>
+        /// Encryption mode. One of: available, disabled, auto-on
+        /// </summary>
+        [JsonPropertyName("mode")]
+        public string? Mode { get; set; }
+    }
+
+    public class EncryptionSettingsResponse
+    {
+        /// <summary>
+        /// the resolved encryption mode for the call
+        /// </summary>
+        [JsonPropertyName("mode")]
+        public string Mode { get; set; }
     }
 
     public class EndCallRequest
@@ -12136,6 +12341,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("filterable_custom_keys")]
         public List<string> FilterableCustomKeys { get; set; }
+        /// <summary>
+        /// AI image moderation labels available as filter values, as a map of L1 label to its L2 sub-labels. Reflects the app's effective image taxonomy: custom Bodyguard taxonomy when enabled, otherwise the standard catalogue of the org's enabled image providers.
+        /// </summary>
+        [JsonPropertyName("ai_image_taxonomy")]
+        public Dictionary<string, List<string>> AiImageTaxonomy { get; set; }
     }
 
     public class FirebaseConfig
@@ -12320,6 +12530,8 @@ namespace GetStream.Models
 
     public class FloodConfig
     {
+        [JsonPropertyName("allowlist")]
+        public List<string> Allowlist { get; set; }
         [JsonPropertyName("identical")]
         public FloodIdenticalConfig? Identical { get; set; }
         [JsonPropertyName("similar")]
@@ -12338,6 +12550,16 @@ namespace GetStream.Models
         public string? TimeWindow { get; set; }
     }
 
+    public class FloodIdenticalRuleParameters
+    {
+        [JsonPropertyName("threshold")]
+        public int? Threshold { get; set; }
+        [JsonPropertyName("time_window")]
+        public string? TimeWindow { get; set; }
+        [JsonPropertyName("allowlist")]
+        public List<string> Allowlist { get; set; }
+    }
+
     public class FloodSimilarConfig
     {
         [JsonPropertyName("action")]
@@ -12350,6 +12572,18 @@ namespace GetStream.Models
         public int? Threshold { get; set; }
         [JsonPropertyName("time_window")]
         public string? TimeWindow { get; set; }
+    }
+
+    public class FloodSimilarRuleParameters
+    {
+        [JsonPropertyName("similarity_distance")]
+        public int? SimilarityDistance { get; set; }
+        [JsonPropertyName("threshold")]
+        public int? Threshold { get; set; }
+        [JsonPropertyName("time_window")]
+        public string? TimeWindow { get; set; }
+        [JsonPropertyName("allowlist")]
+        public List<string> Allowlist { get; set; }
     }
 
     public class FollowBatchRequest
@@ -13135,6 +13369,16 @@ namespace GetStream.Models
         public string? PathPrefix { get; set; }
     }
 
+    public class GetExternalStorageGCSResponse
+    {
+        [JsonPropertyName("bucket")]
+        public string Bucket { get; set; }
+        [JsonPropertyName("credentials_set")]
+        public bool CredentialsSet { get; set; }
+        [JsonPropertyName("path_prefix")]
+        public string? PathPrefix { get; set; }
+    }
+
     public class GetExternalStorageResponse
     {
         [JsonPropertyName("created_at")]
@@ -13150,6 +13394,8 @@ namespace GetStream.Models
         public DateTime UpdatedAt { get; set; }
         [JsonPropertyName("aws_s3")]
         public GetExternalStorageAWSS3Response? AWSS3 { get; set; }
+        [JsonPropertyName("gcs")]
+        public GetExternalStorageGCSResponse? Gcs { get; set; }
     }
 
     public class GetFeedGroupResponse
@@ -13195,6 +13441,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("server_side")]
         public Dictionary<string, LimitInfoResponse> ServerSide { get; set; }
+        /// <summary>
+        /// Rate limits for Unity platform (endpoint name -> limit info)
+        /// </summary>
+        [JsonPropertyName("unity")]
+        public Dictionary<string, LimitInfoResponse> Unity { get; set; }
         /// <summary>
         /// Rate limits for Web platform (endpoint name -> limit info)
         /// </summary>
@@ -13668,6 +13919,11 @@ namespace GetStream.Models
         [JsonPropertyName("server_side")]
         public Dictionary<string, LimitInfoResponse> ServerSide { get; set; }
         /// <summary>
+        /// Map of endpoint rate limits for the Unity platform
+        /// </summary>
+        [JsonPropertyName("unity")]
+        public Dictionary<string, LimitInfoResponse> Unity { get; set; }
+        /// <summary>
         /// Map of endpoint rate limits for the web platform
         /// </summary>
         [JsonPropertyName("web")]
@@ -14037,6 +14293,26 @@ namespace GetStream.Models
         public string? Secret { get; set; }
     }
 
+    public class IPContentCountRuleParameters
+    {
+        [JsonPropertyName("threshold")]
+        public int? Threshold { get; set; }
+        [JsonPropertyName("time_window")]
+        public string? TimeWindow { get; set; }
+    }
+
+    public class IPFlagCountRuleParameters
+    {
+        [JsonPropertyName("severity")]
+        public string? Severity { get; set; }
+        [JsonPropertyName("threshold")]
+        public int? Threshold { get; set; }
+        [JsonPropertyName("time_window")]
+        public string? TimeWindow { get; set; }
+        [JsonPropertyName("harm_labels")]
+        public List<string> HarmLabels { get; set; }
+    }
+
     public class ImageContentParameters
     {
         [JsonPropertyName("label_operator")]
@@ -14146,6 +14422,25 @@ namespace GetStream.Models
         public ImageData Original { get; set; }
     }
 
+    public class ImportBlockListRequest
+    {
+        [JsonPropertyName("items")]
+        public List<string> Items { get; set; }
+        [JsonPropertyName("chunk_size")]
+        public int? ChunkSize { get; set; }
+    }
+
+    public class ImportBlockListResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("task_id")]
+        public string TaskID { get; set; }
+    }
+
     public class ImportTask
     {
         [JsonPropertyName("created_at")]
@@ -14206,8 +14501,6 @@ namespace GetStream.Models
         public string? Path { get; set; }
         [JsonPropertyName("skip_references_check")]
         public bool? SkipReferencesCheck { get; set; }
-        [JsonPropertyName("source")]
-        public string? Source { get; set; }
         [JsonPropertyName("use_import_time_as_op_time")]
         public bool? UseImportTimeAsOpTime { get; set; }
         [JsonPropertyName("s3")]
@@ -14982,6 +15275,8 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListResponse> Blocklists { get; set; }
+        [JsonPropertyName("next_cursor")]
+        public string? NextCursor { get; set; }
     }
 
     public class ListCallTypeResponse
@@ -15409,6 +15704,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("severity")]
         public string? Severity { get; set; }
+        [JsonPropertyName("text")]
+        public string? Text { get; set; }
         /// <summary>
         /// Image-classification entries (keyframe rule, Type=image) carry nested L1 → L2 classifications. Text entries (closed_caption rule, Type=text) carry flat label + severity. Resolved against the app's effective taxonomy on the image side.
         /// </summary>
@@ -15933,7 +16230,7 @@ namespace GetStream.Models
         public string Text { get; set; }
         [JsonPropertyName("attachments")]
         public List<Attachment> Attachments { get; set; }
-        [JsonPropertyName("Custom")]
+        [JsonPropertyName("custom")]
         public object Custom { get; set; }
     }
 
@@ -16078,6 +16375,8 @@ namespace GetStream.Models
     {
         [JsonPropertyName("include_thread_participants")]
         public bool? IncludeThreadParticipants { get; set; }
+        [JsonPropertyName("member_custom_include")]
+        public List<string> MemberCustomInclude { get; set; }
     }
 
     public class MessagePaginationParams
@@ -16487,7 +16786,7 @@ namespace GetStream.Models
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
-        public ChannelMemberResponse? Member { get; set; }
+        public ChannelMemberPartialResponse? Member { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         [JsonPropertyName("pinned_by")]
@@ -16848,7 +17147,7 @@ namespace GetStream.Models
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
-        public ChannelMemberResponse? Member { get; set; }
+        public ChannelMemberPartialResponse? Member { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         [JsonPropertyName("pinned_by")]
@@ -16945,6 +17244,46 @@ namespace GetStream.Models
         public string? QueueType { get; set; }
         /// <summary>
         /// Custom data for the action
+        /// </summary>
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+    }
+
+    public class ModerationAnalysisFailedEvent
+    {
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        /// <summary>
+        /// The moderation policy key the request targeted.
+        /// </summary>
+        [JsonPropertyName("config_key")]
+        public string? ConfigKey { get; set; }
+        /// <summary>
+        /// Echo of the `entity_creator_id` on the /analyze request.
+        /// </summary>
+        [JsonPropertyName("entity_creator_id")]
+        public string? EntityCreatorID { get; set; }
+        /// <summary>
+        /// Echo of the `entity_id` on the /analyze request.
+        /// </summary>
+        [JsonPropertyName("entity_id")]
+        public string? EntityID { get; set; }
+        /// <summary>
+        /// Echo of the `entity_type` on the /analyze request.
+        /// </summary>
+        [JsonPropertyName("entity_type")]
+        public string? EntityType { get; set; }
+        [JsonPropertyName("received_at")]
+        public DateTime? ReceivedAt { get; set; }
+        /// <summary>
+        /// Echo of the request's `content_ids`, keyed by text/image label. On keyframe and caption streams every request repeats the same entity_type/entity_id/entity_creator_id, so this is what identifies the specific submission that went unscreened.
+        /// </summary>
+        [JsonPropertyName("content_ids")]
+        public Dictionary<string, string> ContentIds { get; set; }
+        /// <summary>
+        /// Echo of the `custom` metadata on the /analyze request.
         /// </summary>
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
@@ -18645,6 +18984,198 @@ namespace GetStream.Models
         public List<string> Roles { get; set; }
     }
 
+    public class PolicyTestLabelDrift
+    {
+        [JsonPropertyName("changed")]
+        public int Changed { get; set; }
+        [JsonPropertyName("same")]
+        public int Same { get; set; }
+    }
+
+    public class PolicyTestResult
+    {
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("id")]
+        public int ID { get; set; }
+        [JsonPropertyName("message_text")]
+        public string MessageText { get; set; }
+        [JsonPropertyName("row_index")]
+        public int RowIndex { get; set; }
+        [JsonPropertyName("run_id")]
+        public string RunID { get; set; }
+        [JsonPropertyName("scored")]
+        public bool Scored { get; set; }
+        [JsonPropertyName("actual_action")]
+        public string? ActualAction { get; set; }
+        [JsonPropertyName("expected_action")]
+        public string? ExpectedAction { get; set; }
+        [JsonPropertyName("failure_reason")]
+        public string? FailureReason { get; set; }
+        [JsonPropertyName("passed")]
+        public bool? Passed { get; set; }
+        [JsonPropertyName("severity")]
+        public string? Severity { get; set; }
+        [JsonPropertyName("actual_labels")]
+        public List<string> ActualLabels { get; set; }
+        [JsonPropertyName("expected_labels")]
+        public List<string> ExpectedLabels { get; set; }
+        [JsonPropertyName("raw_response")]
+        public object RawResponse { get; set; }
+    }
+
+    public class PolicyTestRow
+    {
+        [JsonPropertyName("content_type")]
+        public string? ContentType { get; set; }
+        [JsonPropertyName("policy")]
+        public string? Policy { get; set; }
+        [JsonPropertyName("recommended_action")]
+        public string? RecommendedAction { get; set; }
+        [JsonPropertyName("text")]
+        public string? Text { get; set; }
+        [JsonPropertyName("labels")]
+        public List<string> Labels { get; set; }
+    }
+
+    public class PolicyTestRun
+    {
+        [JsonPropertyName("config_key")]
+        public string ConfigKey { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("rows_completed")]
+        public int RowsCompleted { get; set; }
+        [JsonPropertyName("rows_total")]
+        public int RowsTotal { get; set; }
+        [JsonPropertyName("set_id")]
+        public string SetID { get; set; }
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+        [JsonPropertyName("task_id")]
+        public string TaskID { get; set; }
+        [JsonPropertyName("triggered_by")]
+        public string TriggeredBy { get; set; }
+        [JsonPropertyName("completed_at")]
+        public DateTime? CompletedAt { get; set; }
+        [JsonPropertyName("config_updated_at")]
+        public DateTime? ConfigUpdatedAt { get; set; }
+        [JsonPropertyName("error_message")]
+        public string? ErrorMessage { get; set; }
+        [JsonPropertyName("started_at")]
+        public DateTime? StartedAt { get; set; }
+        [JsonPropertyName("metrics")]
+        public PolicyTestRunMetrics? Metrics { get; set; }
+    }
+
+    public class PolicyTestRunMetrics
+    {
+        [JsonPropertyName("mode")]
+        public string Mode { get; set; }
+        [JsonPropertyName("totals")]
+        public PolicyTestTotals Totals { get; set; }
+        [JsonPropertyName("by_label")]
+        public Dictionary<string, PolicyTestLabelDrift> ByLabel { get; set; }
+    }
+
+    public class PolicyTestRunResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// Per-row results (only present once the run has finished)
+        /// </summary>
+        [JsonPropertyName("results")]
+        public List<PolicyTestResult> Results { get; set; }
+        [JsonPropertyName("run")]
+        public PolicyTestRun? Run { get; set; }
+    }
+
+    public class PolicyTestSeedSpec
+    {
+        /// <summary>
+        /// How many rows to sample, newest first; capped at 1000
+        /// </summary>
+        [JsonPropertyName("limit")]
+        public int Limit { get; set; }
+        /// <summary>
+        /// Sample only records carrying any of these labels; empty samples everything
+        /// </summary>
+        [JsonPropertyName("labels")]
+        public List<string> Labels { get; set; }
+    }
+
+    public class PolicyTestSet
+    {
+        [JsonPropertyName("config_key")]
+        public string ConfigKey { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("created_by")]
+        public string CreatedBy { get; set; }
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("mode")]
+        public string Mode { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("row_count")]
+        public int RowCount { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
+        [JsonPropertyName("rows")]
+        public List<PolicyTestRow> Rows { get; set; }
+        [JsonPropertyName("last_run")]
+        public PolicyTestRun? LastRun { get; set; }
+    }
+
+    public class PolicyTestSetListResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// List of policy test sets for the app
+        /// </summary>
+        [JsonPropertyName("sets")]
+        public List<PolicyTestSet> Sets { get; set; }
+    }
+
+    public class PolicyTestSetResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// The set's baseline run (earliest completed run); later runs are scored against it. Absent until the first run completes
+        /// </summary>
+        [JsonPropertyName("baseline_run_id")]
+        public string? BaselineRunID { get; set; }
+        /// <summary>
+        /// Retained run history for this set, newest first
+        /// </summary>
+        [JsonPropertyName("recent_runs")]
+        public List<PolicyTestRun> RecentRuns { get; set; }
+        [JsonPropertyName("set")]
+        public PolicyTestSet? Set { get; set; }
+    }
+
+    public class PolicyTestTotals
+    {
+        [JsonPropertyName("failed")]
+        public int Failed { get; set; }
+        [JsonPropertyName("passed")]
+        public int Passed { get; set; }
+        [JsonPropertyName("rows")]
+        public int Rows { get; set; }
+        [JsonPropertyName("scored")]
+        public int Scored { get; set; }
+        [JsonPropertyName("unscored")]
+        public int Unscored { get; set; }
+    }
+
     public class PollOptionInput
     {
         [JsonPropertyName("text")]
@@ -19288,6 +19819,9 @@ namespace GetStream.Models
         public string? Prev { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
+        /// <summary>
+        /// Filters to apply to the query
+        /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
     }
@@ -19827,6 +20361,9 @@ namespace GetStream.Models
         public int? UserLimit { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
+        /// <summary>
+        /// Filter to apply to the query
+        /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
     }
@@ -19880,6 +20417,11 @@ namespace GetStream.Models
         public bool? State { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
+        /// <summary>
+        /// Top-level keys of the message sender's channel-member custom data to include under member.custom (max 8 keys, 64 chars each)
+        /// </summary>
+        [JsonPropertyName("member_custom_include")]
+        public List<string> MemberCustomInclude { get; set; }
         /// <summary>
         /// List of sort parameters
         /// </summary>
@@ -19972,6 +20514,9 @@ namespace GetStream.Models
         public string? Prev { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
+        /// <summary>
+        /// Filters to apply to the query
+        /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
     }
@@ -20286,6 +20831,11 @@ namespace GetStream.Models
         [JsonPropertyName("exclude_expired_bans")]
         public bool? ExcludeExpiredBans { get; set; }
         /// <summary>
+        /// When true, the response includes the total number of bans matching the query filter (independent of limit and offset, capped at 100000)
+        /// </summary>
+        [JsonPropertyName("include_total")]
+        public bool? IncludeTotal { get; set; }
+        /// <summary>
         /// Number of records to return
         /// </summary>
         [JsonPropertyName("limit")]
@@ -20296,7 +20846,7 @@ namespace GetStream.Models
         [JsonPropertyName("offset")]
         public int? Offset { get; set; }
         /// <summary>
-        /// Filter by the target user ID. For server-side requests only.
+        /// Filter by the target user ID. Server-side: returns all bans against this user. Client-side: narrows the authenticated user's own bans to this target.
         /// </summary>
         [JsonPropertyName("target_user_id")]
         public string? TargetUserID { get; set; }
@@ -20318,6 +20868,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("bans")]
         public List<FutureChannelBanResponse> Bans { get; set; }
+        /// <summary>
+        /// Total number of bans matching the query filter, computed at query time and capped at 100000. Only present when include_total is set on the request; omitted when computing the total timed out
+        /// </summary>
+        [JsonPropertyName("total")]
+        public int? Total { get; set; }
     }
 
     public class QueryLabelResultsRequest
@@ -20553,6 +21108,9 @@ namespace GetStream.Models
         public string? Prev { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
+        /// <summary>
+        /// Filter conditions for moderation flags
+        /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
     }
@@ -22718,10 +23276,18 @@ namespace GetStream.Models
         public ContentCustomPropertyParameters? ContentCustomPropertyParams { get; set; }
         [JsonPropertyName("content_flag_count_rule_params")]
         public FlagCountRuleParameters? ContentFlagCountRuleParams { get; set; }
+        [JsonPropertyName("flood_identical_params")]
+        public FloodIdenticalRuleParameters? FloodIdenticalParams { get; set; }
+        [JsonPropertyName("flood_similar_params")]
+        public FloodSimilarRuleParameters? FloodSimilarParams { get; set; }
         [JsonPropertyName("image_content_params")]
         public ImageContentParameters? ImageContentParams { get; set; }
         [JsonPropertyName("image_rule_params")]
         public ImageRuleParameters? ImageRuleParams { get; set; }
+        [JsonPropertyName("ip_content_count_rule_params")]
+        public IPContentCountRuleParameters? IpContentCountRuleParams { get; set; }
+        [JsonPropertyName("ip_flag_count_rule_params")]
+        public IPFlagCountRuleParameters? IpFlagCountRuleParams { get; set; }
         [JsonPropertyName("keyframe_ocr_rule_params")]
         public KeyframeOCRRuleParameters? KeyframeOcrRuleParams { get; set; }
         [JsonPropertyName("keyframe_rule_params")]
@@ -23442,7 +24008,7 @@ namespace GetStream.Models
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
-        public ChannelMemberResponse? Member { get; set; }
+        public ChannelMemberPartialResponse? Member { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         [JsonPropertyName("pinned_by")]
@@ -23630,6 +24196,16 @@ namespace GetStream.Models
         public MessageRequest Message { get; set; }
         [JsonPropertyName("force_moderation")]
         public bool? ForceModeration { get; set; }
+        /// <summary>
+        /// When true, the response includes channel_context: a slim channel object with cid, type, id and created_by
+        /// </summary>
+        [JsonPropertyName("include_channel_context")]
+        public bool? IncludeChannelContext { get; set; }
+        /// <summary>
+        /// When true, the response includes mentioned_members: for each mentioned user, whether that user is currently a channel member. Requires the ReadChannelMembers permission
+        /// </summary>
+        [JsonPropertyName("include_mentioned_members")]
+        public bool? IncludeMentionedMembers { get; set; }
         [JsonPropertyName("keep_channel_hidden")]
         public bool? KeepChannelHidden { get; set; }
         [JsonPropertyName("pending")]
@@ -23651,6 +24227,13 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("message")]
         public MessageResponse Message { get; set; }
+        [JsonPropertyName("channel_context")]
+        public ChannelContextResponse? ChannelContext { get; set; }
+        /// <summary>
+        /// Map of mentioned user ID to whether that user is currently an active channel member. Only set when include_mentioned_members was requested; omitted when the message has no mentions or the membership lookup failed
+        /// </summary>
+        [JsonPropertyName("mentioned_members")]
+        public Dictionary<string, bool> MentionedMembers { get; set; }
         /// <summary>
         /// Pending message metadata
         /// </summary>
@@ -24070,6 +24653,10 @@ namespace GetStream.Models
         public string PlaylistUrl { get; set; }
     }
 
+    public class StartPolicyTestRunRequest
+    {
+    }
+
     public class StartRTMPBroadcastsRequest
     {
         /// <summary>
@@ -24312,7 +24899,7 @@ namespace GetStream.Models
     public class SubmitActionRequest
     {
         /// <summary>
-        /// Type of moderation action to perform. One of: mark_reviewed, delete_message, delete_activity, delete_comment, delete_reaction, ban, custom, unban, restore, delete_user, unblock, block, shadow_block, unmask, kick_user, end_call, escalate, de_escalate
+        /// Type of moderation action to perform. One of: mark_reviewed, delete_message, delete_activity, delete_comment, delete_reaction, ban, custom, unban, restore, delete_user, delete_user_messages, unblock, block, shadow_block, unmask, kick_user, end_call, escalate, de_escalate
         /// </summary>
         [JsonPropertyName("action_type")]
         public string ActionType { get; set; }
@@ -24346,6 +24933,8 @@ namespace GetStream.Models
         public DeleteReactionRequestPayload? DeleteReaction { get; set; }
         [JsonPropertyName("delete_user")]
         public DeleteUserRequestPayload? DeleteUser { get; set; }
+        [JsonPropertyName("delete_user_messages")]
+        public DeleteUserMessagesRequestPayload? DeleteUserMessages { get; set; }
         [JsonPropertyName("escalate")]
         public EscalatePayload? Escalate { get; set; }
         [JsonPropertyName("flag")]
@@ -24577,8 +25166,6 @@ namespace GetStream.Models
 
     public class ThreadParticipant
     {
-        [JsonPropertyName("app_pk")]
-        public int AppPk { get; set; }
         [JsonPropertyName("channel_cid")]
         public string ChannelCid { get; set; }
         /// <summary>
@@ -24644,6 +25231,11 @@ namespace GetStream.Models
         [JsonPropertyName("participant_count")]
         public int ParticipantCount { get; set; }
         /// <summary>
+        /// Reply Count
+        /// </summary>
+        [JsonPropertyName("reply_count")]
+        public int ReplyCount { get; set; }
+        /// <summary>
         /// Title
         /// </summary>
         [JsonPropertyName("title")]
@@ -24668,11 +25260,6 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("last_message_at")]
         public DateTime? LastMessageAt { get; set; }
-        /// <summary>
-        /// Reply Count
-        /// </summary>
-        [JsonPropertyName("reply_count")]
-        public int? ReplyCount { get; set; }
         /// <summary>
         /// Thread Participants
         /// </summary>
@@ -24719,6 +25306,11 @@ namespace GetStream.Models
         [JsonPropertyName("participant_count")]
         public int ParticipantCount { get; set; }
         /// <summary>
+        /// Reply Count
+        /// </summary>
+        [JsonPropertyName("reply_count")]
+        public int ReplyCount { get; set; }
+        /// <summary>
         /// Title
         /// </summary>
         [JsonPropertyName("title")]
@@ -24745,11 +25337,6 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("last_message_at")]
         public DateTime? LastMessageAt { get; set; }
-        /// <summary>
-        /// Reply Count
-        /// </summary>
-        [JsonPropertyName("reply_count")]
-        public int? ReplyCount { get; set; }
         [JsonPropertyName("read")]
         public List<ReadStateResponse> Read { get; set; }
         /// <summary>
@@ -25170,6 +25757,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("remove_future_channels_ban")]
         public bool? RemoveFutureChannelsBan { get; set; }
+        /// <summary>
+        /// Optional: unban user directly without review item
+        /// </summary>
+        [JsonPropertyName("target_user_id")]
+        public string? TargetUserID { get; set; }
     }
 
     public class UnbanRequest
@@ -25718,6 +26310,8 @@ namespace GetStream.Models
         public int? CdnExpirationSeconds { get; set; }
         [JsonPropertyName("channel_hide_members_only")]
         public bool? ChannelHideMembersOnly { get; set; }
+        [JsonPropertyName("chat_primary_use_case")]
+        public string? ChatPrimaryUseCase { get; set; }
         [JsonPropertyName("custom_action_handler_url")]
         public string? CustomActionHandlerUrl { get; set; }
         [JsonPropertyName("disable_auth_checks")]
@@ -25740,6 +26334,8 @@ namespace GetStream.Models
         public bool? ImageModerationEnabled { get; set; }
         [JsonPropertyName("max_aggregated_activities_length")]
         public int? MaxAggregatedActivitiesLength { get; set; }
+        [JsonPropertyName("member_custom_on_messages_enabled")]
+        public bool? MemberCustomOnMessagesEnabled { get; set; }
         [JsonPropertyName("migrate_permissions_to_v2")]
         public bool? MigratePermissionsToV2 { get; set; }
         [JsonPropertyName("moderation_analytics_enabled")]
@@ -25832,11 +26428,15 @@ namespace GetStream.Models
         public bool? IsSubstringMatchingEnabled { get; set; }
         [JsonPropertyName("team")]
         public string? Team { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         /// <summary>
         /// List of words to block
         /// </summary>
         [JsonPropertyName("words")]
         public List<string> Words { get; set; }
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
     }
 
     public class UpdateBlockListResponse
@@ -26981,7 +27581,10 @@ namespace GetStream.Models
         public string Text { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
-        [JsonPropertyName("Custom")]
+        /// <summary>
+        /// Custom data for this object
+        /// </summary>
+        [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
@@ -27059,7 +27662,10 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("options")]
         public List<PollOptionRequest> Options { get; set; }
-        [JsonPropertyName("Custom")]
+        /// <summary>
+        /// Custom data for this object
+        /// </summary>
+        [JsonPropertyName("custom")]
         public object Custom { get; set; }
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
@@ -27624,12 +28230,24 @@ namespace GetStream.Models
         public string? PathPrefix { get; set; }
     }
 
+    public class UpsertExternalStorageGCSRequest
+    {
+        [JsonPropertyName("bucket")]
+        public string Bucket { get; set; }
+        [JsonPropertyName("credentials")]
+        public string Credentials { get; set; }
+        [JsonPropertyName("path_prefix")]
+        public string? PathPrefix { get; set; }
+    }
+
     public class UpsertExternalStorageRequest
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
         [JsonPropertyName("aws_s3")]
         public UpsertExternalStorageAWSS3Request? AWSS3 { get; set; }
+        [JsonPropertyName("gcs")]
+        public UpsertExternalStorageGCSRequest? Gcs { get; set; }
     }
 
     public class UpsertExternalStorageResponse
@@ -27649,7 +28267,7 @@ namespace GetStream.Models
         [JsonPropertyName("name")]
         public string Name { get; set; }
         /// <summary>
-        /// Type of rule: user, content, or call
+        /// Type of rule: user, content, call, or flood
         /// </summary>
         [JsonPropertyName("rule_type")]
         public string RuleType { get; set; }

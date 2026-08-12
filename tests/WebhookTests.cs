@@ -1170,6 +1170,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ModerationAnalysisFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"moderation.analysis.failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ModerationAnalysisFailedEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ModerationCustomAction_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.custom_action\"}";
