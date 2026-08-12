@@ -737,7 +737,7 @@ namespace GetStream
             else
             {
                 // Body cannot be parsed as APIError.
-                message = "failed to parse error response";
+                message = $"failed to parse error response: unexpected server response code {statusCode}";
                 code = 0;
                 exceptionFields = new Dictionary<string, string>();
                 unrecoverable = false;

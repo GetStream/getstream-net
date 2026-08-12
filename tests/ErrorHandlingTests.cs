@@ -263,7 +263,7 @@ namespace GetStream.Tests
                     "GET", "/anything", null, null, null));
             Assert.That(ex!.StatusCode, Is.EqualTo(500));
             Assert.That(ex.Code, Is.EqualTo(0));
-            Assert.That(ex.Message, Is.EqualTo("failed to parse error response"));
+            Assert.That(ex.Message, Is.EqualTo("failed to parse error response: unexpected server response code 500"));
             Assert.That(ex.RawResponseBody, Is.EqualTo("<html>oops</html>"));
             Assert.That(ex.ExceptionFields.Count, Is.EqualTo(0));
         }
