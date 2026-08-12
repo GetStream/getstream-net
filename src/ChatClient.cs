@@ -506,6 +506,7 @@ namespace GetStream
         // Sends new message to the specified channel
 
         // Sends events:
+        // - channel.visible
         // - message.new
         // - message.updated
         public async Task<StreamResponse<SendMessageResponse>> SendMessageAsync(string type, string id, SendMessageRequest request,

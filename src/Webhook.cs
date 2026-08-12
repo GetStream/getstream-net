@@ -152,6 +152,7 @@ namespace GetStream
         public const string MessageUnblocked = "message.unblocked";
         public const string MessageUndeleted = "message.undeleted";
         public const string MessageUpdated = "message.updated";
+        public const string ModerationAnalysisFailed = "moderation.analysis.failed";
         public const string ModerationCustomAction = "moderation.custom_action";
         public const string ModerationFlagged = "moderation.flagged";
         public const string ModerationImageAnalysisComplete = "moderation.image_analysis.complete";
@@ -415,6 +416,7 @@ namespace GetStream
                 "message.unblocked" => typeof(MessageUnblockedEvent),
                 "message.undeleted" => typeof(MessageUndeletedEvent),
                 "message.updated" => typeof(MessageUpdatedEvent),
+                "moderation.analysis.failed" => typeof(ModerationAnalysisFailedEvent),
                 "moderation.custom_action" => typeof(ModerationCustomActionEvent),
                 "moderation.flagged" => typeof(ModerationFlaggedEvent),
                 "moderation.image_analysis.complete" => typeof(ModerationImageAnalysisCompleteEvent),

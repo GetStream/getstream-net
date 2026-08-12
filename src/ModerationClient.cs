@@ -403,25 +403,33 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<DeleteModerationRuleResponse>> DeleteModerationRuleAsync(object request = null,
+        public async Task<StreamResponse<DeleteModerationRuleResponse>> DeleteModerationRuleAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
             var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteModerationRuleResponse>(
                 "DELETE",
-                "/api/v2/moderation/moderation_rule/{id}", queryParams, null, null,
+                "/api/v2/moderation/moderation_rule/{id}", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<GetModerationRuleResponse>> GetModerationRuleAsync(object request = null,
+        public async Task<StreamResponse<GetModerationRuleResponse>> GetModerationRuleAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
 
             var result = await _client.MakeRequestAsync<object, GetModerationRuleResponse>(
                 "GET",
-                "/api/v2/moderation/moderation_rule/{id}", null, null, null,
+                "/api/v2/moderation/moderation_rule/{id}", null, null, pathParams,
                 cancellationToken);
 
             return result;
@@ -448,13 +456,96 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ListQueuesResponse>> ListQueuesAsync(object request = null,
+        public async Task<StreamResponse<PolicyTestRunResponse>> GetPolicyTestRunAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, PolicyTestRunResponse>(
+                "GET",
+                "/api/v2/moderation/policy_tests/runs/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PolicyTestSetListResponse>> ListPolicyTestSetsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
 
+            var result = await _client.MakeRequestAsync<object, PolicyTestSetListResponse>(
+                "GET",
+                "/api/v2/moderation/policy_tests/sets", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PolicyTestSetResponse>> CreatePolicyTestSetAsync(CreatePolicyTestSetRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CreatePolicyTestSetRequest, PolicyTestSetResponse>(
+                "POST",
+                "/api/v2/moderation/policy_tests/sets", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<Response>> DeletePolicyTestSetAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, Response>(
+                "DELETE",
+                "/api/v2/moderation/policy_tests/sets/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PolicyTestSetResponse>> GetPolicyTestSetAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, PolicyTestSetResponse>(
+                "GET",
+                "/api/v2/moderation/policy_tests/sets/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PolicyTestRunResponse>> StartPolicyTestRunAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, PolicyTestRunResponse>(
+                "POST",
+                "/api/v2/moderation/policy_tests/sets/{id}/runs", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ListQueuesResponse>> ListQueuesAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
             var result = await _client.MakeRequestAsync<object, ListQueuesResponse>(
                 "GET",
-                "/api/v2/moderation/queues", null, null, null,
+                "/api/v2/moderation/queues", queryParams, null, null,
                 cancellationToken);
 
             return result;

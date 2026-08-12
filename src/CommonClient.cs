@@ -104,6 +104,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<ImportBlockListResponse>> ImportBlockListAsync(string id, ImportBlockListRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<ImportBlockListRequest, ImportBlockListResponse>(
+                "POST",
+                "/api/v2/blocklists/{id}/import", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<Response>> DeleteBlockListAsync(string name, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -642,11 +657,10 @@ namespace GetStream
                 ["poll_id"] = pollID,
                 ["option_id"] = optionID,
             };
-            var queryParams = ExtractQueryParams(request);
 
             var result = await MakeRequestAsync<object, PollOptionResponse>(
                 "GET",
-                "/api/v2/polls/{poll_id}/options/{option_id}", queryParams, null, pathParams,
+                "/api/v2/polls/{poll_id}/options/{option_id}", null, null, pathParams,
                 cancellationToken);
 
             return result;
