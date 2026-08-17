@@ -95,6 +95,23 @@ namespace GetStream.Tests
         }
 
         /// <summary>
+        /// Reads the channel back from the API. The channel returned by a partial update can lag
+        /// the write it just applied, so state assertions read the channel instead of trusting
+        /// that response.
+        /// </summary>
+        protected async Task<ChannelResponse> ReadChannel(string channelId)
+        {
+            var response = await StreamClient.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/query",
+                null,
+                new ChannelGetOrCreateRequest(),
+                new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
+
+            return response.Data!.Channel!;
+        }
+
+        /// <summary>
         /// Creates a messaging channel with the given creator and members. Tracks it for cleanup.
         /// Returns the channel ID.
         /// </summary>
