@@ -277,7 +277,7 @@ namespace GetStream
             return result;
         }
 
-        // Returns a channel by its CID without creating it. Responds with 404 when the channel does not exist, so it doubles as an existence check. Pass state=true to also load messages, read state and watchers.
+        // Returns a channel by its CID without creating it. Responds with 404 when the channel does not exist, so it doubles as an existence check. Pass state=true to also load messages, read state and watchers, and the messages_id_* parameters to page those messages by message ID.
         public async Task<StreamResponse<ChannelStateResponse>> GetChannelAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -800,7 +800,7 @@ namespace GetStream
             return result;
         }
 
-        // Exports channel data to JSON file
+        // Exports channel data to a JSON or CSV file (CSV requires version=v2)
         public async Task<StreamResponse<ExportChannelsResponse>> ExportChannelsAsync(ExportChannelsRequest request,
             CancellationToken cancellationToken = default)
         {

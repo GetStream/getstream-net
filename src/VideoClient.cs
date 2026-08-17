@@ -1195,5 +1195,18 @@ namespace GetStream
                 cancellationToken);
             return result;
         }
+
+        // Returns the app's per-broadcast daily digest bundle for one UTC day, with an explicit readiness status (ready, pending, failed, future_date, expired). Payload keys are only present when status is ready.
+        public async Task<StreamResponse<GetDailyDigestResponse>> GetDailyDigestAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetDailyDigestResponse>(
+                "GET",
+                "/api/v2/video/stats/daily_digest", queryParams, null, null,
+                cancellationToken);
+            return result;
+        }
     }
 }
