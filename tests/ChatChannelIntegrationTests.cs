@@ -181,7 +181,7 @@ namespace GetStream.Tests
 
             Assert.That(setResp.Data, Is.Not.Null);
             Assert.That(setResp.Data!.Channel, Is.Not.Null);
-            var custom = (System.Text.Json.JsonElement)setResp.Data!.Channel!.Custom;
+            var custom = (System.Text.Json.JsonElement)(await ReadChannel(channelId)).Custom;
             Assert.That(custom.GetProperty("color").GetString(), Is.EqualTo("red"));
 
             // Unset color
@@ -197,7 +197,7 @@ namespace GetStream.Tests
 
             Assert.That(unsetResp.Data, Is.Not.Null);
             Assert.That(unsetResp.Data!.Channel, Is.Not.Null);
-            var custom2 = (System.Text.Json.JsonElement)unsetResp.Data!.Channel!.Custom;
+            var custom2 = (System.Text.Json.JsonElement)(await ReadChannel(channelId)).Custom;
             // color should be unset
             Assert.That(custom2.TryGetProperty("color", out _), Is.False);
         }
@@ -531,7 +531,7 @@ namespace GetStream.Tests
 
             Assert.That(freezeResp.Data, Is.Not.Null);
             Assert.That(freezeResp.Data!.Channel, Is.Not.Null);
-            Assert.That(freezeResp.Data!.Channel!.Frozen, Is.True);
+            Assert.That((await ReadChannel(channelId)).Frozen, Is.True);
 
             // Unfreeze the channel
             var unfreezeResp = await StreamClient.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
@@ -549,7 +549,7 @@ namespace GetStream.Tests
 
             Assert.That(unfreezeResp.Data, Is.Not.Null);
             Assert.That(unfreezeResp.Data!.Channel, Is.Not.Null);
-            Assert.That(unfreezeResp.Data!.Channel!.Frozen, Is.False);
+            Assert.That((await ReadChannel(channelId)).Frozen, Is.False);
         }
 
         [Test, Order(15)]
