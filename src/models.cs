@@ -674,6 +674,16 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("type")]
         public string Type { get; set; }
+        /// <summary>
+        /// Minimum number of characters the activity text must have before this processor runs. 0 (the default) disables the check. Only applies to text_interest_tags.
+        /// </summary>
+        [JsonPropertyName("min_text_length")]
+        public int? MinTextLength { get; set; }
+        /// <summary>
+        /// Minimum number of words the activity text must have before this processor runs. 0 (the default) disables the check. Only applies to text_interest_tags. Words are whitespace-separated, so scripts written without word spacing (Chinese, Japanese, Thai) always count as 1 word regardless of length — use min_text_length for those.
+        /// </summary>
+        [JsonPropertyName("min_word_count")]
+        public int? MinWordCount { get; set; }
     }
 
     public class ActivityReactionAddedEvent
@@ -3591,7 +3601,7 @@ namespace GetStream.Models
         [JsonPropertyName("reject_appeal")]
         public RejectAppealRequestPayload? RejectAppeal { get; set; }
         /// <summary>
-        /// Configuration for restore action
+        /// Configuration for restore action. State-aware: reverses whichever of a delete, a block, or a shadow block currently applies to the content (including both a delete and a block/shadow block at once).
         /// </summary>
         [JsonPropertyName("restore")]
         public RestoreActionRequestPayload? Restore { get; set; }
@@ -3601,7 +3611,7 @@ namespace GetStream.Models
         [JsonPropertyName("unban")]
         public UnbanActionRequestPayload? Unban { get; set; }
         /// <summary>
-        /// Configuration for unblock action
+        /// Deprecated: use restore instead — it now also reverses a block or shadow block. Configuration for unblock action.
         /// </summary>
         [JsonPropertyName("unblock")]
         public UnblockActionRequestPayload? Unblock { get; set; }
@@ -5877,6 +5887,8 @@ namespace GetStream.Models
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
         public int MaxMessageLength { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool Mutes { get; set; }
         [JsonPropertyName("name")]
@@ -6031,6 +6043,8 @@ namespace GetStream.Models
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
         public int MaxMessageLength { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool Mutes { get; set; }
         [JsonPropertyName("name")]
@@ -7036,6 +7050,8 @@ namespace GetStream.Models
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
         public int MaxMessageLength { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool Mutes { get; set; }
         [JsonPropertyName("name")]
@@ -7899,6 +7915,8 @@ namespace GetStream.Models
         public double? Confidence { get; set; }
         [JsonPropertyName("severity")]
         public string? Severity { get; set; }
+        [JsonPropertyName("matched_contributors")]
+        public List<string> MatchedContributors { get; set; }
         [JsonPropertyName("subclassifications")]
         public List<Classification> Subclassifications { get; set; }
     }
@@ -9117,6 +9135,8 @@ namespace GetStream.Models
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
         public int MaxMessageLength { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool Mutes { get; set; }
         [JsonPropertyName("name")]
@@ -9574,6 +9594,45 @@ namespace GetStream.Models
         public MembershipLevelResponse MembershipLevel { get; set; }
     }
 
+    public class CreatePermissionRequest
+    {
+        /// <summary>
+        /// Action name this permission is for (e.g. SendMessage)
+        /// </summary>
+        [JsonPropertyName("action")]
+        public string Action { get; set; }
+        /// <summary>
+        /// Unique permission ID
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        /// <summary>
+        /// Name of the permission
+        /// </summary>
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        /// <summary>
+        /// MongoDB style condition which decides whether or not the permission is granted
+        /// </summary>
+        [JsonPropertyName("condition")]
+        public object Condition { get; set; }
+        /// <summary>
+        /// Description of the permission
+        /// </summary>
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        /// <summary>
+        /// Whether this permission applies to resource owner or not
+        /// </summary>
+        [JsonPropertyName("owner")]
+        public bool? Owner { get; set; }
+        /// <summary>
+        /// Whether this permission applies to teammates (multi-tenancy mode only)
+        /// </summary>
+        [JsonPropertyName("same_team")]
+        public bool? SameTeam { get; set; }
+    }
+
     public class CreatePolicyTestSetRequest
     {
         /// <summary>
@@ -9678,6 +9737,43 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
+    }
+
+    public class CreatePredefinedFilterRequest
+    {
+        /// <summary>
+        /// The unique name of the predefined filter (alphanumeric, _, - only)
+        /// </summary>
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        /// <summary>
+        /// The operation this filter is for (e.g., QueryChannels)
+        /// </summary>
+        [JsonPropertyName("operation")]
+        public string Operation { get; set; }
+        /// <summary>
+        /// Filter to apply to the query
+        /// </summary>
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        /// <summary>
+        /// The description of the predefined filter
+        /// </summary>
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        [JsonPropertyName("sort")]
+        public List<object> Sort { get; set; }
+    }
+
+    public class CreatePredefinedFilterResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("predefined_filter")]
+        public PredefinedFilterResponse? PredefinedFilter { get; set; }
     }
 
     public class CreateQueueRequest
@@ -13937,6 +14033,8 @@ namespace GetStream.Models
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
         public int MaxMessageLength { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool Mutes { get; set; }
         [JsonPropertyName("name")]
@@ -14175,6 +14273,27 @@ namespace GetStream.Models
         public GetExternalStorageAWSS3Response? AWSS3 { get; set; }
         [JsonPropertyName("gcs")]
         public GetExternalStorageGCSResponse? Gcs { get; set; }
+    }
+
+    public class GetFeedCountsResponse
+    {
+        /// <summary>
+        /// Number of activities in the feed
+        /// </summary>
+        [JsonPropertyName("activity_count")]
+        public int ActivityCount { get; set; }
+        /// <summary>
+        /// Total number of comments on those activities, including nested replies
+        /// </summary>
+        [JsonPropertyName("comment_count")]
+        public int CommentCount { get; set; }
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// Sum of activity_count and comment_count
+        /// </summary>
+        [JsonPropertyName("total_count")]
+        public int TotalCount { get; set; }
     }
 
     public class GetFeedGroupResponse
@@ -14683,6 +14802,31 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("follow")]
         public FollowResponse? Follow { get; set; }
+    }
+
+    public class GetPinnedMessagesResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// Messages
+        /// </summary>
+        [JsonPropertyName("messages")]
+        public List<MessageResponse> Messages { get; set; }
+    }
+
+    public class GetPredefinedFilterResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("predefined_filter")]
+        public PredefinedFilterResponse? PredefinedFilter { get; set; }
     }
 
     public class GetPushTemplatesResponse
@@ -19802,6 +19946,28 @@ namespace GetStream.Models
         public double? P95 { get; set; }
     }
 
+    public class PerformanceAnalysisResponse
+    {
+        [JsonPropertyName("analysis_type")]
+        public string AnalysisType { get; set; }
+        [JsonPropertyName("score")]
+        public string Score { get; set; }
+        [JsonPropertyName("indexed_fields")]
+        public List<string> IndexedFields { get; set; }
+        [JsonPropertyName("recommendations")]
+        public List<string> Recommendations { get; set; }
+        [JsonPropertyName("unindexed_fields")]
+        public List<string> UnindexedFields { get; set; }
+        [JsonPropertyName("unindexed_sort_fields")]
+        public List<string> UnindexedSortFields { get; set; }
+        [JsonPropertyName("warnings")]
+        public List<string> Warnings { get; set; }
+        [JsonPropertyName("last_analyzed")]
+        public DateTime? LastAnalyzed { get; set; }
+        [JsonPropertyName("scan_type")]
+        public string? ScanType { get; set; }
+    }
+
     public class Permission
     {
         /// <summary>
@@ -19859,6 +20025,40 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("condition")]
         public object Condition { get; set; }
+    }
+
+    public class PermissionRequest
+    {
+        /// <summary>
+        /// Action name this permission is for (e.g. SendMessage)
+        /// </summary>
+        [JsonPropertyName("action")]
+        public string Action { get; set; }
+        /// <summary>
+        /// Name of the permission
+        /// </summary>
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        /// <summary>
+        /// MongoDB style condition which decides whether or not the permission is granted
+        /// </summary>
+        [JsonPropertyName("condition")]
+        public object Condition { get; set; }
+        /// <summary>
+        /// Description of the permission
+        /// </summary>
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        /// <summary>
+        /// Whether this permission applies to resource owner or not
+        /// </summary>
+        [JsonPropertyName("owner")]
+        public bool? Owner { get; set; }
+        /// <summary>
+        /// Whether this permission applies to teammates (multi-tenancy mode only)
+        /// </summary>
+        [JsonPropertyName("same_team")]
+        public bool? SameTeam { get; set; }
     }
 
     public class PermissionRequestEvent
@@ -20390,6 +20590,40 @@ namespace GetStream.Models
         public double? HealthyPct { get; set; }
     }
 
+    public class PredefinedFilterResponse
+    {
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("operation")]
+        public string Operation { get; set; }
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        [JsonPropertyName("query_id")]
+        public int? QueryID { get; set; }
+        [JsonPropertyName("sort")]
+        public List<SortParam> Sort { get; set; }
+        [JsonPropertyName("performance")]
+        public PerformanceAnalysisResponse? Performance { get; set; }
+        [JsonPropertyName("stats")]
+        public PredefinedFilterStatsResponse? Stats { get; set; }
+    }
+
+    public class PredefinedFilterStatsResponse
+    {
+        [JsonPropertyName("calls")]
+        public int Calls { get; set; }
+        [JsonPropertyName("max_latency_ms")]
+        public int MaxLatencyMs { get; set; }
+        [JsonPropertyName("last_seen")]
+        public DateTime? LastSeen { get; set; }
+    }
+
     public class PrivacySettingsResponse
     {
         [JsonPropertyName("delivery_receipts")]
@@ -20520,7 +20754,7 @@ namespace GetStream.Models
         [JsonPropertyName("enable_push")]
         public bool? EnablePush { get; set; }
         /// <summary>
-        /// List of notification types that should trigger push notifications (e.g., follow, comment, reaction, comment_reaction, mention)
+        /// Allowlist of notification types that may trigger push (e.g. follow, comment, reaction, comment_reaction, mention, or any custom activity.type). Empty or omitted means no types. Built-in notifications match notification_context.trigger.type; manually added notification activities match activity.type.
         /// </summary>
         [JsonPropertyName("push_types")]
         public List<string> PushTypes { get; set; }
@@ -22515,6 +22749,24 @@ namespace GetStream.Models
         public string? Prev { get; set; }
     }
 
+    public class QueryPredefinedFiltersResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// Predefined filters
+        /// </summary>
+        [JsonPropertyName("predefined_filters")]
+        public List<PredefinedFilterResponse> PredefinedFilters { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+    }
+
     public class QueryReactionsRequest
     {
         [JsonPropertyName("limit")]
@@ -22824,6 +23076,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("start_date")]
         public string? StartDate { get; set; }
+        /// <summary>
+        /// Filter results to a single team ID. Empty string selects users not assigned to any team. Mutually exclusive with 'next'.
+        /// </summary>
+        [JsonPropertyName("team")]
+        public string? Team { get; set; }
     }
 
     public class QueryTeamUsageStatsResponse
@@ -25911,6 +26168,16 @@ namespace GetStream.Models
         public object UserCustomData { get; set; }
     }
 
+    public class SortParam
+    {
+        [JsonPropertyName("direction")]
+        public int Direction { get; set; }
+        [JsonPropertyName("field")]
+        public string Field { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+    }
+
     public class SortParamRequest
     {
         /// <summary>
@@ -26370,7 +26637,7 @@ namespace GetStream.Models
         [JsonPropertyName("reject_appeal")]
         public RejectAppealRequestPayload? RejectAppeal { get; set; }
         /// <summary>
-        /// Configuration for restore action
+        /// Configuration for restore action. State-aware: reverses whichever of a delete, a block, or a shadow block currently applies to the content (including both a delete and a block/shadow block at once).
         /// </summary>
         [JsonPropertyName("restore")]
         public RestoreActionRequestPayload? Restore { get; set; }
@@ -26385,7 +26652,7 @@ namespace GetStream.Models
         [JsonPropertyName("unban")]
         public UnbanActionRequestPayload? Unban { get; set; }
         /// <summary>
-        /// Configuration for unblock action
+        /// Deprecated: use restore instead — it now also reverses a block or shadow block. Configuration for unblock action.
         /// </summary>
         [JsonPropertyName("unblock")]
         public UnblockActionRequestPayload? Unblock { get; set; }
@@ -28409,6 +28676,8 @@ namespace GetStream.Models
         public bool? DeliveryEvents { get; set; }
         [JsonPropertyName("mark_messages_pending")]
         public bool? MarkMessagesPending { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string? MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool? Mutes { get; set; }
         [JsonPropertyName("partition_size")]
@@ -28489,6 +28758,8 @@ namespace GetStream.Models
         public bool MarkMessagesPending { get; set; }
         [JsonPropertyName("max_message_length")]
         public int MaxMessageLength { get; set; }
+        [JsonPropertyName("message_retention")]
+        public string MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
         public bool Mutes { get; set; }
         [JsonPropertyName("name")]
@@ -29335,6 +29606,38 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
+    }
+
+    public class UpdatePredefinedFilterRequest
+    {
+        /// <summary>
+        /// The operation this filter is for (e.g., QueryChannels)
+        /// </summary>
+        [JsonPropertyName("operation")]
+        public string Operation { get; set; }
+        /// <summary>
+        /// Filter to apply to the query
+        /// </summary>
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+        /// <summary>
+        /// The description of the predefined filter
+        /// </summary>
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        [JsonPropertyName("sort")]
+        public List<object> Sort { get; set; }
+    }
+
+    public class UpdatePredefinedFilterResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("predefined_filter")]
+        public PredefinedFilterResponse? PredefinedFilter { get; set; }
     }
 
     public class UpdateQueueRequest

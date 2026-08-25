@@ -73,6 +73,15 @@ namespace GetStream
             request, cancellationToken);
         }
 
+        // Returns the number of activities in a feed, the total number of comments on those activities (including nested replies), and the sum of both. The comment total is cached for a few seconds on large feeds.
+        public async Task<StreamResponse<GetFeedCountsResponse>> GetFeedCountsAsync(
+            object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await _client.GetFeedCountsAsync(_feedGroup, _feedId,
+            request, cancellationToken);
+        }
+
         // Add, remove, or set members for a feed
         public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(
             UpdateFeedMembersRequest request,

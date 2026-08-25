@@ -894,6 +894,22 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<GetFeedCountsResponse>> GetFeedCountsAsync(string feedGroupID, string feedID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = feedGroupID,
+                ["feed_id"] = feedID,
+            };
+
+            var result = await _client.MakeRequestAsync<object, GetFeedCountsResponse>(
+                "GET",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/counts", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UpdateFeedMembersResponse>> UpdateFeedMembersAsync(string feedGroupID, string feedID, UpdateFeedMembersRequest request,
             CancellationToken cancellationToken = default)
         {

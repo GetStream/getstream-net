@@ -2173,6 +2173,43 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task GetFeedCountsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var feedGroupID = "test-feedGroupID";
+            var feedID = "test-feedID";
+
+            var expectedResponse = new StreamResponse<GetFeedCountsResponse>
+            {
+                Data = new GetFeedCountsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, GetFeedCountsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.GetFeedCountsAsync(feedGroupID, feedID, null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, GetFeedCountsResponse>(
+                "GET",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/counts",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task UpdateFeedMembersAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
