@@ -543,6 +543,24 @@ namespace GetStream
             return result;
         }
 
+        // Returns pinned messages for the channel
+        public async Task<StreamResponse<GetPinnedMessagesResponse>> GetPinnedMessagesAsync(string type, string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetPinnedMessagesResponse>(
+                "GET",
+                "/api/v2/chat/channels/{type}/{id}/pinned_messages", queryParams, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // This Method creates a channel or returns an existing one with matching attributes
 
         // Sends events:
@@ -1258,6 +1276,79 @@ namespace GetStream
             return result;
         }
 
+        // Get all predefined filters with optional sorting by created_at, updated_at, name, or operation
+        public async Task<StreamResponse<QueryPredefinedFiltersResponse>> GetPredefinedFiltersAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, QueryPredefinedFiltersResponse>(
+                "GET",
+                "/api/v2/chat/predefined_filters", queryParams, null, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Create a predefined filter that can be used in Query endpoints
+        public async Task<StreamResponse<CreatePredefinedFilterResponse>> CreatePredefinedFilterAsync(CreatePredefinedFilterRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CreatePredefinedFilterRequest, CreatePredefinedFilterResponse>(
+                "POST",
+                "/api/v2/chat/predefined_filters", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Delete a predefined filter by name
+        public async Task<StreamResponse<Response>> DeletePredefinedFilterAsync(string name, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await _client.MakeRequestAsync<object, Response>(
+                "DELETE",
+                "/api/v2/chat/predefined_filters/{name}", null, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Get a predefined filter by name
+        public async Task<StreamResponse<GetPredefinedFilterResponse>> GetPredefinedFilterAsync(string name, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await _client.MakeRequestAsync<object, GetPredefinedFilterResponse>(
+                "GET",
+                "/api/v2/chat/predefined_filters/{name}", null, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Update a predefined filter by name
+        public async Task<StreamResponse<UpdatePredefinedFilterResponse>> UpdatePredefinedFilterAsync(string name, UpdatePredefinedFilterRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["name"] = name,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdatePredefinedFilterRequest, UpdatePredefinedFilterResponse>(
+                "PUT",
+                "/api/v2/chat/predefined_filters/{name}", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Find and filter channel scoped or global user bans
         public async Task<StreamResponse<QueryBannedUsersResponse>> QueryBannedUsersAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -1516,6 +1607,10 @@ namespace GetStream
         // - Use 'month' parameter (YYYY-MM format) for monthly aggregated values
         // - Use 'start_date'/'end_date' parameters (YYYY-MM-DD format) for daily breakdown
         // - If neither provided, defaults to current month (monthly mode)
+
+        // **Team Filter:**
+        // - Use 'team' to return a single team's stats (empty string selects users not assigned to any team)
+        // - Mutually exclusive with the 'next' pagination cursor
 
         // This endpoint is server-side only.
         public async Task<StreamResponse<QueryTeamUsageStatsResponse>> QueryTeamUsageStatsAsync(QueryTeamUsageStatsRequest request,

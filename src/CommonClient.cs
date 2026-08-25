@@ -506,6 +506,32 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<Response>> CreatePermissionAsync(CreatePermissionRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<CreatePermissionRequest, Response>(
+                "POST",
+                "/api/v2/permissions", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<Response>> DeletePermissionAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<object, Response>(
+                "DELETE",
+                "/api/v2/permissions/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetCustomPermissionResponse>> GetPermissionAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -517,6 +543,21 @@ namespace GetStream
             var result = await MakeRequestAsync<object, GetCustomPermissionResponse>(
                 "GET",
                 "/api/v2/permissions/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<Response>> UpdatePermissionAsync(string id, PermissionRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await MakeRequestAsync<PermissionRequest, Response>(
+                "PUT",
+                "/api/v2/permissions/{id}", null, request, pathParams,
                 cancellationToken);
 
             return result;
