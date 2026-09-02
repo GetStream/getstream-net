@@ -67,8 +67,30 @@ namespace GetStream.Models
         public bool? Async { get; set; }
         [JsonPropertyName("enabled")]
         public bool? Enabled { get; set; }
+        [JsonPropertyName("provider")]
+        public string? Provider { get; set; }
         [JsonPropertyName("rules")]
         public List<AWSRekognitionRule> Rules { get; set; }
+    }
+
+    public class AIVideoConfigRequest
+    {
+        [JsonPropertyName("async")]
+        public bool? Async { get; set; }
+        [JsonPropertyName("enabled")]
+        public bool? Enabled { get; set; }
+        [JsonPropertyName("rules")]
+        public List<AWSRekognitionRule> Rules { get; set; }
+    }
+
+    public class AIVideoConfigResponse
+    {
+        [JsonPropertyName("enabled")]
+        public bool Enabled { get; set; }
+        [JsonPropertyName("rules")]
+        public List<AWSRekognitionRule> Rules { get; set; }
+        [JsonPropertyName("async")]
+        public bool? Async { get; set; }
     }
 
     public class APIError
@@ -247,7 +269,7 @@ namespace GetStream.Models
         [JsonPropertyName("target")]
         public string Target { get; set; }
         /// <summary>
-        /// Optional role for the follower in the follow relationship
+        /// Optional role for the follower in the follow relationship. Server-side only. Either a built-in ('feed_follower' (the default) or 'feed_member_viewer') or any role your app has defined; grants are not inspected.
         /// </summary>
         [JsonPropertyName("follower_role")]
         public string? FollowerRole { get; set; }
@@ -665,6 +687,20 @@ namespace GetStream.Models
         public DateTime? ReceivedAt { get; set; }
         [JsonPropertyName("user")]
         public UserResponseCommonFields? User { get; set; }
+    }
+
+    public class ActivityProcessingConfig
+    {
+        /// <summary>
+        /// When set, the LLM activity processors may only write interest tags from this list. Tags are matched literally after lower-casing and trimming, so a generic vocabulary matches more often than in-house terms. Mutually exclusive with blocked_tags.
+        /// </summary>
+        [JsonPropertyName("allowed_tags")]
+        public List<string> AllowedTags { get; set; }
+        /// <summary>
+        /// Interest tags the LLM activity processors are never allowed to write. Mutually exclusive with allowed_tags.
+        /// </summary>
+        [JsonPropertyName("blocked_tags")]
+        public List<string> BlockedTags { get; set; }
     }
 
     public class ActivityProcessorConfig
@@ -1989,7 +2025,7 @@ namespace GetStream.Models
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
         /// <summary>
-        /// Always `complete` — /analyze is sync-only and the full verdict is in the response.
+        /// `complete` (all fields screened), `partial` (mix of verdicts and per-field errors), or `pending` (async).
         /// </summary>
         [JsonPropertyName("status")]
         public string Status { get; set; }
@@ -2069,12 +2105,18 @@ namespace GetStream.Models
         public bool ImageModerationEnabled { get; set; }
         [JsonPropertyName("max_aggregated_activities_length")]
         public int MaxAggregatedActivitiesLength { get; set; }
+        [JsonPropertyName("member_custom_on_mentioned_users_enabled")]
+        public bool MemberCustomOnMentionedUsersEnabled { get; set; }
         [JsonPropertyName("member_custom_on_messages_enabled")]
         public bool MemberCustomOnMessagesEnabled { get; set; }
+        [JsonPropertyName("member_custom_on_typing_events_enabled")]
+        public bool MemberCustomOnTypingEventsEnabled { get; set; }
         [JsonPropertyName("moderation_audio_call_moderation_enabled")]
         public bool ModerationAudioCallModerationEnabled { get; set; }
         [JsonPropertyName("moderation_enabled")]
         public bool ModerationEnabled { get; set; }
+        [JsonPropertyName("moderation_keyframe_video_enabled")]
+        public bool ModerationKeyframeVideoEnabled { get; set; }
         [JsonPropertyName("moderation_llm_configurability_enabled")]
         public bool ModerationLlmConfigurabilityEnabled { get; set; }
         [JsonPropertyName("moderation_multitenant_blocklist_enabled")]
@@ -5850,8 +5892,18 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
+        /// <summary>
+        /// `updateData` only. Deletes these keys from each channel's existing custom object, leaving every other custom key untouched. Keys are dot-paths; deleting a key that does not exist is a no-op. Cannot be combined with `data.custom`
+        /// </summary>
+        [JsonPropertyName("custom_unset")]
+        public List<string> CustomUnset { get; set; }
         [JsonPropertyName("members")]
         public List<ChannelBatchMemberRequest> Members { get; set; }
+        /// <summary>
+        /// `updateData` only. Merges these keys into each channel's existing custom object, leaving every other custom key untouched. Keys are dot-paths, so `a.b` sets key `b` inside object `a` (the parent object must already exist). Cannot be combined with `data.custom`
+        /// </summary>
+        [JsonPropertyName("custom_set")]
+        public object CustomSet { get; set; }
         [JsonPropertyName("data")]
         public ChannelDataUpdate? Data { get; set; }
     }
@@ -6505,20 +6557,17 @@ namespace GetStream.Models
 
     public class ChannelMemberRequest
     {
-        [JsonPropertyName("user_id")]
-        public string UserID { get; set; }
         /// <summary>
         /// Role of the member in the channel
         /// </summary>
         [JsonPropertyName("channel_role")]
         public string? ChannelRole { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
-        /// <summary>
-        /// User response object
-        /// </summary>
         [JsonPropertyName("user")]
-        public UserResponse? User { get; set; }
+        public MemberUserRequest? User { get; set; }
     }
 
     public class ChannelMemberResponse
@@ -8694,7 +8743,7 @@ namespace GetStream.Models
         [JsonPropertyName("ai_text_config")]
         public AITextConfig? AiTextConfig { get; set; }
         [JsonPropertyName("ai_video_config")]
-        public AIVideoConfig? AiVideoConfig { get; set; }
+        public AIVideoConfigResponse? AiVideoConfig { get; set; }
         [JsonPropertyName("automod_platform_circumvention_config")]
         public AutomodPlatformCircumventionConfig? AutomodPlatformCircumventionConfig { get; set; }
         [JsonPropertyName("automod_semantic_filters_config")]
@@ -9354,6 +9403,11 @@ namespace GetStream.Models
         [JsonPropertyName("id")]
         public string ID { get; set; }
         /// <summary>
+        /// Role new followers of feeds in this group are given. Either a built-in (feed_follower, feed_member_viewer) or any role your app has defined. Empty means feed_follower. Applied when the follow is accepted, so a follow that starts pending picks it up on approval
+        /// </summary>
+        [JsonPropertyName("default_follower_role")]
+        public string? DefaultFollowerRole { get; set; }
+        /// <summary>
         /// Default visibility for the feed group, can be 'public', 'visible', 'followers', 'members', or 'private'. Defaults to 'visible' if not provided. 
         /// </summary>
         [JsonPropertyName("default_visibility")]
@@ -9370,6 +9424,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_processing")]
+        public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
         public AggregationConfig? Aggregation { get; set; }
         /// <summary>
@@ -9428,6 +9484,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("feeds")]
         public List<FeedRequest> Feeds { get; set; }
+        /// <summary>
+        /// Server-side only. If true, auto-creates users referenced by feeds[].created_by_id that don't already exist. Default: false.
+        /// </summary>
+        [JsonPropertyName("create_users")]
+        public bool? CreateUsers { get; set; }
         /// <summary>
         /// If true, enriches the created feeds with own_* fields (own_follows, own_followings, own_capabilities, own_membership). Defaults to false for performance.
         /// </summary>
@@ -9808,6 +9869,17 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
+    }
+
+    public class CreateReminderResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("reminder")]
+        public ReminderResponseData Reminder { get; set; }
     }
 
     public class CreateRoleRequest
@@ -11929,6 +12001,8 @@ namespace GetStream.Models
         public int AppPk { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("default_follower_role")]
+        public string DefaultFollowerRole { get; set; }
         [JsonPropertyName("default_visibility")]
         public string DefaultVisibility { get; set; }
         [JsonPropertyName("group_id")]
@@ -12030,6 +12104,11 @@ namespace GetStream.Models
         [JsonPropertyName("updated_at")]
         public DateTime UpdatedAt { get; set; }
         /// <summary>
+        /// Role new followers of feeds in this group are given. Either a built-in (feed_follower, feed_member_viewer) or any role your app has defined. Empty means feed_follower. Applied when the follow is accepted, so a follow that starts pending picks it up on approval
+        /// </summary>
+        [JsonPropertyName("default_follower_role")]
+        public string? DefaultFollowerRole { get; set; }
+        /// <summary>
         /// Default visibility for activities. One of: public, visible, followers, members, private
         /// </summary>
         [JsonPropertyName("default_visibility")]
@@ -12048,6 +12127,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfigResponse> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_processing")]
+        public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
         public AggregationConfig? Aggregation { get; set; }
         /// <summary>
@@ -13567,7 +13648,7 @@ namespace GetStream.Models
         [JsonPropertyName("created_at")]
         public DateTime CreatedAt { get; set; }
         /// <summary>
-        /// Role of the follower (source user) in the follow relationship
+        /// Role of the follower (source user) in the follow relationship, as stored. A reserved name, or a role your app no longer defines, is reported as stored but evaluated as 'feed_follower'.
         /// </summary>
         [JsonPropertyName("follower_role")]
         public string FollowerRole { get; set; }
@@ -14586,6 +14667,11 @@ namespace GetStream.Models
     public class GetOrCreateFeedGroupRequest
     {
         /// <summary>
+        /// Role new followers of feeds in this group are given. Either a built-in (feed_follower, feed_member_viewer) or any role your app has defined. Empty means feed_follower. Applied when the follow is accepted, so a follow that starts pending picks it up on approval
+        /// </summary>
+        [JsonPropertyName("default_follower_role")]
+        public string? DefaultFollowerRole { get; set; }
+        /// <summary>
         /// Default visibility for the feed group, can be 'public', 'visible', 'followers', 'members', or 'private'. Defaults to 'visible' if not provided. 
         /// </summary>
         [JsonPropertyName("default_visibility")]
@@ -14602,6 +14688,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_processing")]
+        public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
         public AggregationConfig? Aggregation { get; set; }
         /// <summary>
@@ -16953,6 +17041,30 @@ namespace GetStream.Models
         public UserResponseCommonFields? User { get; set; }
     }
 
+    public class MemberUserRequest
+    {
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        [JsonPropertyName("image")]
+        public string? Image { get; set; }
+        [JsonPropertyName("invisible")]
+        public bool? Invisible { get; set; }
+        [JsonPropertyName("language")]
+        public string? Language { get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+        [JsonPropertyName("role")]
+        public string? Role { get; set; }
+        [JsonPropertyName("teams")]
+        public List<string> Teams { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("privacy_settings")]
+        public PrivacySettingsResponse? PrivacySettings { get; set; }
+        [JsonPropertyName("teams_role")]
+        public Dictionary<string, string> TeamsRole { get; set; }
+    }
+
     public class MembersResponse
     {
         /// <summary>
@@ -17844,6 +17956,11 @@ namespace GetStream.Models
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
+        /// <summary>
+        /// Channel member data for the users mentioned in the message, keyed by user id. Only present when the app has member custom on mentioned users enabled, and only for the first two mentioned users of each message
+        /// </summary>
+        [JsonPropertyName("mentioned_channel_members")]
+        public Dictionary<string, ChannelMemberPartialResponse> MentionedChannelMembers { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         /// <summary>
@@ -18226,6 +18343,11 @@ namespace GetStream.Models
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
+        /// <summary>
+        /// Channel member data for the users mentioned in the message, keyed by user id. Only present when the app has member custom on mentioned users enabled, and only for the first two mentioned users of each message
+        /// </summary>
+        [JsonPropertyName("mentioned_channel_members")]
+        public Dictionary<string, ChannelMemberPartialResponse> MentionedChannelMembers { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         /// <summary>
@@ -18591,6 +18713,8 @@ namespace GetStream.Models
         public string UserID { get; set; }
         [JsonPropertyName("result")]
         public List<object> Result { get; set; }
+        [JsonPropertyName("content_published_at")]
+        public DateTime? ContentPublishedAt { get; set; }
         [JsonPropertyName("entity_creator_id")]
         public string? EntityCreatorID { get; set; }
         [JsonPropertyName("reason")]
@@ -20479,6 +20603,9 @@ namespace GetStream.Models
         public DateTime UpdatedAt { get; set; }
         [JsonPropertyName("vote_count")]
         public int VoteCount { get; set; }
+        /// <summary>
+        /// Voting visibility of the poll
+        /// </summary>
         [JsonPropertyName("voting_visibility")]
         public string VotingVisibility { get; set; }
         [JsonPropertyName("latest_answers")]
@@ -22303,11 +22430,6 @@ namespace GetStream.Models
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
-        /// <summary>
-        /// Filter conditions to apply to the query
-        /// </summary>
-        [JsonPropertyName("filter_conditions")]
-        public object FilterConditions { get; set; }
         [JsonPropertyName("id")]
         public string? ID { get; set; }
         [JsonPropertyName("limit")]
@@ -22323,6 +22445,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
+        /// <summary>
+        /// Filter conditions to apply to the query
+        /// </summary>
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
         /// <summary>
         /// User request object
         /// </summary>
@@ -23979,6 +24106,8 @@ namespace GetStream.Models
         public string UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("reminder")]
+        public ReminderResponseData Reminder { get; set; }
         /// <summary>
         /// The type of event: "reminder.created" in this case
         /// </summary>
@@ -23991,8 +24120,6 @@ namespace GetStream.Models
         public string? ParentID { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
-        [JsonPropertyName("reminder")]
-        public ReminderResponseData? Reminder { get; set; }
     }
 
     public class ReminderDeletedEvent
@@ -24019,6 +24146,8 @@ namespace GetStream.Models
         public string UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("reminder")]
+        public ReminderResponseData Reminder { get; set; }
         /// <summary>
         /// The type of event: "reminder.deleted" in this case
         /// </summary>
@@ -24031,8 +24160,6 @@ namespace GetStream.Models
         public string? ParentID { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
-        [JsonPropertyName("reminder")]
-        public ReminderResponseData? Reminder { get; set; }
     }
 
     public class ReminderNotificationEvent
@@ -24059,6 +24186,8 @@ namespace GetStream.Models
         public string UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("reminder")]
+        public ReminderResponseData Reminder { get; set; }
         /// <summary>
         /// The type of event: "notification.reminder_due" in this case
         /// </summary>
@@ -24068,8 +24197,6 @@ namespace GetStream.Models
         public string? ParentID { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
-        [JsonPropertyName("reminder")]
-        public ReminderResponseData? Reminder { get; set; }
     }
 
     public class ReminderResponseData
@@ -24127,6 +24254,8 @@ namespace GetStream.Models
         public string UserID { get; set; }
         [JsonPropertyName("custom")]
         public object Custom { get; set; }
+        [JsonPropertyName("reminder")]
+        public ReminderResponseData Reminder { get; set; }
         /// <summary>
         /// The type of event: "reminder.updated" in this case
         /// </summary>
@@ -24139,8 +24268,6 @@ namespace GetStream.Models
         public string? ParentID { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
-        [JsonPropertyName("reminder")]
-        public ReminderResponseData? Reminder { get; set; }
     }
 
     public class RemoveUserGroupMembersRequest
@@ -25568,6 +25695,8 @@ namespace GetStream.Models
         public Dictionary<string, List<string>> ImageLabels { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
+        [JsonPropertyName("mentioned_channel_members")]
+        public Dictionary<string, ChannelMemberPartialResponse> MentionedChannelMembers { get; set; }
         [JsonPropertyName("moderation")]
         public ModerationV2Response? Moderation { get; set; }
         /// <summary>
@@ -27468,6 +27597,20 @@ namespace GetStream.Models
         public string Language { get; set; }
     }
 
+    public class TranslateMessageResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// Represents any chat message
+        /// </summary>
+        [JsonPropertyName("message")]
+        public MessageResponse Message { get; set; }
+    }
+
     public class TranslationSettings
     {
         [JsonPropertyName("enabled")]
@@ -27595,8 +27738,10 @@ namespace GetStream.Models
     public class UnbanRequest
     {
         /// <summary>
-        /// ID of the user performing the unban
+        /// ID of the user performing the unban Deprecated: not used by the unban flow
+        /// <para>Deprecated.</para>
         /// </summary>
+        [Obsolete]
         [JsonPropertyName("unbanned_by_id")]
         public string? UnbannedByID { get; set; }
         /// <summary>
@@ -28186,8 +28331,12 @@ namespace GetStream.Models
         public bool? ImageModerationEnabled { get; set; }
         [JsonPropertyName("max_aggregated_activities_length")]
         public int? MaxAggregatedActivitiesLength { get; set; }
+        [JsonPropertyName("member_custom_on_mentioned_users_enabled")]
+        public bool? MemberCustomOnMentionedUsersEnabled { get; set; }
         [JsonPropertyName("member_custom_on_messages_enabled")]
         public bool? MemberCustomOnMessagesEnabled { get; set; }
+        [JsonPropertyName("member_custom_on_typing_events_enabled")]
+        public bool? MemberCustomOnTypingEventsEnabled { get; set; }
         [JsonPropertyName("migrate_permissions_to_v2")]
         public bool? MigratePermissionsToV2 { get; set; }
         [JsonPropertyName("moderation_analytics_enabled")]
@@ -29104,6 +29253,14 @@ namespace GetStream.Models
 
     public class UpdateFeedGroupRequest
     {
+        /// <summary>
+        /// Role new followers of feeds in this group are given. Either a built-in (feed_follower, feed_member_viewer) or any role your app has defined. Empty means feed_follower. Applied when the follow is accepted, so a follow that starts pending picks it up on approval
+        /// </summary>
+        [JsonPropertyName("default_follower_role")]
+        public string? DefaultFollowerRole { get; set; }
+        /// <summary>
+        /// Default visibility for the feed group. One of: public, visible, followers, members, private
+        /// </summary>
         [JsonPropertyName("default_visibility")]
         public string? DefaultVisibility { get; set; }
         /// <summary>
@@ -29118,6 +29275,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_processing")]
+        public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
         public AggregationConfig? Aggregation { get; set; }
         /// <summary>
@@ -29304,6 +29463,9 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("enrich_own_fields")]
         public bool? EnrichOwnFields { get; set; }
+        /// <summary>
+        /// Optional role for the follower in the follow relationship. Server-side only. Either a built-in ('feed_follower' (the default) or 'feed_member_viewer') or any role your app has defined; grants are not inspected.
+        /// </summary>
         [JsonPropertyName("follower_role")]
         public string? FollowerRole { get; set; }
         /// <summary>
@@ -30191,7 +30353,7 @@ namespace GetStream.Models
         [JsonPropertyName("ai_text_config")]
         public AITextConfig? AiTextConfig { get; set; }
         [JsonPropertyName("ai_video_config")]
-        public AIVideoConfig? AiVideoConfig { get; set; }
+        public AIVideoConfigRequest? AiVideoConfig { get; set; }
         [JsonPropertyName("automod_platform_circumvention_config")]
         public AutomodPlatformCircumventionConfig? AutomodPlatformCircumventionConfig { get; set; }
         [JsonPropertyName("automod_semantic_filters_config")]
