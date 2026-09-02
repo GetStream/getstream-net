@@ -1071,7 +1071,7 @@ namespace GetStream
 
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<MessageActionResponse>> TranslateMessageAsync(string id, TranslateMessageRequest request,
+        public async Task<StreamResponse<TranslateMessageResponse>> TranslateMessageAsync(string id, TranslateMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1079,7 +1079,7 @@ namespace GetStream
                 ["id"] = id,
             };
 
-            var result = await _client.MakeRequestAsync<TranslateMessageRequest, MessageActionResponse>(
+            var result = await _client.MakeRequestAsync<TranslateMessageRequest, TranslateMessageResponse>(
                 "POST",
                 "/api/v2/chat/messages/{id}/translate", null, request, pathParams,
                 cancellationToken);
@@ -1196,7 +1196,7 @@ namespace GetStream
 
         // Sends events:
         // - reminder.created
-        public async Task<StreamResponse<ReminderResponseData>> CreateReminderAsync(string messageID, CreateReminderRequest request,
+        public async Task<StreamResponse<CreateReminderResponse>> CreateReminderAsync(string messageID, CreateReminderRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1204,7 +1204,7 @@ namespace GetStream
                 ["message_id"] = messageID,
             };
 
-            var result = await _client.MakeRequestAsync<CreateReminderRequest, ReminderResponseData>(
+            var result = await _client.MakeRequestAsync<CreateReminderRequest, CreateReminderResponse>(
                 "POST",
                 "/api/v2/chat/messages/{message_id}/reminders", null, request, pathParams,
                 cancellationToken);
