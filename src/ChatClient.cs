@@ -97,7 +97,7 @@ namespace GetStream
         }
 
         // Updates a campaign
-        public async Task<StreamResponse<CampaignResponse>> UpdateCampaignAsync(string id, UpdateCampaignRequest request,
+        public async Task<StreamResponse<UpdateCampaignResponse>> UpdateCampaignAsync(string id, UpdateCampaignRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -105,7 +105,7 @@ namespace GetStream
                 ["id"] = id,
             };
 
-            var result = await _client.MakeRequestAsync<UpdateCampaignRequest, CampaignResponse>(
+            var result = await _client.MakeRequestAsync<UpdateCampaignRequest, UpdateCampaignResponse>(
                 "PUT",
                 "/api/v2/chat/campaigns/{id}", null, request, pathParams,
                 cancellationToken);
@@ -129,7 +129,7 @@ namespace GetStream
         }
 
         // Stops a campaign
-        public async Task<StreamResponse<CampaignResponse>> StopCampaignAsync(string id, StopCampaignRequest request,
+        public async Task<StreamResponse<StopCampaignResponse>> StopCampaignAsync(string id, StopCampaignRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -137,7 +137,7 @@ namespace GetStream
                 ["id"] = id,
             };
 
-            var result = await _client.MakeRequestAsync<StopCampaignRequest, CampaignResponse>(
+            var result = await _client.MakeRequestAsync<StopCampaignRequest, StopCampaignResponse>(
                 "POST",
                 "/api/v2/chat/campaigns/{id}/stop", null, request, pathParams,
                 cancellationToken);

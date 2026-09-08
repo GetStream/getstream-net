@@ -634,6 +634,20 @@ namespace GetStream.Models
         public UserResponseCommonFields? User { get; set; }
     }
 
+    public class ActivityMarksConfig
+    {
+        /// <summary>
+        /// Whether to return per-activity read status on content feeds
+        /// </summary>
+        [JsonPropertyName("track_read")]
+        public bool? TrackRead { get; set; }
+        /// <summary>
+        /// Whether to return per-activity seen status on content feeds
+        /// </summary>
+        [JsonPropertyName("track_seen")]
+        public bool? TrackSeen { get; set; }
+    }
+
     public class ActivityPinResponse
     {
         /// <summary>
@@ -692,7 +706,12 @@ namespace GetStream.Models
     public class ActivityProcessingConfig
     {
         /// <summary>
-        /// When set, the LLM activity processors may only write interest tags from this list. Tags are matched literally after lower-casing and trimming, so a generic vocabulary matches more often than in-house terms. Mutually exclusive with blocked_tags.
+        /// When true, this feed group's allowed_tags is given to the model as a constrained vocabulary so it maps its own wording onto a configured tag instead of that output being discarded. Improves how often a tag is produced, at the cost of sending the list on every request. Scoped to this group's own list: leaving it false keeps this group's tags out of the request even when another feed group on the same activity sets it true. Requires allowed_tags. Off by default.
+        /// </summary>
+        [JsonPropertyName("send_allowed_tags_to_ai")]
+        public bool? SendAllowedTagsToAi { get; set; }
+        /// <summary>
+        /// When set, the LLM activity processors may only write interest tags from this list. By default the model is not told about the list, so a tag is only written when the model happens to produce that exact word after lower-casing and trimming, which for any vocabulary is often not the case; set send_allowed_tags_to_ai to have the model choose from the list instead. Mutually exclusive with blocked_tags.
         /// </summary>
         [JsonPropertyName("allowed_tags")]
         public List<string> AllowedTags { get; set; }
@@ -1234,6 +1253,8 @@ namespace GetStream.Models
         public List<SortParamRequest> Sort { get; set; }
         [JsonPropertyName("params")]
         public object @Params { get; set; }
+        [JsonPropertyName("feed_groups")]
+        public FeedGroupScope? FeedGroups { get; set; }
         /// <summary>
         /// Filter for activity selection
         /// </summary>
@@ -1273,6 +1294,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("params")]
         public object @Params { get; set; }
+        [JsonPropertyName("feed_groups")]
+        public FeedGroupScope? FeedGroups { get; set; }
         /// <summary>
         /// Filter for activity selection
         /// </summary>
@@ -2967,11 +2990,6 @@ namespace GetStream.Models
 
     public class BatchQueryActivityReactionsRequest
     {
-        /// <summary>
-        /// Activity IDs to fetch the user's reactions for (max 100)
-        /// </summary>
-        [JsonPropertyName("activity_ids")]
-        public List<string> ActivityIds { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -2983,10 +3001,15 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
+        /// <summary>
+        /// Activity IDs to fetch the user's reactions for (max 100). Omit to page over all of the user's activity reactions
+        /// </summary>
+        [JsonPropertyName("activity_ids")]
+        public List<string> ActivityIds { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
         /// <summary>
-        /// Optional filter on reaction_type or created_at
+        /// Optional filter on reaction_type or created_at. To restrict by activity, prefer activity_ids over filter.activity_id: activity_ids is capped at 100 and served by the per-activity index, and filter.activity_id is rejected when activity_ids is omitted
         /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
@@ -3014,11 +3037,6 @@ namespace GetStream.Models
 
     public class BatchQueryCommentReactionsRequest
     {
-        /// <summary>
-        /// Comment IDs to fetch the user's reactions for (max 100)
-        /// </summary>
-        [JsonPropertyName("comment_ids")]
-        public List<string> CommentIds { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -3030,10 +3048,15 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
+        /// <summary>
+        /// Comment IDs to fetch the user's reactions for (max 100). Omit to page over all of the user's comment reactions
+        /// </summary>
+        [JsonPropertyName("comment_ids")]
+        public List<string> CommentIds { get; set; }
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
         /// <summary>
-        /// Optional filter on reaction_type or created_at
+        /// Optional filter on reaction_type or created_at. To restrict by comment, prefer comment_ids over filter.comment_id: comment_ids is capped at 100 and served by the per-comment index, and filter.comment_id is rejected when comment_ids is omitted
         /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
@@ -9424,6 +9447,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_marks")]
+        public ActivityMarksConfig? ActivityMarks { get; set; }
         [JsonPropertyName("activity_processing")]
         public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
@@ -10524,10 +10549,15 @@ namespace GetStream.Models
         [JsonPropertyName("cids")]
         public List<string> Cids { get; set; }
         /// <summary>
-        /// Specify if channels and all ressources should be hard deleted
+        /// Server-side only. When true, the channels and all their resources are permanently deleted instead of soft-deleted.
         /// </summary>
         [JsonPropertyName("hard_delete")]
         public bool? HardDelete { get; set; }
+        /// <summary>
+        /// Server-side only. When true, the soft delete preserves message history instead of hiding it, so a later recreation of any of these channel IDs restores the full history. Only supported for distinct channels. Cannot be combined with hard_delete.
+        /// </summary>
+        [JsonPropertyName("skip_truncate")]
+        public bool? SkipTruncate { get; set; }
     }
 
     public class DeleteChannelsResponse
@@ -12127,6 +12157,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfigResponse> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_marks")]
+        public ActivityMarksConfig? ActivityMarks { get; set; }
         [JsonPropertyName("activity_processing")]
         public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
@@ -12171,6 +12203,20 @@ namespace GetStream.Models
         public string? FeedVisibility { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
+    }
+
+    public class FeedGroupScope
+    {
+        /// <summary>
+        /// Select activities from every feed group except these. An activity cross-posted to an excluded and a non-excluded group is still selected. Mutually exclusive with include
+        /// </summary>
+        [JsonPropertyName("exclude")]
+        public List<string> Exclude { get; set; }
+        /// <summary>
+        /// Select only activities that live in a feed belonging to one of these feed groups. Mutually exclusive with exclude
+        /// </summary>
+        [JsonPropertyName("include")]
+        public List<string> Include { get; set; }
     }
 
     public class FeedInput
@@ -14426,6 +14472,16 @@ namespace GetStream.Models
         [JsonPropertyName("unity")]
         public Dictionary<string, LimitInfoResponse> Unity { get; set; }
         /// <summary>
+        /// Rate limits for Unity console platform (endpoint name -> limit info)
+        /// </summary>
+        [JsonPropertyName("unity_console")]
+        public Dictionary<string, LimitInfoResponse> UnityConsole { get; set; }
+        /// <summary>
+        /// Rate limits for Unity desktop platform (endpoint name -> limit info)
+        /// </summary>
+        [JsonPropertyName("unity_desktop")]
+        public Dictionary<string, LimitInfoResponse> UnityDesktop { get; set; }
+        /// <summary>
         /// Rate limits for Web platform (endpoint name -> limit info)
         /// </summary>
         [JsonPropertyName("web")]
@@ -14688,6 +14744,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_marks")]
+        public ActivityMarksConfig? ActivityMarks { get; set; }
         [JsonPropertyName("activity_processing")]
         public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
@@ -14952,6 +15010,16 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("unity")]
         public Dictionary<string, LimitInfoResponse> Unity { get; set; }
+        /// <summary>
+        /// Map of endpoint rate limits for the Unity console platform
+        /// </summary>
+        [JsonPropertyName("unity_console")]
+        public Dictionary<string, LimitInfoResponse> UnityConsole { get; set; }
+        /// <summary>
+        /// Map of endpoint rate limits for the Unity desktop platform
+        /// </summary>
+        [JsonPropertyName("unity_desktop")]
+        public Dictionary<string, LimitInfoResponse> UnityDesktop { get; set; }
         /// <summary>
         /// Map of endpoint rate limits for the web platform
         /// </summary>
@@ -18677,6 +18745,8 @@ namespace GetStream.Models
         public bool? DisableAuditLogs { get; set; }
         [JsonPropertyName("disable_flagging_reviewed_entity")]
         public bool? DisableFlaggingReviewedEntity { get; set; }
+        [JsonPropertyName("enforce_shadow_server_side")]
+        public bool? EnforceShadowServerSide { get; set; }
         [JsonPropertyName("escalation_queue_enabled")]
         public bool? EscalationQueueEnabled { get; set; }
         [JsonPropertyName("flag_user_on_flagged_content")]
@@ -19826,6 +19896,14 @@ namespace GetStream.Models
 
     public class PaginationParams
     {
+        [JsonPropertyName("id_gt")]
+        public int? IDGt { get; set; }
+        [JsonPropertyName("id_gte")]
+        public int? IDGte { get; set; }
+        [JsonPropertyName("id_lt")]
+        public int? IDLt { get; set; }
+        [JsonPropertyName("id_lte")]
+        public int? IDLte { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("offset")]
@@ -21417,6 +21495,14 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("filter_conditions")]
         public object FilterConditions { get; set; }
+        [JsonPropertyName("created_at_after")]
+        public DateTime? CreatedAtAfter { get; set; }
+        [JsonPropertyName("created_at_after_or_equal")]
+        public DateTime? CreatedAtAfterOrEqual { get; set; }
+        [JsonPropertyName("created_at_before")]
+        public DateTime? CreatedAtBefore { get; set; }
+        [JsonPropertyName("created_at_before_or_equal")]
+        public DateTime? CreatedAtBeforeOrEqual { get; set; }
         /// <summary>
         /// Whether to exclude expired bans or not
         /// </summary>
@@ -22331,6 +22417,14 @@ namespace GetStream.Models
 
     public class QueryFutureChannelBansPayload
     {
+        [JsonPropertyName("created_at_after")]
+        public DateTime? CreatedAtAfter { get; set; }
+        [JsonPropertyName("created_at_after_or_equal")]
+        public DateTime? CreatedAtAfterOrEqual { get; set; }
+        [JsonPropertyName("created_at_before")]
+        public DateTime? CreatedAtBefore { get; set; }
+        [JsonPropertyName("created_at_before_or_equal")]
+        public DateTime? CreatedAtBeforeOrEqual { get; set; }
         /// <summary>
         /// Whether to exclude expired bans or not
         /// </summary>
@@ -22430,6 +22524,14 @@ namespace GetStream.Models
     {
         [JsonPropertyName("type")]
         public string Type { get; set; }
+        [JsonPropertyName("created_at_after")]
+        public DateTime? CreatedAtAfter { get; set; }
+        [JsonPropertyName("created_at_after_or_equal")]
+        public DateTime? CreatedAtAfterOrEqual { get; set; }
+        [JsonPropertyName("created_at_before")]
+        public DateTime? CreatedAtBefore { get; set; }
+        [JsonPropertyName("created_at_before_or_equal")]
+        public DateTime? CreatedAtBeforeOrEqual { get; set; }
         [JsonPropertyName("id")]
         public string? ID { get; set; }
         [JsonPropertyName("limit")]
@@ -22438,6 +22540,14 @@ namespace GetStream.Models
         public int? Offset { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
+        [JsonPropertyName("user_id_gt")]
+        public string? UserIDGt { get; set; }
+        [JsonPropertyName("user_id_gte")]
+        public string? UserIDGte { get; set; }
+        [JsonPropertyName("user_id_lt")]
+        public string? UserIDLt { get; set; }
+        [JsonPropertyName("user_id_lte")]
+        public string? UserIDLte { get; set; }
         [JsonPropertyName("members")]
         public List<ChannelMemberRequest> Members { get; set; }
         /// <summary>
@@ -23328,6 +23438,14 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("filter_conditions")]
         public object FilterConditions { get; set; }
+        [JsonPropertyName("id_gt")]
+        public string? IDGt { get; set; }
+        [JsonPropertyName("id_gte")]
+        public string? IDGte { get; set; }
+        [JsonPropertyName("id_lt")]
+        public string? IDLt { get; set; }
+        [JsonPropertyName("id_lte")]
+        public string? IDLte { get; set; }
         [JsonPropertyName("include_deactivated_users")]
         public bool? IncludeDeactivatedUsers { get; set; }
         [JsonPropertyName("limit")]
@@ -24940,6 +25058,8 @@ namespace GetStream.Models
         public FlagCountRuleParameters? UserFlagCountRuleParams { get; set; }
         [JsonPropertyName("user_identical_content_count_params")]
         public UserIdenticalContentCountParameters? UserIdenticalContentCountParams { get; set; }
+        [JsonPropertyName("user_reaction_count_params")]
+        public UserReactionCountRuleParameters? UserReactionCountParams { get; set; }
         [JsonPropertyName("user_role_params")]
         public UserRoleParameters? UserRoleParams { get; set; }
         [JsonPropertyName("user_rule_params")]
@@ -24988,6 +25108,8 @@ namespace GetStream.Models
 
     public class RunStats
     {
+        [JsonPropertyName("activities_deleted")]
+        public int? ActivitiesDeleted { get; set; }
         [JsonPropertyName("channels_deleted")]
         public int? ChannelsDeleted { get; set; }
         [JsonPropertyName("messages_deleted")]
@@ -26516,6 +26638,17 @@ namespace GetStream.Models
 
     public class StopCampaignRequest
     {
+    }
+
+    public class StopCampaignResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("campaign")]
+        public CampaignResponse? Campaign { get; set; }
     }
 
     public class StopClosedCaptionsRequest
@@ -28657,6 +28790,19 @@ namespace GetStream.Models
         public CampaignChannelTemplate? ChannelTemplate { get; set; }
     }
 
+    public class UpdateCampaignResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("campaign")]
+        public CampaignResponse? Campaign { get; set; }
+        [JsonPropertyName("users")]
+        public PagerResponse? Users { get; set; }
+    }
+
     public class UpdateChannelPartialRequest
     {
         [JsonPropertyName("user_id")]
@@ -28806,11 +28952,9 @@ namespace GetStream.Models
     public class UpdateChannelTypeRequest
     {
         [JsonPropertyName("automod")]
-        public string Automod { get; set; }
+        public string? Automod { get; set; }
         [JsonPropertyName("automod_behavior")]
-        public string AutomodBehavior { get; set; }
-        [JsonPropertyName("max_message_length")]
-        public int MaxMessageLength { get; set; }
+        public string? AutomodBehavior { get; set; }
         [JsonPropertyName("blocklist")]
         public string? Blocklist { get; set; }
         [JsonPropertyName("blocklist_behavior")]
@@ -28825,6 +28969,8 @@ namespace GetStream.Models
         public bool? DeliveryEvents { get; set; }
         [JsonPropertyName("mark_messages_pending")]
         public bool? MarkMessagesPending { get; set; }
+        [JsonPropertyName("max_message_length")]
+        public int? MaxMessageLength { get; set; }
         [JsonPropertyName("message_retention")]
         public string? MessageRetention { get; set; }
         [JsonPropertyName("mutes")]
@@ -29275,6 +29421,8 @@ namespace GetStream.Models
         public List<ActivitySelectorConfig> ActivitySelectors { get; set; }
         [JsonPropertyName("activity_filter")]
         public ActivityFilterConfig? ActivityFilter { get; set; }
+        [JsonPropertyName("activity_marks")]
+        public ActivityMarksConfig? ActivityMarks { get; set; }
         [JsonPropertyName("activity_processing")]
         public ActivityProcessingConfig? ActivityProcessing { get; set; }
         [JsonPropertyName("aggregation")]
@@ -30080,6 +30228,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
+        /// <summary>
+        /// Deprecated: always empty. Removing a user from a team no longer deletes their memberships in that team's channels, so there is no task to poll
+        /// <para>Deprecated.</para>
+        /// </summary>
+        [Obsolete]
         [JsonPropertyName("membership_deletion_task_id")]
         public string MembershipDeletionTaskID { get; set; }
         /// <summary>
@@ -31199,6 +31352,14 @@ namespace GetStream.Models
         public int Count { get; set; }
     }
 
+    public class UserReactionCountRuleParameters
+    {
+        [JsonPropertyName("threshold")]
+        public int? Threshold { get; set; }
+        [JsonPropertyName("time_window")]
+        public string? TimeWindow { get; set; }
+    }
+
     public class UserReactivatedEvent
     {
         /// <summary>
@@ -31881,6 +32042,18 @@ namespace GetStream.Models
         public string? GcsCredentials { get; set; }
         [JsonPropertyName("gcs_path")]
         public string? GcsPath { get; set; }
+        [JsonPropertyName("s3_api_key")]
+        public string? S3APIKey { get; set; }
+        [JsonPropertyName("s3_bucket")]
+        public string? S3Bucket { get; set; }
+        [JsonPropertyName("s3_path")]
+        public string? S3Path { get; set; }
+        [JsonPropertyName("s3_region")]
+        public string? S3Region { get; set; }
+        [JsonPropertyName("s3_role_arn")]
+        public string? S3RoleArn { get; set; }
+        [JsonPropertyName("s3_secret")]
+        public string? S3Secret { get; set; }
         [JsonPropertyName("type")]
         public string? Type { get; set; }
     }
