@@ -4,7 +4,7 @@ on:
   workflow_call:
     secrets:
       STREAM_API_KEY:
-        required: true
+        required: false
       STREAM_API_SECRET:
         required: true
 
@@ -78,7 +78,7 @@ jobs:
           exit 1
         fi
     
-    - name: Run Tests
+    - name: Run Tests (Debug)
       env:
         STREAM_API_KEY: ${{ vars.STREAM_API_KEY || secrets.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
@@ -86,6 +86,15 @@ jobs:
       run: |
         echo "Running all tests with API credentials from repository secrets"
         make test
+
+    # The package is packed from the Release build, so it has to be tested there too.
+    # The old release.yml was the only place that ran this configuration.
+    - name: Run Tests (Release)
+      env:
+        STREAM_API_KEY: ${{ vars.STREAM_API_KEY || secrets.STREAM_API_KEY }}
+        STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+        CONFIGURATION: Release
+      run: make test
     
     - name: Check for warnings
       run: |

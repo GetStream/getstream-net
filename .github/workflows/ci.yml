@@ -7,7 +7,7 @@ name: .NET CI
 # gate before a tag is covered but the routine post-merge signal is gone.
 on:
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "*.x" ]
     paths-ignore:
       - '**.md'
       - 'docs/**'

@@ -9,7 +9,8 @@
           "type": "xml",
           "path": "src/stream-feed-net.csproj",
           "xpath": "/Project/PropertyGroup/Version"
-        }
+        },
+        "src/Client.cs"
       ]
     }
   }

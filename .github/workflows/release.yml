@@ -156,7 +156,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - name: Resolve tag
@@ -206,9 +206,26 @@ jobs:
           dotnet nuget remove source nuget.org || true
           dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
 
-          dotnet nuget push ./packages/*.nupkg \
+          # Exact path, not a glob: with --skip-duplicate a glob that matches a
+          # differently-versioned package, or nothing, exits 0 and publishes nothing.
+          pkg="./packages/getstream-net.${{ steps.target.outputs.version }}.nupkg"
+          if [ ! -f "$pkg" ]; then
+            echo "::error::${pkg} was not produced. dotnet pack takes its version from <Version> in the checked-out csproj, so that tree does not match tag ${{ steps.target.outputs.tag }}."
+            exit 1
+          fi
+
+          dotnet nuget push "$pkg" \
             --api-key "$NUGET_API_KEY" \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate \
             --no-symbols \
             --timeout 300
+
+      # release-please creates the GitHub Release without assets; every release before
+      # this one carried the nupkg, so keep attaching it.
+      - name: Attach the package to the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ steps.target.outputs.tag }}" \
+            "./packages/getstream-net.${{ steps.target.outputs.version }}.nupkg" --clobber
