@@ -2086,9 +2086,11 @@ namespace GetStream.Tests
         {
             Console.WriteLine("\n📄 Testing file upload...");
 
-            // Create a temporary test file
+            // Create a temporary test file. The extension has to be one the app allows:
+            // GetTempFileName() yields .tmp, which the shared test app's
+            // chat_allowed_file_extensions does not list.
             var testContent = "This is a test file for multipart upload integration test\nContains multiple lines\nWith various content";
-            var tempFile = Path.GetTempFileName();
+            var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.txt");
             await File.WriteAllTextAsync(tempFile, testContent);
 
             try
