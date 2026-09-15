@@ -1,15 +1,13 @@
 name: .NET CI
 
+# pull_request only. A push trigger alongside it ran the whole suite twice on the same
+# SHA, and the duplicate live legs raced each other against the Stream app several SDK
+# repos share. The trade is that a merge to master, and a direct push to it, now run
+# nothing: release.yml runs this same workflow only when a release is pending, so the
+# gate before a tag is covered but the routine post-merge signal is gone.
 on:
-  push:
-    branches: [ "main", "master" ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.gitignore'
-      - 'LICENSE'
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "*.x" ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -21,97 +19,10 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  actions: write
   contents: read
   pull-requests: read
 
 jobs:
-  build-and-test:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    
-    - name: Cache NuGet packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-    
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Verify formatting
-      run: dotnet format --verify-no-changes
-      
-    - name: Build (Debug)
-      run: dotnet build --no-restore --configuration Debug
-      
-    - name: Build (Release)
-      run: dotnet build --no-restore --configuration Release
-    
-    - name: Verify API Credentials
-      env:
-        STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
-        STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
-      run: |
-        echo "🔍 Checking API credentials..."
-        
-        if [ -z "$STREAM_API_KEY" ]; then
-          echo "❌ STREAM_API_KEY is missing or empty"
-          echo "   Please check that the secret 'STREAM_API_KEY' is set in repository settings"
-        else
-          echo "✅ STREAM_API_KEY is available (${#STREAM_API_KEY} characters)"
-        fi
-        
-        if [ -z "$STREAM_API_SECRET" ]; then
-          echo "❌ STREAM_API_SECRET is missing or empty"
-          echo "   Please check that the secret 'STREAM_API_SECRET' is set in repository settings"
-        else
-          echo "✅ STREAM_API_SECRET is available (${#STREAM_API_SECRET} characters)"
-        fi
-        
-        if [ -n "$STREAM_API_KEY" ] && [ -n "$STREAM_API_SECRET" ]; then
-          echo "✅ API credentials are available from repository secrets"
-          echo "API Key length: ${#STREAM_API_KEY} characters"
-          echo "API Secret length: ${#STREAM_API_SECRET} characters"
-        else
-          echo "❌ API credentials are missing"
-          exit 1
-        fi
-    
-    - name: Run Tests
-      env:
-        STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
-        STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
-        CONFIGURATION: Debug
-      run: |
-        echo "Running all tests with API credentials from repository secrets"
-        make test
-    
-    - name: Check for warnings
-      run: |
-        echo "Checking for build warnings..."
-        dotnet build --no-restore --configuration Release --verbosity normal 2>&1 | tee build.log
-        if grep -q "warning" build.log; then
-          echo "❌ Build warnings found:"
-          grep "warning" build.log
-          exit 1
-        else
-          echo "✅ No build warnings found"
-        fi
-    
-    - name: Test NuGet package creation
-      run: |
-        echo "Testing NuGet package creation..."
-        dotnet pack src/stream-feed-net.csproj --configuration Release --no-build --output ./test-packages
-        ls -la ./test-packages/
-        echo "✅ NuGet package created successfully" 
+  tests:
+    uses: ./.github/workflows/run_tests.yml
+    secrets: inherit

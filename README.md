@@ -149,17 +149,30 @@ When enabled:
 
 ## Release Process
 
-Releases use two paths, both handled by `.github/workflows/release.yml`:
+Releases are driven by [release-please](https://github.com/googleapis/release-please).
 
-- **Default**: automatic release when a PR is merged to `master`. The PR title drives the semver bump.
-- **Fallback**: manual release via the `Release` workflow's `workflow_dispatch` (admin use). Select a `version_bump` (`patch`/`minor`/`major`). `use_current_version=true` skips the bump and publishes whatever is already in `src/stream-feed-net.csproj`.
+- Merge PRs to `master` with conventional-commit titles, using **Squash and merge**. The
+  title becomes the commit subject and decides the next version: `feat:` is a minor,
+  `fix:` and `perf:` are a patch, `feat!:` or `<type>(scope)!:` is a major. Other types
+  (`chore`, `ci`, `docs`, `test`, `refactor`) ship nothing.
+- release-please keeps a Release PR open with the version bump in
+  `src/stream-feed-net.csproj` and `CHANGELOG.md`. It is opened by
+  `github-actions[bot]`, so approve it and run its held checks like any other PR. Never
+  edit `<Version>` by hand.
+- Merging the Release PR runs format verification, both build configurations, the test
+  suite and the package build on that merge commit, which is the commit the tag will
+  point at. Only if that is green does the workflow create the tag and the GitHub
+  Release and push the package to NuGet. The order matters: a tag, a GitHub Release and
+  a NuGet push cannot be withdrawn.
 
-Automatic semver bump rules:
+To retry a NuGet push that failed after the release was tagged, use "Re-run failed jobs"
+on that workflow run. Once GitHub has retired the run, dispatch `Release` from `master`
+with `publish_tag` set to the tag (for example `v16.1.1`), which packs and pushes that
+tag without touching release-please. If the suite goes red after the Release PR merged,
+the release stays pending and every later push logs a warning naming the commit to go
+back to, rather than failing.
 
-- `feat:` -> minor
-- `fix:` (or `bug:`) -> patch
-- `feat!:` or `<type>(scope)!:` (the `!` marker) -> major
-
-PRs with any other prefix do not trigger a release.
-
-The release pipeline runs `dotnet build`, `make test`, and a warnings-as-errors check on the merged commit before publishing to NuGet. Each step is idempotent; a failed run can be re-dispatched from the Actions UI.
+To force a specific version, type `Release-As: X.Y.Z` in the commit message box of the
+squash dialog when merging a PR; the PR description is not copied there. To hotfix while
+`master` carries unreleased work, branch `N.x` from the last tag, cherry-pick the fix,
+and merge the Release PR that release-please opens against that branch.
