@@ -187,18 +187,20 @@ namespace GetStream.Tests
         }
 
         /// <summary>
-        /// Polls an async task until it completes or fails (up to 30 seconds).
+        /// Polls an async task until it completes or fails (up to 120 seconds).
         /// </summary>
         protected async Task WaitForTask(string taskId)
         {
-            for (int i = 0; i < 30; i++)
+            // 30s was not enough for a hard delete on the shared integration app, which
+            // several repos' suites queue work against at once.
+            for (int i = 0; i < 120; i++)
             {
                 var result = await StreamClient.GetTaskAsync(taskId);
                 if (result.Data?.Status == "completed" || result.Data?.Status == "failed")
                     return;
                 await Task.Delay(1000);
             }
-            Assert.Fail($"Task {taskId} did not complete after 30 attempts");
+            Assert.Fail($"Task {taskId} did not complete after 120 attempts");
         }
 
         /// <summary>
