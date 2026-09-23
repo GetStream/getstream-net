@@ -33,10 +33,10 @@ build: restore
 
 # Run unit tests: no credentials needed, anything in the Integration category is excluded
 test: build
-	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory!=Integration"
+	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory!=Integration" -- RunConfiguration.TreatNoTestsAsError=true
 
 # Run specific test by name (usage: make test-one TEST_NAME=TestName)
-test-one: check-env build
+test-one: build
 	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "Name~$(TEST_NAME)"
 
 # Run endpoint tests only
@@ -45,15 +45,15 @@ test-endpoints: check-env build
 
 # Run the tests that talk to a live Stream app
 test-integration: check-env build
-	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory=Integration"
+	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory=Integration" -- RunConfiguration.TreatNoTestsAsError=true
 
 # Run sample app
 sample: check-env build
 	$(DOTNET) run --project $(SAMPLE_PROJECT) --configuration $(CONFIGURATION)
 
 # Watch tests (rerun on file changes)
-watch-test: check-env
-	$(DOTNET) watch test $(TEST_PROJECT) --configuration $(CONFIGURATION)
+watch-test:
+	$(DOTNET) watch test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory!=Integration"
 
 # Watch sample app (rerun on file changes)
 watch-sample: check-env

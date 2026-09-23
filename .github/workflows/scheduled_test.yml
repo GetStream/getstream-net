@@ -20,7 +20,8 @@ jobs:
   report:
     name: Report a red run
     needs: integration
-    if: ${{ !cancelled() && needs.integration.result != 'success' }}
+    # Default branch only: a manual dispatch on a feature branch must not touch master's issue.
+    if: ${{ !cancelled() && needs.integration.result != 'success' && github.ref_name == github.event.repository.default_branch }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
