@@ -49,7 +49,7 @@ CI follows the same split:
 | --- | --- | --- |
 | Pull request | format check, both builds, `make test`, package build | yes, `🧪 Tests` |
 | Daily at 13:00 UTC | `make test-integration` | no, a red run opens an issue |
-| Release PR merged | nothing, it tags and publishes | no |
+| Release PR merged | nothing on the default branch, the unit lane on `N.x` | `N.x` only |
 
 ## Structure
 
@@ -172,10 +172,8 @@ Releases are driven by [release-please](https://github.com/googleapis/release-pl
   `src/stream-feed-net.csproj` and `CHANGELOG.md`. Never edit `<Version>` by hand.
 - Its runs are created held at `action_required` until someone clicks **Approve and
   run**, because release-please opens the PR with `GITHUB_TOKEN`. The unit lane then
-  reports `skipped` and `🧪 Tests` goes green without running a test. The skip keys on
-  the PR author, so a commit pushed onto a Release PR by hand is skipped too and reaches
-  `master` untested.
-- Merging the Release PR creates the tag and the GitHub Release on that merge commit and pushes the package to NuGet, with no further test run: the Release PR adds only the version bump and changelog to an already-tested `master`. A tag, a GitHub Release and a NuGet push cannot be withdrawn. The publish step builds and packs, so a build that does not compile fails there and can be retried with `publish_tag`.
+  reports `skipped` and `🧪 Tests` goes green without running a test. The skip only applies while every changed file is one release-please writes, so a code change pushed onto a Release PR by hand runs the unit lane like any other PR.
+- Merging the Release PR creates the tag and the GitHub Release on that merge commit and pushes the package to NuGet, with no further test run: the Release PR adds only the version bump and changelog to an already-tested `master`. A hotfix release from `N.x` runs the unit lane first, since its commits were pushed without a PR. A tag, a GitHub Release and a NuGet push cannot be withdrawn. The publish step builds and packs, so a build that does not compile fails there after the tag exists; the fix ships under the next version, since `publish_tag` rebuilds the same tag.
 
 To retry a NuGet push that failed after the release was tagged, use "Re-run failed jobs"
 on that workflow run. Once GitHub has retired the run, dispatch `Release` from `master`
