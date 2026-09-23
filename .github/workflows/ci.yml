@@ -1,9 +1,7 @@
 name: .NET CI
 
 # pull_request only. A push trigger alongside it ran the whole suite twice on the same
-# SHA. A merge to master runs nothing here: release.yml runs the unit lane only when a
-# release is pending, so the gate before a tag is covered. No paths-ignore: a docs-only
-# PR must still report the required 🧪 Tests check, or it waits on it forever.
+# SHA. A merge to master runs nothing here. No paths-ignore: a docs-only PR must still report the required 🧪 Tests check, or it waits on it forever.
 on:
   pull_request:
     branches: [ "main", "master", "*.x" ]
