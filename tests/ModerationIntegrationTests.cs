@@ -24,6 +24,7 @@ namespace GetStream.Tests
     /// 9. Cleanup
     /// </summary>
     [TestFixture]
+    [Category("Integration")]
     public class ModerationIntegrationTests
     {
         private StreamClient _client = null!;

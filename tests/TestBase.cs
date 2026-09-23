@@ -6,6 +6,9 @@ using NUnit.Framework;
 
 namespace GetStream.Tests
 {
+    // Inherited by every fixture deriving from this class: OneTimeSetUp builds a client from
+    // the environment and the fixtures call a live Stream app through it.
+    [Category("Integration")]
     public class TestBase
     {
         protected StreamClient StreamClient { get; private set; } = null!;
