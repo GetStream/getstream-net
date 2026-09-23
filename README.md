@@ -30,13 +30,26 @@ The project includes a Makefile for common development tasks:
 # Run the sample application
 make sample
 
-# Run tests
+# Run unit tests (no credentials needed)
 make test
+
+# Run the tests that talk to a live Stream app
+make test-integration
 
 # Additional commands available in Makefile
 make build     # Build the project
 make clean     # Clean build artifacts
 ```
+
+A fixture in the `Integration` category talks to a live Stream app and needs credentials. `TestBase` carries the category and NUnit inherits it, so deriving from it is enough. `make test` excludes the category; `make test-integration` runs only it.
+
+CI follows the same split:
+
+| When | What runs | Gates |
+| --- | --- | --- |
+| Pull request | format check, both builds, `make test`, package build | yes, `🧪 Tests` |
+| Daily at 13:00 UTC | `make test-integration` | no, a red run opens an issue |
+| Push to `master` with a release pending | the unit lane | yes, it gates the tag |
 
 ## Structure
 
@@ -156,14 +169,17 @@ Releases are driven by [release-please](https://github.com/googleapis/release-pl
   `fix:` and `perf:` are a patch, `feat!:` or `<type>(scope)!:` is a major. Other types
   (`chore`, `ci`, `docs`, `test`, `refactor`) ship nothing.
 - release-please keeps a Release PR open with the version bump in
-  `src/stream-feed-net.csproj` and `CHANGELOG.md`. It is opened by
-  `github-actions[bot]`, so approve it and run its held checks like any other PR. Never
-  edit `<Version>` by hand.
-- Merging the Release PR runs format verification, both build configurations, the test
-  suite and the package build on that merge commit, which is the commit the tag will
+  `src/stream-feed-net.csproj` and `CHANGELOG.md`. Never edit `<Version>` by hand.
+- Its runs are created held at `action_required` until someone clicks **Approve and
+  run**, because release-please opens the PR with `GITHUB_TOKEN`. The unit lane then
+  reports `skipped` and `🧪 Tests` goes green without running a test. The skip keys on
+  the PR author, so a commit pushed onto a Release PR by hand is skipped too and reaches
+  `master` untested.
+- Merging the Release PR runs format verification, both build configurations, the unit
+  tests and the package build on that merge commit, which is the commit the tag will
   point at. Only if that is green does the workflow create the tag and the GitHub
   Release and push the package to NuGet. The order matters: a tag, a GitHub Release and
-  a NuGet push cannot be withdrawn.
+  a NuGet push cannot be withdrawn. Integration tests are advisory and gate none of it.
 
 To retry a NuGet push that failed after the release was tagged, use "Re-run failed jobs"
 on that workflow run. Once GitHub has retired the run, dispatch `Release` from `master`

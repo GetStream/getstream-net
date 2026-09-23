@@ -21,6 +21,7 @@ namespace GetStream.Tests
     /// 6. Cleanup
     /// </summary>
     [TestFixture]
+    [Category("Integration")]
     public class FeedIntegrationTests
     {
         private StreamClient _client = null!;

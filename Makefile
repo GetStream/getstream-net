@@ -31,9 +31,9 @@ restore:
 build: restore
 	$(DOTNET) build --configuration $(CONFIGURATION)
 
-# Run all tests
-test: check-env build
-	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION)
+# Run unit tests: no credentials needed, anything in the Integration category is excluded
+test: build
+	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory!=Integration"
 
 # Run specific test by name (usage: make test-one TEST_NAME=TestName)
 test-one: check-env build
@@ -43,9 +43,9 @@ test-one: check-env build
 test-endpoints: check-env build
 	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "FullyQualifiedName~FeedEndpointTests"
 
-# Run integration tests only
+# Run the tests that talk to a live Stream app
 test-integration: check-env build
-	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "FullyQualifiedName~FeedIntegrationTests"
+	$(DOTNET) test $(TEST_PROJECT) --configuration $(CONFIGURATION) --filter "TestCategory=Integration"
 
 # Run sample app
 sample: check-env build
@@ -69,10 +69,10 @@ help:
 	@echo "  clean          - Clean build artifacts"
 	@echo "  restore        - Restore NuGet packages"
 	@echo "  build          - Build solution"
-	@echo "  test           - Run all tests"
+	@echo "  test           - Run unit tests (no credentials needed)"
 	@echo "  test-one       - Run specific test (usage: make test-one TEST_NAME=TestName)"
 	@echo "  test-endpoints - Run endpoint tests only"
-	@echo "  test-integration - Run integration tests only"
+	@echo "  test-integration - Run the tests that talk to a live Stream app"
 	@echo "  sample         - Run sample app"
 	@echo "  watch-test     - Watch tests (rerun on file changes)"
 	@echo "  watch-sample   - Watch sample app (rerun on file changes)"
