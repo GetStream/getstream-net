@@ -49,7 +49,7 @@ CI follows the same split:
 | --- | --- | --- |
 | Pull request | format check, both builds, `make test`, package build | yes, `🧪 Tests` |
 | Daily at 13:00 UTC | `make test-integration` | no, a red run opens an issue |
-| Push to `master` with a release pending | the unit lane | yes, it gates the tag |
+| Release PR merged | nothing on the default branch, the unit lane on `N.x` | `N.x` only |
 
 ## Structure
 
@@ -172,19 +172,13 @@ Releases are driven by [release-please](https://github.com/googleapis/release-pl
   `src/stream-feed-net.csproj` and `CHANGELOG.md`. Never edit `<Version>` by hand.
 - Its runs are created held at `action_required` until someone clicks **Approve and
   run**, because release-please opens the PR with `GITHUB_TOKEN`. The unit lane then
-  reports `skipped` and `🧪 Tests` goes green without running a test. The skip keys on
-  the PR author, so a commit pushed onto a Release PR by hand is skipped too and reaches
-  `master` untested.
-- Merging the Release PR runs format verification, both build configurations, the unit
-  tests and the package build on that merge commit, which is the commit the tag will
-  point at. Only if that is green does the workflow create the tag and the GitHub
-  Release and push the package to NuGet. The order matters: a tag, a GitHub Release and
-  a NuGet push cannot be withdrawn. Integration tests are advisory and gate none of it.
+  reports `skipped` and `🧪 Tests` goes green without running a test. The skip only applies while the diff is nothing but what release-please writes, down to the version line in each version file, so a code or dependency change pushed onto a Release PR by hand runs the unit lane like any other PR.
+- Merging the Release PR creates the tag and the GitHub Release on that merge commit and pushes the package to NuGet, with no further test run: the Release PR adds only the version bump and changelog to an already-tested `master`. A hotfix release from `N.x` runs the unit lane first, since its commits were pushed without a PR. A tag, a GitHub Release and a NuGet push cannot be withdrawn. The publish step builds and packs, so a build that does not compile fails there after the tag exists; the fix ships under the next version, since `publish_tag` rebuilds the same tag.
 
 To retry a NuGet push that failed after the release was tagged, use "Re-run failed jobs"
 on that workflow run. Once GitHub has retired the run, dispatch `Release` from `master`
 with `publish_tag` set to the tag (for example `v16.1.1`), which packs and pushes that
-tag without touching release-please. If the suite goes red after the Release PR merged,
+tag without touching release-please. If the release job fails after the Release PR merged,
 the release stays pending and every later push logs a warning naming the commit to go
 back to, rather than failing.
 
