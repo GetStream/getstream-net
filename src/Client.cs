@@ -15,7 +15,7 @@ namespace GetStream
 {
     public class BaseClient : IClient
     {
-        private const string VersionName = "16.0.1"; // x-release-please-version
+        private const string VersionName = "16.0.2"; // x-release-please-version
         private static readonly string VersionHeader = $"getstream-net-{VersionName}";
 
         private readonly HttpClient _httpClient;
