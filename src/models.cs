@@ -3249,7 +3249,7 @@ namespace GetStream.Models
         [JsonPropertyName("name")]
         public string Name { get; set; }
         /// <summary>
-        /// Block list type. One of: regex, domain, domain_allowlist, email, email_allowlist, word
+        /// Block list type. One of: regex, domain, domain_allowlist, email, email_allowlist, word, word_allowlist
         /// </summary>
         [JsonPropertyName("type")]
         public string Type { get; set; }
@@ -9054,7 +9054,7 @@ namespace GetStream.Models
         [JsonPropertyName("team")]
         public string? Team { get; set; }
         /// <summary>
-        /// Block list type. One of: regex, domain, domain_allowlist, email, email_allowlist, word
+        /// Block list type. One of: regex, domain, domain_allowlist, email, email_allowlist, word, word_allowlist
         /// </summary>
         [JsonPropertyName("type")]
         public string? Type { get; set; }
@@ -15114,6 +15114,11 @@ namespace GetStream.Models
         public string? View { get; set; }
         [JsonPropertyName("watch")]
         public bool? Watch { get; set; }
+        /// <summary>
+        /// Feature-gated; not available for all apps. Request-scoped list of actor/user IDs whose activities are filtered from this GetOrCreateFeed response only. Merged (union) into the viewing user's in-memory blocked authors for this request; never persisted to blocked_users. Max: 1000.
+        /// </summary>
+        [JsonPropertyName("discard_actors")]
+        public List<string> DiscardActors { get; set; }
         [JsonPropertyName("data")]
         public FeedInput? Data { get; set; }
         /// <summary>
