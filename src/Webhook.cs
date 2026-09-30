@@ -138,6 +138,8 @@ namespace GetStream
         public const string FeedsNotificationFeedUpdated = "feeds.notification_feed.updated";
         public const string FeedsStoriesFeedUpdated = "feeds.stories_feed.updated";
         public const string FlagUpdated = "flag.updated";
+        public const string ImportError = "import.error";
+        public const string ImportSuccess = "import.success";
         public const string IngressError = "ingress.error";
         public const string IngressStarted = "ingress.started";
         public const string IngressStopped = "ingress.stopped";
@@ -156,6 +158,7 @@ namespace GetStream
         public const string ModerationCustomAction = "moderation.custom_action";
         public const string ModerationFlagged = "moderation.flagged";
         public const string ModerationImageAnalysisComplete = "moderation.image_analysis.complete";
+        public const string ModerationIntentDetected = "moderation.intent_detected";
         public const string ModerationMarkReviewed = "moderation.mark_reviewed";
         public const string ModerationTextAnalysisComplete = "moderation.text_analysis.complete";
         public const string ModerationCheckCompleted = "moderation_check.completed";
@@ -402,6 +405,8 @@ namespace GetStream
                 "feeds.notification_feed.updated" => typeof(NotificationFeedUpdatedEvent),
                 "feeds.stories_feed.updated" => typeof(StoriesFeedUpdatedEvent),
                 "flag.updated" => typeof(FlagUpdatedEvent),
+                "import.error" => typeof(AsyncImportErrorEvent),
+                "import.success" => typeof(AsyncImportSuccessEvent),
                 "ingress.error" => typeof(IngressErrorEvent),
                 "ingress.started" => typeof(IngressStartedEvent),
                 "ingress.stopped" => typeof(IngressStoppedEvent),
@@ -420,6 +425,7 @@ namespace GetStream
                 "moderation.custom_action" => typeof(ModerationCustomActionEvent),
                 "moderation.flagged" => typeof(ModerationFlaggedEvent),
                 "moderation.image_analysis.complete" => typeof(ModerationImageAnalysisCompleteEvent),
+                "moderation.intent_detected" => typeof(IntentDetectedEvent),
                 "moderation.mark_reviewed" => typeof(ModerationMarkReviewedEvent),
                 "moderation.text_analysis.complete" => typeof(ModerationTextAnalysisCompleteEvent),
                 "moderation_check.completed" => typeof(ModerationCheckCompletedEvent),
