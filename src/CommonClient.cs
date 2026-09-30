@@ -698,10 +698,11 @@ namespace GetStream
                 ["poll_id"] = pollID,
                 ["option_id"] = optionID,
             };
+            var queryParams = ExtractQueryParams(request);
 
             var result = await MakeRequestAsync<object, PollOptionResponse>(
                 "GET",
-                "/api/v2/polls/{poll_id}/options/{option_id}", null, null, pathParams,
+                "/api/v2/polls/{poll_id}/options/{option_id}", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;

@@ -1420,6 +1420,50 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<GetFeedsRetentionPolicyResponse>> FeedsGetRetentionPolicyAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, GetFeedsRetentionPolicyResponse>(
+                "GET",
+                "/api/v2/feeds/retention_policy", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<SetFeedsRetentionPolicyResponse>> FeedsSetRetentionPolicyAsync(SetFeedsRetentionPolicyRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SetFeedsRetentionPolicyRequest, SetFeedsRetentionPolicyResponse>(
+                "POST",
+                "/api/v2/feeds/retention_policy", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<DeleteFeedsRetentionPolicyResponse>> FeedsDeleteRetentionPolicyAsync(DeleteFeedsRetentionPolicyRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<DeleteFeedsRetentionPolicyRequest, DeleteFeedsRetentionPolicyResponse>(
+                "POST",
+                "/api/v2/feeds/retention_policy/delete", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetFeedsRetentionPolicyRunsResponse>> FeedsGetRetentionPolicyRunsAsync(GetFeedsRetentionPolicyRunsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<GetFeedsRetentionPolicyRunsRequest, GetFeedsRetentionPolicyRunsResponse>(
+                "POST",
+                "/api/v2/feeds/retention_policy/runs", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryRevisionHistoryResponse>> QueryRevisionHistoryAsync(QueryRevisionHistoryRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1505,6 +1549,22 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<DeleteUserInterestsResponse>> DeleteUserInterestsAsync(string userID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["user_id"] = userID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, DeleteUserInterestsResponse>(
+                "DELETE",
+                "/api/v2/feeds/users/{user_id}/interests", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetUserInterestsResponse>> GetUserInterestsAsync(string userID, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -1517,6 +1577,21 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetUserInterestsResponse>(
                 "GET",
                 "/api/v2/feeds/users/{user_id}/interests", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpsertUserInterestsResponse>> UpsertUserInterestsAsync(string userID, UpsertUserInterestsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["user_id"] = userID,
+            };
+
+            var result = await _client.MakeRequestAsync<UpsertUserInterestsRequest, UpsertUserInterestsResponse>(
+                "PUT",
+                "/api/v2/feeds/users/{user_id}/interests", null, request, pathParams,
                 cancellationToken);
 
             return result;
