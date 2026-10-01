@@ -31,7 +31,7 @@ namespace GetStream
         private bool _loadEnv = true;
         private string? _envPath;
         private string? _envFilePath;
-        private int _maxConnsPerHost = 5;
+        private int _maxConnsPerHost = 100;
         private TimeSpan _idleTimeout = TimeSpan.FromSeconds(55);
         private TimeSpan _connectTimeout = TimeSpan.FromSeconds(10);
         private TimeSpan _requestTimeout = TimeSpan.FromSeconds(30);
@@ -85,7 +85,7 @@ namespace GetStream
             return this;
         }
 
-        /// <summary>CHA-2956: max concurrent TCP connections per host (default 5).</summary>
+        /// <summary>CHA-2956: max concurrent TCP connections per host (default 100).</summary>
         public ClientBuilder MaxConnsPerHost(int n) { _maxConnsPerHost = n; return this; }
 
         /// <summary>CHA-2956: how long an idle pooled connection lingers (default 55s).</summary>
