@@ -158,7 +158,7 @@ namespace GetStream.Tests
                 .SkipEnvLoad()
                 .BuildChatClient();
             var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapWrapperHandler(chatClient);
-            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(100));
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
             Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
@@ -196,7 +196,7 @@ namespace GetStream.Tests
                 .SkipEnvLoad()
                 .Build();
             var (httpClient, handler) = GetStream.Tests.ConnectionPoolTests.UnwrapHandler(client);
-            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(100));
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
             Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));

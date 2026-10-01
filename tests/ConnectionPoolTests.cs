@@ -27,8 +27,8 @@ namespace GetStream.Tests
             var (httpClient, handler) = UnwrapHandler(client);
             Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)),
                 "default RequestTimeout = 30s");
-            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5),
-                "default MaxConnsPerHost = 5");
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(100),
+                "default MaxConnsPerHost = 100");
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)),
                 "default IdleTimeout = 55s");
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)),
@@ -63,7 +63,7 @@ namespace GetStream.Tests
             var client = new BaseClient(DummyApiKey, DummySecret);
             var (httpClient, handler) = UnwrapHandler(client);
             Assert.That(httpClient.Timeout, Is.EqualTo(TimeSpan.FromSeconds(30)));
-            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(5));
+            Assert.That(handler.MaxConnectionsPerServer, Is.EqualTo(100));
             Assert.That(handler.PooledConnectionIdleTimeout, Is.EqualTo(TimeSpan.FromSeconds(55)));
             Assert.That(handler.ConnectTimeout, Is.EqualTo(TimeSpan.FromSeconds(10)));
             Assert.That(handler.AutomaticDecompression.HasFlag(DecompressionMethods.GZip), Is.True);
@@ -197,7 +197,7 @@ namespace GetStream.Tests
             Assert.That(capture.Infos.Count, Is.EqualTo(1), "exactly one INFO line on construction");
             var msg = capture.Infos[0];
             Assert.That(msg, Does.StartWith("client.initialized"));
-            Assert.That(msg, Does.Contain("stream.client.max_conns_per_host=5"));
+            Assert.That(msg, Does.Contain("stream.client.max_conns_per_host=100"));
             Assert.That(msg, Does.Contain("stream.client.idle_timeout_seconds=55"));
             Assert.That(msg, Does.Contain("stream.client.connect_timeout_seconds=10"));
             Assert.That(msg, Does.Contain("stream.client.request_timeout_seconds=30"));
