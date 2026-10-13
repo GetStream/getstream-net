@@ -56,6 +56,7 @@ namespace GetStream
         public const string CallRecordingStopped = "call.recording_stopped";
         public const string CallRejected = "call.rejected";
         public const string CallRing = "call.ring";
+        public const string CallRingSettled = "call.ring_settled";
         public const string CallRTMPBroadcastFailed = "call.rtmp_broadcast_failed";
         public const string CallRTMPBroadcastStarted = "call.rtmp_broadcast_started";
         public const string CallRTMPBroadcastStopped = "call.rtmp_broadcast_stopped";
@@ -93,6 +94,8 @@ namespace GetStream
         public const string ExportBulkImageModerationSuccess = "export.bulk_image_moderation.success";
         public const string ExportChannelsError = "export.channels.error";
         public const string ExportChannelsSuccess = "export.channels.success";
+        public const string ExportLabelResultsError = "export.label_results.error";
+        public const string ExportLabelResultsSuccess = "export.label_results.success";
         public const string ExportModerationLogsError = "export.moderation_logs.error";
         public const string ExportModerationLogsSuccess = "export.moderation_logs.success";
         public const string ExportReviewQueueError = "export.review_queue.error";
@@ -118,6 +121,7 @@ namespace GetStream
         public const string FeedsBookmarkFolderUpdated = "feeds.bookmark_folder.updated";
         public const string FeedsCommentAdded = "feeds.comment.added";
         public const string FeedsCommentDeleted = "feeds.comment.deleted";
+        public const string FeedsCommentFeedback = "feeds.comment.feedback";
         public const string FeedsCommentReactionAdded = "feeds.comment.reaction.added";
         public const string FeedsCommentReactionDeleted = "feeds.comment.reaction.deleted";
         public const string FeedsCommentReactionUpdated = "feeds.comment.reaction.updated";
@@ -158,7 +162,6 @@ namespace GetStream
         public const string ModerationCustomAction = "moderation.custom_action";
         public const string ModerationFlagged = "moderation.flagged";
         public const string ModerationImageAnalysisComplete = "moderation.image_analysis.complete";
-        public const string ModerationIntentDetected = "moderation.intent_detected";
         public const string ModerationMarkReviewed = "moderation.mark_reviewed";
         public const string ModerationTextAnalysisComplete = "moderation.text_analysis.complete";
         public const string ModerationCheckCompleted = "moderation_check.completed";
@@ -323,6 +326,7 @@ namespace GetStream
                 "call.recording_stopped" => typeof(CallRecordingStoppedEvent),
                 "call.rejected" => typeof(CallRejectedEvent),
                 "call.ring" => typeof(CallRingEvent),
+                "call.ring_settled" => typeof(CallRingSettledEvent),
                 "call.rtmp_broadcast_failed" => typeof(CallRtmpBroadcastFailedEvent),
                 "call.rtmp_broadcast_started" => typeof(CallRtmpBroadcastStartedEvent),
                 "call.rtmp_broadcast_stopped" => typeof(CallRtmpBroadcastStoppedEvent),
@@ -360,6 +364,8 @@ namespace GetStream
                 "export.bulk_image_moderation.success" => typeof(AsyncBulkImageModerationEvent),
                 "export.channels.error" => typeof(AsyncExportErrorEvent),
                 "export.channels.success" => typeof(AsyncExportChannelsEvent),
+                "export.label_results.error" => typeof(AsyncExportErrorEvent),
+                "export.label_results.success" => typeof(AsyncExportLabelResultsEvent),
                 "export.moderation_logs.error" => typeof(AsyncExportErrorEvent),
                 "export.moderation_logs.success" => typeof(AsyncExportModerationLogsEvent),
                 "export.review_queue.error" => typeof(AsyncExportErrorEvent),
@@ -385,6 +391,7 @@ namespace GetStream
                 "feeds.bookmark_folder.updated" => typeof(BookmarkFolderUpdatedEvent),
                 "feeds.comment.added" => typeof(CommentAddedEvent),
                 "feeds.comment.deleted" => typeof(CommentDeletedEvent),
+                "feeds.comment.feedback" => typeof(CommentFeedbackEvent),
                 "feeds.comment.reaction.added" => typeof(CommentReactionAddedEvent),
                 "feeds.comment.reaction.deleted" => typeof(CommentReactionDeletedEvent),
                 "feeds.comment.reaction.updated" => typeof(CommentReactionUpdatedEvent),
@@ -425,7 +432,6 @@ namespace GetStream
                 "moderation.custom_action" => typeof(ModerationCustomActionEvent),
                 "moderation.flagged" => typeof(ModerationFlaggedEvent),
                 "moderation.image_analysis.complete" => typeof(ModerationImageAnalysisCompleteEvent),
-                "moderation.intent_detected" => typeof(IntentDetectedEvent),
                 "moderation.mark_reviewed" => typeof(ModerationMarkReviewedEvent),
                 "moderation.text_analysis.complete" => typeof(ModerationTextAnalysisCompleteEvent),
                 "moderation_check.completed" => typeof(ModerationCheckCompletedEvent),

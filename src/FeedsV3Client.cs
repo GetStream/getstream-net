@@ -646,6 +646,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CommentFeedbackResponse>> CommentFeedbackAsync(string id, CommentFeedbackRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<CommentFeedbackRequest, CommentFeedbackResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/feedback", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UpdateCommentPartialResponse>> UpdateCommentPartialAsync(string id, UpdateCommentPartialRequest request,
             CancellationToken cancellationToken = default)
         {
