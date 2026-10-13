@@ -166,6 +166,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CheckGCPPubSubResponse>> CheckGCPPubSubAsync(CheckGCPPubSubRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await MakeRequestAsync<CheckGCPPubSubRequest, CheckGCPPubSubResponse>(
+                "POST",
+                "/api/v2/check_gcp_pubsub", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<CheckPushResponse>> CheckPushAsync(CheckPushRequest request,
             CancellationToken cancellationToken = default)
         {

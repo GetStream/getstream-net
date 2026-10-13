@@ -402,6 +402,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_CallRingSettled_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.ring_settled\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRingSettledEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_CallRTMPBroadcastFailed_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"call.rtmp_broadcast_failed\"}";
@@ -698,6 +706,22 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ExportLabelResultsError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.label_results.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportLabelResultsSuccess_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.label_results.success\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportLabelResultsEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ExportModerationLogsError_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"export.moderation_logs.error\"}";
@@ -895,6 +919,14 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"feeds.comment.deleted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<CommentDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_FeedsCommentFeedback_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"feeds.comment.feedback\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CommentFeedbackEvent>());
         }
 
         [Test]
@@ -1215,14 +1247,6 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"moderation.image_analysis.complete\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<ModerationImageAnalysisCompleteEvent>());
-        }
-
-        [Test]
-        public void ParseWebhookEvent_ModerationIntentDetected_ReturnsCorrectType()
-        {
-            var payload = "{\"type\":\"moderation.intent_detected\"}";
-            var result = Webhook.ParseWebhookEvent(payload);
-            Assert.That(result, Is.InstanceOf<IntentDetectedEvent>());
         }
 
         [Test]
