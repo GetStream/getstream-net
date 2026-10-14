@@ -339,6 +339,23 @@ namespace GetStream
             return result;
         }
 
+        // Lists the users banned from a channel, by a ban on the channel or by a future channel ban issued by the channel's creator, with one entry per user
+        public async Task<StreamResponse<QueryChannelBansResponse>> QueryChannelBansAsync(string type, string id, QueryChannelBansRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<QueryChannelBansRequest, QueryChannelBansResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/bans/query", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Deletes a draft
 
         // Sends events:
@@ -509,6 +526,7 @@ namespace GetStream
         // - channel.visible
         // - message.new
         // - message.updated
+        // - scheduled_message.created
         public async Task<StreamResponse<SendMessageResponse>> SendMessageAsync(string type, string id, SendMessageRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1441,6 +1459,75 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<GetRetentionPolicyRunsRequest, GetRetentionPolicyRunsResponse>(
                 "POST",
                 "/api/v2/chat/retention_policy/runs", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Lists the scheduled messages of one user across channels: pending ones first, then failed ones, each by scheduled_at. Client-side requests return the caller's own; server-side requests require user_id
+        public async Task<StreamResponse<QueryScheduledMessagesResponse>> QueryScheduledMessagesAsync(QueryScheduledMessagesRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryScheduledMessagesRequest, QueryScheduledMessagesResponse>(
+                "POST",
+                "/api/v2/chat/scheduled_messages/query", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Cancels a scheduled message so it is never sent, or removes a failed one. Returns 409 while the message is being sent
+
+        // Sends events:
+        // - scheduled_message.deleted
+        public async Task<StreamResponse<DeleteScheduledMessageResponse>> DeleteScheduledMessageAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, DeleteScheduledMessageResponse>(
+                "DELETE",
+                "/api/v2/chat/scheduled_messages/{id}", null, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Replaces the message and/or the send time of a scheduled message. The scheduling checks run again, and the message is then sent, under the caller's auth mode. A request that changes only scheduled_at keeps the auth mode the message was scheduled with. Returns 409 while the message is being sent
+
+        // Sends events:
+        // - scheduled_message.updated
+        public async Task<StreamResponse<UpdateScheduledMessageResponse>> UpdateScheduledMessageAsync(string id, UpdateScheduledMessageRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateScheduledMessageRequest, UpdateScheduledMessageResponse>(
+                "PATCH",
+                "/api/v2/chat/scheduled_messages/{id}", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Moves the send time of a scheduled message to now and queues the send. Every send check runs when it is sent. Returns 409 while the message is being sent
+
+        // Sends events:
+        // - scheduled_message.updated
+        public async Task<StreamResponse<SendScheduledMessageNowResponse>> SendScheduledMessageNowAsync(string id, SendScheduledMessageNowRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<SendScheduledMessageNowRequest, SendScheduledMessageNowResponse>(
+                "POST",
+                "/api/v2/chat/scheduled_messages/{id}/send_now", null, request, pathParams,
                 cancellationToken);
             return result;
         }
