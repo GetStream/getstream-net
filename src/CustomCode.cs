@@ -8,6 +8,14 @@ namespace GetStream
     // catch (GetStreamApiException e) when (e.StatusCode is 401 or 403).
 
     /// <summary>
+    /// Marks a generated request model whose endpoint takes a multipart/form-data body.
+    /// The generator adds it to every such model.
+    /// </summary>
+    public interface IMultipartRequest
+    {
+    }
+
+    /// <summary>
     /// Custom JSON converter for handling nanosecond timestamps
     /// </summary>
     public class NanosecondTimestampConverter : JsonConverter<DateTime>

@@ -1589,6 +1589,42 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task CommentFeedbackAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new CommentFeedbackRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<CommentFeedbackResponse>
+            {
+                Data = new CommentFeedbackResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<CommentFeedbackRequest, CommentFeedbackResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CommentFeedbackRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.CommentFeedbackAsync(id, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<CommentFeedbackRequest, CommentFeedbackResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/feedback",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CommentFeedbackRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task UpdateCommentPartialAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange

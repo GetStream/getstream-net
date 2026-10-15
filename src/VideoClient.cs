@@ -72,6 +72,18 @@ namespace GetStream
             return result;
         }
 
+        // Returns a call's ring attempts, newest first. A session can be rung more than once, and the session-level accepted_by / rejected_by / missed_by maps flatten every ring together; an attempt says which ring a user acted on, which devices it reached, and who settled it and why. Pass call_session_id to limit the read to one session.
+        public async Task<StreamResponse<QueryCallRingAttemptsResponse>> QueryCallRingAttemptsAsync(QueryCallRingAttemptsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryCallRingAttemptsRequest, QueryCallRingAttemptsResponse>(
+                "POST",
+                "/api/v2/video/call/ring_attempts", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
 
         public async Task<StreamResponse<QueryCallStatsResponse>> QueryCallStatsAsync(QueryCallStatsRequest request,
             CancellationToken cancellationToken = default)
