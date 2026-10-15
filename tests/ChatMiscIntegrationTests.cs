@@ -669,23 +669,18 @@ namespace GetStream.Tests
 
             var remindAt = DateTime.UtcNow.AddHours(24);
 
-            // Create reminder - must send remind_at as RFC 3339 string (not nanosecond int)
+            // Create reminder through the typed client, which sends remind_at as an RFC 3339 string
             ReminderResponseData? created = null;
             try
             {
-                var createResp = await StreamClient.MakeRequestAsync<Dictionary<string, object>, ReminderResponseData>(
-                    "POST",
-                    "/api/v2/chat/messages/{message_id}/reminders",
-                    null,
-                    new Dictionary<string, object>
-                    {
-                        ["user_id"] = userId,
-                        ["remind_at"] = new DateTimeOffset(remindAt, TimeSpan.Zero).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
-                    },
-                    new Dictionary<string, string> { ["message_id"] = msgId });
+                var createResp = await _chatClient.CreateReminderAsync(msgId, new CreateReminderRequest
+                {
+                    UserID = userId,
+                    RemindAt = remindAt,
+                });
 
                 Assert.That(createResp.Data, Is.Not.Null);
-                created = createResp.Data;
+                created = createResp.Data!.Reminder;
                 Assert.That(created!.UserID, Is.EqualTo(userId));
                 Assert.That(created.MessageID, Is.EqualTo(msgId));
                 Assert.That(created.RemindAt, Is.Not.Null);
@@ -715,18 +710,13 @@ namespace GetStream.Tests
             Assert.That(queryResp.Data!.Reminders[0].MessageID, Is.EqualTo(msgId));
             Assert.That(queryResp.Data!.Reminders[0].UserID, Is.EqualTo(userId));
 
-            // Update reminder - must send remind_at as RFC 3339 string
+            // Update reminder through the typed client
             var newRemindAt = DateTime.UtcNow.AddHours(48);
-            var updateResp = await StreamClient.MakeRequestAsync<Dictionary<string, object>, UpdateReminderResponse>(
-                "PATCH",
-                "/api/v2/chat/messages/{message_id}/reminders",
-                null,
-                new Dictionary<string, object>
-                {
-                    ["user_id"] = userId,
-                    ["remind_at"] = new DateTimeOffset(newRemindAt, TimeSpan.Zero).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
-                },
-                new Dictionary<string, string> { ["message_id"] = msgId });
+            var updateResp = await _chatClient.UpdateReminderAsync(msgId, new UpdateReminderRequest
+            {
+                UserID = userId,
+                RemindAt = newRemindAt,
+            });
 
             Assert.That(updateResp.Data, Is.Not.Null);
             Assert.That(updateResp.Data!.Reminder, Is.Not.Null);

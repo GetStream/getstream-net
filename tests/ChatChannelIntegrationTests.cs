@@ -1437,22 +1437,16 @@ namespace GetStream.Tests
             Assert.That(sendResp.Data!.Message, Is.Not.Null);
             var msgTimestamp = sendResp.Data!.Message.CreatedAt;
 
-            // The NanosecondTimestampConverter writes DateTime as a nanosecond integer,
-            // but the API's message_timestamp field expects an RFC 3339 string.
-            // Pass the timestamp as a pre-formatted string via a raw dictionary to bypass
-            // the converter.
-            var timestampStr = new DateTimeOffset(msgTimestamp, TimeSpan.Zero)
-                .ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ");
-
-            // Mark unread using message timestamp instead of message ID
-            var unreadResp = await StreamClient.MakeRequestAsync<Dictionary<string, object>, Response>(
+            // Mark unread using message timestamp instead of message ID. The typed request
+            // sends message_timestamp as an RFC 3339 string.
+            var unreadResp = await StreamClient.MakeRequestAsync<MarkUnreadRequest, Response>(
                 "POST",
                 "/api/v2/chat/channels/{type}/{id}/unread",
                 null,
-                new Dictionary<string, object>
+                new MarkUnreadRequest
                 {
-                    ["user_id"] = memberId,
-                    ["message_timestamp"] = timestampStr
+                    UserID = memberId,
+                    MessageTimestamp = msgTimestamp
                 },
                 new Dictionary<string, string> { ["type"] = "messaging", ["id"] = channelId });
 
