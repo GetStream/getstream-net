@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GetStream.Models;
@@ -8,7 +9,8 @@ namespace GetStream
     // catch (GetStreamApiException e) when (e.StatusCode is 401 or 403).
 
     /// <summary>
-    /// Custom JSON converter for handling nanosecond timestamps
+    /// Reads timestamps sent as nanosecond integers (response date-times) or strings,
+    /// and writes every DateTime as an RFC 3339 UTC string.
     /// </summary>
     public class NanosecondTimestampConverter : JsonConverter<DateTime>
     {
@@ -31,8 +33,14 @@ namespace GetStream
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            var timestamp = ((DateTimeOffset)value).ToUnixTimeMilliseconds() * 1000000;
-            writer.WriteNumberValue(timestamp);
+            // The API spec types every request date-time as an RFC 3339 string, and the
+            // server rejects a number ("Time.UnmarshalJSON: input is not a JSON string").
+            // Unspecified kind is treated as UTC because Read returns server timestamps that
+            // way, so a value read from a response must be sent back unchanged.
+            var utc = value.Kind == DateTimeKind.Local
+                ? value.ToUniversalTime()
+                : DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            writer.WriteStringValue(utc.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", CultureInfo.InvariantCulture));
         }
     }
 
