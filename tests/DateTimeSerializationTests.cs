@@ -62,6 +62,41 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public async Task UpdateUsers_SendsDateTimeInCustomDataAsRfc3339String()
+        {
+            // Custom is typed object, so System.Text.Json picks the converter by runtime type and
+            // DateTime values inside custom data go out as RFC 3339 strings too.
+            var handler = new CapturingHandler();
+            var client = new StreamClient(new StreamOptions
+            {
+                ApiKey = DummyApiKey,
+                ApiSecret = DummySecret,
+                HttpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) },
+            });
+
+            await client.UpdateUsersAsync(new UpdateUsersRequest
+            {
+                Users = new Dictionary<string, UserRequest>
+                {
+                    ["user-id"] = new UserRequest
+                    {
+                        ID = "user-id",
+                        Custom = new Dictionary<string, object>
+                        {
+                            ["birthday"] = new DateTime(2026, 1, 1, 9, 0, 0, DateTimeKind.Unspecified),
+                        },
+                    },
+                },
+            });
+
+            using var body = JsonDocument.Parse(handler.LastBody!);
+            var birthday = body.RootElement.GetProperty("users").GetProperty("user-id")
+                .GetProperty("custom").GetProperty("birthday");
+            Assert.That(birthday.ValueKind, Is.EqualTo(JsonValueKind.String));
+            Assert.That(birthday.GetString(), Is.EqualTo("2026-01-01T09:00:00.0000000Z"));
+        }
+
+        [Test]
         public void Write_LocalKind_IsConvertedToUtc()
         {
             var local = new DateTime(2026, 10, 15, 12, 0, 0, DateTimeKind.Local);
