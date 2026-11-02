@@ -402,6 +402,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_CallRingSettled_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"call.ring_settled\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CallRingSettledEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_CallRTMPBroadcastFailed_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"call.rtmp_broadcast_failed\"}";
@@ -570,6 +578,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ChannelForked_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.forked\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelForkedEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ChannelFrozen_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"channel.frozen\"}";
@@ -599,6 +615,14 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"channel.muted\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<ChannelMutedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ChannelRewound_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"channel.rewound\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ChannelRewoundEvent>());
         }
 
         [Test]
@@ -695,6 +719,22 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"export.channels.success\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<AsyncExportChannelsEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportLabelResultsError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.label_results.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ExportLabelResultsSuccess_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"export.label_results.success\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportLabelResultsEvent>());
         }
 
         [Test]
@@ -898,6 +938,14 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_FeedsCommentFeedback_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"feeds.comment.feedback\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<CommentFeedbackEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_FeedsCommentReactionAdded_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.comment.reaction.added\"}";
@@ -935,6 +983,22 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"feeds.comment.updated\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<CommentUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_FeedsExportError_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"feeds.export.error\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportErrorEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_FeedsExportSuccess_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"feeds.export.success\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<AsyncExportFeedsSuccessEvent>());
         }
 
         [Test]
@@ -1218,14 +1282,6 @@ namespace GetStream.Tests
         }
 
         [Test]
-        public void ParseWebhookEvent_ModerationIntentDetected_ReturnsCorrectType()
-        {
-            var payload = "{\"type\":\"moderation.intent_detected\"}";
-            var result = Webhook.ParseWebhookEvent(payload);
-            Assert.That(result, Is.InstanceOf<IntentDetectedEvent>());
-        }
-
-        [Test]
         public void ParseWebhookEvent_ModerationMarkReviewed_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"moderation.mark_reviewed\"}";
@@ -1279,6 +1335,54 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"notification.thread_message_new\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<NotificationThreadMessageNewEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_PollClosed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"poll.closed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PollClosedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_PollDeleted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"poll.deleted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PollDeletedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_PollUpdated_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"poll.updated\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PollUpdatedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_PollVoteCasted_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"poll.vote_casted\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PollVoteCastedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_PollVoteChanged_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"poll.vote_changed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PollVoteChangedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_PollVoteRemoved_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"poll.vote_removed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<PollVoteRemovedEvent>());
         }
 
         [Test]
@@ -1346,6 +1450,22 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void ParseWebhookEvent_ScheduledMessageFailed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"scheduled_message.failed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ScheduledMessageFailedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_ScheduledMessageSent_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"scheduled_message.sent\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<ScheduledMessageSentEvent>());
+        }
+
+        [Test]
         public void ParseWebhookEvent_ThreadUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"thread.updated\"}";
@@ -1359,6 +1479,14 @@ namespace GetStream.Tests
             var payload = "{\"type\":\"user.banned\"}";
             var result = Webhook.ParseWebhookEvent(payload);
             Assert.That(result, Is.InstanceOf<UserBannedEvent>());
+        }
+
+        [Test]
+        public void ParseWebhookEvent_UserClaimed_ReturnsCorrectType()
+        {
+            var payload = "{\"type\":\"user.claimed\"}";
+            var result = Webhook.ParseWebhookEvent(payload);
+            Assert.That(result, Is.InstanceOf<UserClaimedEvent>());
         }
 
         [Test]

@@ -97,7 +97,7 @@ namespace GetStream
         }
 
         // Updates a campaign
-        public async Task<StreamResponse<CampaignResponse>> UpdateCampaignAsync(string id, UpdateCampaignRequest request,
+        public async Task<StreamResponse<UpdateCampaignResponse>> UpdateCampaignAsync(string id, UpdateCampaignRequest request,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -105,7 +105,7 @@ namespace GetStream
                 ["id"] = id,
             };
 
-            var result = await _client.MakeRequestAsync<UpdateCampaignRequest, CampaignResponse>(
+            var result = await _client.MakeRequestAsync<UpdateCampaignRequest, UpdateCampaignResponse>(
                 "PUT",
                 "/api/v2/chat/campaigns/{id}", null, request, pathParams,
                 cancellationToken);
@@ -129,7 +129,7 @@ namespace GetStream
         }
 
         // Stops a campaign
-        public async Task<StreamResponse<CampaignResponse>> StopCampaignAsync(string id, StopCampaignRequest request,
+        public async Task<StreamResponse<StopCampaignResponse>> StopCampaignAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -137,9 +137,9 @@ namespace GetStream
                 ["id"] = id,
             };
 
-            var result = await _client.MakeRequestAsync<StopCampaignRequest, CampaignResponse>(
+            var result = await _client.MakeRequestAsync<object, StopCampaignResponse>(
                 "POST",
-                "/api/v2/chat/campaigns/{id}/stop", null, request, pathParams,
+                "/api/v2/chat/campaigns/{id}/stop", null, null, pathParams,
                 cancellationToken);
             return result;
         }
@@ -156,7 +156,7 @@ namespace GetStream
             return result;
         }
 
-        // Update channels in batch. By default returns task_id for an asynchronous task. With synchronous: true, updateData accepts at most 100 explicit CIDs and returns a positive success_channels_count of channels selected for update after the database write completes, without task_id. Always poll a returned task_id, including when an older node ignores synchronous.
+        // Update channels in batch. By default returns task_id for an asynchronous task. With synchronous: true, updateData and hide accept at most 100 explicit CIDs (hide also at most 10 distinct members) and return success_channels_count of channels selected after the database write completes, without task_id. A synchronous hide where none of the member users exist hides nothing and omits success_channels_count. Always poll a returned task_id, including when an older node ignores synchronous.
 
         // Sends events:
         // - channel.frozen
@@ -189,6 +189,18 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<DeleteChannelsRequest, DeleteChannelsResponse>(
                 "POST",
                 "/api/v2/chat/channels/delete", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Lists soft-deleted channels, ordered by created_at. Server-side only. Without a filter it lists every soft-deleted channel of the app; filter by team to scope it to one tenant. To permanently remove the returned channels, pass their cids to Delete channels (POST /channels/delete) with hard_delete set to true; the single-channel Delete channel endpoint does not accept soft-deleted channels.
+        public async Task<StreamResponse<QueryDeletedChannelsResponse>> QueryDeletedChannelsAsync(QueryDeletedChannelsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryDeletedChannelsRequest, QueryDeletedChannelsResponse>(
+                "POST",
+                "/api/v2/chat/channels/deleted", null, request, null,
                 cancellationToken);
             return result;
         }
@@ -339,6 +351,23 @@ namespace GetStream
             return result;
         }
 
+        // Lists the users banned from a channel, by a ban on the channel or by a future channel ban issued by the channel's creator, with one entry per user
+        public async Task<StreamResponse<QueryChannelBansResponse>> QueryChannelBansAsync(string type, string id, QueryChannelBansRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<QueryChannelBansRequest, QueryChannelBansResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/bans/query", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Deletes a draft
 
         // Sends events:
@@ -430,6 +459,44 @@ namespace GetStream
             return result;
         }
 
+        // Forks an agent channel at one of its messages: creates a new agent channel holding a copy of the messages a client sees up to it, itself included, with their replies up to it. The source channel is not changed. Reactions, pins, polls, read state, mutes, reminders, moderation flags and edit history are not copied. Fork only at a message the agent has finished writing. The request copies the newest 100 messages and their replies, so the fork is usable when it returns (fewer when the newest 1,000 messages are mostly deleted or hidden); older history is copied by a background task (`fork.status` is `backfilling`, `fork.task_id` names the task) and `channel.forked` is sent once every message is copied. A retry with the same channel ID and message returns the fork. Only available for the `agent` channel type.
+
+        // Sends events:
+        // - channel.created
+        // - channel.forked
+        public async Task<StreamResponse<ForkChannelResponse>> ForkChannelAsync(string type, string id, ForkChannelRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<ForkChannelRequest, ForkChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/fork", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Maps messages of a fork's source channel to their copies in the fork. Call it on the fork. A source message the fork holds no copy of is left out of the map.
+        public async Task<StreamResponse<ForkMessageIDsResponse>> ForkMessageIDsAsync(string type, string id, ForkMessageIDsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<ForkMessageIDsRequest, ForkMessageIDsResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/fork/message_ids", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Marks channel as hidden for current user
 
         // Sends events:
@@ -509,6 +576,7 @@ namespace GetStream
         // - channel.visible
         // - message.new
         // - message.updated
+        // - scheduled_message.created
         public async Task<StreamResponse<SendMessageResponse>> SendMessageAsync(string type, string id, SendMessageRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -601,6 +669,26 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<MarkReadRequest, MarkReadResponse>(
                 "POST",
                 "/api/v2/chat/channels/{type}/{id}/read", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Rewinds an agent channel to one of its messages: every message created after it, and the message itself when `inclusive` is set, is hidden from every read. The messages are kept and can still be exported. Only available for the `agent` channel type.
+
+        // Sends events:
+        // - channel.rewound
+        public async Task<StreamResponse<RewindChannelResponse>> RewindChannelAsync(string type, string id, RewindChannelRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<RewindChannelRequest, RewindChannelResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/rewind", null, request, pathParams,
                 cancellationToken);
             return result;
         }
@@ -830,6 +918,42 @@ namespace GetStream
             return result;
         }
 
+        // Returns the app's default history window and the teams with full history. Only for apps with the history window enabled; other apps get 403. Server-side only.
+        public async Task<StreamResponse<GetHistoryWindowTeamsResponse>> GetHistoryWindowTeamsAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, GetHistoryWindowTeamsResponse>(
+                "GET",
+                "/api/v2/chat/history_window/teams", null, null, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Gives up to ten teams full history. Only for apps with the history window enabled; other apps get 403. Server-side only.
+        public async Task<StreamResponse<SetHistoryWindowTeamsResponse>> SetHistoryWindowTeamsAsync(SetHistoryWindowTeamsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SetHistoryWindowTeamsRequest, SetHistoryWindowTeamsResponse>(
+                "POST",
+                "/api/v2/chat/history_window/teams", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Puts up to ten teams back on the app's default history window. Only for apps with the history window enabled; other apps get 403. Server-side only.
+        public async Task<StreamResponse<DeleteHistoryWindowTeamsResponse>> DeleteHistoryWindowTeamsAsync(DeleteHistoryWindowTeamsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<DeleteHistoryWindowTeamsRequest, DeleteHistoryWindowTeamsResponse>(
+                "POST",
+                "/api/v2/chat/history_window/teams/delete", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
         // Find and filter channel members
         public async Task<StreamResponse<MembersResponse>> QueryMembersAsync(object request = null,
             CancellationToken cancellationToken = default)
@@ -959,7 +1083,7 @@ namespace GetStream
         // Sends events:
         // - message.new
         // - message.updated
-        public async Task<StreamResponse<MessageActionResponse>> CommitMessageAsync(string id, CommitMessageRequest request,
+        public async Task<StreamResponse<MessageActionResponse>> CommitMessageAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -967,9 +1091,9 @@ namespace GetStream
                 ["id"] = id,
             };
 
-            var result = await _client.MakeRequestAsync<CommitMessageRequest, MessageActionResponse>(
+            var result = await _client.MakeRequestAsync<object, MessageActionResponse>(
                 "POST",
-                "/api/v2/chat/messages/{id}/commit", null, request, pathParams,
+                "/api/v2/chat/messages/{id}/commit", null, null, pathParams,
                 cancellationToken);
             return result;
         }
@@ -1441,6 +1565,75 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<GetRetentionPolicyRunsRequest, GetRetentionPolicyRunsResponse>(
                 "POST",
                 "/api/v2/chat/retention_policy/runs", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Lists the scheduled messages of one user across channels: pending ones first, then failed ones, each by scheduled_at. Client-side requests return the caller's own; server-side requests require user_id
+        public async Task<StreamResponse<QueryScheduledMessagesResponse>> QueryScheduledMessagesAsync(QueryScheduledMessagesRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryScheduledMessagesRequest, QueryScheduledMessagesResponse>(
+                "POST",
+                "/api/v2/chat/scheduled_messages/query", null, request, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Cancels a scheduled message so it is never sent, or removes a failed one. Returns 409 while the message is being sent
+
+        // Sends events:
+        // - scheduled_message.deleted
+        public async Task<StreamResponse<DeleteScheduledMessageResponse>> DeleteScheduledMessageAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, DeleteScheduledMessageResponse>(
+                "DELETE",
+                "/api/v2/chat/scheduled_messages/{id}", null, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Replaces the message and/or the send time of a scheduled message. The scheduling checks run again, and the message is then sent, under the caller's auth mode. A request that changes only scheduled_at keeps the auth mode the message was scheduled with. Returns 409 while the message is being sent
+
+        // Sends events:
+        // - scheduled_message.updated
+        public async Task<StreamResponse<UpdateScheduledMessageResponse>> UpdateScheduledMessageAsync(string id, UpdateScheduledMessageRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateScheduledMessageRequest, UpdateScheduledMessageResponse>(
+                "PATCH",
+                "/api/v2/chat/scheduled_messages/{id}", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Moves the send time of a scheduled message to now and queues the send. Every send check runs when it is sent. Returns 409 while the message is being sent
+
+        // Sends events:
+        // - scheduled_message.updated
+        public async Task<StreamResponse<SendScheduledMessageNowResponse>> SendScheduledMessageNowAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, SendScheduledMessageNowResponse>(
+                "POST",
+                "/api/v2/chat/scheduled_messages/{id}/send_now", null, null, pathParams,
                 cancellationToken);
             return result;
         }

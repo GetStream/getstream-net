@@ -1589,6 +1589,42 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task CommentFeedbackAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new CommentFeedbackRequest();
+            var id = "test-id";
+
+            var expectedResponse = new StreamResponse<CommentFeedbackResponse>
+            {
+                Data = new CommentFeedbackResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<CommentFeedbackRequest, CommentFeedbackResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CommentFeedbackRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.CommentFeedbackAsync(id, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<CommentFeedbackRequest, CommentFeedbackResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/feedback",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CommentFeedbackRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task UpdateCommentPartialAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
@@ -1838,6 +1874,113 @@ namespace GetStream.Tests
                 "/api/v2/feeds/comments/{id}/translate",
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<TranslateCommentRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task ExportFeedsAppAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+
+            var expectedResponse = new StreamResponse<ExportFeedsResponse>
+            {
+                Data = new ExportFeedsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, ExportFeedsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.ExportFeedsAppAsync(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, ExportFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/export/app",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task CancelExportFeedsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            object request = null!;
+            var taskID = "test-taskID";
+
+            var expectedResponse = new StreamResponse<CancelExportFeedsResponse>
+            {
+                Data = new CancelExportFeedsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<object, CancelExportFeedsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.CancelExportFeedsAsync(taskID, null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<object, CancelExportFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/export/{task_id}/cancel",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<object>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
+        public async Task ExportFeedsByTypeAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new ExportFeedsByTypeRequest();
+            var type = "test-type";
+
+            var expectedResponse = new StreamResponse<ExportFeedsResponse>
+            {
+                Data = new ExportFeedsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<ExportFeedsByTypeRequest, ExportFeedsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<ExportFeedsByTypeRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.ExportFeedsByTypeAsync(type, request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<ExportFeedsByTypeRequest, ExportFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/export/{type}",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<ExportFeedsByTypeRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

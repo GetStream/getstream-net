@@ -293,6 +293,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<QueryModerationFeedbackResponse>> QueryModerationFeedbackAsync(QueryModerationFeedbackRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryModerationFeedbackRequest, QueryModerationFeedbackResponse>(
+                "POST",
+                "/api/v2/moderation/feedback_items", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteModerationTemplateResponse>> V2DeleteTemplateAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -603,6 +614,17 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<DeleteQueueRequest, QueueResponse>(
                 "POST",
                 "/api/v2/moderation/queues/{id}/delete", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<RevealMediaResponse>> RevealMediaAsync(RevealMediaRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<RevealMediaRequest, RevealMediaResponse>(
+                "POST",
+                "/api/v2/moderation/reveal_media", null, request, null,
                 cancellationToken);
 
             return result;
