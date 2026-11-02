@@ -6,7 +6,7 @@ For detailed setup instructions, see [Example](samples/ConsoleApp/Program.cs).
 
 ## Upgrading from v16?
 
-See [v16 → v17](MIGRATION_v16_to_v17.md). HTTP JSON for API fields is unchanged. Campaign responses, a few request types, and `DateTime` JSON changed.
+See [v16 → v17](MIGRATION_v16_to_v17.md). HTTP JSON for API fields is unchanged. `string` fields became enum structs. Campaign responses, removed request types, and `DateTime` JSON changed.
 
 ## Migrating from stream-chat-net?
 
