@@ -61,14 +61,44 @@ These endpoints no longer have a body type. Drop the argument, or pass `null`.
 
 ## Named enums
 
-New types such as `PushLevel`, `ChannelModerationBehavior`, and `ActivityVisibility` are `readonly struct` values with an implicit conversion from `string`. Existing string assignments still compile. Prefer the constants:
+Fields that were `string` / `string?` are now readonly structs. JSON is still `"all"`, `"flag"`, `"public"`. Each struct converts to and from `string`, so this still compiles:
+
+```csharp
+request.PushLevel = "all";
+request.AutomodBehavior = "flag";
+```
+
+Prefer the generated constants. A dynamic value is `new PushLevel(configured)`.
 
 ```csharp
 request.AutomodBehavior = ChannelModerationBehavior.FLAG;
 request.PushLevel = PushLevel.ALL;
+
+if (response.PushLevel == PushLevel.NONE) { }
+// wire string:
+string level = response.PushLevel?.Value;
 ```
 
-`ChannelOwnCapability`, `FeedOwnCapability`, and `OwnCapability` changed from empty classes to these structs. `new ChannelOwnCapability()` no longer compiles. Use a constant or `new ChannelOwnCapability("send-message")`.
+`== "none"` often does not compile. `==` is defined for two structs, not for a struct and a string. Compare to the constant, or to `.Value`.
+
+`ChannelOwnCapability`, `FeedOwnCapability`, and `OwnCapability` changed from empty classes to these structs. `new ChannelOwnCapability()` no longer compiles. Use `ChannelOwnCapability.SEND_MESSAGE` or `new ChannelOwnCapability("send-message")`. Lists stay `List<ChannelOwnCapability>`. Each element is one capability string.
+
+On `CampaignResponse`, `SenderMode` and `SenderVisibility` are `CampaignSenderMode?` and `CampaignSenderVisibility?`. A campaign that omits those keys leaves them `null`, not `""`.
+
+### New struct types
+
+`ActivitySelectorType`, `ActivityVisibility`, `AudioDefaultDevice`, `AutomodMode`, `BlocklistBehavior`, `CallLifecycleMode`, `CameraFacing`, `CampaignSenderMode`, `CampaignSenderVisibility`, `ChannelModerationBehavior`, `ChannelOwnCapability`, `CollectionStatus`, `CommentStatus`, `DeleteMessages`, `FeatureActivationMode`, `FeedMemberStatus`, `FeedOwnCapability`, `FeedVisibility`, `FollowPushPreference`, `FollowStatus`, `FriendReactionType`, `LayoutName`, `ModerationAction`, `OwnCapability`, `PushLevel`, `PushProviderName`, `RecordingType`, `RestrictReplies`, `RetentionPolicyType`, `ScheduledMessageFailureReason`, `ScheduledMessageQueryStatus`, `ScheduledMessageStatus`, `SetupStatus`, `SetupStep`, `SortParamType`, `TranscriptionLanguage`, `VideoCodec`, `VotingVisibility`.
+
+| Field | v16 | v17 |
+|---|---|---|
+| `PushLevel` | `string?` | `PushLevel?` |
+| `AutomodBehavior` | `string` | `ChannelModerationBehavior` |
+| `BlocklistBehavior` | `string?` | `BlocklistBehavior?` |
+| feeds `Visibility` | `string?` | `FeedVisibility?` or `ActivityVisibility?` |
+| `VotingVisibility` | `string?` | `VotingVisibility?` |
+| push provider name | `string` | `PushProviderName` where the spec names it |
+| `SenderMode`, `SenderVisibility` | `string?` | `CampaignSenderMode?`, `CampaignSenderVisibility?` |
+| `OwnCapabilities` | `List<ChannelOwnCapability>` of an empty class | `List<ChannelOwnCapability>` of the struct |
 
 ## When to stay on v16
 
