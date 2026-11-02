@@ -4,6 +4,10 @@ This is the official .NET SDK for GetStream's Feeds API.
 
 For detailed setup instructions, see [Example](samples/ConsoleApp/Program.cs).
 
+## Upgrading from v16?
+
+See [v16 → v17](MIGRATION_v16_to_v17.md). HTTP JSON for API fields is unchanged. Campaign responses, a few request types, and `DateTime` JSON changed.
+
 ## Migrating from stream-chat-net?
 
 If you are coming from [`stream-chat-net`](https://github.com/GetStream/stream-chat-net), we have a detailed migration guide with
