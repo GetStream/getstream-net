@@ -646,6 +646,21 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CommentFeedbackResponse>> CommentFeedbackAsync(string id, CommentFeedbackRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<CommentFeedbackRequest, CommentFeedbackResponse>(
+                "POST",
+                "/api/v2/feeds/comments/{id}/feedback", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<UpdateCommentPartialResponse>> UpdateCommentPartialAsync(string id, UpdateCommentPartialRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -750,6 +765,47 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<TranslateCommentRequest, TranslateCommentResponse>(
                 "POST",
                 "/api/v2/feeds/comments/{id}/translate", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ExportFeedsResponse>> ExportFeedsAppAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, ExportFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/export/app", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<CancelExportFeedsResponse>> CancelExportFeedsAsync(string taskID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["task_id"] = taskID,
+            };
+
+            var result = await _client.MakeRequestAsync<object, CancelExportFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/export/{task_id}/cancel", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ExportFeedsResponse>> ExportFeedsByTypeAsync(string type, ExportFeedsByTypeRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+            };
+
+            var result = await _client.MakeRequestAsync<ExportFeedsByTypeRequest, ExportFeedsResponse>(
+                "POST",
+                "/api/v2/feeds/export/{type}", null, request, pathParams,
                 cancellationToken);
 
             return result;
@@ -1296,6 +1352,7 @@ namespace GetStream
 
             return result;
         }
+        [System.Obsolete("This endpoint is deprecated.")]
         public async Task<StreamResponse<FollowBatchResponse>> FollowBatchAsync(FollowBatchRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1486,6 +1543,7 @@ namespace GetStream
 
             return result;
         }
+        [System.Obsolete("This endpoint is deprecated.")]
         public async Task<StreamResponse<UnfollowBatchResponse>> UnfollowBatchAsync(UnfollowBatchRequest request,
             CancellationToken cancellationToken = default)
         {

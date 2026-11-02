@@ -335,11 +335,11 @@ namespace GetStream.Tests
             var msgId = sendData.Message.ID;
 
             // Commit the pending message
-            var commitResp = await StreamClient.MakeRequestAsync<CommitMessageRequest, MessageActionResponse>(
+            var commitResp = await StreamClient.MakeRequestAsync<object, MessageActionResponse>(
                 "POST",
                 "/api/v2/chat/messages/{id}/commit",
                 null,
-                new CommitMessageRequest(),
+                new { },
                 new Dictionary<string, string> { ["id"] = msgId });
 
             Assert.That(commitResp.Data, Is.Not.Null);
