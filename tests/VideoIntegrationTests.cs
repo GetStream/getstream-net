@@ -97,7 +97,7 @@ namespace GetStream.Tests
                 Assert.That(createResp.Data, Is.Not.Null);
                 Assert.That(createResp.Data!.Name, Is.EqualTo(callTypeName));
                 Assert.That(createResp.Data.Settings.Audio.MicDefaultOn, Is.True);
-                Assert.That(createResp.Data.Settings.Audio.DefaultDevice, Is.EqualTo("speaker"));
+                Assert.That(createResp.Data.Settings.Audio.DefaultDevice, Is.EqualTo(AudioDefaultDevice.SPEAKER));
                 Assert.That(createResp.Data.Settings.Screensharing.AccessRequestEnabled, Is.False);
 
                 // Video call types have eventual consistency; wait before update/read
@@ -150,8 +150,8 @@ namespace GetStream.Tests
 
                 Assert.That(updateData, Is.Not.Null);
                 Assert.That(updateData!.Settings.Audio.MicDefaultOn, Is.False);
-                Assert.That(updateData.Settings.Audio.DefaultDevice, Is.EqualTo("earpiece"));
-                Assert.That(updateData.Settings.Recording.Mode, Is.EqualTo("disabled"));
+                Assert.That(updateData.Settings.Audio.DefaultDevice, Is.EqualTo(AudioDefaultDevice.EARPIECE));
+                Assert.That(updateData.Settings.Recording.Mode, Is.EqualTo(FeatureActivationMode.DISABLED));
                 Assert.That(updateData.Settings.Backstage.Enabled, Is.True);
                 Assert.That(updateData.Grants.ContainsKey("host"), Is.True);
                 Assert.That(updateData.Grants["host"], Does.Contain("join-backstage"));
@@ -1067,7 +1067,7 @@ namespace GetStream.Tests
                     new Dictionary<string, string> { ["type"] = callType, ["id"] = callId });
 
                 Assert.That(recordingResp.Data, Is.Not.Null);
-                Assert.That(recordingResp.Data!.Call.Settings.Recording.Mode, Is.EqualTo("available"));
+                Assert.That(recordingResp.Data!.Call.Settings.Recording.Mode, Is.EqualTo(FeatureActivationMode.AVAILABLE));
 
                 // Enable backstage mode
                 var backstageResp = await StreamClient.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(

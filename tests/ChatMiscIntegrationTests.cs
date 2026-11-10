@@ -56,7 +56,7 @@ namespace GetStream.Tests
             Assert.That(found, Is.True, "Created device should appear in list");
 
             var device = listResp.Data!.Devices.First(d => d.ID == deviceId);
-            Assert.That(device.PushProvider, Is.EqualTo("firebase"));
+            Assert.That(device.PushProvider, Is.EqualTo(PushProviderName.FIREBASE));
             Assert.That(device.UserID, Is.EqualTo(userId));
 
             // Delete the device
