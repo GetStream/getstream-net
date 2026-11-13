@@ -1793,6 +1793,21 @@ namespace GetStream.Tests
         }
 
         [Test]
+        public void Conformance_OversizedCompression()
+        {
+            var dir = NegDir("oversized_compression");
+            if (!Directory.Exists(dir))
+            {
+                Assert.Ignore("fixtures not present");
+            }
+            var body = File.ReadAllBytes(Path.Combine(dir, "body.gz"));
+            var sig = File.ReadAllText(Path.Combine(dir, "signature.txt")).Trim();
+            var ex = Assert.Throws<Webhook.StreamInvalidWebhookException>(
+                () => Webhook.VerifyAndParseWebhook(body, sig, CanonicalTestSecret));
+            Assert.That(ex.Message, Does.Contain("payload exceeds"));
+        }
+
+        [Test]
         public void Conformance_BadBase64()
         {
             // Per CHA-3071 wire format: DecodeSqsPayload falls back to raw bytes when

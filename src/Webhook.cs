@@ -220,6 +220,13 @@ namespace GetStream
         private static readonly byte[] GzipMagic = new byte[] { 0x1F, 0x8B };
 
         /// <summary>
+        /// Caps the decompressed size of a gzip webhook body. <see cref="GunzipPayload(byte[])"/> runs
+        /// before the signature check, so without a cap an unsigned gzip bomb could exhaust memory.
+        /// Raise it if your events are larger.
+        /// </summary>
+        public static long MaxPayloadBytes { get; set; } = 10 * 1024 * 1024;
+
+        /// <summary>
         /// Extract the event type from a raw webhook payload.
         /// </summary>
         /// <param name="rawEvent">The raw webhook payload as a byte array</param>
@@ -606,7 +613,7 @@ namespace GetStream
         /// </summary>
         /// <param name="body">The raw request body, possibly gzip-compressed</param>
         /// <returns>The uncompressed bytes (or <paramref name="body"/> unchanged if no gzip prefix)</returns>
-        /// <exception cref="StreamInvalidWebhookException">If the body has the gzip magic prefix but isn't a valid gzip stream</exception>
+        /// <exception cref="StreamInvalidWebhookException">If the body has the gzip magic prefix but isn't a valid gzip stream, or decompresses to more than <see cref="MaxPayloadBytes"/></exception>
         public static byte[] GunzipPayload(byte[] body)
         {
             if (body == null || body.Length < 2 || body[0] != GzipMagic[0] || body[1] != GzipMagic[1])
@@ -615,10 +622,20 @@ namespace GetStream
             }
             try
             {
+                var limit = MaxPayloadBytes;
                 using var input = new MemoryStream(body);
                 using var gz = new GZipStream(input, CompressionMode.Decompress);
                 using var output = new MemoryStream();
-                gz.CopyTo(output);
+                var buffer = new byte[81920];
+                int n;
+                while ((n = gz.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    if (output.Length + n > limit)
+                    {
+                        throw new StreamInvalidWebhookException($"{StreamInvalidWebhookException.GzipFailed}: payload exceeds {limit} bytes");
+                    }
+                    output.Write(buffer, 0, n);
+                }
                 return output.ToArray();
             }
             catch (Exception e) when (e is InvalidDataException || e is IOException)
