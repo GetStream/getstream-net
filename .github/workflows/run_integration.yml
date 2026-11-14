@@ -3,8 +3,6 @@ name: _run-integration
 on:
   workflow_call:
     secrets:
-      STREAM_API_KEY:
-        required: false
       STREAM_API_SECRET:
         required: true
 
@@ -40,7 +38,7 @@ jobs:
 
     - name: Integration tests
       env:
-        STREAM_API_KEY: ${{ vars.STREAM_API_KEY || secrets.STREAM_API_KEY }}
+        STREAM_API_KEY: ${{ vars.STREAM_API_KEY }}
         STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         CONFIGURATION: Release
       run: make test-integration
