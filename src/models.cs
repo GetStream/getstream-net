@@ -2876,6 +2876,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("effective_agent_review")]
         public AgentReviewSettingsPayload? EffectiveAgentReview { get; set; }
+        /// <summary>
+        /// The app's message marks policy: the mark types it defines or overrides, and the privacy switch. The channel type's mark_types says which of them are on in its channels.
+        /// </summary>
+        [JsonPropertyName("message_marks")]
+        public MessageMarksConfig? MessageMarks { get; set; }
         [JsonPropertyName("moderation_dashboard_preferences")]
         public ModerationDashboardPreferences? ModerationDashboardPreferences { get; set; }
     }
@@ -7215,6 +7220,8 @@ namespace GetStream.Models
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         /// <summary>
         /// Sets thresholds for AI moderation
         /// </summary>
@@ -7410,6 +7417,8 @@ namespace GetStream.Models
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         /// <summary>
         /// Sets thresholds for AI moderation
         /// </summary>
@@ -8261,6 +8270,7 @@ namespace GetStream.Models
         public static readonly ChannelOwnCapability SEND_CUSTOM_EVENTS = new("send-custom-events");
         public static readonly ChannelOwnCapability SEND_LINKS = new("send-links");
         public static readonly ChannelOwnCapability SEND_MESSAGE = new("send-message");
+        public static readonly ChannelOwnCapability SEND_MESSAGE_MARK = new("send-message-mark");
         public static readonly ChannelOwnCapability SEND_POLL = new("send-poll");
         public static readonly ChannelOwnCapability SEND_REACTION = new("send-reaction");
         public static readonly ChannelOwnCapability SEND_REPLY = new("send-reply");
@@ -8860,6 +8870,8 @@ namespace GetStream.Models
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         /// <summary>
         /// Sets thresholds for AI moderation
         /// </summary>
@@ -9106,6 +9118,22 @@ namespace GetStream.Models
         public ChatMessageResponse? QuotedMessage { get; set; }
     }
 
+    public class ChatMarkGroupResponse
+    {
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
+        [JsonPropertyName("latest_by")]
+        public List<ChatMessageMarkerResponse> LatestBy { get; set; }
+    }
+
+    public class ChatMessageMarkerResponse
+    {
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
+
     public class ChatMessageResponse
     {
         [JsonPropertyName("cid")]
@@ -9185,6 +9213,8 @@ namespace GetStream.Models
         public List<UserGroupResponse> MentionedGroups { get; set; }
         [JsonPropertyName("mentioned_roles")]
         public List<string> MentionedRoles { get; set; }
+        [JsonPropertyName("own_marks")]
+        public List<ChatOwnMarkResponse> OwnMarks { get; set; }
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
         [JsonPropertyName("draft")]
@@ -9193,6 +9223,8 @@ namespace GetStream.Models
         public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
+        [JsonPropertyName("mark_groups")]
+        public Dictionary<string, ChatMarkGroupResponse?> MarkGroups { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
         [JsonPropertyName("moderation")]
@@ -9232,6 +9264,14 @@ namespace GetStream.Models
         public List<string> ImageHarms { get; set; }
         [JsonPropertyName("text_harms")]
         public List<string> TextHarms { get; set; }
+    }
+
+    public class ChatOwnMarkResponse
+    {
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
     }
 
     public class ChatPreferences
@@ -11260,6 +11300,11 @@ namespace GetStream.Models
         [JsonPropertyName("commands")]
         public List<string> Commands { get; set; }
         /// <summary>
+        /// Message mark types members can send in channels of this type, for example played
+        /// </summary>
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
+        /// <summary>
         /// List of permissions for the channel type
         /// </summary>
         [JsonPropertyName("permissions")]
@@ -11373,6 +11418,8 @@ namespace GetStream.Models
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         /// <summary>
         /// Sets thresholds for AI moderation
         /// </summary>
@@ -11788,6 +11835,38 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("membership_level")]
         public MembershipLevelResponse MembershipLevel { get; set; }
+    }
+
+    public class CreateMessageMarkRequest
+    {
+        /// <summary>
+        /// The mark type: a built-in type such as played (the acting user played the message's audio, voiceRecording or video attachment) or a type the app defines in its message_marks settings
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        /// <summary>
+        /// User request object
+        /// </summary>
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+
+    public class CreateMessageMarkResponse
+    {
+        /// <summary>
+        /// Whether this request wrote the mark. False on a repeat and on the author's own mark
+        /// </summary>
+        [JsonPropertyName("created")]
+        public bool Created { get; set; }
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// A mark one user put on one message, for example played on a voice note. A mark is written once and never removed by users.
+        /// </summary>
+        [JsonPropertyName("mark")]
+        public MessageMarkResponse Mark { get; set; }
     }
 
     public class CreatePermissionRequest
@@ -13135,6 +13214,12 @@ namespace GetStream.Models
     }
 
     public class DeleteSIPTrunkResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+    }
+
+    public class DeleteScheduledActivityResponse
     {
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
@@ -17197,6 +17282,8 @@ namespace GetStream.Models
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         /// <summary>
         /// Sets thresholds for AI moderation
         /// </summary>
@@ -17262,7 +17349,7 @@ namespace GetStream.Models
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
         /// <summary>
-        /// Sort order used for the comments (first, last, top, best, controversial)
+        /// Sort order used for the comments (first, last, top, best, controversial, popular, mutuals)
         /// </summary>
         [JsonPropertyName("sort")]
         public string Sort { get; set; }
@@ -17900,6 +17987,11 @@ namespace GetStream.Models
         public bool? OverwriteInterestWeights { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+        /// <summary>
+        /// Default: false. When true, a missing feed returns 404 instead of being created. Cannot be combined with data.
+        /// </summary>
+        [JsonPropertyName("skip_feed_creation")]
+        public bool? SkipFeedCreation { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
         [JsonPropertyName("view")]
@@ -18234,6 +18326,17 @@ namespace GetStream.Models
         public AgentReviewResponse? AgentReview { get; set; }
         [JsonPropertyName("item")]
         public ReviewQueueItemResponse? Item { get; set; }
+    }
+
+    public class GetScheduledActivityResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// An activity scheduled to be published at a future time
+        /// </summary>
+        [JsonPropertyName("scheduled_activity")]
+        public ScheduledActivityResponse ScheduledActivity { get; set; }
     }
 
     public class GetSegmentResponse
@@ -20180,6 +20283,29 @@ namespace GetStream.Models
         public string Duration { get; set; }
     }
 
+    public class MarkGroupResponse
+    {
+        /// <summary>
+        /// Number of users who marked the message with this type
+        /// </summary>
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
+        /// <summary>
+        /// The users who marked the message with this type, newest first, at most 100
+        /// </summary>
+        [JsonPropertyName("latest_by")]
+        public List<MessageMarkerResponse> LatestBy { get; set; }
+    }
+
+    public class MarkPrivacyConfig
+    {
+        /// <summary>
+        /// When true, a mark by a user whose read receipts are off is kept for that user only: the author gets no event and does not see it in mark_groups or in the marks listing. Decided when the mark is written; changing the switch does not rewrite earlier marks. Defaults to false
+        /// </summary>
+        [JsonPropertyName("respect_read_receipts")]
+        public bool? RespectReadReceipts { get; set; }
+    }
+
     public class MarkReadRequest
     {
         /// <summary>
@@ -20263,6 +20389,20 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("reason")]
         public string? Reason { get; set; }
+    }
+
+    public class MarkTypeConfig
+    {
+        /// <summary>
+        /// Channel size above which the type is off, 1 to 100. Defaults to 100
+        /// </summary>
+        [JsonPropertyName("max_members")]
+        public int? MaxMembers { get; set; }
+        /// <summary>
+        /// Attachment types that qualify a message for the mark, any one of them; 1 to 10 entries, required for a custom type. For a built-in type the list replaces the default, and leaving it out keeps the default
+        /// </summary>
+        [JsonPropertyName("requires")]
+        public List<string> Requires { get; set; }
     }
 
     public class MarkUnreadRequest
@@ -20947,6 +21087,87 @@ namespace GetStream.Models
         public object Custom { get; set; }
     }
 
+    public class MessageMarkResponse
+    {
+        /// <summary>
+        /// When the mark was written
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// The marked message
+        /// </summary>
+        [JsonPropertyName("message_id")]
+        public string MessageID { get; set; }
+        /// <summary>
+        /// The mark type, for example played
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        /// <summary>
+        /// The user who marked the message
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
+
+    public class MessageMarkWithUserResponse
+    {
+        /// <summary>
+        /// When the mark was written
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// The marked message
+        /// </summary>
+        [JsonPropertyName("message_id")]
+        public string MessageID { get; set; }
+        /// <summary>
+        /// The mark type, for example played
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        /// <summary>
+        /// The user who marked the message
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("user")]
+        public UserResponse User { get; set; }
+    }
+
+    public class MessageMarkerResponse
+    {
+        /// <summary>
+        /// When the mark was written
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// The user who marked the message
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+    }
+
+    public class MessageMarksConfig
+    {
+        /// <summary>
+        /// How marks follow the marker's privacy settings.
+        /// </summary>
+        [JsonPropertyName("privacy")]
+        public MarkPrivacyConfig? Privacy { get; set; }
+        /// <summary>
+        /// Mark type definitions by name. A built-in name such as played overrides its defaults; a custom name must be namespaced, for example acme.viewed. At most 20 types
+        /// </summary>
+        [JsonPropertyName("types")]
+        public Dictionary<string, MarkTypeConfig> Types { get; set; }
+    }
+
     public class MessageModerationResult
     {
         /// <summary>
@@ -21503,6 +21724,11 @@ namespace GetStream.Models
         [JsonPropertyName("mentioned_roles")]
         public List<string> MentionedRoles { get; set; }
         /// <summary>
+        /// The viewer's own marks on this message, for example played. Omitted when marks are off for the channel type
+        /// </summary>
+        [JsonPropertyName("own_marks")]
+        public List<OwnMarkResponse> OwnMarks { get; set; }
+        /// <summary>
         /// List of users who participate in thread
         /// </summary>
         [JsonPropertyName("thread_participants")]
@@ -21519,6 +21745,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
+        /// <summary>
+        /// On the viewer's own messages: who marked them, per mark type (for example played). Omitted when marks are off for the channel type
+        /// </summary>
+        [JsonPropertyName("mark_groups")]
+        public Dictionary<string, MarkGroupResponse?> MarkGroups { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
         /// <summary>
@@ -21890,6 +22121,11 @@ namespace GetStream.Models
         [JsonPropertyName("mentioned_roles")]
         public List<string> MentionedRoles { get; set; }
         /// <summary>
+        /// The viewer's own marks on this message, for example played. Omitted when marks are off for the channel type
+        /// </summary>
+        [JsonPropertyName("own_marks")]
+        public List<OwnMarkResponse> OwnMarks { get; set; }
+        /// <summary>
         /// List of users who participate in thread
         /// </summary>
         [JsonPropertyName("thread_participants")]
@@ -21906,6 +22142,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
+        /// <summary>
+        /// On the viewer's own messages: who marked them, per mark type (for example played). Omitted when marks are off for the channel type
+        /// </summary>
+        [JsonPropertyName("mark_groups")]
+        public Dictionary<string, MarkGroupResponse?> MarkGroups { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
         /// <summary>
@@ -23692,6 +23933,7 @@ namespace GetStream.Models
         public static readonly OwnCapability SCREENSHARE = new("screenshare");
         public static readonly OwnCapability SEND_AUDIO = new("send-audio");
         public static readonly OwnCapability SEND_CLOSED_CAPTIONS_CALL = new("send-closed-captions-call");
+        public static readonly OwnCapability SEND_DATA = new("send-data");
         public static readonly OwnCapability SEND_VIDEO = new("send-video");
         public static readonly OwnCapability START_BROADCAST_CALL = new("start-broadcast-call");
         public static readonly OwnCapability START_CLOSED_CAPTIONS_CALL = new("start-closed-captions-call");
@@ -23727,6 +23969,20 @@ namespace GetStream.Models
             public override void Write(Utf8JsonWriter writer, OwnCapability value, JsonSerializerOptions options)
                 => writer.WriteStringValue(value.Value);
         }
+    }
+
+    public class OwnMarkResponse
+    {
+        /// <summary>
+        /// When the mark was written
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// The mark type, for example played
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
     }
 
     public class OwnUserResponse
@@ -25075,6 +25331,17 @@ namespace GetStream.Models
         public string Duration { get; set; }
         [JsonPropertyName("config")]
         public ConfigResponse? Config { get; set; }
+    }
+
+    public class PublishScheduledActivityNowResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// An activity scheduled to be published at a future time
+        /// </summary>
+        [JsonPropertyName("scheduled_activity")]
+        public ScheduledActivityResponse ScheduledActivity { get; set; }
     }
 
     public class PublishedTrackFlags
@@ -26834,6 +27101,51 @@ namespace GetStream.Models
         public List<QueryFeedModerationTemplate> Templates { get; set; }
     }
 
+    public class QueryFeedsReactionsRequest
+    {
+        /// <summary>
+        /// Which reactions to list: activity reactions or comment reactions
+        /// </summary>
+        [JsonPropertyName("object_type")]
+        public string ObjectType { get; set; }
+        /// <summary>
+        /// The user whose reactions to list
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+        /// <summary>
+        /// Sort by created_at only (a single field); defaults to created_at descending
+        /// </summary>
+        [JsonPropertyName("sort")]
+        public List<SortParamRequest> Sort { get; set; }
+        /// <summary>
+        /// Optional filter; only reaction_type and created_at are accepted
+        /// </summary>
+        [JsonPropertyName("filter")]
+        public object Filter { get; set; }
+    }
+
+    public class QueryFeedsReactionsResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("reactions")]
+        public List<FeedsReactionResponse> Reactions { get; set; }
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("prev")]
+        public string? Prev { get; set; }
+    }
+
     public class QueryFeedsRequest
     {
         [JsonPropertyName("enrich_own_fields")]
@@ -27239,6 +27551,60 @@ namespace GetStream.Models
         public string? Next { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+    }
+
+    public class QueryMessageMarksFilter
+    {
+        /// <summary>
+        /// Only marks of this type, for example played
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+    }
+
+    public class QueryMessageMarksRequest
+    {
+        /// <summary>
+        /// Page size, 1 to 100. Defaults to 25
+        /// </summary>
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        /// <summary>
+        /// Cursor from the previous page's next field. The order is fixed: newest first
+        /// </summary>
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        /// <summary>
+        /// Filter for listing the marks on a message
+        /// </summary>
+        [JsonPropertyName("filter")]
+        public QueryMessageMarksFilter? Filter { get; set; }
+        /// <summary>
+        /// User request object
+        /// </summary>
+        [JsonPropertyName("user")]
+        public UserRequest? User { get; set; }
+    }
+
+    public class QueryMessageMarksResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// The marks of this page, newest first
+        /// </summary>
+        [JsonPropertyName("marks")]
+        public List<MessageMarkWithUserResponse> Marks { get; set; }
+        /// <summary>
+        /// Cursor for the next page; absent on the last page
+        /// </summary>
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
     }
 
     public class QueryModerationConfigsRequest
@@ -27830,6 +28196,57 @@ namespace GetStream.Models
         public string? Next { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+    }
+
+    public class QueryScheduledActivitiesFilter
+    {
+        /// <summary>
+        /// Only activities scheduled for this feed
+        /// </summary>
+        [JsonPropertyName("fid")]
+        public string? Fid { get; set; }
+        /// <summary>
+        /// Only activities of this user. Server-side only; client-side requests always see their own.
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        /// <summary>
+        /// Only activities with one of these statuses: scheduled, publishing, failed
+        /// </summary>
+        [JsonPropertyName("status")]
+        public List<ScheduledActivityQueryStatus> Status { get; set; }
+    }
+
+    public class QueryScheduledActivitiesRequest
+    {
+        /// <summary>
+        /// Maximum number of scheduled activities to return. Default 25, maximum 100.
+        /// </summary>
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        /// <summary>
+        /// Cursor from a previous response to fetch the next page
+        /// </summary>
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
+        [JsonPropertyName("filter")]
+        public QueryScheduledActivitiesFilter? Filter { get; set; }
+    }
+
+    public class QueryScheduledActivitiesResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// The scheduled activities, ordered by scheduled_at
+        /// </summary>
+        [JsonPropertyName("scheduled_activities")]
+        public List<ScheduledActivityResponse> ScheduledActivities { get; set; }
+        /// <summary>
+        /// Cursor for the next page, absent on the last page
+        /// </summary>
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
     }
 
     public class QueryScheduledMessagesRequest
@@ -30795,6 +31212,435 @@ namespace GetStream.Models
         public int? PublishedVersion { get; set; }
     }
 
+    public class ScheduleActivityRequest
+    {
+        /// <summary>
+        /// Type of activity
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        /// <summary>
+        /// List of feeds to add the activity to with a default max limit of 25 feeds
+        /// </summary>
+        [JsonPropertyName("feeds")]
+        public List<string> Feeds { get; set; }
+        /// <summary>
+        /// Whether to copy custom data to the notification activity (only applies when create_notification_activity is true) Deprecated: use notification_context.trigger.custom and notification_context.target.custom instead
+        /// <para>Deprecated.</para>
+        /// </summary>
+        [Obsolete]
+        [JsonPropertyName("copy_custom_to_notification")]
+        public bool? CopyCustomToNotification { get; set; }
+        /// <summary>
+        /// Whether to create notification activities for mentioned users
+        /// </summary>
+        [JsonPropertyName("create_notification_activity")]
+        public bool? CreateNotificationActivity { get; set; }
+        /// <summary>
+        /// If true, creates the user referenced by user_id when it does not exist. Server-side only.
+        /// </summary>
+        [JsonPropertyName("create_users")]
+        public bool? CreateUsers { get; set; }
+        /// <summary>
+        /// Expiration time for the activity
+        /// </summary>
+        [JsonPropertyName("expires_at")]
+        public string? ExpiresAt { get; set; }
+        /// <summary>
+        /// If true, forces moderation to run at publish for server-side requests. By default, server-side requests skip moderation. Client-side requests always run moderation regardless of this field.
+        /// </summary>
+        [JsonPropertyName("force_moderation")]
+        public bool? ForceModeration { get; set; }
+        /// <summary>
+        /// Optional ID for the activity
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        /// <summary>
+        /// ID of parent activity for replies/comments
+        /// </summary>
+        [JsonPropertyName("parent_id")]
+        public string? ParentID { get; set; }
+        /// <summary>
+        /// ID of a poll to attach to activity
+        /// </summary>
+        [JsonPropertyName("poll_id")]
+        public string? PollID { get; set; }
+        /// <summary>
+        /// Controls who can add comments/replies to this activity. One of: everyone, people_i_follow, nobody
+        /// </summary>
+        [JsonPropertyName("restrict_replies")]
+        public RestrictReplies? RestrictReplies { get; set; }
+        /// <summary>
+        /// When to publish the activity, an RFC 3339 time. A time less than a minute ahead or in the past is moved to one minute from now, and the time is rounded up to a whole minute.
+        /// </summary>
+        [JsonPropertyName("scheduled_at")]
+        public DateTime? ScheduledAt { get; set; }
+        /// <summary>
+        /// Whether to skip URL enrichment for the activity
+        /// </summary>
+        [JsonPropertyName("skip_enrich_url")]
+        public bool? SkipEnrichUrl { get; set; }
+        /// <summary>
+        /// Whether to skip push notifications
+        /// </summary>
+        [JsonPropertyName("skip_push")]
+        public bool? SkipPush { get; set; }
+        /// <summary>
+        /// Text content of the activity
+        /// </summary>
+        [JsonPropertyName("text")]
+        public string? Text { get; set; }
+        /// <summary>
+        /// ID of the user creating the activity
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string? UserID { get; set; }
+        /// <summary>
+        /// Visibility setting for the activity. One of: public, private, tag
+        /// </summary>
+        [JsonPropertyName("visibility")]
+        public ActivityVisibility? Visibility { get; set; }
+        /// <summary>
+        /// If visibility is 'tag', this is the tag name and is required
+        /// </summary>
+        [JsonPropertyName("visibility_tag")]
+        public string? VisibilityTag { get; set; }
+        /// <summary>
+        /// List of attachments for the activity
+        /// </summary>
+        [JsonPropertyName("attachments")]
+        public List<Attachment> Attachments { get; set; }
+        /// <summary>
+        /// Collections that this activity references
+        /// </summary>
+        [JsonPropertyName("collection_refs")]
+        public List<string> CollectionRefs { get; set; }
+        /// <summary>
+        /// Collections to create or update as part of this request, so an activity and the collections it references can be written in one call. Their refs (name:id) are added to collection_refs automatically; you do not need to restate them, and they count toward the same per-activity collection-reference limit, which is the effective cap here. A collection that already exists has its custom data updated. Use collection_refs instead when the collection already exists and you are only referencing it, which requires no collection permissions.
+        /// </summary>
+        [JsonPropertyName("collections")]
+        public List<CollectionRequest> Collections { get; set; }
+        /// <summary>
+        /// Tags for filtering activities
+        /// </summary>
+        [JsonPropertyName("filter_tags")]
+        public List<string> FilterTags { get; set; }
+        /// <summary>
+        /// Tags for indicating user interests
+        /// </summary>
+        [JsonPropertyName("interest_tags")]
+        public List<string> InterestTags { get; set; }
+        /// <summary>
+        /// List of users mentioned in the activity
+        /// </summary>
+        [JsonPropertyName("mentioned_user_ids")]
+        public List<string> MentionedUserIds { get; set; }
+        /// <summary>
+        /// Custom data for the activity
+        /// </summary>
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("location")]
+        public Location? Location { get; set; }
+        /// <summary>
+        /// Additional data for search indexing
+        /// </summary>
+        [JsonPropertyName("search_data")]
+        public object SearchData { get; set; }
+    }
+
+    public class ScheduleActivityResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// An activity scheduled to be published at a future time
+        /// </summary>
+        [JsonPropertyName("scheduled_activity")]
+        public ScheduledActivityResponse ScheduledActivity { get; set; }
+    }
+
+    public class ScheduledActivityFailedEvent
+    {
+        /// <summary>
+        /// Date/time of creation
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// Why the activity failed to publish
+        /// </summary>
+        [JsonPropertyName("failure_reason")]
+        public ScheduledActivityFailureReason FailureReason { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        /// <summary>
+        /// An activity scheduled to be published at a future time
+        /// </summary>
+        [JsonPropertyName("scheduled_activity")]
+        public ScheduledActivityResponse ScheduledActivity { get; set; }
+        /// <summary>
+        /// The type of event: "feeds.scheduled_activity.failed" in this case
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("received_at")]
+        public DateTime? ReceivedAt { get; set; }
+        [JsonPropertyName("user")]
+        public UserResponseCommonFields? User { get; set; }
+    }
+
+    [JsonConverter(typeof(ScheduledActivityFailureReason.Converter))]
+    public readonly struct ScheduledActivityFailureReason
+    {
+        public string Value { get; }
+        public ScheduledActivityFailureReason(string value) => Value = value ?? "";
+        public static readonly ScheduledActivityFailureReason BANNED = new("banned");
+        public static readonly ScheduledActivityFailureReason EXPIRED = new("expired");
+        public static readonly ScheduledActivityFailureReason FEED_DELETED = new("feed_deleted");
+        public static readonly ScheduledActivityFailureReason ID_CONFLICT = new("id_conflict");
+        public static readonly ScheduledActivityFailureReason INTERNAL_ERROR = new("internal_error");
+        public static readonly ScheduledActivityFailureReason INVALID_ACTIVITY = new("invalid_activity");
+        public static readonly ScheduledActivityFailureReason MODERATION_BLOCKED = new("moderation_blocked");
+        public static readonly ScheduledActivityFailureReason NO_PERMISSION = new("no_permission");
+        public static readonly ScheduledActivityFailureReason USER_DELETED = new("user_deleted");
+        public static implicit operator ScheduledActivityFailureReason(string value) => new(value);
+        public override string ToString() => Value;
+        public static bool operator ==(ScheduledActivityFailureReason left, ScheduledActivityFailureReason right) => left.Value == right.Value;
+        public static bool operator !=(ScheduledActivityFailureReason left, ScheduledActivityFailureReason right) => left.Value != right.Value;
+        [Obsolete("Use .Value or ToString(); implicit conversion to string will be removed in the next major version.")]
+        public static implicit operator string(ScheduledActivityFailureReason value) => value.Value;
+        public override bool Equals(object? obj) => obj is ScheduledActivityFailureReason other && this == other;
+        public override int GetHashCode() => (Value ?? "").GetHashCode();
+
+        public sealed class Converter : JsonConverter<ScheduledActivityFailureReason>
+        {
+            public override ScheduledActivityFailureReason Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+                => new(reader.GetString());
+            public override void Write(Utf8JsonWriter writer, ScheduledActivityFailureReason value, JsonSerializerOptions options)
+                => writer.WriteStringValue(value.Value);
+        }
+    }
+
+    public class ScheduledActivityPreview
+    {
+        /// <summary>
+        /// Type of activity
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        /// <summary>
+        /// Feeds the activity will be added to
+        /// </summary>
+        [JsonPropertyName("feeds")]
+        public List<string> Feeds { get; set; }
+        /// <summary>
+        /// When the published activity expires
+        /// </summary>
+        [JsonPropertyName("expires_at")]
+        public DateTime? ExpiresAt { get; set; }
+        /// <summary>
+        /// ID the activity gets when published
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        /// <summary>
+        /// ID of the parent activity
+        /// </summary>
+        [JsonPropertyName("parent_id")]
+        public string? ParentID { get; set; }
+        /// <summary>
+        /// ID of the poll attached to the activity
+        /// </summary>
+        [JsonPropertyName("poll_id")]
+        public string? PollID { get; set; }
+        /// <summary>
+        /// Who may reply to the activity
+        /// </summary>
+        [JsonPropertyName("restrict_replies")]
+        public RestrictReplies? RestrictReplies { get; set; }
+        /// <summary>
+        /// Text content of the activity
+        /// </summary>
+        [JsonPropertyName("text")]
+        public string? Text { get; set; }
+        /// <summary>
+        /// Visibility of the activity
+        /// </summary>
+        [JsonPropertyName("visibility")]
+        public ActivityVisibility? Visibility { get; set; }
+        /// <summary>
+        /// Visibility tag of the activity
+        /// </summary>
+        [JsonPropertyName("visibility_tag")]
+        public string? VisibilityTag { get; set; }
+        /// <summary>
+        /// Attachments of the activity
+        /// </summary>
+        [JsonPropertyName("attachments")]
+        public List<Attachment> Attachments { get; set; }
+        /// <summary>
+        /// Collections referenced by the activity
+        /// </summary>
+        [JsonPropertyName("collection_refs")]
+        public List<string> CollectionRefs { get; set; }
+        /// <summary>
+        /// Filter tags of the activity
+        /// </summary>
+        [JsonPropertyName("filter_tags")]
+        public List<string> FilterTags { get; set; }
+        /// <summary>
+        /// Interest tags of the activity
+        /// </summary>
+        [JsonPropertyName("interest_tags")]
+        public List<string> InterestTags { get; set; }
+        /// <summary>
+        /// Users mentioned in the activity
+        /// </summary>
+        [JsonPropertyName("mentioned_user_ids")]
+        public List<string> MentionedUserIds { get; set; }
+        /// <summary>
+        /// Custom data of the activity
+        /// </summary>
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        [JsonPropertyName("location")]
+        public Location? Location { get; set; }
+        /// <summary>
+        /// Search data of the activity
+        /// </summary>
+        [JsonPropertyName("search_data")]
+        public object SearchData { get; set; }
+    }
+
+    public class ScheduledActivityPublishedEvent
+    {
+        /// <summary>
+        /// Date/time of creation
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("custom")]
+        public object Custom { get; set; }
+        /// <summary>
+        /// An activity scheduled to be published at a future time
+        /// </summary>
+        [JsonPropertyName("scheduled_activity")]
+        public ScheduledActivityResponse ScheduledActivity { get; set; }
+        /// <summary>
+        /// The type of event: "feeds.scheduled_activity.published" in this case
+        /// </summary>
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+        [JsonPropertyName("received_at")]
+        public DateTime? ReceivedAt { get; set; }
+        [JsonPropertyName("user")]
+        public UserResponseCommonFields? User { get; set; }
+    }
+
+    [JsonConverter(typeof(ScheduledActivityQueryStatus.Converter))]
+    public readonly struct ScheduledActivityQueryStatus
+    {
+        public string Value { get; }
+        public ScheduledActivityQueryStatus(string value) => Value = value ?? "";
+        public static readonly ScheduledActivityQueryStatus FAILED = new("failed");
+        public static readonly ScheduledActivityQueryStatus PUBLISHING = new("publishing");
+        public static readonly ScheduledActivityQueryStatus SCHEDULED = new("scheduled");
+        public static implicit operator ScheduledActivityQueryStatus(string value) => new(value);
+        public override string ToString() => Value;
+        public static bool operator ==(ScheduledActivityQueryStatus left, ScheduledActivityQueryStatus right) => left.Value == right.Value;
+        public static bool operator !=(ScheduledActivityQueryStatus left, ScheduledActivityQueryStatus right) => left.Value != right.Value;
+        [Obsolete("Use .Value or ToString(); implicit conversion to string will be removed in the next major version.")]
+        public static implicit operator string(ScheduledActivityQueryStatus value) => value.Value;
+        public override bool Equals(object? obj) => obj is ScheduledActivityQueryStatus other && this == other;
+        public override int GetHashCode() => (Value ?? "").GetHashCode();
+
+        public sealed class Converter : JsonConverter<ScheduledActivityQueryStatus>
+        {
+            public override ScheduledActivityQueryStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+                => new(reader.GetString());
+            public override void Write(Utf8JsonWriter writer, ScheduledActivityQueryStatus value, JsonSerializerOptions options)
+                => writer.WriteStringValue(value.Value);
+        }
+    }
+
+    public class ScheduledActivityResponse
+    {
+        /// <summary>
+        /// When the activity was scheduled
+        /// </summary>
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// ID of the scheduled activity, also the ID the activity gets when published
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string ID { get; set; }
+        /// <summary>
+        /// When the activity will be published
+        /// </summary>
+        [JsonPropertyName("scheduled_at")]
+        public DateTime ScheduledAt { get; set; }
+        /// <summary>
+        /// One of: scheduled, publishing, failed, canceled
+        /// </summary>
+        [JsonPropertyName("status")]
+        public ScheduledActivityStatus Status { get; set; }
+        /// <summary>
+        /// When the scheduled activity was last changed
+        /// </summary>
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+        /// <summary>
+        /// ID of the user the activity is published as
+        /// </summary>
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+        /// <summary>
+        /// Feeds the activity will be added to
+        /// </summary>
+        [JsonPropertyName("feeds")]
+        public List<string> Feeds { get; set; }
+        /// <summary>
+        /// The activity a scheduled activity will publish
+        /// </summary>
+        [JsonPropertyName("activity")]
+        public ScheduledActivityPreview Activity { get; set; }
+        /// <summary>
+        /// Why the publish failed; set only when status is failed
+        /// </summary>
+        [JsonPropertyName("failure_reason")]
+        public ScheduledActivityFailureReason? FailureReason { get; set; }
+    }
+
+    [JsonConverter(typeof(ScheduledActivityStatus.Converter))]
+    public readonly struct ScheduledActivityStatus
+    {
+        public string Value { get; }
+        public ScheduledActivityStatus(string value) => Value = value ?? "";
+        public static readonly ScheduledActivityStatus CANCELED = new("canceled");
+        public static readonly ScheduledActivityStatus FAILED = new("failed");
+        public static readonly ScheduledActivityStatus PUBLISHING = new("publishing");
+        public static readonly ScheduledActivityStatus SCHEDULED = new("scheduled");
+        public static implicit operator ScheduledActivityStatus(string value) => new(value);
+        public override string ToString() => Value;
+        public static bool operator ==(ScheduledActivityStatus left, ScheduledActivityStatus right) => left.Value == right.Value;
+        public static bool operator !=(ScheduledActivityStatus left, ScheduledActivityStatus right) => left.Value != right.Value;
+        [Obsolete("Use .Value or ToString(); implicit conversion to string will be removed in the next major version.")]
+        public static implicit operator string(ScheduledActivityStatus value) => value.Value;
+        public override bool Equals(object? obj) => obj is ScheduledActivityStatus other && this == other;
+        public override int GetHashCode() => (Value ?? "").GetHashCode();
+
+        public sealed class Converter : JsonConverter<ScheduledActivityStatus>
+        {
+            public override ScheduledActivityStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+                => new(reader.GetString());
+            public override void Write(Utf8JsonWriter writer, ScheduledActivityStatus value, JsonSerializerOptions options)
+                => writer.WriteStringValue(value.Value);
+        }
+    }
+
     public class ScheduledMessageChannelResponse
     {
         /// <summary>
@@ -30808,10 +31654,20 @@ namespace GetStream.Models
         [JsonPropertyName("id")]
         public string ID { get; set; }
         /// <summary>
+        /// Number of members of the channel. 0 when the channel is deleted
+        /// </summary>
+        [JsonPropertyName("member_count")]
+        public int MemberCount { get; set; }
+        /// <summary>
         /// Channel type
         /// </summary>
         [JsonPropertyName("type")]
         public string Type { get; set; }
+        /// <summary>
+        /// Up to 4 members of the channel, oldest first. Empty when the channel is deleted
+        /// </summary>
+        [JsonPropertyName("members")]
+        public List<ChannelMemberResponse> Members { get; set; }
         /// <summary>
         /// Channel image, from its custom data
         /// </summary>
@@ -31487,6 +32343,8 @@ namespace GetStream.Models
         public List<UserGroupResponse> MentionedGroups { get; set; }
         [JsonPropertyName("mentioned_roles")]
         public List<string> MentionedRoles { get; set; }
+        [JsonPropertyName("own_marks")]
+        public List<OwnMarkResponse> OwnMarks { get; set; }
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
         /// <summary>
@@ -31500,6 +32358,8 @@ namespace GetStream.Models
         public Dictionary<string, string> I18n { get; set; }
         [JsonPropertyName("image_labels")]
         public Dictionary<string, List<string>> ImageLabels { get; set; }
+        [JsonPropertyName("mark_groups")]
+        public Dictionary<string, MarkGroupResponse?> MarkGroups { get; set; }
         [JsonPropertyName("member")]
         public ChannelMemberPartialResponse? Member { get; set; }
         [JsonPropertyName("mentioned_channel_members")]
@@ -34818,6 +35678,11 @@ namespace GetStream.Models
         public HuaweiConfig? HuaweiConfig { get; set; }
         [JsonPropertyName("image_upload_config")]
         public FileUploadConfig? ImageUploadConfig { get; set; }
+        /// <summary>
+        /// The app's message marks policy: the mark types it defines or overrides, and the privacy switch. The channel type's mark_types says which of them are on in its channels.
+        /// </summary>
+        [JsonPropertyName("message_marks")]
+        public MessageMarksConfig? MessageMarks { get; set; }
         [JsonPropertyName("moderation_dashboard_preferences")]
         public ModerationDashboardPreferences? ModerationDashboardPreferences { get; set; }
         [JsonPropertyName("push_config")]
@@ -35314,6 +36179,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("commands")]
         public List<string> Commands { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         [JsonPropertyName("permissions")]
         public List<PolicyRequest> Permissions { get; set; }
         /// <summary>
@@ -35422,6 +36289,8 @@ namespace GetStream.Models
         public List<string> AllowedFlagReasons { get; set; }
         [JsonPropertyName("blocklists")]
         public List<BlockListOptions> Blocklists { get; set; }
+        [JsonPropertyName("mark_types")]
+        public List<string> MarkTypes { get; set; }
         /// <summary>
         /// Sets thresholds for AI moderation
         /// </summary>
@@ -36431,6 +37300,28 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("sip_trunk")]
         public SIPTrunkResponse? SipTrunk { get; set; }
+    }
+
+    public class UpdateScheduledActivityRequest
+    {
+        /// <summary>
+        /// When to publish the activity, an RFC 3339 time. A time less than a minute ahead or in the past is moved to one minute from now, and the time is rounded up to a whole minute.
+        /// </summary>
+        [JsonPropertyName("scheduled_at")]
+        public DateTime? ScheduledAt { get; set; }
+        [JsonPropertyName("activity")]
+        public ActivityRequest? Activity { get; set; }
+    }
+
+    public class UpdateScheduledActivityResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// An activity scheduled to be published at a future time
+        /// </summary>
+        [JsonPropertyName("scheduled_activity")]
+        public ScheduledActivityResponse ScheduledActivity { get; set; }
     }
 
     public class UpdateScheduledMessageRequest
