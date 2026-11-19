@@ -1121,41 +1121,6 @@ namespace GetStream
             return result;
         }
 
-        // Marks a message for the acting user, for example played when the user played a voice note. A mark is written once: a repeat returns created false and the stored mark, and nothing else happens. The message author's own mark is a no-op. A message the user deleted for themselves answers as a first write does, created true, without storing anything. A mark on a message whose author is shadow-banned is stored hidden: the marker keeps it, the author never sees it. Only members of channels whose type lists the mark type can mark, and only messages with a matching attachment; a thread reply is marked like any other message
-
-        // Sends events:
-        // - message.mark_added
-        public async Task<StreamResponse<CreateMessageMarkResponse>> CreateMessageMarkAsync(string id, CreateMessageMarkRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await _client.MakeRequestAsync<CreateMessageMarkRequest, CreateMessageMarkResponse>(
-                "POST",
-                "/api/v2/chat/messages/{id}/marks", null, request, pathParams,
-                cancellationToken);
-            return result;
-        }
-
-        // Lists the marks on a message one page at a time, newest first; the order cannot be changed. The message's mark_groups carry the count and the newest 100 markers per type, this endpoint lists every marker. Only the message author may list client-side; server-side, pass the author's user_id or no user_id. filter.type narrows the list to one mark type; without it every type the channel type lists is returned
-        public async Task<StreamResponse<QueryMessageMarksResponse>> QueryMessageMarksAsync(string id, QueryMessageMarksRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await _client.MakeRequestAsync<QueryMessageMarksRequest, QueryMessageMarksResponse>(
-                "POST",
-                "/api/v2/chat/messages/{id}/marks/query", null, request, pathParams,
-                cancellationToken);
-            return result;
-        }
-
         // Sends reaction to specified message
 
         // Sends events:

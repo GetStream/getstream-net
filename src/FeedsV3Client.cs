@@ -1543,17 +1543,6 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryFeedsReactionsResponse>> QueryFeedsReactionsAsync(QueryFeedsReactionsRequest request,
-            CancellationToken cancellationToken = default)
-        {
-
-            var result = await _client.MakeRequestAsync<QueryFeedsReactionsRequest, QueryFeedsReactionsResponse>(
-                "POST",
-                "/api/v2/feeds/reactions/query", null, request, null,
-                cancellationToken);
-
-            return result;
-        }
         public async Task<StreamResponse<GetFeedsRetentionPolicyResponse>> FeedsGetRetentionPolicyAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -1605,88 +1594,6 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<QueryRevisionHistoryRequest, QueryRevisionHistoryResponse>(
                 "POST",
                 "/api/v2/feeds/revisions/query", null, request, null,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<ScheduleActivityResponse>> ScheduleActivityAsync(ScheduleActivityRequest request,
-            CancellationToken cancellationToken = default)
-        {
-
-            var result = await _client.MakeRequestAsync<ScheduleActivityRequest, ScheduleActivityResponse>(
-                "POST",
-                "/api/v2/feeds/scheduled_activities", null, request, null,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<QueryScheduledActivitiesResponse>> QueryScheduledActivitiesAsync(QueryScheduledActivitiesRequest request,
-            CancellationToken cancellationToken = default)
-        {
-
-            var result = await _client.MakeRequestAsync<QueryScheduledActivitiesRequest, QueryScheduledActivitiesResponse>(
-                "POST",
-                "/api/v2/feeds/scheduled_activities/query", null, request, null,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<DeleteScheduledActivityResponse>> DeleteScheduledActivityAsync(string id, object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await _client.MakeRequestAsync<object, DeleteScheduledActivityResponse>(
-                "DELETE",
-                "/api/v2/feeds/scheduled_activities/{id}", null, null, pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<GetScheduledActivityResponse>> GetScheduledActivityAsync(string id, object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await _client.MakeRequestAsync<object, GetScheduledActivityResponse>(
-                "GET",
-                "/api/v2/feeds/scheduled_activities/{id}", null, null, pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<UpdateScheduledActivityResponse>> UpdateScheduledActivityAsync(string id, UpdateScheduledActivityRequest request,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await _client.MakeRequestAsync<UpdateScheduledActivityRequest, UpdateScheduledActivityResponse>(
-                "PATCH",
-                "/api/v2/feeds/scheduled_activities/{id}", null, request, pathParams,
-                cancellationToken);
-
-            return result;
-        }
-        public async Task<StreamResponse<PublishScheduledActivityNowResponse>> PublishScheduledActivityNowAsync(string id, object request = null,
-            CancellationToken cancellationToken = default)
-        {
-            var pathParams = new Dictionary<string, string>
-            {
-                ["id"] = id,
-            };
-
-            var result = await _client.MakeRequestAsync<object, PublishScheduledActivityNowResponse>(
-                "POST",
-                "/api/v2/feeds/scheduled_activities/{id}/publish_now", null, null, pathParams,
                 cancellationToken);
 
             return result;

@@ -1106,22 +1106,6 @@ namespace GetStream.Tests
         }
 
         [Test]
-        public void ParseWebhookEvent_FeedsScheduledActivityFailed_ReturnsCorrectType()
-        {
-            var payload = "{\"type\":\"feeds.scheduled_activity.failed\"}";
-            var result = Webhook.ParseWebhookEvent(payload);
-            Assert.That(result, Is.InstanceOf<ScheduledActivityFailedEvent>());
-        }
-
-        [Test]
-        public void ParseWebhookEvent_FeedsScheduledActivityPublished_ReturnsCorrectType()
-        {
-            var payload = "{\"type\":\"feeds.scheduled_activity.published\"}";
-            var result = Webhook.ParseWebhookEvent(payload);
-            Assert.That(result, Is.InstanceOf<ScheduledActivityPublishedEvent>());
-        }
-
-        [Test]
         public void ParseWebhookEvent_FeedsStoriesFeedUpdated_ReturnsCorrectType()
         {
             var payload = "{\"type\":\"feeds.stories_feed.updated\"}";
