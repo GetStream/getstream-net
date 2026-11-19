@@ -51,7 +51,9 @@ namespace GetStream
         public async Task<StreamResponse<QueryUserFeedbackResponse>> QueryUserFeedbackAsync(QueryUserFeedbackRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<QueryUserFeedbackRequest, QueryUserFeedbackResponse>(
                 "POST",
@@ -365,7 +367,9 @@ namespace GetStream
                 ["id"] = id,
                 ["type"] = type,
             };
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<QueryCallParticipantsRequest, QueryCallParticipantsResponse>(
                 "POST",

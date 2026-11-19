@@ -144,6 +144,8 @@ namespace GetStream
         public const string FeedsFollowDeleted = "feeds.follow.deleted";
         public const string FeedsFollowUpdated = "feeds.follow.updated";
         public const string FeedsNotificationFeedUpdated = "feeds.notification_feed.updated";
+        public const string FeedsScheduledActivityFailed = "feeds.scheduled_activity.failed";
+        public const string FeedsScheduledActivityPublished = "feeds.scheduled_activity.published";
         public const string FeedsStoriesFeedUpdated = "feeds.stories_feed.updated";
         public const string FlagUpdated = "flag.updated";
         public const string ImportError = "import.error";
@@ -434,6 +436,8 @@ namespace GetStream
                 "feeds.follow.deleted" => typeof(FollowDeletedEvent),
                 "feeds.follow.updated" => typeof(FollowUpdatedEvent),
                 "feeds.notification_feed.updated" => typeof(NotificationFeedUpdatedEvent),
+                "feeds.scheduled_activity.failed" => typeof(ScheduledActivityFailedEvent),
+                "feeds.scheduled_activity.published" => typeof(ScheduledActivityPublishedEvent),
                 "feeds.stories_feed.updated" => typeof(StoriesFeedUpdatedEvent),
                 "flag.updated" => typeof(FlagUpdatedEvent),
                 "import.error" => typeof(AsyncImportErrorEvent),

@@ -104,7 +104,9 @@ namespace GetStream
         public async Task<StreamResponse<QueryActivitiesResponse>> QueryActivitiesAsync(QueryActivitiesRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<QueryActivitiesRequest, QueryActivitiesResponse>(
                 "POST",
@@ -351,7 +353,9 @@ namespace GetStream
             {
                 ["id"] = id,
             };
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<RestoreActivityRequest, RestoreActivityResponse>(
                 "POST",
@@ -419,7 +423,9 @@ namespace GetStream
         public async Task<StreamResponse<QueryBookmarksResponse>> QueryBookmarksAsync(QueryBookmarksRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<QueryBookmarksRequest, QueryBookmarksResponse>(
                 "POST",
@@ -533,7 +539,9 @@ namespace GetStream
         public async Task<StreamResponse<QueryCommentsResponse>> QueryCommentsAsync(QueryCommentsRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<QueryCommentsRequest, QueryCommentsResponse>(
                 "POST",
@@ -769,13 +777,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ExportFeedsResponse>> ExportFeedsAppAsync(object request = null,
+        public async Task<StreamResponse<ExportFeedsResponse>> ExportFeedsAppAsync(ExportFeedsAppRequest request,
             CancellationToken cancellationToken = default)
         {
 
-            var result = await _client.MakeRequestAsync<object, ExportFeedsResponse>(
+            var result = await _client.MakeRequestAsync<ExportFeedsAppRequest, ExportFeedsResponse>(
                 "POST",
-                "/api/v2/feeds/export/app", null, null, null,
+                "/api/v2/feeds/export/app", null, request, null,
                 cancellationToken);
 
             return result;
@@ -858,7 +866,9 @@ namespace GetStream
                 ["feed_group_id"] = feedGroupID,
                 ["feed_id"] = feedID,
             };
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<GetOrCreateFeedRequest, GetOrCreateFeedResponse>(
                 "POST",
@@ -1030,7 +1040,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(string feedGroupID, string feedID, QueryPinnedActivitiesRequest request,
+        public async Task<StreamResponse<GetNotificationStatusResponse>> GetNotificationStatusAsync(string feedGroupID, string feedID, object request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1039,6 +1049,25 @@ namespace GetStream
                 ["feed_id"] = feedID,
             };
             var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetNotificationStatusResponse>(
+                "GET",
+                "/api/v2/feeds/feed_groups/{feed_group_id}/feeds/{feed_id}/notification_status", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(string feedGroupID, string feedID, QueryPinnedActivitiesRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["feed_group_id"] = feedGroupID,
+                ["feed_id"] = feedID,
+            };
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<QueryPinnedActivitiesRequest, QueryPinnedActivitiesResponse>(
                 "POST",
@@ -1477,6 +1506,54 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<ListPromotedTopicsResponse>> ListPromotedTopicsAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, ListPromotedTopicsResponse>(
+                "GET",
+                "/api/v2/feeds/promoted_topics", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PromoteTopicsResponse>> PromoteTopicsAsync(PromoteTopicsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<PromoteTopicsRequest, PromoteTopicsResponse>(
+                "POST",
+                "/api/v2/feeds/promoted_topics", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UnpromoteTopicsResponse>> UnpromoteTopicsAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, UnpromoteTopicsResponse>(
+                "DELETE",
+                "/api/v2/feeds/promoted_topics/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryFeedsReactionsResponse>> QueryFeedsReactionsAsync(QueryFeedsReactionsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryFeedsReactionsRequest, QueryFeedsReactionsResponse>(
+                "POST",
+                "/api/v2/feeds/reactions/query", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetFeedsRetentionPolicyResponse>> FeedsGetRetentionPolicyAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -1528,6 +1605,88 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<QueryRevisionHistoryRequest, QueryRevisionHistoryResponse>(
                 "POST",
                 "/api/v2/feeds/revisions/query", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ScheduleActivityResponse>> ScheduleActivityAsync(ScheduleActivityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<ScheduleActivityRequest, ScheduleActivityResponse>(
+                "POST",
+                "/api/v2/feeds/scheduled_activities", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<QueryScheduledActivitiesResponse>> QueryScheduledActivitiesAsync(QueryScheduledActivitiesRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryScheduledActivitiesRequest, QueryScheduledActivitiesResponse>(
+                "POST",
+                "/api/v2/feeds/scheduled_activities/query", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<DeleteScheduledActivityResponse>> DeleteScheduledActivityAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, DeleteScheduledActivityResponse>(
+                "DELETE",
+                "/api/v2/feeds/scheduled_activities/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetScheduledActivityResponse>> GetScheduledActivityAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, GetScheduledActivityResponse>(
+                "GET",
+                "/api/v2/feeds/scheduled_activities/{id}", null, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<UpdateScheduledActivityResponse>> UpdateScheduledActivityAsync(string id, UpdateScheduledActivityRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<UpdateScheduledActivityRequest, UpdateScheduledActivityResponse>(
+                "PATCH",
+                "/api/v2/feeds/scheduled_activities/{id}", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PublishScheduledActivityNowResponse>> PublishScheduledActivityNowAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, PublishScheduledActivityNowResponse>(
+                "POST",
+                "/api/v2/feeds/scheduled_activities/{id}/publish_now", null, null, pathParams,
                 cancellationToken);
 
             return result;
@@ -1650,6 +1809,22 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<UpsertUserInterestsRequest, UpsertUserInterestsResponse>(
                 "PUT",
                 "/api/v2/feeds/users/{user_id}/interests", null, request, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetTrendingTopicsResponse>> GetTrendingTopicsAsync(string userID, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["user_id"] = userID,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetTrendingTopicsResponse>(
+                "GET",
+                "/api/v2/feeds/users/{user_id}/trending_topics", queryParams, null, pathParams,
                 cancellationToken);
 
             return result;

@@ -114,6 +114,40 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<ListAgentFeedbackResponse>> ListAgentFeedbackAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, ListAgentFeedbackResponse>(
+                "GET",
+                "/api/v2/moderation/agent_feedback", queryParams, null, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<SubmitAgentFeedbackResponse>> SubmitAgentFeedbackAsync(SubmitAgentFeedbackRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SubmitAgentFeedbackRequest, SubmitAgentFeedbackResponse>(
+                "POST",
+                "/api/v2/moderation/agent_feedback", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetAgentReviewStatusResponse>> GetAgentReviewStatusAsync(object request = null,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<object, GetAgentReviewStatusResponse>(
+                "GET",
+                "/api/v2/moderation/agent_review_status", null, null, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<AnalyzeResponse>> AnalyzeAsync(AnalyzeRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -239,6 +273,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<SaveConfigVersionResponse>> SaveConfigVersionAsync(SaveConfigVersionRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SaveConfigVersionRequest, SaveConfigVersionResponse>(
+                "POST",
+                "/api/v2/moderation/config/versions", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<DeleteModerationConfigResponse>> DeleteConfigAsync(string key, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -267,6 +312,55 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, GetConfigResponse>(
                 "GET",
                 "/api/v2/moderation/config/{key}", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<ListConfigVersionsResponse>> ListConfigVersionsAsync(string key, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["key"] = key,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, ListConfigVersionsResponse>(
+                "GET",
+                "/api/v2/moderation/config/{key}/versions", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<GetConfigVersionResponse>> GetConfigVersionAsync(string key, string version, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["key"] = key,
+                ["version"] = version,
+            };
+            var queryParams = ExtractQueryParams(request);
+
+            var result = await _client.MakeRequestAsync<object, GetConfigVersionResponse>(
+                "GET",
+                "/api/v2/moderation/config/{key}/versions/{version}", queryParams, null, pathParams,
+                cancellationToken);
+
+            return result;
+        }
+        public async Task<StreamResponse<PublishConfigVersionResponse>> PublishConfigVersionAsync(string key, string version, PublishConfigVersionRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["key"] = key,
+                ["version"] = version,
+            };
+
+            var result = await _client.MakeRequestAsync<PublishConfigVersionRequest, PublishConfigVersionResponse>(
+                "POST",
+                "/api/v2/moderation/config/{key}/versions/{version}/publish", null, request, pathParams,
                 cancellationToken);
 
             return result;
@@ -307,10 +401,11 @@ namespace GetStream
         public async Task<StreamResponse<DeleteModerationTemplateResponse>> V2DeleteTemplateAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, DeleteModerationTemplateResponse>(
                 "DELETE",
-                "/api/v2/moderation/feeds_moderation_template", null, null, null,
+                "/api/v2/moderation/feeds_moderation_template", queryParams, null, null,
                 cancellationToken);
 
             return result;
@@ -485,10 +580,11 @@ namespace GetStream
         public async Task<StreamResponse<PolicyTestSetListResponse>> ListPolicyTestSetsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await _client.MakeRequestAsync<object, PolicyTestSetListResponse>(
                 "GET",
-                "/api/v2/moderation/policy_tests/sets", null, null, null,
+                "/api/v2/moderation/policy_tests/sets", queryParams, null, null,
                 cancellationToken);
 
             return result;
@@ -640,6 +736,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<CountReviewQueueResponse>> CountReviewQueueAsync(CountReviewQueueRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<CountReviewQueueRequest, CountReviewQueueResponse>(
+                "POST",
+                "/api/v2/moderation/review_queue/count", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<GetReviewQueueItemResponse>> GetReviewQueueItemAsync(string id, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -702,7 +809,9 @@ namespace GetStream
         public async Task<StreamResponse<UnbanResponse>> UnbanAsync(UnbanRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<UnbanRequest, UnbanResponse>(
                 "POST",
