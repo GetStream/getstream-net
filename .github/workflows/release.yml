@@ -35,13 +35,22 @@ jobs:
     if: needs.detect.outputs.pending == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # The enterprise forbids GITHUB_TOKEN from creating pull requests. The sdk-bot
+    # App opens this one. Its key is only in this environment, which allows master and *.x.
+    environment: sdk-bot
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
+      contents: read
     steps:
+      - id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: Iv23lioh9qYGjBIp9nsK
+          private-key: ${{ secrets.SDK_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - uses: googleapis/release-please-action@v4
         with:
+          token: ${{ steps.app.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
           target-branch: ${{ github.ref_name }}
