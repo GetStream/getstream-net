@@ -348,10 +348,11 @@ namespace GetStream
         public async Task<StreamResponse<ListImportsResponse>> ListImportsAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
+            var queryParams = ExtractQueryParams(request);
 
             var result = await MakeRequestAsync<object, ListImportsResponse>(
                 "GET",
-                "/api/v2/imports", null, null, null,
+                "/api/v2/imports", queryParams, null, null,
                 cancellationToken);
 
             return result;
@@ -598,7 +599,9 @@ namespace GetStream
         public async Task<StreamResponse<QueryPollsResponse>> QueryPollsAsync(QueryPollsRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await MakeRequestAsync<QueryPollsRequest, QueryPollsResponse>(
                 "POST",
@@ -725,7 +728,9 @@ namespace GetStream
             {
                 ["poll_id"] = pollID,
             };
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await MakeRequestAsync<QueryPollVotesRequest, PollVotesResponse>(
                 "POST",
@@ -1150,7 +1155,9 @@ namespace GetStream
         public async Task<StreamResponse<SharedLocationResponse>> UpdateLiveLocationAsync(UpdateLiveLocationRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await MakeRequestAsync<UpdateLiveLocationRequest, SharedLocationResponse>(
                 "PUT",

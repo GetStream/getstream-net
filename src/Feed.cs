@@ -118,6 +118,15 @@ namespace GetStream
             request, cancellationToken);
         }
 
+        // Returns the unread and unseen counts of a notification feed, along with the last seen and last read timestamps, without building a page.
+        public async Task<StreamResponse<GetNotificationStatusResponse>> GetNotificationStatusAsync(
+            object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await _client.GetNotificationStatusAsync(_feedGroup, _feedId,
+            request, cancellationToken);
+        }
+
         // Query pinned activities for a feed with filter query
         public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(
             QueryPinnedActivitiesRequest request,

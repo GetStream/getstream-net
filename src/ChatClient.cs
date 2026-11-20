@@ -209,7 +209,9 @@ namespace GetStream
         public async Task<StreamResponse<MarkDeliveredResponse>> MarkDeliveredAsync(MarkDeliveredRequest request,
             CancellationToken cancellationToken = default)
         {
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<MarkDeliveredRequest, MarkDeliveredResponse>(
                 "POST",
@@ -289,7 +291,7 @@ namespace GetStream
             return result;
         }
 
-        // Returns a channel by its CID without creating it. Responds with 404 when the channel does not exist, so it doubles as an existence check. Pass state=true to also load messages, read state and watchers, and the messages_id_* parameters to page those messages by message ID.
+        // Returns a channel by its CID without creating it. Responds with 404 when the channel does not exist, so it doubles as an existence check. Pass state=true to also load messages, read state and watchers, and the messages_id_* parameters to page those messages by message ID. Server-side requests can set include_soft_deleted_channel to read a soft-deleted channel and the messages its deletion hid; members are not returned for a deleted channel.
         public async Task<StreamResponse<ChannelStateResponse>> GetChannelAsync(string type, string id, object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -561,7 +563,9 @@ namespace GetStream
                 ["type"] = type,
                 ["id"] = id,
             };
-            var queryParams = ExtractQueryParams(request);
+            // Body properties are not query parameters. Reflecting them calls ToString(),
+            // which is the CLR type name for objects and dictionaries.
+            Dictionary<string, string>? queryParams = null;
 
             var result = await _client.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
                 "PATCH",
@@ -1117,6 +1121,41 @@ namespace GetStream
             return result;
         }
 
+        // Marks a message for the acting user, for example played when the user played a voice note. A mark is written once: a repeat returns created false and the stored mark, and nothing else happens. The message author's own mark is a no-op. A message the user deleted for themselves answers as a first write does, created true, without storing anything. A mark on a message whose author is shadow-banned is stored hidden: the marker keeps it, the author never sees it. Only members of channels whose type lists the mark type can mark, and only messages with a matching attachment; a thread reply is marked like any other message
+
+        // Sends events:
+        // - message.mark_added
+        public async Task<StreamResponse<CreateMessageMarkResponse>> CreateMessageMarkAsync(string id, CreateMessageMarkRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<CreateMessageMarkRequest, CreateMessageMarkResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/marks", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
+        // Lists the marks on a message one page at a time, newest first; the order cannot be changed. The message's mark_groups carry the count and the newest 100 markers per type, this endpoint lists every marker. Only the message author may list client-side; server-side, pass the author's user_id or no user_id. filter.type narrows the list to one mark type; without it every type the channel type lists is returned
+        public async Task<StreamResponse<QueryMessageMarksResponse>> QueryMessageMarksAsync(string id, QueryMessageMarksRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<QueryMessageMarksRequest, QueryMessageMarksResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/marks/query", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Sends reaction to specified message
 
         // Sends events:
@@ -1521,7 +1560,7 @@ namespace GetStream
             return result;
         }
 
-        // Returns all retention policies configured for the app. Server-side only.
+        // Returns all retention policies configured for the app. The per-channel-type rules of the 'inactive-channels-by-type' policy are returned in 'channel_type_rules' rather than in 'policies'. Server-side only.
         public async Task<StreamResponse<GetRetentionPolicyResponse>> GetRetentionPolicyAsync(object request = null,
             CancellationToken cancellationToken = default)
         {
@@ -1533,7 +1572,7 @@ namespace GetStream
             return result;
         }
 
-        // Creates or updates a retention policy for the app. Server-side only.
+        // Creates or updates a retention policy for the app. The 'inactive-channels-by-type' policy sets the 'max_age_hours' rule of the channel type given by 'channel_type', which overrides 'inactive-channels' for that type; its response carries the saved rule in 'channel_type_rule'. Server-side only.
         public async Task<StreamResponse<SetRetentionPolicyResponse>> SetRetentionPolicyAsync(SetRetentionPolicyRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1545,7 +1584,7 @@ namespace GetStream
             return result;
         }
 
-        // Removes a retention policy for the app. Server-side only.
+        // Removes a retention policy for the app. For the 'inactive-channels-by-type' policy, 'channel_type' selects the rule to remove. Server-side only.
         public async Task<StreamResponse<DeleteRetentionPolicyResponse>> DeleteRetentionPolicyAsync(DeleteRetentionPolicyRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1557,7 +1596,7 @@ namespace GetStream
             return result;
         }
 
-        // Returns filtered and sorted retention cleanup run history for the app. Supports filter_conditions on 'policy' (possible values: 'old-messages', 'inactive-channels') and 'date' fields. Server-side only.
+        // Returns filtered and sorted retention cleanup run history for the app. Supports filter_conditions on 'policy' (possible values: 'old-messages', 'inactive-channels', 'inactive-channels@type:<channel type>', 'inactive-channels@blanket:<channel type>') and 'date' fields. Once the app has a per-channel-type rule, inactive-channels runs are recorded per channel type, under 'inactive-channels@type:<channel type>' for a type with its own rule and 'inactive-channels@blanket:<channel type>' for a type covered by the app-wide rule, and 'policy': 'inactive-channels' no longer matches new runs; filter with '$in' over the pass names of your channel types. Server-side only.
         public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(GetRetentionPolicyRunsRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -1581,7 +1620,7 @@ namespace GetStream
             return result;
         }
 
-        // Cancels a scheduled message so it is never sent, or removes a failed one. Returns 409 while the message is being sent
+        // Cancels a scheduled message so it is never sent, or removes a failed one. Returns 409 while the message is being sent. Returns 400 scheduled_message_already_sent (code 123) when the message was already sent and 400 scheduled_message_canceled (code 124) when it was deleted
 
         // Sends events:
         // - scheduled_message.deleted
@@ -1600,7 +1639,7 @@ namespace GetStream
             return result;
         }
 
-        // Replaces the message and/or the send time of a scheduled message. The scheduling checks run again, and the message is then sent, under the caller's auth mode. A request that changes only scheduled_at keeps the auth mode the message was scheduled with. Returns 409 while the message is being sent
+        // Replaces the message and/or the send time of a scheduled message. The scheduling checks run again, and the message is then sent, under the caller's auth mode. A request that changes only scheduled_at keeps the auth mode the message was scheduled with. Returns 409 while the message is being sent. Returns 400 scheduled_message_already_sent (code 123) when the message was already sent and 400 scheduled_message_canceled (code 124) when it was deleted
 
         // Sends events:
         // - scheduled_message.updated
@@ -1619,7 +1658,7 @@ namespace GetStream
             return result;
         }
 
-        // Moves the send time of a scheduled message to now and queues the send. Every send check runs when it is sent. Returns 409 while the message is being sent
+        // Moves the send time of a scheduled message to now and queues the send. Every send check runs when it is sent. Returns 409 while the message is being sent. Returns 400 scheduled_message_already_sent (code 123) when the message was already sent and 400 scheduled_message_canceled (code 124) when it was deleted
 
         // Sends events:
         // - scheduled_message.updated
@@ -1652,6 +1691,18 @@ namespace GetStream
             var result = await _client.MakeRequestAsync<object, SearchResponse>(
                 "GET",
                 "/api/v2/chat/search", queryParams, null, null,
+                cancellationToken);
+            return result;
+        }
+
+        // Runs one free-text query across messages, users and channels and returns one envelope with a section per requested entity. The server picks the match operator, sort and scope for every section: messages are matched as full text in the channels the caller can read, users by name or username prefix, and channels by name prefix among the channels the caller is a member of. Each section carries its own opaque `next` cursor when more results exist; a section that fails is reported in its `error` field while the other sections return normally.
+        public async Task<StreamResponse<SearchAllResponse>> SearchAllAsync(SearchAllRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<SearchAllRequest, SearchAllResponse>(
+                "POST",
+                "/api/v2/chat/search/all", null, request, null,
                 cancellationToken);
             return result;
         }
