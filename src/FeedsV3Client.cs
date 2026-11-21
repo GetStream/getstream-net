@@ -777,13 +777,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<ExportFeedsResponse>> ExportFeedsAppAsync(object request = null,
+        public async Task<StreamResponse<ExportFeedsResponse>> ExportFeedsAppAsync(ExportFeedsAppRequest request,
             CancellationToken cancellationToken = default)
         {
 
-            var result = await _client.MakeRequestAsync<object, ExportFeedsResponse>(
+            var result = await _client.MakeRequestAsync<ExportFeedsAppRequest, ExportFeedsResponse>(
                 "POST",
-                "/api/v2/feeds/export/app", null, null, null,
+                "/api/v2/feeds/export/app", null, request, null,
                 cancellationToken);
 
             return result;
