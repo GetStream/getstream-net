@@ -30,12 +30,23 @@ namespace GetStream
                 var value = prop.GetValue(request);
                 if (value != null)
                 {
-                    queryParams[prop.Name.ToLower()] = value.ToString();
+                    queryParams[prop.Name.ToLower()] = value is System.Collections.IEnumerable items && value is not (string or System.Text.Json.Nodes.JsonNode)
+                        ? string.Join(",", items.Cast<object?>().Select(FormatQueryValue))
+                        : FormatQueryValue(value);
                 }
             }
 
             return queryParams;
         }
+
+        private static string FormatQueryValue(object? value) => value switch
+        {
+            System.Text.Json.Nodes.JsonNode node and not System.Text.Json.Nodes.JsonValue => node.ToJsonString(),
+            DateTime dt => (dt.Kind == DateTimeKind.Local ? dt.ToUniversalTime() : DateTime.SpecifyKind(dt, DateTimeKind.Utc)).ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+            DateTimeOffset dto => dto.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+            IFormattable f => f.ToString(null, System.Globalization.CultureInfo.InvariantCulture),
+            _ => value?.ToString() ?? string.Empty,
+        };
         private static readonly JsonSerializerOptions QueryPayloadJsonOptions =
             new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
@@ -409,6 +420,26 @@ namespace GetStream
             return result;
         }
 
+        // Creates a draft
+
+        // Sends events:
+        // - draft.updated
+        public async Task<StreamResponse<CreateDraftResponse>> CreateDraftAsync(string type, string id, CreateDraftRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["type"] = type,
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<CreateDraftRequest, CreateDraftResponse>(
+                "POST",
+                "/api/v2/chat/channels/{type}/{id}/draft", null, request, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Sends event to the channel
         public async Task<StreamResponse<EventResponse>> SendEventAsync(string type, string id, SendEventRequest request,
             CancellationToken cancellationToken = default)
@@ -737,7 +768,7 @@ namespace GetStream
             return result;
         }
 
-        // Marks channel as unread from a specific message
+        // Marks channel as unread from a specific message, or as soft unread (a dot without a counter) when no message_id, message_timestamp or thread_id is given
         public async Task<StreamResponse<Response>> MarkUnreadAsync(string type, string id, MarkUnreadRequest request,
             CancellationToken cancellationToken = default)
         {
