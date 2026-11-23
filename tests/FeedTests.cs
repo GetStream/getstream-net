@@ -1881,18 +1881,18 @@ namespace GetStream.Tests
         public async Task ExportFeedsAppAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange
-            object request = null!;
+            var request = new ExportFeedsAppRequest();
 
             var expectedResponse = new StreamResponse<ExportFeedsResponse>
             {
                 Data = new ExportFeedsResponse()
             };
 
-            _mockClient.Setup(x => x.MakeRequestAsync<object, ExportFeedsResponse>(
+            _mockClient.Setup(x => x.MakeRequestAsync<ExportFeedsAppRequest, ExportFeedsResponse>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<object>(),
+                It.IsAny<ExportFeedsAppRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResponse);
@@ -1904,11 +1904,11 @@ namespace GetStream.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(expectedResponse));
 
-            _mockClient.Verify(x => x.MakeRequestAsync<object, ExportFeedsResponse>(
+            _mockClient.Verify(x => x.MakeRequestAsync<ExportFeedsAppRequest, ExportFeedsResponse>(
                 "POST",
                 "/api/v2/feeds/export/app",
                 It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<object>(),
+                It.IsAny<ExportFeedsAppRequest>(),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
