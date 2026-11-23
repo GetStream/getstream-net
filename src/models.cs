@@ -10988,6 +10988,11 @@ namespace GetStream.Models
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
         /// <summary>
+        /// For regex block lists, reject any rule that matches 50% or more of a built-in sample dataset as too broad
+        /// </summary>
+        [JsonPropertyName("validate")]
+        public bool? Validate { get; set; }
+        /// <summary>
         /// User request object
         /// </summary>
         [JsonPropertyName("user")]
@@ -11528,6 +11533,26 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user")]
         public UserRequest? User { get; set; }
+    }
+
+    public class CreateDraftRequest
+    {
+        /// <summary>
+        /// Message data for creating or updating a message
+        /// </summary>
+        [JsonPropertyName("message")]
+        public MessageRequest Message { get; set; }
+    }
+
+    public class CreateDraftResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("draft")]
+        public DraftResponse Draft { get; set; }
     }
 
     public class CreateExternalStorageRequest
@@ -13395,6 +13420,20 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("user")]
         public string? User { get; set; }
+        /// <summary>
+        /// Channel CIDs (type:id) to keep intact. Applies to every user in user_ids.
+        /// Channels listed here keep their rows, messages, memberships, thread participation and reactions, and are not deleted as conversations,
+        /// whatever the messages and conversations modes say. Everything else is deleted as usual.
+        /// * Maximum 1000 entries, duplicates included. Duplicates are then ignored.
+        /// * Cannot be combined with user 'hard' (400).
+        /// * Cannot be combined with files true (400).
+        /// * A malformed CID is rejected with 400.
+        /// * A well-formed CID that does not exist is accepted and excludes nothing.
+        /// * Scheduled messages are not channel-scoped: with user 'pruning' the user's scheduled messages are still removed in every channel, excluded ones included.
+        /// * The user.deleted event does not list the kept channels. A consumer that mirrors deletions must skip them itself.
+        /// </summary>
+        [JsonPropertyName("exclude_channel_cids")]
+        public List<string> ExcludeChannelCids { get; set; }
     }
 
     public class DeleteUsersResponse
@@ -17681,6 +17720,17 @@ namespace GetStream.Models
         public List<HistoryWindowTeam> Teams { get; set; }
     }
 
+    public class GetHookEventsResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        [JsonPropertyName("events")]
+        public List<HookEvents> Events { get; set; }
+    }
+
     public class GetImportResponse
     {
         /// <summary>
@@ -18662,6 +18712,16 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("updated_at")]
         public DateTime UpdatedAt { get; set; }
+    }
+
+    public class HookEvents
+    {
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("products")]
+        public List<string> Products { get; set; }
     }
 
     public class HuaweiConfig
@@ -20408,17 +20468,17 @@ namespace GetStream.Models
     public class MarkUnreadRequest
     {
         /// <summary>
-        /// ID of the message from where the channel is marked unread
+        /// ID of the message from where the channel is marked unread. Omit message_id, message_timestamp and thread_id to mark the whole channel soft unread: a dot without a counter
         /// </summary>
         [JsonPropertyName("message_id")]
         public string? MessageID { get; set; }
         /// <summary>
-        /// Timestamp of the message from where the channel is marked unread
+        /// Timestamp of the message from where the channel is marked unread. Omit message_id, message_timestamp and thread_id to mark the whole channel soft unread
         /// </summary>
         [JsonPropertyName("message_timestamp")]
         public DateTime? MessageTimestamp { get; set; }
         /// <summary>
-        /// Mark a thread unread, specify one of the thread, message timestamp, or message id
+        /// Mark a thread unread. Specify at most one of thread_id, message_timestamp, or message_id; omit all three to mark the channel soft unread
         /// </summary>
         [JsonPropertyName("thread_id")]
         public string? ThreadID { get; set; }
@@ -23552,6 +23612,11 @@ namespace GetStream.Models
         public string? LastReadMessageID { get; set; }
         [JsonPropertyName("received_at")]
         public DateTime? ReceivedAt { get; set; }
+        /// <summary>
+        /// True when the channel was marked unread without a message: an unread dot with no counter
+        /// </summary>
+        [JsonPropertyName("soft_unread")]
+        public bool? SoftUnread { get; set; }
         /// <summary>
         /// The team ID
         /// </summary>
@@ -29248,6 +29313,8 @@ namespace GetStream.Models
         public string? LastDeliveredMessageID { get; set; }
         [JsonPropertyName("last_read_message_id")]
         public string? LastReadMessageID { get; set; }
+        [JsonPropertyName("soft_unread")]
+        public bool? SoftUnread { get; set; }
     }
 
     public class RecordSettings
@@ -35242,7 +35309,7 @@ namespace GetStream.Models
         [JsonPropertyName("channel_id")]
         public string ChannelID { get; set; }
         /// <summary>
-        /// Whether the channel has messages newer than the user's last read. Large channels have no unread_count and only report this.
+        /// Whether the channel counts as unread for the user: it has messages newer than the user's last read, or the user marked it unread without a message (soft_unread). It is true for soft-unread channels even though unread_count is 0. Large channels have no unread_count and only report this.
         /// </summary>
         [JsonPropertyName("has_unread")]
         public bool HasUnread { get; set; }
@@ -35256,6 +35323,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("unread_count")]
         public int UnreadCount { get; set; }
+        /// <summary>
+        /// True when the user marked the channel unread without a message. unread_count stays 0, and the channel adds 1 to total_unread_count; clients should key off has_unread and this field rather than unread_count > 0.
+        /// </summary>
+        [JsonPropertyName("soft_unread")]
+        public bool? SoftUnread { get; set; }
     }
 
     public class UnreadCountsChannelType
@@ -35705,6 +35777,11 @@ namespace GetStream.Models
         public string? Team { get; set; }
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
+        /// <summary>
+        /// For regex block lists, reject any rule that matches 50% or more of a built-in sample dataset as too broad
+        /// </summary>
+        [JsonPropertyName("validate")]
+        public bool? Validate { get; set; }
         /// <summary>
         /// List of words to block
         /// </summary>

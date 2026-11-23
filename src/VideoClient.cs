@@ -28,12 +28,23 @@ namespace GetStream
                 var value = prop.GetValue(request);
                 if (value != null)
                 {
-                    queryParams[prop.Name.ToLower()] = value.ToString();
+                    queryParams[prop.Name.ToLower()] = value is System.Collections.IEnumerable items && value is not (string or System.Text.Json.Nodes.JsonNode)
+                        ? string.Join(",", items.Cast<object?>().Select(FormatQueryValue))
+                        : FormatQueryValue(value);
                 }
             }
 
             return queryParams;
         }
+
+        private static string FormatQueryValue(object? value) => value switch
+        {
+            System.Text.Json.Nodes.JsonNode node and not System.Text.Json.Nodes.JsonValue => node.ToJsonString(),
+            DateTime dt => (dt.Kind == DateTimeKind.Local ? dt.ToUniversalTime() : DateTime.SpecifyKind(dt, DateTimeKind.Utc)).ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+            DateTimeOffset dto => dto.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+            IFormattable f => f.ToString(null, System.Globalization.CultureInfo.InvariantCulture),
+            _ => value?.ToString() ?? string.Empty,
+        };
 
         // Get the current status of all active calls including metrics and summary information
         public async Task<StreamResponse<GetActiveCallsStatusResponse>> GetActiveCallsStatusAsync(object request = null,
