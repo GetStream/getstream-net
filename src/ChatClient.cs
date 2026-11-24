@@ -63,13 +63,13 @@ namespace GetStream
         }
 
         // Query campaigns with filter query
-        public async Task<StreamResponse<QueryCampaignsResponse>> QueryCampaignsAsync(QueryCampaignsRequest request,
+        public async Task<StreamResponse<QueryCampaignsResponse>> QueryCampaignsAsync(QueryCampaignsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryCampaignsRequest, QueryCampaignsResponse>(
                 "POST",
-                "/api/v2/chat/campaigns/query", null, request, null,
+                "/api/v2/chat/campaigns/query", null, request ?? new QueryCampaignsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -124,7 +124,7 @@ namespace GetStream
         }
 
         // Starts or schedules a campaign
-        public async Task<StreamResponse<StartCampaignResponse>> StartCampaignAsync(string id, StartCampaignRequest request,
+        public async Task<StreamResponse<StartCampaignResponse>> StartCampaignAsync(string id, StartCampaignRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -134,7 +134,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StartCampaignRequest, StartCampaignResponse>(
                 "POST",
-                "/api/v2/chat/campaigns/{id}/start", null, request, pathParams,
+                "/api/v2/chat/campaigns/{id}/start", null, request ?? new StartCampaignRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -156,13 +156,13 @@ namespace GetStream
         }
 
         // Query channels with filter query
-        public async Task<StreamResponse<QueryChannelsResponse>> QueryChannelsAsync(QueryChannelsRequest request,
+        public async Task<StreamResponse<QueryChannelsResponse>> QueryChannelsAsync(QueryChannelsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryChannelsRequest, QueryChannelsResponse>(
                 "POST",
-                "/api/v2/chat/channels", null, request, null,
+                "/api/v2/chat/channels", null, request ?? new QueryChannelsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -205,19 +205,19 @@ namespace GetStream
         }
 
         // Lists soft-deleted channels, ordered by created_at. Server-side only. Without a filter it lists every soft-deleted channel of the app; filter by team to scope it to one tenant. To permanently remove the returned channels, pass their cids to Delete channels (POST /channels/delete) with hard_delete set to true; the single-channel Delete channel endpoint does not accept soft-deleted channels.
-        public async Task<StreamResponse<QueryDeletedChannelsResponse>> QueryDeletedChannelsAsync(QueryDeletedChannelsRequest request,
+        public async Task<StreamResponse<QueryDeletedChannelsResponse>> QueryDeletedChannelsAsync(QueryDeletedChannelsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryDeletedChannelsRequest, QueryDeletedChannelsResponse>(
                 "POST",
-                "/api/v2/chat/channels/deleted", null, request, null,
+                "/api/v2/chat/channels/deleted", null, request ?? new QueryDeletedChannelsRequest(), null,
                 cancellationToken);
             return result;
         }
 
         // Mark the status of a channel message delivered.
-        public async Task<StreamResponse<MarkDeliveredResponse>> MarkDeliveredAsync(MarkDeliveredRequest request,
+        public async Task<StreamResponse<MarkDeliveredResponse>> MarkDeliveredAsync(MarkDeliveredRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             // Body properties are not query parameters. Reflecting them calls ToString(),
@@ -226,19 +226,19 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<MarkDeliveredRequest, MarkDeliveredResponse>(
                 "POST",
-                "/api/v2/chat/channels/delivered", queryParams, request, null,
+                "/api/v2/chat/channels/delivered", queryParams, request ?? new MarkDeliveredRequest(), null,
                 cancellationToken);
             return result;
         }
 
         // Query channels grouped into predefined buckets. Only available for enterprise apps.
-        public async Task<StreamResponse<GroupedQueryChannelsResponse>> GroupedQueryChannelsAsync(GroupedQueryChannelsRequest request,
+        public async Task<StreamResponse<GroupedQueryChannelsResponse>> GroupedQueryChannelsAsync(GroupedQueryChannelsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<GroupedQueryChannelsRequest, GroupedQueryChannelsResponse>(
                 "POST",
-                "/api/v2/chat/channels/grouped", null, request, null,
+                "/api/v2/chat/channels/grouped", null, request ?? new GroupedQueryChannelsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -247,13 +247,13 @@ namespace GetStream
 
         // Sends events:
         // - message.read
-        public async Task<StreamResponse<MarkReadResponse>> MarkChannelsReadAsync(MarkChannelsReadRequest request,
+        public async Task<StreamResponse<MarkReadResponse>> MarkChannelsReadAsync(MarkChannelsReadRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<MarkChannelsReadRequest, MarkReadResponse>(
                 "POST",
-                "/api/v2/chat/channels/read", null, request, null,
+                "/api/v2/chat/channels/read", null, request ?? new MarkChannelsReadRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -266,7 +266,7 @@ namespace GetStream
         // - member.removed
         // - member.updated
         // - user.watching.start
-        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateDistinctChannelAsync(string type, ChannelGetOrCreateRequest request,
+        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateDistinctChannelAsync(string type, ChannelGetOrCreateRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -276,7 +276,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/query", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/query", null, request ?? new ChannelGetOrCreateRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -324,7 +324,7 @@ namespace GetStream
 
         // Sends events:
         // - channel.updated
-        public async Task<StreamResponse<UpdateChannelPartialResponse>> UpdateChannelPartialAsync(string type, string id, UpdateChannelPartialRequest request,
+        public async Task<StreamResponse<UpdateChannelPartialResponse>> UpdateChannelPartialAsync(string type, string id, UpdateChannelPartialRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -335,7 +335,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateChannelPartialRequest, UpdateChannelPartialResponse>(
                 "PATCH",
-                "/api/v2/chat/channels/{type}/{id}", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}", null, request ?? new UpdateChannelPartialRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -348,7 +348,7 @@ namespace GetStream
         // - member.removed
         // - member.updated
         // - message.new
-        public async Task<StreamResponse<UpdateChannelResponse>> UpdateChannelAsync(string type, string id, UpdateChannelRequest request,
+        public async Task<StreamResponse<UpdateChannelResponse>> UpdateChannelAsync(string type, string id, UpdateChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -359,13 +359,13 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateChannelRequest, UpdateChannelResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}", null, request ?? new UpdateChannelRequest(), pathParams,
                 cancellationToken);
             return result;
         }
 
         // Lists the users banned from a channel, by a ban on the channel or by a future channel ban issued by the channel's creator, with one entry per user
-        public async Task<StreamResponse<QueryChannelBansResponse>> QueryChannelBansAsync(string type, string id, QueryChannelBansRequest request,
+        public async Task<StreamResponse<QueryChannelBansResponse>> QueryChannelBansAsync(string type, string id, QueryChannelBansRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -376,7 +376,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<QueryChannelBansRequest, QueryChannelBansResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/bans/query", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/bans/query", null, request ?? new QueryChannelBansRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -476,7 +476,7 @@ namespace GetStream
         }
 
         // Uploads file
-        public async Task<StreamResponse<UploadChannelFileResponse>> UploadChannelFileAsync(string type, string id, UploadChannelFileRequest request,
+        public async Task<StreamResponse<UploadChannelFileResponse>> UploadChannelFileAsync(string type, string id, UploadChannelFileRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -487,7 +487,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UploadChannelFileRequest, UploadChannelFileResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/file", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/file", null, request ?? new UploadChannelFileRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -534,7 +534,7 @@ namespace GetStream
 
         // Sends events:
         // - channel.hidden
-        public async Task<StreamResponse<HideChannelResponse>> HideChannelAsync(string type, string id, HideChannelRequest request,
+        public async Task<StreamResponse<HideChannelResponse>> HideChannelAsync(string type, string id, HideChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -545,7 +545,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<HideChannelRequest, HideChannelResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/hide", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/hide", null, request ?? new HideChannelRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -569,7 +569,7 @@ namespace GetStream
         }
 
         // Uploads image
-        public async Task<StreamResponse<UploadChannelResponse>> UploadChannelImageAsync(string type, string id, UploadChannelRequest request,
+        public async Task<StreamResponse<UploadChannelResponse>> UploadChannelImageAsync(string type, string id, UploadChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -580,13 +580,13 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UploadChannelRequest, UploadChannelResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/image", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/image", null, request ?? new UploadChannelRequest(), pathParams,
                 cancellationToken);
             return result;
         }
 
 
-        public async Task<StreamResponse<UpdateMemberPartialResponse>> UpdateMemberPartialAsync(string type, string id, UpdateMemberPartialRequest request,
+        public async Task<StreamResponse<UpdateMemberPartialResponse>> UpdateMemberPartialAsync(string type, string id, UpdateMemberPartialRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -600,7 +600,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateMemberPartialRequest, UpdateMemberPartialResponse>(
                 "PATCH",
-                "/api/v2/chat/channels/{type}/{id}/member", queryParams, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/member", queryParams, request ?? new UpdateMemberPartialRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -672,7 +672,7 @@ namespace GetStream
         // - member.removed
         // - member.updated
         // - user.watching.start
-        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateChannelAsync(string type, string id, ChannelGetOrCreateRequest request,
+        public async Task<StreamResponse<ChannelStateResponse>> GetOrCreateChannelAsync(string type, string id, ChannelGetOrCreateRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -683,7 +683,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<ChannelGetOrCreateRequest, ChannelStateResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/query", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/query", null, request ?? new ChannelGetOrCreateRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -692,7 +692,7 @@ namespace GetStream
 
         // Sends events:
         // - message.read
-        public async Task<StreamResponse<MarkReadResponse>> MarkReadAsync(string type, string id, MarkReadRequest request,
+        public async Task<StreamResponse<MarkReadResponse>> MarkReadAsync(string type, string id, MarkReadRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -703,7 +703,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<MarkReadRequest, MarkReadResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/read", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/read", null, request ?? new MarkReadRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -732,7 +732,7 @@ namespace GetStream
 
         // Sends events:
         // - channel.visible
-        public async Task<StreamResponse<ShowChannelResponse>> ShowChannelAsync(string type, string id, ShowChannelRequest request,
+        public async Task<StreamResponse<ShowChannelResponse>> ShowChannelAsync(string type, string id, ShowChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -743,7 +743,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<ShowChannelRequest, ShowChannelResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/show", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/show", null, request ?? new ShowChannelRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -752,7 +752,7 @@ namespace GetStream
 
         // Sends events:
         // - channel.truncated
-        public async Task<StreamResponse<TruncateChannelResponse>> TruncateChannelAsync(string type, string id, TruncateChannelRequest request,
+        public async Task<StreamResponse<TruncateChannelResponse>> TruncateChannelAsync(string type, string id, TruncateChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -763,13 +763,13 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<TruncateChannelRequest, TruncateChannelResponse>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/truncate", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/truncate", null, request ?? new TruncateChannelRequest(), pathParams,
                 cancellationToken);
             return result;
         }
 
         // Marks channel as unread from a specific message, or as soft unread (a dot without a counter) when no message_id, message_timestamp or thread_id is given
-        public async Task<StreamResponse<Response>> MarkUnreadAsync(string type, string id, MarkUnreadRequest request,
+        public async Task<StreamResponse<Response>> MarkUnreadAsync(string type, string id, MarkUnreadRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -780,7 +780,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<MarkUnreadRequest, Response>(
                 "POST",
-                "/api/v2/chat/channels/{type}/{id}/unread", null, request, pathParams,
+                "/api/v2/chat/channels/{type}/{id}/unread", null, request ?? new MarkUnreadRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -842,7 +842,7 @@ namespace GetStream
         }
 
         // Updates channel type
-        public async Task<StreamResponse<UpdateChannelTypeResponse>> UpdateChannelTypeAsync(string name, UpdateChannelTypeRequest request,
+        public async Task<StreamResponse<UpdateChannelTypeResponse>> UpdateChannelTypeAsync(string name, UpdateChannelTypeRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -852,7 +852,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateChannelTypeRequest, UpdateChannelTypeResponse>(
                 "PUT",
-                "/api/v2/chat/channeltypes/{name}", null, request, pathParams,
+                "/api/v2/chat/channeltypes/{name}", null, request ?? new UpdateChannelTypeRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -930,13 +930,13 @@ namespace GetStream
         }
 
         // Queries draft messages for a user
-        public async Task<StreamResponse<QueryDraftsResponse>> QueryDraftsAsync(QueryDraftsRequest request,
+        public async Task<StreamResponse<QueryDraftsResponse>> QueryDraftsAsync(QueryDraftsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryDraftsRequest, QueryDraftsResponse>(
                 "POST",
-                "/api/v2/chat/drafts/query", null, request, null,
+                "/api/v2/chat/drafts/query", null, request ?? new QueryDraftsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1079,7 +1079,7 @@ namespace GetStream
 
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<UpdateMessagePartialResponse>> UpdateMessagePartialAsync(string id, UpdateMessagePartialRequest request,
+        public async Task<StreamResponse<UpdateMessagePartialResponse>> UpdateMessagePartialAsync(string id, UpdateMessagePartialRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1089,7 +1089,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateMessagePartialRequest, UpdateMessagePartialResponse>(
                 "PUT",
-                "/api/v2/chat/messages/{id}", null, request, pathParams,
+                "/api/v2/chat/messages/{id}", null, request ?? new UpdateMessagePartialRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1137,7 +1137,7 @@ namespace GetStream
 
         // Sends events:
         // - message.updated
-        public async Task<StreamResponse<UpdateMessagePartialResponse>> EphemeralMessageUpdateAsync(string id, UpdateMessagePartialRequest request,
+        public async Task<StreamResponse<UpdateMessagePartialResponse>> EphemeralMessageUpdateAsync(string id, UpdateMessagePartialRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1147,7 +1147,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateMessagePartialRequest, UpdateMessagePartialResponse>(
                 "PATCH",
-                "/api/v2/chat/messages/{id}/ephemeral", null, request, pathParams,
+                "/api/v2/chat/messages/{id}/ephemeral", null, request ?? new UpdateMessagePartialRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1172,7 +1172,7 @@ namespace GetStream
         }
 
         // Lists the marks on a message one page at a time, newest first; the order cannot be changed. The message's mark_groups carry the count and the newest 100 markers per type, this endpoint lists every marker. Only the message author may list client-side; server-side, pass the author's user_id or no user_id. filter.type narrows the list to one mark type; without it every type the channel type lists is returned
-        public async Task<StreamResponse<QueryMessageMarksResponse>> QueryMessageMarksAsync(string id, QueryMessageMarksRequest request,
+        public async Task<StreamResponse<QueryMessageMarksResponse>> QueryMessageMarksAsync(string id, QueryMessageMarksRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1182,7 +1182,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<QueryMessageMarksRequest, QueryMessageMarksResponse>(
                 "POST",
-                "/api/v2/chat/messages/{id}/marks/query", null, request, pathParams,
+                "/api/v2/chat/messages/{id}/marks/query", null, request ?? new QueryMessageMarksRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1246,7 +1246,7 @@ namespace GetStream
         }
 
         // Get reactions on a message
-        public async Task<StreamResponse<QueryReactionsResponse>> QueryReactionsAsync(string id, QueryReactionsRequest request,
+        public async Task<StreamResponse<QueryReactionsResponse>> QueryReactionsAsync(string id, QueryReactionsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1256,7 +1256,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<QueryReactionsRequest, QueryReactionsResponse>(
                 "POST",
-                "/api/v2/chat/messages/{id}/reactions", null, request, pathParams,
+                "/api/v2/chat/messages/{id}/reactions", null, request ?? new QueryReactionsRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1308,7 +1308,7 @@ namespace GetStream
         // - poll.vote_casted
         // - poll.vote_changed
         // - poll.vote_removed
-        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string messageID, string pollID, CastPollVoteRequest request,
+        public async Task<StreamResponse<PollVoteResponse>> CastPollVoteAsync(string messageID, string pollID, CastPollVoteRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1319,7 +1319,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<CastPollVoteRequest, PollVoteResponse>(
                 "POST",
-                "/api/v2/chat/messages/{message_id}/polls/{poll_id}/vote", null, request, pathParams,
+                "/api/v2/chat/messages/{message_id}/polls/{poll_id}/vote", null, request ?? new CastPollVoteRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1371,7 +1371,7 @@ namespace GetStream
 
         // Sends events:
         // - reminder.updated
-        public async Task<StreamResponse<UpdateReminderResponse>> UpdateReminderAsync(string messageID, UpdateReminderRequest request,
+        public async Task<StreamResponse<UpdateReminderResponse>> UpdateReminderAsync(string messageID, UpdateReminderRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1381,7 +1381,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateReminderRequest, UpdateReminderResponse>(
                 "PATCH",
-                "/api/v2/chat/messages/{message_id}/reminders", null, request, pathParams,
+                "/api/v2/chat/messages/{message_id}/reminders", null, request ?? new UpdateReminderRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1390,7 +1390,7 @@ namespace GetStream
 
         // Sends events:
         // - reminder.created
-        public async Task<StreamResponse<CreateReminderResponse>> CreateReminderAsync(string messageID, CreateReminderRequest request,
+        public async Task<StreamResponse<CreateReminderResponse>> CreateReminderAsync(string messageID, CreateReminderRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1400,7 +1400,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<CreateReminderRequest, CreateReminderResponse>(
                 "POST",
-                "/api/v2/chat/messages/{message_id}/reminders", null, request, pathParams,
+                "/api/v2/chat/messages/{message_id}/reminders", null, request ?? new CreateReminderRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1444,13 +1444,13 @@ namespace GetStream
 
         // Sends events:
         // - channel.muted
-        public async Task<StreamResponse<MuteChannelResponse>> MuteChannelAsync(MuteChannelRequest request,
+        public async Task<StreamResponse<MuteChannelResponse>> MuteChannelAsync(MuteChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<MuteChannelRequest, MuteChannelResponse>(
                 "POST",
-                "/api/v2/chat/moderation/mute/channel", null, request, null,
+                "/api/v2/chat/moderation/mute/channel", null, request ?? new MuteChannelRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1459,13 +1459,13 @@ namespace GetStream
 
         // Sends events:
         // - channel.unmuted
-        public async Task<StreamResponse<UnmuteResponse>> UnmuteChannelAsync(UnmuteChannelRequest request,
+        public async Task<StreamResponse<UnmuteResponse>> UnmuteChannelAsync(UnmuteChannelRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<UnmuteChannelRequest, UnmuteResponse>(
                 "POST",
-                "/api/v2/chat/moderation/unmute/channel", null, request, null,
+                "/api/v2/chat/moderation/unmute/channel", null, request ?? new UnmuteChannelRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1580,13 +1580,13 @@ namespace GetStream
         }
 
         // Queries reminders
-        public async Task<StreamResponse<QueryRemindersResponse>> QueryRemindersAsync(QueryRemindersRequest request,
+        public async Task<StreamResponse<QueryRemindersResponse>> QueryRemindersAsync(QueryRemindersRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryRemindersRequest, QueryRemindersResponse>(
                 "POST",
-                "/api/v2/chat/reminders/query", null, request, null,
+                "/api/v2/chat/reminders/query", null, request ?? new QueryRemindersRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1628,25 +1628,25 @@ namespace GetStream
         }
 
         // Returns filtered and sorted retention cleanup run history for the app. Supports filter_conditions on 'policy' (possible values: 'old-messages', 'inactive-channels', 'inactive-channels@type:<channel type>', 'inactive-channels@blanket:<channel type>') and 'date' fields. Once the app has a per-channel-type rule, inactive-channels runs are recorded per channel type, under 'inactive-channels@type:<channel type>' for a type with its own rule and 'inactive-channels@blanket:<channel type>' for a type covered by the app-wide rule, and 'policy': 'inactive-channels' no longer matches new runs; filter with '$in' over the pass names of your channel types. Server-side only.
-        public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(GetRetentionPolicyRunsRequest request,
+        public async Task<StreamResponse<GetRetentionPolicyRunsResponse>> GetRetentionPolicyRunsAsync(GetRetentionPolicyRunsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<GetRetentionPolicyRunsRequest, GetRetentionPolicyRunsResponse>(
                 "POST",
-                "/api/v2/chat/retention_policy/runs", null, request, null,
+                "/api/v2/chat/retention_policy/runs", null, request ?? new GetRetentionPolicyRunsRequest(), null,
                 cancellationToken);
             return result;
         }
 
         // Lists the scheduled messages of one user across channels: pending ones first, then failed ones, each by scheduled_at. Client-side requests return the caller's own; server-side requests require user_id
-        public async Task<StreamResponse<QueryScheduledMessagesResponse>> QueryScheduledMessagesAsync(QueryScheduledMessagesRequest request,
+        public async Task<StreamResponse<QueryScheduledMessagesResponse>> QueryScheduledMessagesAsync(QueryScheduledMessagesRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryScheduledMessagesRequest, QueryScheduledMessagesResponse>(
                 "POST",
-                "/api/v2/chat/scheduled_messages/query", null, request, null,
+                "/api/v2/chat/scheduled_messages/query", null, request ?? new QueryScheduledMessagesRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1674,7 +1674,7 @@ namespace GetStream
 
         // Sends events:
         // - scheduled_message.updated
-        public async Task<StreamResponse<UpdateScheduledMessageResponse>> UpdateScheduledMessageAsync(string id, UpdateScheduledMessageRequest request,
+        public async Task<StreamResponse<UpdateScheduledMessageResponse>> UpdateScheduledMessageAsync(string id, UpdateScheduledMessageRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1684,7 +1684,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateScheduledMessageRequest, UpdateScheduledMessageResponse>(
                 "PATCH",
-                "/api/v2/chat/scheduled_messages/{id}", null, request, pathParams,
+                "/api/v2/chat/scheduled_messages/{id}", null, request ?? new UpdateScheduledMessageRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1727,13 +1727,13 @@ namespace GetStream
         }
 
         // Runs one free-text query across messages, users and channels and returns one envelope with a section per requested entity. The server picks the match operator, sort and scope for every section: messages are matched as full text in the channels the caller can read, users by name or username prefix, and channels by name prefix among the channels the caller is a member of. Each section carries its own opaque `next` cursor when more results exist; a section that fails is reported in its `error` field while the other sections return normally.
-        public async Task<StreamResponse<SearchAllResponse>> SearchAllAsync(SearchAllRequest request,
+        public async Task<StreamResponse<SearchAllResponse>> SearchAllAsync(SearchAllRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<SearchAllRequest, SearchAllResponse>(
                 "POST",
-                "/api/v2/chat/search/all", null, request, null,
+                "/api/v2/chat/search/all", null, request ?? new SearchAllRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1795,7 +1795,7 @@ namespace GetStream
         }
 
         // Update an existing segment
-        public async Task<StreamResponse<UpdateSegmentResponse>> UpdateSegmentAsync(string id, UpdateSegmentRequest request,
+        public async Task<StreamResponse<UpdateSegmentResponse>> UpdateSegmentAsync(string id, UpdateSegmentRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1805,7 +1805,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateSegmentRequest, UpdateSegmentResponse>(
                 "PUT",
-                "/api/v2/chat/segments/{id}", null, request, pathParams,
+                "/api/v2/chat/segments/{id}", null, request ?? new UpdateSegmentRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1860,7 +1860,7 @@ namespace GetStream
         }
 
         // Query segment targets
-        public async Task<StreamResponse<QuerySegmentTargetsResponse>> QuerySegmentTargetsAsync(string id, QuerySegmentTargetsRequest request,
+        public async Task<StreamResponse<QuerySegmentTargetsResponse>> QuerySegmentTargetsAsync(string id, QuerySegmentTargetsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1870,7 +1870,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<QuerySegmentTargetsRequest, QuerySegmentTargetsResponse>(
                 "POST",
-                "/api/v2/chat/segments/{id}/targets/query", null, request, pathParams,
+                "/api/v2/chat/segments/{id}/targets/query", null, request ?? new QuerySegmentTargetsRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1888,25 +1888,25 @@ namespace GetStream
         // - Mutually exclusive with the 'next' pagination cursor
 
         // This endpoint is server-side only.
-        public async Task<StreamResponse<QueryTeamUsageStatsResponse>> QueryTeamUsageStatsAsync(QueryTeamUsageStatsRequest request,
+        public async Task<StreamResponse<QueryTeamUsageStatsResponse>> QueryTeamUsageStatsAsync(QueryTeamUsageStatsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryTeamUsageStatsRequest, QueryTeamUsageStatsResponse>(
                 "POST",
-                "/api/v2/chat/stats/team_usage", null, request, null,
+                "/api/v2/chat/stats/team_usage", null, request ?? new QueryTeamUsageStatsRequest(), null,
                 cancellationToken);
             return result;
         }
 
         // Returns the list of threads for specific user
-        public async Task<StreamResponse<QueryThreadsResponse>> QueryThreadsAsync(QueryThreadsRequest request,
+        public async Task<StreamResponse<QueryThreadsResponse>> QueryThreadsAsync(QueryThreadsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryThreadsRequest, QueryThreadsResponse>(
                 "POST",
-                "/api/v2/chat/threads", null, request, null,
+                "/api/v2/chat/threads", null, request ?? new QueryThreadsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1932,7 +1932,7 @@ namespace GetStream
 
         // Sends events:
         // - thread.updated
-        public async Task<StreamResponse<UpdateThreadPartialResponse>> UpdateThreadPartialAsync(string messageID, UpdateThreadPartialRequest request,
+        public async Task<StreamResponse<UpdateThreadPartialResponse>> UpdateThreadPartialAsync(string messageID, UpdateThreadPartialRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1942,7 +1942,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateThreadPartialRequest, UpdateThreadPartialResponse>(
                 "PATCH",
-                "/api/v2/chat/threads/{message_id}", null, request, pathParams,
+                "/api/v2/chat/threads/{message_id}", null, request ?? new UpdateThreadPartialRequest(), pathParams,
                 cancellationToken);
             return result;
         }

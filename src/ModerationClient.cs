@@ -159,13 +159,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<AnalyzeResponse>> AnalyzeAsync(AnalyzeRequest request,
+        public async Task<StreamResponse<AnalyzeResponse>> AnalyzeAsync(AnalyzeRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<AnalyzeRequest, AnalyzeResponse>(
                 "POST",
-                "/api/v2/moderation/analyze", null, request, null,
+                "/api/v2/moderation/analyze", null, request ?? new AnalyzeRequest(), null,
                 cancellationToken);
 
             return result;
@@ -196,13 +196,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryAppealsResponse>> QueryAppealsAsync(QueryAppealsRequest request,
+        public async Task<StreamResponse<QueryAppealsResponse>> QueryAppealsAsync(QueryAppealsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryAppealsRequest, QueryAppealsResponse>(
                 "POST",
-                "/api/v2/moderation/appeals", null, request, null,
+                "/api/v2/moderation/appeals", null, request ?? new QueryAppealsRequest(), null,
                 cancellationToken);
 
             return result;
@@ -262,13 +262,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<CheckS3AccessResponse>> CheckS3AccessAsync(CheckS3AccessRequest request,
+        public async Task<StreamResponse<CheckS3AccessResponse>> CheckS3AccessAsync(CheckS3AccessRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<CheckS3AccessRequest, CheckS3AccessResponse>(
                 "POST",
-                "/api/v2/moderation/check_s3_access", null, request, null,
+                "/api/v2/moderation/check_s3_access", null, request ?? new CheckS3AccessRequest(), null,
                 cancellationToken);
 
             return result;
@@ -360,7 +360,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<PublishConfigVersionResponse>> PublishConfigVersionAsync(string key, string version, PublishConfigVersionRequest request,
+        public async Task<StreamResponse<PublishConfigVersionResponse>> PublishConfigVersionAsync(string key, string version, PublishConfigVersionRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -371,18 +371,18 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<PublishConfigVersionRequest, PublishConfigVersionResponse>(
                 "POST",
-                "/api/v2/moderation/config/{key}/versions/{version}/publish", null, request, pathParams,
+                "/api/v2/moderation/config/{key}/versions/{version}/publish", null, request ?? new PublishConfigVersionRequest(), pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<QueryModerationConfigsResponse>> QueryModerationConfigsAsync(QueryModerationConfigsRequest request,
+        public async Task<StreamResponse<QueryModerationConfigsResponse>> QueryModerationConfigsAsync(QueryModerationConfigsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryModerationConfigsRequest, QueryModerationConfigsResponse>(
                 "POST",
-                "/api/v2/moderation/configs", null, request, null,
+                "/api/v2/moderation/configs", null, request ?? new QueryModerationConfigsRequest(), null,
                 cancellationToken);
 
             return result;
@@ -398,13 +398,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryModerationFeedbackResponse>> QueryModerationFeedbackAsync(QueryModerationFeedbackRequest request,
+        public async Task<StreamResponse<QueryModerationFeedbackResponse>> QueryModerationFeedbackAsync(QueryModerationFeedbackRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryModerationFeedbackRequest, QueryModerationFeedbackResponse>(
                 "POST",
-                "/api/v2/moderation/feedback_items", null, request, null,
+                "/api/v2/moderation/feedback_items", null, request ?? new QueryModerationFeedbackRequest(), null,
                 cancellationToken);
 
             return result;
@@ -465,13 +465,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryModerationFlagsResponse>> QueryModerationFlagsAsync(QueryModerationFlagsRequest request,
+        public async Task<StreamResponse<QueryModerationFlagsResponse>> QueryModerationFlagsAsync(QueryModerationFlagsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryModerationFlagsRequest, QueryModerationFlagsResponse>(
                 "POST",
-                "/api/v2/moderation/flags", null, request, null,
+                "/api/v2/moderation/flags", null, request ?? new QueryModerationFlagsRequest(), null,
                 cancellationToken);
 
             return result;
@@ -487,24 +487,24 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryLabelResultsResponse>> QueryLabelResultsAsync(QueryLabelResultsRequest request,
+        public async Task<StreamResponse<QueryLabelResultsResponse>> QueryLabelResultsAsync(QueryLabelResultsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryLabelResultsRequest, QueryLabelResultsResponse>(
                 "POST",
-                "/api/v2/moderation/labels/results", null, request, null,
+                "/api/v2/moderation/labels/results", null, request ?? new QueryLabelResultsRequest(), null,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<QueryModerationLogsResponse>> QueryModerationLogsAsync(QueryModerationLogsRequest request,
+        public async Task<StreamResponse<QueryModerationLogsResponse>> QueryModerationLogsAsync(QueryModerationLogsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryModerationLogsRequest, QueryModerationLogsResponse>(
                 "POST",
-                "/api/v2/moderation/logs", null, request, null,
+                "/api/v2/moderation/logs", null, request ?? new QueryModerationLogsRequest(), null,
                 cancellationToken);
 
             return result;
@@ -551,13 +551,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryModerationRulesResponse>> QueryModerationRulesAsync(QueryModerationRulesRequest request,
+        public async Task<StreamResponse<QueryModerationRulesResponse>> QueryModerationRulesAsync(QueryModerationRulesRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryModerationRulesRequest, QueryModerationRulesResponse>(
                 "POST",
-                "/api/v2/moderation/moderation_rules", null, request, null,
+                "/api/v2/moderation/moderation_rules", null, request ?? new QueryModerationRulesRequest(), null,
                 cancellationToken);
 
             return result;
@@ -695,7 +695,7 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueueResponse>> UpdateQueueAsync(string id, UpdateQueueRequest request,
+        public async Task<StreamResponse<QueueResponse>> UpdateQueueAsync(string id, UpdateQueueRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -705,12 +705,12 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateQueueRequest, QueueResponse>(
                 "PATCH",
-                "/api/v2/moderation/queues/{id}", null, request, pathParams,
+                "/api/v2/moderation/queues/{id}", null, request ?? new UpdateQueueRequest(), pathParams,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<QueueResponse>> DeleteQueueAsync(string id, DeleteQueueRequest request,
+        public async Task<StreamResponse<QueueResponse>> DeleteQueueAsync(string id, DeleteQueueRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -720,7 +720,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<DeleteQueueRequest, QueueResponse>(
                 "POST",
-                "/api/v2/moderation/queues/{id}/delete", null, request, pathParams,
+                "/api/v2/moderation/queues/{id}/delete", null, request ?? new DeleteQueueRequest(), pathParams,
                 cancellationToken);
 
             return result;
@@ -736,24 +736,24 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<QueryReviewQueueResponse>> QueryReviewQueueAsync(QueryReviewQueueRequest request,
+        public async Task<StreamResponse<QueryReviewQueueResponse>> QueryReviewQueueAsync(QueryReviewQueueRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryReviewQueueRequest, QueryReviewQueueResponse>(
                 "POST",
-                "/api/v2/moderation/review_queue", null, request, null,
+                "/api/v2/moderation/review_queue", null, request ?? new QueryReviewQueueRequest(), null,
                 cancellationToken);
 
             return result;
         }
-        public async Task<StreamResponse<CountReviewQueueResponse>> CountReviewQueueAsync(CountReviewQueueRequest request,
+        public async Task<StreamResponse<CountReviewQueueResponse>> CountReviewQueueAsync(CountReviewQueueRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<CountReviewQueueRequest, CountReviewQueueResponse>(
                 "POST",
-                "/api/v2/moderation/review_queue/count", null, request, null,
+                "/api/v2/moderation/review_queue/count", null, request ?? new CountReviewQueueRequest(), null,
                 cancellationToken);
 
             return result;
@@ -806,13 +806,13 @@ namespace GetStream
 
             return result;
         }
-        public async Task<StreamResponse<SubmitModerationFeedbackResponse>> SubmitModerationFeedbackAsync(SubmitModerationFeedbackRequest request,
+        public async Task<StreamResponse<SubmitModerationFeedbackResponse>> SubmitModerationFeedbackAsync(SubmitModerationFeedbackRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<SubmitModerationFeedbackRequest, SubmitModerationFeedbackResponse>(
                 "POST",
-                "/api/v2/moderation/submit_moderation_feedback", null, request, null,
+                "/api/v2/moderation/submit_moderation_feedback", null, request ?? new SubmitModerationFeedbackRequest(), null,
                 cancellationToken);
 
             return result;

@@ -59,7 +59,7 @@ namespace GetStream
         }
 
 
-        public async Task<StreamResponse<QueryUserFeedbackResponse>> QueryUserFeedbackAsync(QueryUserFeedbackRequest request,
+        public async Task<StreamResponse<QueryUserFeedbackResponse>> QueryUserFeedbackAsync(QueryUserFeedbackRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             // Body properties are not query parameters. Reflecting them calls ToString(),
@@ -68,7 +68,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<QueryUserFeedbackRequest, QueryUserFeedbackResponse>(
                 "POST",
-                "/api/v2/video/call/feedback", queryParams, request, null,
+                "/api/v2/video/call/feedback", queryParams, request ?? new QueryUserFeedbackRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -98,13 +98,13 @@ namespace GetStream
         }
 
 
-        public async Task<StreamResponse<QueryCallStatsResponse>> QueryCallStatsAsync(QueryCallStatsRequest request,
+        public async Task<StreamResponse<QueryCallStatsResponse>> QueryCallStatsAsync(QueryCallStatsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryCallStatsRequest, QueryCallStatsResponse>(
                 "POST",
-                "/api/v2/video/call/stats", null, request, null,
+                "/api/v2/video/call/stats", null, request ?? new QueryCallStatsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -131,7 +131,7 @@ namespace GetStream
 
         // Sends events:
         // - call.updated
-        public async Task<StreamResponse<UpdateCallResponse>> UpdateCallAsync(string type, string id, UpdateCallRequest request,
+        public async Task<StreamResponse<UpdateCallResponse>> UpdateCallAsync(string type, string id, UpdateCallRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -142,7 +142,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateCallRequest, UpdateCallResponse>(
                 "PATCH",
-                "/api/v2/video/call/{type}/{id}", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}", null, request ?? new UpdateCallRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -153,7 +153,7 @@ namespace GetStream
         // - call.created
         // - call.notification
         // - call.ring
-        public async Task<StreamResponse<GetOrCreateCallResponse>> GetOrCreateCallAsync(string type, string id, GetOrCreateCallRequest request,
+        public async Task<StreamResponse<GetOrCreateCallResponse>> GetOrCreateCallAsync(string type, string id, GetOrCreateCallRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -164,7 +164,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<GetOrCreateCallRequest, GetOrCreateCallResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}", null, request ?? new GetOrCreateCallRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -213,7 +213,7 @@ namespace GetStream
 
         // Sends events:
         // - call.deleted
-        public async Task<StreamResponse<DeleteCallResponse>> DeleteCallAsync(string type, string id, DeleteCallRequest request,
+        public async Task<StreamResponse<DeleteCallResponse>> DeleteCallAsync(string type, string id, DeleteCallRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -224,7 +224,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<DeleteCallRequest, DeleteCallResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/delete", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/delete", null, request ?? new DeleteCallRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -233,7 +233,7 @@ namespace GetStream
 
         // Sends events:
         // - custom
-        public async Task<StreamResponse<SendCallEventResponse>> SendCallEventAsync(string type, string id, SendCallEventRequest request,
+        public async Task<StreamResponse<SendCallEventResponse>> SendCallEventAsync(string type, string id, SendCallEventRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -244,7 +244,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<SendCallEventRequest, SendCallEventResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/event", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/event", null, request ?? new SendCallEventRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -273,7 +273,7 @@ namespace GetStream
 
         // Sends events:
         // - call.live_started
-        public async Task<StreamResponse<GoLiveResponse>> GoLiveAsync(string type, string id, GoLiveRequest request,
+        public async Task<StreamResponse<GoLiveResponse>> GoLiveAsync(string type, string id, GoLiveRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -284,7 +284,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<GoLiveRequest, GoLiveResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/go_live", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/go_live", null, request ?? new GoLiveRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -336,7 +336,7 @@ namespace GetStream
         // - call.member_added
         // - call.member_removed
         // - call.member_updated
-        public async Task<StreamResponse<UpdateCallMembersResponse>> UpdateCallMembersAsync(string type, string id, UpdateCallMembersRequest request,
+        public async Task<StreamResponse<UpdateCallMembersResponse>> UpdateCallMembersAsync(string type, string id, UpdateCallMembersRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -347,13 +347,13 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateCallMembersRequest, UpdateCallMembersResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/members", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/members", null, request ?? new UpdateCallMembersRequest(), pathParams,
                 cancellationToken);
             return result;
         }
 
         // Mutes users in a call
-        public async Task<StreamResponse<MuteUsersResponse>> MuteUsersAsync(string type, string id, MuteUsersRequest request,
+        public async Task<StreamResponse<MuteUsersResponse>> MuteUsersAsync(string type, string id, MuteUsersRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -364,13 +364,13 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<MuteUsersRequest, MuteUsersResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/mute_users", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/mute_users", null, request ?? new MuteUsersRequest(), pathParams,
                 cancellationToken);
             return result;
         }
 
         // Returns a list of participants connected to the call
-        public async Task<StreamResponse<QueryCallParticipantsResponse>> QueryCallParticipantsAsync(string id, string type, QueryCallParticipantsRequest request,
+        public async Task<StreamResponse<QueryCallParticipantsResponse>> QueryCallParticipantsAsync(string id, string type, QueryCallParticipantsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -384,7 +384,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<QueryCallParticipantsRequest, QueryCallParticipantsResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/participants", queryParams, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/participants", queryParams, request ?? new QueryCallParticipantsRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -427,7 +427,7 @@ namespace GetStream
 
         // Sends events:
         // - call.recording_started
-        public async Task<StreamResponse<StartRecordingResponse>> StartRecordingAsync(string type, string id, string recordingType, StartRecordingRequest request,
+        public async Task<StreamResponse<StartRecordingResponse>> StartRecordingAsync(string type, string id, string recordingType, StartRecordingRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -439,7 +439,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StartRecordingRequest, StartRecordingResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/recordings/{recording_type}/start", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/recordings/{recording_type}/start", null, request ?? new StartRecordingRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -448,7 +448,7 @@ namespace GetStream
 
         // Sends events:
         // - call.recording_stopped
-        public async Task<StreamResponse<StopRecordingResponse>> StopRecordingAsync(string type, string id, string recordingType, StopRecordingRequest request,
+        public async Task<StreamResponse<StopRecordingResponse>> StopRecordingAsync(string type, string id, string recordingType, StopRecordingRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -460,7 +460,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StopRecordingRequest, StopRecordingResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/recordings/{recording_type}/stop", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/recordings/{recording_type}/stop", null, request ?? new StopRecordingRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -487,7 +487,7 @@ namespace GetStream
 
         // Sends events:
         // - call.ring
-        public async Task<StreamResponse<RingCallResponse>> RingCallAsync(string type, string id, RingCallRequest request,
+        public async Task<StreamResponse<RingCallResponse>> RingCallAsync(string type, string id, RingCallRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -498,7 +498,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<RingCallRequest, RingCallResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/ring", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/ring", null, request ?? new RingCallRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -538,7 +538,7 @@ namespace GetStream
         }
 
         // Stop RTMP broadcasts for the provided RTMP destinations
-        public async Task<StreamResponse<StopRTMPBroadcastsResponse>> StopRTMPBroadcastAsync(string type, string id, string name, StopRTMPBroadcastsRequest request,
+        public async Task<StreamResponse<StopRTMPBroadcastsResponse>> StopRTMPBroadcastAsync(string type, string id, string name, StopRTMPBroadcastsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -550,7 +550,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StopRTMPBroadcastsRequest, StopRTMPBroadcastsResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/rtmp_broadcasts/{name}/stop", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/rtmp_broadcasts/{name}/stop", null, request ?? new StopRTMPBroadcastsRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -613,7 +613,7 @@ namespace GetStream
         }
 
         // Starts closed captions
-        public async Task<StreamResponse<StartClosedCaptionsResponse>> StartClosedCaptionsAsync(string type, string id, StartClosedCaptionsRequest request,
+        public async Task<StreamResponse<StartClosedCaptionsResponse>> StartClosedCaptionsAsync(string type, string id, StartClosedCaptionsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -624,7 +624,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StartClosedCaptionsRequest, StartClosedCaptionsResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/start_closed_captions", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/start_closed_captions", null, request ?? new StartClosedCaptionsRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -633,7 +633,7 @@ namespace GetStream
 
         // Sends events:
         // - call.frame_recording_started
-        public async Task<StreamResponse<StartFrameRecordingResponse>> StartFrameRecordingAsync(string type, string id, StartFrameRecordingRequest request,
+        public async Task<StreamResponse<StartFrameRecordingResponse>> StartFrameRecordingAsync(string type, string id, StartFrameRecordingRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -644,13 +644,13 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StartFrameRecordingRequest, StartFrameRecordingResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/start_frame_recording", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/start_frame_recording", null, request ?? new StartFrameRecordingRequest(), pathParams,
                 cancellationToken);
             return result;
         }
 
         // Starts transcription
-        public async Task<StreamResponse<StartTranscriptionResponse>> StartTranscriptionAsync(string type, string id, StartTranscriptionRequest request,
+        public async Task<StreamResponse<StartTranscriptionResponse>> StartTranscriptionAsync(string type, string id, StartTranscriptionRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -661,7 +661,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StartTranscriptionRequest, StartTranscriptionResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/start_transcription", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/start_transcription", null, request ?? new StartTranscriptionRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -687,7 +687,7 @@ namespace GetStream
 
         // Sends events:
         // - call.transcription_stopped
-        public async Task<StreamResponse<StopClosedCaptionsResponse>> StopClosedCaptionsAsync(string type, string id, StopClosedCaptionsRequest request,
+        public async Task<StreamResponse<StopClosedCaptionsResponse>> StopClosedCaptionsAsync(string type, string id, StopClosedCaptionsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -698,7 +698,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StopClosedCaptionsRequest, StopClosedCaptionsResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/stop_closed_captions", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/stop_closed_captions", null, request ?? new StopClosedCaptionsRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -727,7 +727,7 @@ namespace GetStream
 
         // Sends events:
         // - call.updated
-        public async Task<StreamResponse<StopLiveResponse>> StopLiveAsync(string type, string id, StopLiveRequest request,
+        public async Task<StreamResponse<StopLiveResponse>> StopLiveAsync(string type, string id, StopLiveRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -738,7 +738,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StopLiveRequest, StopLiveResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/stop_live", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/stop_live", null, request ?? new StopLiveRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -747,7 +747,7 @@ namespace GetStream
 
         // Sends events:
         // - call.transcription_stopped
-        public async Task<StreamResponse<StopTranscriptionResponse>> StopTranscriptionAsync(string type, string id, StopTranscriptionRequest request,
+        public async Task<StreamResponse<StopTranscriptionResponse>> StopTranscriptionAsync(string type, string id, StopTranscriptionRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -758,7 +758,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<StopTranscriptionRequest, StopTranscriptionResponse>(
                 "POST",
-                "/api/v2/video/call/{type}/{id}/stop_transcription", null, request, pathParams,
+                "/api/v2/video/call/{type}/{id}/stop_transcription", null, request ?? new StopTranscriptionRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -888,13 +888,13 @@ namespace GetStream
         }
 
 
-        public async Task<StreamResponse<QueryCallSessionStatsResponse>> QueryCallSessionStatsAsync(QueryCallSessionStatsRequest request,
+        public async Task<StreamResponse<QueryCallSessionStatsResponse>> QueryCallSessionStatsAsync(QueryCallSessionStatsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryCallSessionStatsRequest, QueryCallSessionStatsResponse>(
                 "POST",
-                "/api/v2/video/call_stats", null, request, null,
+                "/api/v2/video/call_stats", null, request ?? new QueryCallSessionStatsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -980,13 +980,13 @@ namespace GetStream
         }
 
         // Query calls with filter query
-        public async Task<StreamResponse<QueryCallsResponse>> QueryCallsAsync(QueryCallsRequest request,
+        public async Task<StreamResponse<QueryCallsResponse>> QueryCallsAsync(QueryCallsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryCallsRequest, QueryCallsResponse>(
                 "POST",
-                "/api/v2/video/calls", null, request, null,
+                "/api/v2/video/calls", null, request ?? new QueryCallsRequest(), null,
                 cancellationToken);
             return result;
         }
@@ -1048,7 +1048,7 @@ namespace GetStream
         }
 
 
-        public async Task<StreamResponse<UpdateCallTypeResponse>> UpdateCallTypeAsync(string name, UpdateCallTypeRequest request,
+        public async Task<StreamResponse<UpdateCallTypeResponse>> UpdateCallTypeAsync(string name, UpdateCallTypeRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             var pathParams = new Dictionary<string, string>
@@ -1058,7 +1058,7 @@ namespace GetStream
 
             var result = await _client.MakeRequestAsync<UpdateCallTypeRequest, UpdateCallTypeResponse>(
                 "PUT",
-                "/api/v2/video/calltypes/{name}", null, request, pathParams,
+                "/api/v2/video/calltypes/{name}", null, request ?? new UpdateCallTypeRequest(), pathParams,
                 cancellationToken);
             return result;
         }
@@ -1212,13 +1212,13 @@ namespace GetStream
         }
 
 
-        public async Task<StreamResponse<QueryAggregateCallStatsResponse>> QueryAggregateCallStatsAsync(QueryAggregateCallStatsRequest request,
+        public async Task<StreamResponse<QueryAggregateCallStatsResponse>> QueryAggregateCallStatsAsync(QueryAggregateCallStatsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
 
             var result = await _client.MakeRequestAsync<QueryAggregateCallStatsRequest, QueryAggregateCallStatsResponse>(
                 "POST",
-                "/api/v2/video/stats", null, request, null,
+                "/api/v2/video/stats", null, request ?? new QueryAggregateCallStatsRequest(), null,
                 cancellationToken);
             return result;
         }
