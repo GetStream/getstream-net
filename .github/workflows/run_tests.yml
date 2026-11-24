@@ -16,7 +16,7 @@ permissions:
 jobs:
   build-and-test:
     name: 🧪 Build & test
-    runs-on: { group: github-public-ubuntu-static }
+    runs-on: { group: github-public-amd64 }
     timeout-minutes: 20
 
     steps:
