@@ -32144,7 +32144,7 @@ namespace GetStream.Models
         [JsonPropertyName("next")]
         public string? Next { get; set; }
         /// <summary>
-        /// Channels the caller is a member of whose name starts with the query, in the same shape as the query channels endpoint's results but without messages or members
+        /// Channels the caller is a member of whose name starts with the query, in the same shape as the query channels endpoint's results, without messages and with up to 4 members, oldest first. channel.member_count is the channel's total member count
         /// </summary>
         [JsonPropertyName("channels")]
         public List<ChannelStateResponseFields> Channels { get; set; }
