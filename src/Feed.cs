@@ -21,7 +21,7 @@ namespace GetStream
 
         // Create a single feed for a given feed group
         public async Task<StreamResponse<GetOrCreateFeedResponse>> GetOrCreateFeedAsync(
-            GetOrCreateFeedRequest request,
+            GetOrCreateFeedRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.GetOrCreateFeedAsync(_feedGroup, _feedId,
@@ -30,7 +30,7 @@ namespace GetStream
 
         // Update an existing feed
         public async Task<StreamResponse<UpdateFeedResponse>> UpdateFeedAsync(
-            UpdateFeedRequest request,
+            UpdateFeedRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.UpdateFeedAsync(_feedGroup, _feedId,
@@ -39,7 +39,7 @@ namespace GetStream
 
         // Mark activities as read/seen/watched. Can mark by timestamp (seen), activity IDs (read), or all as read.
         public async Task<StreamResponse<Response>> MarkActivityAsync(
-            MarkActivityRequest request,
+            MarkActivityRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.MarkActivityAsync(_feedGroup, _feedId,
@@ -57,7 +57,7 @@ namespace GetStream
 
         // Pin an activity to a feed. Pinned activities are typically displayed at the top of a feed.
         public async Task<StreamResponse<PinActivityResponse>> PinActivityAsync(string activityID,
-            PinActivityRequest request,
+            PinActivityRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.PinActivityAsync(_feedGroup, _feedId,
@@ -93,7 +93,7 @@ namespace GetStream
 
         // Accepts a pending feed member request
         public async Task<StreamResponse<AcceptFeedMemberInviteResponse>> AcceptFeedMemberInviteAsync(
-            AcceptFeedMemberInviteRequest request,
+            AcceptFeedMemberInviteRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.AcceptFeedMemberInviteAsync(_feedGroup, _feedId,
@@ -102,7 +102,7 @@ namespace GetStream
 
         // Query feed members based on filters with pagination and sorting options
         public async Task<StreamResponse<QueryFeedMembersResponse>> QueryFeedMembersAsync(
-            QueryFeedMembersRequest request,
+            QueryFeedMembersRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.QueryFeedMembersAsync(_feedGroup, _feedId,
@@ -111,7 +111,7 @@ namespace GetStream
 
         // Rejects a pending feed member request
         public async Task<StreamResponse<RejectFeedMemberInviteResponse>> RejectFeedMemberInviteAsync(
-            RejectFeedMemberInviteRequest request,
+            RejectFeedMemberInviteRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.RejectFeedMemberInviteAsync(_feedGroup, _feedId,
@@ -129,7 +129,7 @@ namespace GetStream
 
         // Query pinned activities for a feed with filter query
         public async Task<StreamResponse<QueryPinnedActivitiesResponse>> QueryPinnedActivitiesAsync(
-            QueryPinnedActivitiesRequest request,
+            QueryPinnedActivitiesRequest? request = null,
             CancellationToken cancellationToken = default)
         {
             return await _client.QueryPinnedActivitiesAsync(_feedGroup, _feedId,
