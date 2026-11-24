@@ -26127,6 +26127,11 @@ namespace GetStream.Models
 
     public class QueryAppealsRequest
     {
+        /// <summary>
+        /// Whether to also return the number of appeals matching the filter (total and capped). Set limit to 0 to get only the count. Not returned for team-scoped moderators, or when the count fails.
+        /// </summary>
+        [JsonPropertyName("include_count")]
+        public bool? IncludeCount { get; set; }
         [JsonPropertyName("limit")]
         public int? Limit { get; set; }
         [JsonPropertyName("next")]
@@ -26161,10 +26166,20 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("items")]
         public List<AppealItemResponse> Items { get; set; }
+        /// <summary>
+        /// Whether more appeals match than are counted exactly (1,000), so total is a lower bound. Returned when include_count is set.
+        /// </summary>
+        [JsonPropertyName("capped")]
+        public bool? Capped { get; set; }
         [JsonPropertyName("next")]
         public string? Next { get; set; }
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
+        /// <summary>
+        /// Number of appeals matching the filter, returned when include_count is set. When capped is true, at least this many appeals match.
+        /// </summary>
+        [JsonPropertyName("total")]
+        public int? Total { get; set; }
     }
 
     public class QueryBannedUsersPayload
