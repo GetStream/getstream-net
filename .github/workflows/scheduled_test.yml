@@ -24,7 +24,7 @@ jobs:
     needs: integration
     # Default branch only: a manual dispatch on a feature branch must not touch master's issue.
     if: ${{ !cancelled() && needs.integration.result != 'success' && (github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch) }}
-    runs-on: ubuntu-latest
+    runs-on: { group: github-public-ubuntu-static }
     timeout-minutes: 5
     permissions:
       issues: write
