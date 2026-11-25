@@ -3813,6 +3813,11 @@ namespace GetStream.Models
         [JsonPropertyName("channel_cid")]
         public string? ChannelCid { get; set; }
         /// <summary>
+        /// Ban the user from every channel of this type, including channels they join later. Cannot be combined with channel_cid, ip_ban, ban_from_future_channels, delete_messages or delete_reactions
+        /// </summary>
+        [JsonPropertyName("channel_type")]
+        public string? ChannelType { get; set; }
+        /// <summary>
         /// How a ban or user deletion treats the user's messages.
         /// </summary>
         [JsonPropertyName("delete_messages")]
