@@ -1261,6 +1261,25 @@ namespace GetStream
             return result;
         }
 
+        // Transcribes the voice recordings of a message that have no transcript yet. Transcription runs in the background: the transcript arrives in the attachment's voice_transcript field with message.updated. A recording that already has a transcript, or is already being transcribed, is not transcribed again
+
+        // Sends events:
+        // - message.updated
+        public async Task<StreamResponse<TranscribeMessageResponse>> TranscribeMessageAsync(string id, object request = null,
+            CancellationToken cancellationToken = default)
+        {
+            var pathParams = new Dictionary<string, string>
+            {
+                ["id"] = id,
+            };
+
+            var result = await _client.MakeRequestAsync<object, TranscribeMessageResponse>(
+                "POST",
+                "/api/v2/chat/messages/{id}/transcribe", null, null, pathParams,
+                cancellationToken);
+            return result;
+        }
+
         // Translates message to a given language using automated translation software
 
         // Sends events:
