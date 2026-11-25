@@ -269,13 +269,14 @@ namespace GetStream
         }
 
         /// <summary>
-        /// Load environment variables from .env file
+        /// Load environment variables from an explicitly configured .env file
+        /// without overwriting existing process environment variables.
         /// </summary>
         private void LoadEnvironmentVariables()
         {
             try
             {
-                string envFilePath;
+                string? envFilePath = null;
 
                 if (_envFilePath != null)
                 {
@@ -287,15 +288,10 @@ namespace GetStream
                     // Use explicit directory path if provided
                     envFilePath = Path.Combine(_envPath, ".env");
                 }
-                else
-                {
-                    // Search for .env file starting from current directory and going up
-                    envFilePath = FindEnvFile();
-                }
 
                 if (!string.IsNullOrEmpty(envFilePath) && File.Exists(envFilePath))
                 {
-                    Env.Load(envFilePath);
+                    Env.NoClobber().Load(envFilePath);
                 }
             }
             catch (Exception)
@@ -303,28 +299,6 @@ namespace GetStream
                 // Silently ignore if .env file doesn't exist or can't be loaded
                 // Environment variables might be set through other means
             }
-        }
-
-        /// <summary>
-        /// Find .env file by searching up the directory tree
-        /// </summary>
-        private string FindEnvFile()
-        {
-            var currentDir = Directory.GetCurrentDirectory();
-
-            while (currentDir != null)
-            {
-                var envPath = Path.Combine(currentDir, ".env");
-                if (File.Exists(envPath))
-                {
-                    return envPath;
-                }
-
-                var parent = Directory.GetParent(currentDir);
-                currentDir = parent?.FullName;
-            }
-
-            return string.Empty;
         }
 
         /// <summary>
