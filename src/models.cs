@@ -113,6 +113,8 @@ namespace GetStream.Models
         public List<BodyguardRule> OcrSeverityRules { get; set; }
         [JsonPropertyName("rules")]
         public List<AWSRekognitionRule> Rules { get; set; }
+        [JsonPropertyName("audio_config")]
+        public AIAudioConfigRequest? AudioConfig { get; set; }
     }
 
     public class AIVideoConfigResponse
@@ -127,6 +129,8 @@ namespace GetStream.Models
         public List<OCRRule> OcrRules { get; set; }
         [JsonPropertyName("ocr_severity_rules")]
         public List<BodyguardRule> OcrSeverityRules { get; set; }
+        [JsonPropertyName("audio_config")]
+        public AIAudioConfigResponse? AudioConfig { get; set; }
     }
 
     public class APIError
@@ -17099,10 +17103,15 @@ namespace GetStream.Models
         [JsonPropertyName("duration")]
         public string Duration { get; set; }
         /// <summary>
-        /// Array of blocked user object
+        /// Blocked users on this page, oldest block first
         /// </summary>
         [JsonPropertyName("blocks")]
         public List<BlockedUserResponse> Blocks { get; set; }
+        /// <summary>
+        /// Cursor for the next page. Absent on the last page
+        /// </summary>
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
     }
 
     public class GetCallParticipantSessionMetricsResponse
@@ -20316,6 +20325,11 @@ namespace GetStream.Models
     {
         [JsonPropertyName("user_id")]
         public string? UserID { get; set; }
+        /// <summary>
+        /// Filter conditions to apply to the query
+        /// </summary>
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
         /// <summary>
         /// Map of channel ID to last read message ID
         /// </summary>
@@ -27440,7 +27454,7 @@ namespace GetStream.Models
         [JsonPropertyName("sort")]
         public List<SortParamRequest> Sort { get; set; }
         /// <summary>
-        /// Filter conditions
+        /// Filter conditions. keyword searches the moderated content: "$q" matches whole words, while "$contains" is a case-insensitive substring match (text inside unspaced CJK sentences, word roots, emoji and symbols). "$contains" requires a date_range or created_at window within the last 7 days, at most 1 day long, or 7 days when the filter also narrows language to at most 3 non-empty values. The 7-day window is best effort: a language that covers most of an app's results can still time out.
         /// </summary>
         [JsonPropertyName("filter")]
         public object Filter { get; set; }
@@ -38710,7 +38724,7 @@ namespace GetStream.Models
     public class UserInterestRequest
     {
         /// <summary>
-        /// The interest tag; trimmed and lower-cased like activity interest_tags
+        /// The interest tag; trimmed and lower-cased like activity interest_tags. Avoid commas: removing interests takes a comma-separated list, so a tag that contains a comma cannot be removed
         /// </summary>
         [JsonPropertyName("tag")]
         public string Tag { get; set; }
