@@ -3813,6 +3813,11 @@ namespace GetStream.Models
         [JsonPropertyName("channel_cid")]
         public string? ChannelCid { get; set; }
         /// <summary>
+        /// Ban the user from every channel of this type, including channels they join later. Cannot be combined with channel_cid, ip_ban, ban_from_future_channels, delete_messages or delete_reactions
+        /// </summary>
+        [JsonPropertyName("channel_type")]
+        public string? ChannelType { get; set; }
+        /// <summary>
         /// How a ban or user deletion treats the user's messages.
         /// </summary>
         [JsonPropertyName("delete_messages")]
@@ -8284,6 +8289,7 @@ namespace GetStream.Models
         public static readonly ChannelOwnCapability SHARE_LOCATION = new("share-location");
         public static readonly ChannelOwnCapability SKIP_SLOW_MODE = new("skip-slow-mode");
         public static readonly ChannelOwnCapability SLOW_MODE = new("slow-mode");
+        public static readonly ChannelOwnCapability TRANSCRIBE_VOICE_MESSAGE = new("transcribe-voice-message");
         public static readonly ChannelOwnCapability TYPING_EVENTS = new("typing-events");
         public static readonly ChannelOwnCapability UPDATE_ANY_MESSAGE = new("update-any-message");
         public static readonly ChannelOwnCapability UPDATE_CHANNEL = new("update-channel");
@@ -22595,6 +22601,8 @@ namespace GetStream.Models
         public bool? DisableAuditLogs { get; set; }
         [JsonPropertyName("disable_flagging_reviewed_entity")]
         public bool? DisableFlaggingReviewedEntity { get; set; }
+        [JsonPropertyName("disable_review_queue")]
+        public bool? DisableReviewQueue { get; set; }
         [JsonPropertyName("enforce_shadow_server_side")]
         public bool? EnforceShadowServerSide { get; set; }
         [JsonPropertyName("escalation_queue_enabled")]
@@ -34686,6 +34694,15 @@ namespace GetStream.Models
         public int DurationSeconds { get; set; }
         [JsonPropertyName("track_type")]
         public string TrackType { get; set; }
+    }
+
+    public class TranscribeMessageResponse
+    {
+        /// <summary>
+        /// Duration of the request in milliseconds
+        /// </summary>
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
     }
 
     public class TranscriptLanguageResponse
