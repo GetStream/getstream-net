@@ -33,11 +33,13 @@ namespace GetStream.Tests
         {
             var handler = new CapturingHandler();
             using var httpClient = new HttpClient(handler);
-            var client = new Client(
-                "test-key",
-                "0123456789abcdef0123456789abcdef",
-                httpClient,
-                "https://chat.stream-io-api.com");
+            var client = new BaseClient(new StreamOptions
+            {
+                ApiKey = "test-key",
+                ApiSecret = "0123456789abcdef0123456789abcdef",
+                BaseUrl = "https://chat.stream-io-api.com",
+                HttpClient = httpClient,
+            });
 
             await client.MakeRequestAsync<object, Dictionary<string, object>>(
                 "GET",
@@ -52,8 +54,9 @@ namespace GetStream.Tests
 
             Assert.That(handler.LastRequestUri, Is.Not.Null);
             Assert.That(
-                handler.LastRequestUri!.AbsolutePath,
-                Is.EqualTo("/api/v2/video/call/default/..%2Fother%2Fpath%3Fhard_delete%3Dtrue%23frag"));
+                handler.LastRequestUri!.OriginalString,
+                Is.EqualTo(
+                    "https://chat.stream-io-api.com/api/v2/video/call/default/..%2Fother%2Fpath%3Fhard_delete%3Dtrue%23frag?api_key=test-key"));
             Assert.That(handler.LastRequestUri.Query, Is.EqualTo("?api_key=test-key"));
             Assert.That(handler.LastRequestUri.Fragment, Is.Empty);
         }
@@ -65,11 +68,13 @@ namespace GetStream.Tests
         {
             var handler = new CapturingHandler();
             using var httpClient = new HttpClient(handler);
-            var client = new Client(
-                "test-key",
-                "0123456789abcdef0123456789abcdef",
-                httpClient,
-                "https://chat.stream-io-api.com");
+            var client = new BaseClient(new StreamOptions
+            {
+                ApiKey = "test-key",
+                ApiSecret = "0123456789abcdef0123456789abcdef",
+                BaseUrl = "https://chat.stream-io-api.com",
+                HttpClient = httpClient,
+            });
 
             Assert.ThrowsAsync<ArgumentException>(async () =>
                 await client.MakeRequestAsync<object, Dictionary<string, object>>(
