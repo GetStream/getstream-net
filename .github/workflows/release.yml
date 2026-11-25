@@ -255,9 +255,16 @@ jobs:
       - name: Publish to NuGet
         env:
           NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
+          RELEASE_TAG: ${{ steps.target.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.target.outputs.version }}
         run: |
           if [ -z "$NUGET_API_KEY" ]; then
             echo "::error::NuGet/login did not return NUGET_API_KEY. Check the Trusted Publishing policy and vars.NUGET_USER (nuget.org profile name, not email)."
+            exit 1
+          fi
+
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid release version format: ${RELEASE_VERSION}"
             exit 1
           fi
 
@@ -266,9 +273,9 @@ jobs:
 
           # Exact path, not a glob: with --skip-duplicate a glob that matches a
           # differently-versioned package, or nothing, exits 0 and publishes nothing.
-          pkg="./packages/getstream-net.${{ steps.target.outputs.version }}.nupkg"
+          pkg="./packages/getstream-net.${RELEASE_VERSION}.nupkg"
           if [ ! -f "$pkg" ]; then
-            echo "::error::${pkg} was not produced. dotnet pack takes its version from <Version> in the checked-out csproj, so that tree does not match tag ${{ steps.target.outputs.tag }}."
+            echo "::error::${pkg} was not produced. dotnet pack takes its version from <Version> in the checked-out csproj, so that tree does not match tag ${RELEASE_TAG}."
             exit 1
           fi
 
@@ -284,6 +291,12 @@ jobs:
       - name: Attach the package to the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.target.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.target.outputs.version }}
         run: |
-          gh release upload "${{ steps.target.outputs.tag }}" \
-            "./packages/getstream-net.${{ steps.target.outputs.version }}.nupkg" --clobber
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid release version format: ${RELEASE_VERSION}"
+            exit 1
+          fi
+          gh release upload "$RELEASE_TAG" \
+            "./packages/getstream-net.${RELEASE_VERSION}.nupkg" --clobber
