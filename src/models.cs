@@ -4582,6 +4582,84 @@ namespace GetStream.Models
         public string? Version { get; set; }
     }
 
+    public class BudgetStatusResponse
+    {
+        /// <summary>
+        /// Whether exhausting the budget rejects requests with HTTP 429. False when the budget is only measured, or while enforcement is temporarily suspended
+        /// </summary>
+        [JsonPropertyName("enforced")]
+        public bool Enforced { get; set; }
+        /// <summary>
+        /// Database time in milliseconds the endpoint may use per sliding window
+        /// </summary>
+        [JsonPropertyName("limit_ms")]
+        public int LimitMs { get; set; }
+        /// <summary>
+        /// Database time in milliseconds left in the current sliding window, never negative
+        /// </summary>
+        [JsonPropertyName("remaining_ms")]
+        public int RemainingMs { get; set; }
+        /// <summary>
+        /// The Unix timestamp at which all usage currently in the window will have expired, if no new usage is added. The current time when no usage is recorded in the window. Can be in the future while used_ms is 0, when earlier usage was refunded
+        /// </summary>
+        [JsonPropertyName("reset")]
+        public int Reset { get; set; }
+        /// <summary>
+        /// Database time in milliseconds used in the current sliding window, including requests still in flight
+        /// </summary>
+        [JsonPropertyName("used_ms")]
+        public int UsedMs { get; set; }
+        /// <summary>
+        /// Length of the sliding window in seconds
+        /// </summary>
+        [JsonPropertyName("window_seconds")]
+        public int WindowSeconds { get; set; }
+    }
+
+    public class BudgetsResponse
+    {
+        /// <summary>
+        /// Map of endpoint budgets shared by all platforms. Set when budgets are not tracked per platform
+        /// </summary>
+        [JsonPropertyName("all")]
+        public Dictionary<string, BudgetStatusResponse> All { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Android platform
+        /// </summary>
+        [JsonPropertyName("android")]
+        public Dictionary<string, BudgetStatusResponse> Android { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the iOS platform
+        /// </summary>
+        [JsonPropertyName("ios")]
+        public Dictionary<string, BudgetStatusResponse> Ios { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the server-side platform
+        /// </summary>
+        [JsonPropertyName("server_side")]
+        public Dictionary<string, BudgetStatusResponse> ServerSide { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Unity platform
+        /// </summary>
+        [JsonPropertyName("unity")]
+        public Dictionary<string, BudgetStatusResponse> Unity { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Unity console platform
+        /// </summary>
+        [JsonPropertyName("unity_console")]
+        public Dictionary<string, BudgetStatusResponse> UnityConsole { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Unity desktop platform
+        /// </summary>
+        [JsonPropertyName("unity_desktop")]
+        public Dictionary<string, BudgetStatusResponse> UnityDesktop { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the web platform
+        /// </summary>
+        [JsonPropertyName("web")]
+        public Dictionary<string, BudgetStatusResponse> Web { get; set; }
+    }
+
     public class BulkActionAppealsRequest
     {
         /// <summary>
@@ -18288,6 +18366,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("android")]
         public Dictionary<string, LimitInfoResponse> Android { get; set; }
+        [JsonPropertyName("budgets")]
+        public BudgetsResponse? Budgets { get; set; }
         /// <summary>
         /// Map of endpoint rate limits for the iOS platform
         /// </summary>
