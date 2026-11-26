@@ -574,6 +574,9 @@ namespace GetStream
         /// <returns>true if the signature is valid, false otherwise</returns>
         public static bool VerifySignature(byte[] body, string signature, string secret)
         {
+            if (body == null || string.IsNullOrEmpty(signature) || string.IsNullOrEmpty(secret))
+                return false;
+
             using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
             var hash = hmac.ComputeHash(body);
             var expected = Convert.ToHexString(hash).ToLowerInvariant();
@@ -606,6 +609,9 @@ namespace GetStream
         /// <returns>true if the signature is valid, false otherwise</returns>
         public static bool VerifySignature(string body, string signature, string secret)
         {
+            if (body == null)
+                return false;
+
             return VerifySignature(Encoding.UTF8.GetBytes(body), signature, secret);
         }
 
