@@ -1607,6 +1607,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("create_system_feeds")]
+        public bool? CreateSystemFeeds { get; set; }
         [JsonPropertyName("create_users")]
         public bool? CreateUsers { get; set; }
         [JsonPropertyName("enrich_own_fields")]
@@ -9227,6 +9229,11 @@ namespace GetStream.Models
         public List<ChatOwnMarkResponse> OwnMarks { get; set; }
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public ChatDraftResponse? Draft { get; set; }
         [JsonPropertyName("i18n")]
@@ -21813,6 +21820,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public DraftResponse? Draft { get; set; }
         /// <summary>
@@ -22210,6 +22222,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public DraftResponse? Draft { get; set; }
         /// <summary>
@@ -32456,6 +32473,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("channel")]
         public ChannelResponse? Channel { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public DraftResponse? Draft { get; set; }
         [JsonPropertyName("i18n")]
@@ -37809,6 +37831,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("activities")]
         public List<ActivityRequest> Activities { get; set; }
+        /// <summary>
+        /// Server-side only. If true, a missing feed whose id is not a user id (e.g. game:123) is created as a system feed with no user owner. Missing feeds named after an existing user are created either way. Built-in groups (such as user, timeline and notification) and notification groups still require a user. Default: false.
+        /// </summary>
+        [JsonPropertyName("create_system_feeds")]
+        public bool? CreateSystemFeeds { get; set; }
         /// <summary>
         /// Server-side only. If true, auto-creates users referenced by activity user_id values that don't already exist. Default: false.
         /// </summary>
