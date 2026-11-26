@@ -430,7 +430,14 @@ namespace GetStream
             {
                 foreach (var param in pathParams)
                 {
-                    url = url.Replace($"{{{param.Key}}}", param.Value);
+                    if (string.IsNullOrEmpty(param.Value) || param.Value == "." || param.Value == "..")
+                    {
+                        throw new ArgumentException(
+                            $"Invalid path parameter '{param.Key}': must not be empty or a dot-segment.",
+                            nameof(pathParams));
+                    }
+
+                    url = url.Replace($"{{{param.Key}}}", Uri.EscapeDataString(param.Value));
                 }
             }
 
