@@ -14592,6 +14592,21 @@ namespace GetStream.Models
     {
         [JsonPropertyName("user_ids")]
         public List<string> UserIds { get; set; }
+        /// <summary>
+        /// Start of the message window, inclusive: messages with created_at >= messages_from are exported. Unlike export_channels' messages_since, which is exclusive. Reactions are selected by the time they were added, in the same window.
+        /// </summary>
+        [JsonPropertyName("messages_from")]
+        public DateTime? MessagesFrom { get; set; }
+        /// <summary>
+        /// End of the message window, exclusive: messages with created_at < messages_to are exported. Unlike export_channels' messages_until, which is inclusive. Must be after messages_from. When any of channel_cids, messages_from or messages_to is set, calls are omitted from the export.
+        /// </summary>
+        [JsonPropertyName("messages_to")]
+        public DateTime? MessagesTo { get; set; }
+        /// <summary>
+        /// Limit the export to these channels, in type:id form (at most 100, not empty). Without it every channel of the users is exported.
+        /// </summary>
+        [JsonPropertyName("channel_cids")]
+        public List<string> ChannelCids { get; set; }
     }
 
     public class ExportUsersResponse
