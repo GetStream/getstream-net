@@ -4276,6 +4276,41 @@ namespace GetStream.Tests
                 It.IsAny<CancellationToken>()), Times.Once);
         }
         [Test]
+        public async Task QueryFeedsEngagementStatsAsync_ShouldCallCorrectEndpoint()
+        {
+            // Arrange
+            var request = new QueryFeedsEngagementStatsRequest();
+
+            var expectedResponse = new StreamResponse<QueryFeedsEngagementStatsResponse>
+            {
+                Data = new QueryFeedsEngagementStatsResponse()
+            };
+
+            _mockClient.Setup(x => x.MakeRequestAsync<QueryFeedsEngagementStatsRequest, QueryFeedsEngagementStatsResponse>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryFeedsEngagementStatsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            // Act
+            var result = await _client.QueryFeedsEngagementStatsAsync(request);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedResponse));
+
+            _mockClient.Verify(x => x.MakeRequestAsync<QueryFeedsEngagementStatsRequest, QueryFeedsEngagementStatsResponse>(
+                "POST",
+                "/api/v2/feeds/stats/engagement",
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<QueryFeedsEngagementStatsRequest>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+        [Test]
         public async Task QueryFeedsUsageStatsAsync_ShouldCallCorrectEndpoint()
         {
             // Arrange

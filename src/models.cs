@@ -603,6 +603,11 @@ namespace GetStream.Models
         [JsonPropertyName("hide")]
         public bool? Hide { get; set; }
         /// <summary>
+        /// From the feed response; attributes the hide to the feed's view
+        /// </summary>
+        [JsonPropertyName("request_id")]
+        public string? RequestID { get; set; }
+        /// <summary>
         /// Whether to show less content like this
         /// </summary>
         [JsonPropertyName("show_less")]
@@ -2887,6 +2892,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("message_marks")]
         public MessageMarksConfig? MessageMarks { get; set; }
+        /// <summary>
+        /// The app's message schema settings: how strictly messages and reactions are checked, and the JSON Schemas they are checked against.
+        /// </summary>
+        [JsonPropertyName("message_schema")]
+        public MessageSchemaSettings? MessageSchema { get; set; }
         [JsonPropertyName("moderation_dashboard_preferences")]
         public ModerationDashboardPreferences? ModerationDashboardPreferences { get; set; }
     }
@@ -13924,6 +13934,55 @@ namespace GetStream.Models
         public string Duration { get; set; }
     }
 
+    public class EngagementRates
+    {
+        /// <summary>
+        /// dwell_ms / dwell_count, in milliseconds
+        /// </summary>
+        [JsonPropertyName("avg_dwell_ms")]
+        public double? AvgDwellMs { get; set; }
+        /// <summary>
+        /// clicks / users (user-days)
+        /// </summary>
+        [JsonPropertyName("clicks_per_user")]
+        public double? ClicksPerUser { get; set; }
+        /// <summary>
+        /// clicks / impressions
+        /// </summary>
+        [JsonPropertyName("ctr")]
+        public double? Ctr { get; set; }
+        /// <summary>
+        /// hides / impressions
+        /// </summary>
+        [JsonPropertyName("hide_rate")]
+        public double? HideRate { get; set; }
+        /// <summary>
+        /// impressions / users (user-days)
+        /// </summary>
+        [JsonPropertyName("impressions_per_user")]
+        public double? ImpressionsPerUser { get; set; }
+    }
+
+    public class EngagementStatsResult
+    {
+        /// <summary>
+        /// Empty outside an experiment
+        /// </summary>
+        [JsonPropertyName("experiment_id")]
+        public string ExperimentID { get; set; }
+        [JsonPropertyName("group_id")]
+        public string GroupID { get; set; }
+        [JsonPropertyName("view_id")]
+        public string ViewID { get; set; }
+        /// <summary>
+        /// Daily values and total per metric: reads, users, impressions, clicks, dwell_ms, dwell_count, hides. users.total counts user-days
+        /// </summary>
+        [JsonPropertyName("metrics")]
+        public Dictionary<string, DailyMetricStatsResponse> Metrics { get; set; }
+        [JsonPropertyName("rates")]
+        public EngagementRates Rates { get; set; }
+    }
+
     public class EnrichedActivity
     {
         [JsonPropertyName("foreign_id")]
@@ -15701,6 +15760,11 @@ namespace GetStream.Models
         public int MaxAgeHours { get; set; }
         [JsonPropertyName("feed_groups")]
         public List<string> FeedGroups { get; set; }
+        /// <summary>
+        /// Activities must match every condition to be deleted.
+        /// </summary>
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
     }
 
     public class FeedsPreferences
@@ -16666,6 +16730,11 @@ namespace GetStream.Models
     public class ForYouConfig
     {
         /// <summary>
+        /// Counts engagement per feed view and experiment. Requires enabled and a plan with activity metrics
+        /// </summary>
+        [JsonPropertyName("analytics")]
+        public bool? Analytics { get; set; }
+        /// <summary>
         /// Turns For You ranking on. Groups: only the non-aggregated 'foryou' group. Views: applies only when read on that group
         /// </summary>
         [JsonPropertyName("enabled")]
@@ -16682,6 +16751,8 @@ namespace GetStream.Models
         public bool? Trending { get; set; }
         [JsonPropertyName("dwell")]
         public ForYouDwellConfig? Dwell { get; set; }
+        [JsonPropertyName("experiment")]
+        public ForYouExperimentConfig? Experiment { get; set; }
         [JsonPropertyName("exploration")]
         public ForYouExplorationConfig? Exploration { get; set; }
     }
@@ -16698,6 +16769,34 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("threshold_ms")]
         public int? ThresholdMs { get; set; }
+    }
+
+    public class ForYouExperimentConfig
+    {
+        /// <summary>
+        /// Experiment identifier, 1 to 64 letters, digits, dashes or underscores
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string? ID { get; set; }
+        /// <summary>
+        /// 2 to 4 feed views with distinct ids; weights are percents summing to 100
+        /// </summary>
+        [JsonPropertyName("variants")]
+        public List<ForYouExperimentVariant> Variants { get; set; }
+    }
+
+    public class ForYouExperimentVariant
+    {
+        /// <summary>
+        /// ID of an existing feed view
+        /// </summary>
+        [JsonPropertyName("view")]
+        public string? View { get; set; }
+        /// <summary>
+        /// Share of users in percent, 1 to 100
+        /// </summary>
+        [JsonPropertyName("weight")]
+        public int? Weight { get; set; }
     }
 
     public class ForYouExplorationConfig
@@ -18214,7 +18313,7 @@ namespace GetStream.Models
         [JsonPropertyName("prev")]
         public string? Prev { get; set; }
         /// <summary>
-        /// Signed token identifying this read. Pass it with activity metrics events to attribute them to this read. Only set on feed reads for paid plans with an authenticated user, when the app uses feed impressions (For You exploration, or a For You ranking that uses impressions_bucket)
+        /// Signed token identifying this read. Pass it with activity metrics events to attribute them to this read. Only set on feed reads for paid plans with an authenticated user, when the app uses feed impressions (For You exploration, or a For You ranking that uses impressions_bucket) or For You engagement analytics
         /// </summary>
         [JsonPropertyName("request_id")]
         public string? RequestID { get; set; }
@@ -21951,6 +22050,30 @@ namespace GetStream.Models
         public SharedLocationResponseData? SharedLocation { get; set; }
     }
 
+    public class MessageSchemaSettings
+    {
+        /// <summary>
+        /// The settings document version to use. When omitted, the latest version is used; an unknown version is rejected
+        /// </summary>
+        [JsonPropertyName("document_version")]
+        public int? DocumentVersion { get; set; }
+        /// <summary>
+        /// How violations are handled: off does not check, report checks and records violations without rejecting the write, enforce rejects writes that violate the schema. Defaults to off
+        /// </summary>
+        [JsonPropertyName("mode")]
+        public string? Mode { get; set; }
+        /// <summary>
+        /// The rules a message is checked against.
+        /// </summary>
+        [JsonPropertyName("message")]
+        public MessageValidation? Message { get; set; }
+        /// <summary>
+        /// The rules a reaction is checked against.
+        /// </summary>
+        [JsonPropertyName("reaction")]
+        public ReactionValidation? Reaction { get; set; }
+    }
+
     public class MessageStatsResponse
     {
         [JsonPropertyName("count_over_time")]
@@ -22113,6 +22236,20 @@ namespace GetStream.Models
         public MessageUpdate? MessageUpdate { get; set; }
         [JsonPropertyName("user")]
         public UserResponseCommonFields? User { get; set; }
+    }
+
+    public class MessageValidation
+    {
+        /// <summary>
+        /// Message document paths that cannot change after the message is created
+        /// </summary>
+        [JsonPropertyName("frozen_fields")]
+        public List<string> FrozenFields { get; set; }
+        /// <summary>
+        /// A JSON Schema 2020-12 object validating {message, user}
+        /// </summary>
+        [JsonPropertyName("schema")]
+        public object Schema { get; set; }
     }
 
     public class MessageWithChannelResponse
@@ -27300,6 +27437,51 @@ namespace GetStream.Models
         public List<QueryFeedModerationTemplate> Templates { get; set; }
     }
 
+    public class QueryFeedsEngagementStatsRequest
+    {
+        /// <summary>
+        /// Feed group to report on
+        /// </summary>
+        [JsonPropertyName("group_id")]
+        public string GroupID { get; set; }
+        /// <summary>
+        /// Only this experiment (optional)
+        /// </summary>
+        [JsonPropertyName("experiment_id")]
+        public string? ExperimentID { get; set; }
+        /// <summary>
+        /// Start date in YYYY-MM-DD format (optional, defaults to 29 days before to, so a 30-day range)
+        /// </summary>
+        [JsonPropertyName("from")]
+        public string? From { get; set; }
+        /// <summary>
+        /// Maximum number of series (one per group, view and experiment), not rows, 1 to 100 (optional, defaults to 100, or 10,000 / days for ranges over 100 days). The limit never cuts a series; a metric's days with no events are omitted from its daily values. limit x days must not exceed 10,000
+        /// </summary>
+        [JsonPropertyName("limit")]
+        public int? Limit { get; set; }
+        /// <summary>
+        /// End date in YYYY-MM-DD format (optional, defaults to today UTC). The range is at most 396 days
+        /// </summary>
+        [JsonPropertyName("to")]
+        public string? To { get; set; }
+        /// <summary>
+        /// Only this view (optional)
+        /// </summary>
+        [JsonPropertyName("view_id")]
+        public string? ViewID { get; set; }
+    }
+
+    public class QueryFeedsEngagementStatsResponse
+    {
+        [JsonPropertyName("duration")]
+        public string Duration { get; set; }
+        /// <summary>
+        /// One series per (group, view, experiment), in byte order of experiment, view, then group
+        /// </summary>
+        [JsonPropertyName("results")]
+        public List<EngagementStatsResult> Results { get; set; }
+    }
+
     public class QueryFeedsReactionsRequest
     {
         /// <summary>
@@ -29346,6 +29528,15 @@ namespace GetStream.Models
         public ReactionResponse? Reaction { get; set; }
         [JsonPropertyName("user")]
         public UserResponseCommonFields? User { get; set; }
+    }
+
+    public class ReactionValidation
+    {
+        /// <summary>
+        /// A JSON Schema 2020-12 object validating {reaction, user}
+        /// </summary>
+        [JsonPropertyName("schema")]
+        public object Schema { get; set; }
     }
 
     public class ReactivateUserRequest
@@ -32956,6 +33147,11 @@ namespace GetStream.Models
         public bool? Enabled { get; set; }
         [JsonPropertyName("feed_groups")]
         public List<string> FeedGroups { get; set; }
+        /// <summary>
+        /// Limits deletion to activities matching every condition; expires_at supports only $exists: true. Not allowed on old-activities. Omitted or null keeps the stored filter; {} removes it.
+        /// </summary>
+        [JsonPropertyName("filter_conditions")]
+        public object FilterConditions { get; set; }
     }
 
     public class SetFeedsRetentionPolicyResponse
@@ -34738,7 +34934,7 @@ namespace GetStream.Models
         [JsonPropertyName("position")]
         public int? Position { get; set; }
         /// <summary>
-        /// The request_id returned by the feed read that showed the activity. An invalid, expired (older than 48h) or future-dated (more than 5 minutes ahead) value fails only this event. Impressions sent with a valid request_id feed ranking, are not added to the activity's metrics.impressions, and must use a delta of 1.
+        /// The request_id returned by the feed read that showed the activity. An invalid, expired (older than 48h) or future-dated (more than 5 minutes ahead) value fails only this event. Impressions sent with a valid request_id must use a delta of 1 and feed For You engagement analytics. In apps that use feed impressions (exploration or impressions_bucket) they feed ranking and are not added to the activity's metrics.impressions; with For You analytics on and no feed impressions they are added as without a request_id.
         /// </summary>
         [JsonPropertyName("request_id")]
         public string? RequestID { get; set; }
@@ -35908,6 +36104,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("message_marks")]
         public MessageMarksConfig? MessageMarks { get; set; }
+        /// <summary>
+        /// The app's message schema settings: how strictly messages and reactions are checked, and the JSON Schemas they are checked against.
+        /// </summary>
+        [JsonPropertyName("message_schema")]
+        public MessageSchemaSettings? MessageSchema { get; set; }
         [JsonPropertyName("moderation_dashboard_preferences")]
         public ModerationDashboardPreferences? ModerationDashboardPreferences { get; set; }
         [JsonPropertyName("push_config")]

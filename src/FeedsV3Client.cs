@@ -1702,6 +1702,17 @@ namespace GetStream
 
             return result;
         }
+        public async Task<StreamResponse<QueryFeedsEngagementStatsResponse>> QueryFeedsEngagementStatsAsync(QueryFeedsEngagementStatsRequest request,
+            CancellationToken cancellationToken = default)
+        {
+
+            var result = await _client.MakeRequestAsync<QueryFeedsEngagementStatsRequest, QueryFeedsEngagementStatsResponse>(
+                "POST",
+                "/api/v2/feeds/stats/engagement", null, request, null,
+                cancellationToken);
+
+            return result;
+        }
         public async Task<StreamResponse<QueryFeedsUsageStatsResponse>> QueryFeedsUsageStatsAsync(QueryFeedsUsageStatsRequest? request = null,
             CancellationToken cancellationToken = default)
         {
