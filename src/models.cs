@@ -33874,6 +33874,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("auto_restore_warning")]
         public string? AutoRestoreWarning { get; set; }
+        /// <summary>
+        /// ID of the review queue item the action was performed on
+        /// </summary>
+        [JsonPropertyName("item_id")]
+        public string? ItemID { get; set; }
         [JsonPropertyName("appeal_item")]
         public AppealItemResponse? AppealItem { get; set; }
         [JsonPropertyName("item")]
