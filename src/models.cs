@@ -1607,6 +1607,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("create_notification_activity")]
         public bool? CreateNotificationActivity { get; set; }
+        [JsonPropertyName("create_system_feeds")]
+        public bool? CreateSystemFeeds { get; set; }
         [JsonPropertyName("create_users")]
         public bool? CreateUsers { get; set; }
         [JsonPropertyName("enrich_own_fields")]
@@ -4578,6 +4580,84 @@ namespace GetStream.Models
         public string? Name { get; set; }
         [JsonPropertyName("version")]
         public string? Version { get; set; }
+    }
+
+    public class BudgetStatusResponse
+    {
+        /// <summary>
+        /// Whether exhausting the budget rejects requests with HTTP 429. False when the budget is only measured, or while enforcement is temporarily suspended
+        /// </summary>
+        [JsonPropertyName("enforced")]
+        public bool Enforced { get; set; }
+        /// <summary>
+        /// Database time in milliseconds the endpoint may use per sliding window
+        /// </summary>
+        [JsonPropertyName("limit_ms")]
+        public int LimitMs { get; set; }
+        /// <summary>
+        /// Database time in milliseconds left in the current sliding window, never negative
+        /// </summary>
+        [JsonPropertyName("remaining_ms")]
+        public int RemainingMs { get; set; }
+        /// <summary>
+        /// The Unix timestamp at which all usage currently in the window will have expired, if no new usage is added. The current time when no usage is recorded in the window. Can be in the future while used_ms is 0, when earlier usage was refunded
+        /// </summary>
+        [JsonPropertyName("reset")]
+        public int Reset { get; set; }
+        /// <summary>
+        /// Database time in milliseconds used in the current sliding window, including requests still in flight
+        /// </summary>
+        [JsonPropertyName("used_ms")]
+        public int UsedMs { get; set; }
+        /// <summary>
+        /// Length of the sliding window in seconds
+        /// </summary>
+        [JsonPropertyName("window_seconds")]
+        public int WindowSeconds { get; set; }
+    }
+
+    public class BudgetsResponse
+    {
+        /// <summary>
+        /// Map of endpoint budgets shared by all platforms. Set when budgets are not tracked per platform
+        /// </summary>
+        [JsonPropertyName("all")]
+        public Dictionary<string, BudgetStatusResponse> All { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Android platform
+        /// </summary>
+        [JsonPropertyName("android")]
+        public Dictionary<string, BudgetStatusResponse> Android { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the iOS platform
+        /// </summary>
+        [JsonPropertyName("ios")]
+        public Dictionary<string, BudgetStatusResponse> Ios { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the server-side platform
+        /// </summary>
+        [JsonPropertyName("server_side")]
+        public Dictionary<string, BudgetStatusResponse> ServerSide { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Unity platform
+        /// </summary>
+        [JsonPropertyName("unity")]
+        public Dictionary<string, BudgetStatusResponse> Unity { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Unity console platform
+        /// </summary>
+        [JsonPropertyName("unity_console")]
+        public Dictionary<string, BudgetStatusResponse> UnityConsole { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the Unity desktop platform
+        /// </summary>
+        [JsonPropertyName("unity_desktop")]
+        public Dictionary<string, BudgetStatusResponse> UnityDesktop { get; set; }
+        /// <summary>
+        /// Map of endpoint budgets for the web platform
+        /// </summary>
+        [JsonPropertyName("web")]
+        public Dictionary<string, BudgetStatusResponse> Web { get; set; }
     }
 
     public class BulkActionAppealsRequest
@@ -9227,6 +9307,11 @@ namespace GetStream.Models
         public List<ChatOwnMarkResponse> OwnMarks { get; set; }
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public ChatDraftResponse? Draft { get; set; }
         [JsonPropertyName("i18n")]
@@ -18281,6 +18366,8 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("android")]
         public Dictionary<string, LimitInfoResponse> Android { get; set; }
+        [JsonPropertyName("budgets")]
+        public BudgetsResponse? Budgets { get; set; }
         /// <summary>
         /// Map of endpoint rate limits for the iOS platform
         /// </summary>
@@ -21813,6 +21900,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public DraftResponse? Draft { get; set; }
         /// <summary>
@@ -22210,6 +22302,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("thread_participants")]
         public List<UserResponse> ThreadParticipants { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public DraftResponse? Draft { get; set; }
         /// <summary>
@@ -32456,6 +32553,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("channel")]
         public ChannelResponse? Channel { get; set; }
+        /// <summary>
+        /// User response object
+        /// </summary>
+        [JsonPropertyName("deleted_by")]
+        public UserResponse? DeletedBy { get; set; }
         [JsonPropertyName("draft")]
         public DraftResponse? Draft { get; set; }
         [JsonPropertyName("i18n")]
@@ -33772,6 +33874,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("auto_restore_warning")]
         public string? AutoRestoreWarning { get; set; }
+        /// <summary>
+        /// ID of the review queue item the action was performed on
+        /// </summary>
+        [JsonPropertyName("item_id")]
+        public string? ItemID { get; set; }
         [JsonPropertyName("appeal_item")]
         public AppealItemResponse? AppealItem { get; set; }
         [JsonPropertyName("item")]
@@ -37809,6 +37916,11 @@ namespace GetStream.Models
         /// </summary>
         [JsonPropertyName("activities")]
         public List<ActivityRequest> Activities { get; set; }
+        /// <summary>
+        /// Server-side only. If true, a missing feed whose id is not a user id (e.g. game:123) is created as a system feed with no user owner. Missing feeds named after an existing user are created either way. Built-in groups (such as user, timeline and notification) and notification groups still require a user. Default: false.
+        /// </summary>
+        [JsonPropertyName("create_system_feeds")]
+        public bool? CreateSystemFeeds { get; set; }
         /// <summary>
         /// Server-side only. If true, auto-creates users referenced by activity user_id values that don't already exist. Default: false.
         /// </summary>
